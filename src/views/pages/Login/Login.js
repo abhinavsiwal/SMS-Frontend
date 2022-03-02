@@ -14,7 +14,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useState } from "react";
+import { useState,useEffect } from "react";
 // nodejs library that concatenates classes
 import { Redirect } from "react-router-dom";
 import classnames from "classnames";
@@ -37,10 +37,13 @@ import {
 } from "reactstrap";
 import { adminLogin, staffLogin, studentLogin } from "api/login";
 import validator from "validator";
+import { useDispatch,useSelector } from "react-redux";
+import {login} from '../../../store/reducers/auth'
 // // core components
 // import AuthHeader from "components/Headers/AuthHeader.js";
 
 function Login() {
+  const dispatch = useDispatch();
   const [errormsg, setErrormsg] = useState("");
   const [redirect, setRedirect] = useState(false);
   const [username, setUsername] = useState("");
@@ -49,51 +52,74 @@ function Login() {
   const [focusedEmail, setfocusedEmail] = useState(false);
   const [focusedPassword, setfocusedPassword] = useState(false);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (username && password) {
-      if (validator.isEmail(username)) {
-        adminLogin(username, password)
-          .then((res) => {
-            console.log("user", res);
-            localStorage.setItem("jwt", JSON.stringify(res));
-            setRedirect(true);
-          })
-          .catch((err) => {
-            console.log(err);
-            setErrormsg("Invalid Credentials");
-          });
-      } else {
-        const role = username.substring(3, 6);
-        console.log(role);
-        if (role === "STF") {
-          staffLogin(username, password)
-            .then((res) => {
-              localStorage.setItem("jwt", res.token);
-              setRedirect(true);
-            })
-            .catch((err) => {
-              console.log(err);
-              setErrormsg("Invalid Credentials");
-            });
-        } else if (role === "STD") {
-          studentLogin(username, password)
-            .then((res) => {
-              localStorage.setItem("jwt", res.token);
-              setRedirect(true);
-            })
-            .catch((err) => {
-              console.log(err);
-              setErrormsg("Invalid Credentials");
-            });
-        } else {
-          alert("Invalid username");
-        }
-      }
-    } else {
-      alert("Please fill all fields");
-    }
+  const {loading,error,token} = useSelector(state=>state.authReducer);
+
+
+  useEffect(() => {
+    
+  if(token){
+    setRedirect(true);
   }
+  if(error){
+    console.log(error);
+    setErrormsg(error.message)
+  }
+
+  }, [])
+  
+
+  // function handleSubmit(e) {
+  //   e.preventDefault();
+  //   if (username && password) {
+  //     if (validator.isEmail(username)) {
+  //       adminLogin(username, password)
+  //         .then((res) => {
+  //           console.log("user", res);
+  //           localStorage.setItem("jwt", JSON.stringify(res));
+  //           setRedirect(true);
+  //         })
+  //         .catch((err) => {
+  //           console.log(err);
+  //           setErrormsg("Invalid Credentials");
+  //         });
+  //     } else {
+  //       const role = username.substring(3, 6);
+  //       console.log(role);
+  //       if (role === "STF") {
+  //         staffLogin(username, password)
+  //           .then((res) => {
+  //             localStorage.setItem("jwt", res.token);
+  //             setRedirect(true);
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //             setErrormsg("Invalid Credentials");
+  //           });
+  //       } else if (role === "STD") {
+  //         studentLogin(username, password)
+  //           .then((res) => {
+  //             localStorage.setItem("jwt", res.token);
+  //             setRedirect(true);
+  //           })
+  //           .catch((err) => {
+  //             console.log(err);
+  //             setErrormsg("Invalid Credentials");
+  //           });
+  //       } else {
+  //         alert("Invalid username");
+  //       }
+  //     }
+  //   } else {
+  //     alert("Please fill all fields");
+  //   }
+  // }
+
+const handleSubmit=(e)=>{
+  e.preventDefault();
+  console.log(username,password);
+  dispatch(login({username,password}))
+}
+  
   return (
     <>
       {redirect ? <Redirect to="/admin/dashboard" /> : null}

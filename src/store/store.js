@@ -13,13 +13,17 @@ import {
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
 
-const reducers = combineReducers({});
+import authReducer from './reducers/auth'
+
+const reducers = combineReducers({
+    authReducer,
+});
 
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  whitelist: [""],
+  whitelist: ["authReducer"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
