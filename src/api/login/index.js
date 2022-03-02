@@ -18,7 +18,7 @@ const adminLogin = (username, password) => {
   // }
   const user = { email: username, password: password };
   console.log(user);
-  return fetch(`http://35.174.4.42:5000/api/school/signin`, {
+  return fetch(`${process.env.REACT_APP_API_URL}/api/school/signin`, {
     method: "POST",
     headers: {
       Accept: "application/json",

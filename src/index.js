@@ -33,7 +33,7 @@ import "assets/vendor/nucleo/css/nucleo.css";
 // core styles
 import "assets/scss/argon-dashboard-pro-react.scss?v1.2.0";
 
-import 'antd/dist/antd.css';
+import "antd/dist/antd.css";
 
 // import AdminLayout from "layouts/Admin.js";
 // import RTLLayout from "layouts/RTL.js";
@@ -41,15 +41,21 @@ import 'antd/dist/antd.css';
 // import IndexView from "views/Index.js";
 import Login from "views/pages/Login/Login";
 import AdminRoutes from "AdminRoutes";
-
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
+let persistor = persistStore(store);
 ReactDOM.render(
   <BrowserRouter>
-    <Switch>
-      <Route path='/login' render={(props) => <Login {...props} />} />
-      <AdminRoutes />
-    </Switch>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <Switch>
+          <Route path="/login" render={(props) => <Login {...props} />} />
+          <AdminRoutes />
+        </Switch>
+      </PersistGate>
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root")
 );
-
-
