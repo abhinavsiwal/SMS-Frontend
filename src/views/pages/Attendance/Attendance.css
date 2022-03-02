@@ -1,0 +1,54 @@
+.attendance-icons {
+  text-align: center;
+}
+.attendance-icons > p {
+  font-size: 2rem;
+  border-radius: 15px;
+  margin: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+  .attendance-icons > h1 {
+    margin: 5px;
+  }
+}
+
+.attendance-icons > span {
+  font-size: 1.2rem;
+}
+
+.start-end-date {
+  float: left;
+  /* margin: 15px; */
+}
+
+.attendance-button {
+  float: right;
+  margin: 5px;
+}
+
+.tags {
+  margin-bottom: 20px;
+}
+
+.custom-modal-style {
+  max-width: 2000px;
+  margin-top: -0.5px;
+}
+.modal-body {
+  width: 100%;
+  overflow-y: scroll;
+
+  /* height: 765px; */
+}
+
+.studentAttendance {
+  font-size: 1.1rem;
+  font-weight: 400;
+  display: flex;
+}
+
+.studentAttendance > div > p {
+  font-size: 1.3rem;
+  font-weight: 500;
+}

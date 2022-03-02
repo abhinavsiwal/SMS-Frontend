@@ -1,0 +1,600 @@
+import React, { useEffect, useState } from "react";
+import { isAuthenticated } from "api/auth";
+import { allStudents } from "api/student";
+
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Input,
+  Container,
+  Row,
+  Col,
+  Button,
+  CardImg,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
+// core components
+import SimpleHeader from "components/Headers/SimpleHeader.js";
+import { SearchOutlined } from "@ant-design/icons";
+import AntTable from "../tables/AntTable";
+import { Link } from "react-router-dom";
+import Loader from "components/Loader/Loader";
+
+import ReactPaginate from "react-paginate";
+
+const AllStudents = () => {
+  const [loading, setLoading] = useState(false);
+  // 0 -> List, 1-> Grid
+  const [view, setView] = useState(0);
+  const [studentList, setStudentList] = useState([]);
+  // Pagination
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+  const itemsPerPage = 9;
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % studentList.length;
+    setItemOffset(newOffset);
+  };
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const endOffset = itemOffset + itemsPerPage;
+      const { user, token } = isAuthenticated();
+      const payload = { school: user.school };
+      const res = await allStudents(user._id, token, JSON.stringify(payload));
+      console.log(res);
+      const data = [];
+      for (let i = 0; i < res.length; i++) {
+        data.push({
+          key: i,
+          sid: res[i].SID,
+          first_name: res[i].firstname,
+          last_name: res[i].lastname,
+          email: res[i].email,
+          phone: res[i].phone,
+          gender: res[i].gender,
+          dob: res[i].date_of_birth.split("T")[0].toString(),
+          class: "Class",
+          section: "Section",
+          roll: "Roll",
+          joining_date: res[i].joining_date.split("T")[0].toString(),
+          action: (
+            <h5 key={i + 1} className="mb-0">
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+              >
+                <i className="fas fa-user-edit" />
+              </Button>
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
+                <i className="fas fa-trash" />
+              </Button>
+              <Button
+                className="btn-sm pull-right"
+                color="success"
+                type="button"
+                key={"view" + i + 1}
+              >
+                <i className="fas fa-user" />
+              </Button>
+            </h5>
+          ),
+        });
+      }
+      setStudentList(data);
+      setCurrentItems(data.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(data.length / itemsPerPage));
+      setLoading(true);
+    };
+    fetchStudents();
+  }, [itemOffset, itemsPerPage]);
+
+  const columns = [
+    {
+      title: "SID",
+      dataIndex: "sid",
+      sorter: (a, b) => a.sid > b.sid,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.sid.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "First Name",
+      dataIndex: "first_name",
+      sorter: (a, b) => a.first_name > b.first_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.first_name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Last Name",
+      dataIndex: "last_name",
+      sorter: (a, b) => a.last_name > b.last_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.last_name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      sorter: (a, b) => a.email > b.email,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.email.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      sorter: (a, b) => a.phone > b.phone,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.phone.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Gender",
+      dataIndex: "gender",
+      sorter: (a, b) => a.gender > b.gender,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.gender.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "DOB",
+      dataIndex: "dob",
+      sorter: (a, b) => a.dob > b.dob,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.dob.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Class",
+      dataIndex: "class",
+      sorter: (a, b) => a.class > b.class,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.class.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Section",
+      dataIndex: "section",
+      sorter: (a, b) => a.section > b.section,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.section.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Roll",
+      dataIndex: "roll",
+      sorter: (a, b) => a.roll > b.roll,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.roll.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Joining Date",
+      dataIndex: "joining_date",
+      sorter: (a, b) => a.joining_date > b.joining_date,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.joining_date.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
+
+  return (
+    <>
+      <SimpleHeader name="All Students" />
+      <Container className="mt--6" fluid>
+        <Card className="mb-4">
+          <CardHeader>
+            <Button
+              color={`${view === 0 ? "warning" : "primary"}`}
+              type="button"
+              onClick={() => {
+                setView(0);
+              }}
+            >
+              List View
+            </Button>{" "}
+            <Button
+              color={`${view === 1 ? "warning" : "primary"}`}
+              type="button"
+              onClick={() => {
+                setView(1);
+              }}
+            >
+              Grid View
+            </Button>
+          </CardHeader>
+          <CardBody>
+            {view === 0 ? (
+              <>
+                {loading ? (
+                  <AntTable
+                    columns={columns}
+                    data={studentList}
+                    pagination={true}
+                    exportFileName="StudentDetails"
+                  />
+                ) : (
+                  <Loader />
+                )}
+              </>
+            ) : (
+              <>
+                <Container className="" fluid>
+                  <Row className="card-wrapper">
+                    {currentItems.map((student, index) => (
+                      <Col md="4" key={index}>
+                        <Card>
+                          <CardHeader align="right">
+                            <UncontrolledDropdown>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                color=""
+                                role="button"
+                                size="sm"
+                              >
+                                <i className="fas fa-ellipsis-v" />
+                              </DropdownToggle>
+                              <DropdownMenu
+                                className="dropdown-menu-arrow"
+                                right
+                              >
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  Edit
+                                </DropdownItem>
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
+                                  Delete
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </CardHeader>
+                          <CardImg
+                            alt="..."
+                            src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                            top
+                            className="p-4"
+                          />
+                          <CardBody className="mt-0">
+                            <Row>
+                              <Col align="center">
+                                <h4 className="mt-3 mb-1">SID</h4>
+                                <span className="text-md">{student.sid}</span>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col align="center">
+                                <h4 className="mt-3 mb-1">First Name</h4>
+                                <span className="text-md">
+                                  {student.first_name}
+                                </span>
+                              </Col>
+                              <Col align="center">
+                                <h4 className="mt-3 mb-1">Last Name</h4>
+                                <span className="text-md">
+                                  {student.last_name}
+                                </span>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col align="center">
+                                <h4 className="mt-3 mb-1">Class</h4>
+                                <span className="text-md">{student.class}</span>
+                              </Col>
+                              <Col align="center">
+                                <h4 className="mt-3 mb-1">Section</h4>
+                                <span className="text-md">
+                                  {student.section}
+                                </span>
+                              </Col>
+                              <Col align="center">
+                                <h4 className="mt-3 mb-1">Roll</h4>
+                                <span className="text-md">{student.roll}</span>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col align="center">
+                                <Button className="mt-3">
+                                  <Link
+                                    to="/admin/student-profile"
+                                    className="mb-1"
+                                  >
+                                    Read More
+                                  </Link>
+                                </Button>
+                              </Col>
+                            </Row>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                    ))}
+                  </Row>
+                </Container>
+                <Row>
+                  <Col className="d-flex justify-content-around mt-4">
+                    <ReactPaginate
+                      nextLabel=">"
+                      onPageChange={handlePageClick}
+                      pageRangeDisplayed={3}
+                      marginPagesDisplayed={2}
+                      pageCount={pageCount}
+                      previousLabel="<"
+                      pageClassName="page-item"
+                      pageLinkClassName="page-link"
+                      previousClassName="page-item"
+                      previousLinkClassName="page-link"
+                      nextClassName="page-item"
+                      nextLinkClassName="page-link"
+                      breakLabel="..."
+                      breakClassName="page-item"
+                      breakLinkClassName="page-link"
+                      containerClassName="pagination"
+                      activeClassName="active"
+                      renderOnZeroPageCount={null}
+                    />
+                  </Col>
+                </Row>
+              </>
+            )}
+          </CardBody>
+        </Card>
+      </Container>
+    </>
+  );
+};
+
+export default AllStudents;

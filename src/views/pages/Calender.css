@@ -1,0 +1,16 @@
+.datePicker {
+  border: none;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  width: 45%;
+}
+
+.endDate {
+  border: none;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  width: 50%;
+}
+
+.descrip {
+  /* padding-left: 15px; */
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
