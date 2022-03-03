@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { isAuthenticated } from 'api/auth';
-import { allStaffs } from 'api/staff';
+import React, { useEffect, useState } from "react";
+import { isAuthenticated } from "api/auth";
+import { allStaffs } from "api/staff";
 
-import { Card, CardHeader, CardBody, Input, Container, Row, Col, Button, CardImg, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Input,
+  Container,
+  Row,
+  Col,
+  Button,
+  CardImg,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 // core components
-import SimpleHeader from 'components/Headers/SimpleHeader.js';
-import { SearchOutlined } from '@ant-design/icons';
-import AntTable from '../tables/AntTable';
-import { Link } from 'react-router-dom';
+import SimpleHeader from "components/Headers/SimpleHeader.js";
+import { SearchOutlined } from "@ant-design/icons";
+import AntTable from "../tables/AntTable";
+import { Link } from "react-router-dom";
 
-import ReactPaginate from 'react-paginate';
+import ReactPaginate from "react-paginate";
 
 const AllStaffs = () => {
   // 0 -> List, 1-> Grid
@@ -30,6 +44,7 @@ const AllStaffs = () => {
       const { user, token } = isAuthenticated();
       const payload = { school: user.school };
       const res = await allStaffs(user._id, token, JSON.stringify(payload));
+      console.log("res", res);
       const data = [];
       for (let i = 0; i < res.length; i++) {
         data.push({
@@ -44,16 +59,31 @@ const AllStaffs = () => {
           job: res[i].job,
           salary: res[i].salary,
           department: res[i].department,
-          joining_date: res[i].joining_date.split('T')[0].toString(),
+          joining_date: res[i].joining_date.split("T")[0].toString(),
           action: (
             <h5 key={i + 1} className="mb-0">
-              <Button className="btn-sm pull-right" color="primary" type="button" key={'edit' + i + 1}>
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+              >
                 <i className="fas fa-user-edit" />
               </Button>
-              <Button className="btn-sm pull-right" color="danger" type="button" key={'delete' + i + 1}>
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
                 <i className="fas fa-trash" />
               </Button>
-              <Button className="btn-sm pull-right" color="success" type="button" key={'view' + i + 1}>
+              <Button
+                className="btn-sm pull-right"
+                color="success"
+                type="button"
+                key={"view" + i + 1}
+              >
                 <i className="fas fa-user" />
               </Button>
             </h5>
@@ -69,8 +99,8 @@ const AllStaffs = () => {
 
   const columns = [
     {
-      title: 'SID',
-      dataIndex: 'sid',
+      title: "SID",
+      dataIndex: "sid",
       sorter: (a, b) => a.sid > b.sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -98,8 +128,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'First Name',
-      dataIndex: 'first_name',
+      title: "First Name",
+      dataIndex: "first_name",
       sorter: (a, b) => a.first_name > b.first_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -127,8 +157,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Last Name',
-      dataIndex: 'last_name',
+      title: "Last Name",
+      dataIndex: "last_name",
       sorter: (a, b) => a.last_name > b.last_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -156,8 +186,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
+      title: "Email",
+      dataIndex: "email",
       sorter: (a, b) => a.email > b.email,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -185,8 +215,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Phone',
-      dataIndex: 'phone',
+      title: "Phone",
+      dataIndex: "phone",
       sorter: (a, b) => a.phone > b.phone,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -214,8 +244,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Gender',
-      dataIndex: 'gender',
+      title: "Gender",
+      dataIndex: "gender",
       sorter: (a, b) => a.gender > b.gender,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -243,8 +273,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Assign Role',
-      dataIndex: 'assign_role',
+      title: "Assign Role",
+      dataIndex: "assign_role",
       sorter: (a, b) => a.assign_role > b.assign_role,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -272,8 +302,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Job',
-      dataIndex: 'job',
+      title: "Job",
+      dataIndex: "job",
       sorter: (a, b) => a.job > b.job,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -301,8 +331,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Salary',
-      dataIndex: 'salary',
+      title: "Salary",
+      dataIndex: "salary",
       sorter: (a, b) => a.salary > b.salary,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -330,8 +360,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Department',
-      dataIndex: 'department',
+      title: "Department",
+      dataIndex: "department",
       sorter: (a, b) => a.department > b.department,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -359,8 +389,8 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Joining Date',
-      dataIndex: 'joining_date',
+      title: "Joining Date",
+      dataIndex: "joining_date",
       sorter: (a, b) => a.joining_date > b.joining_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -388,10 +418,10 @@ const AllStaffs = () => {
       },
     },
     {
-      title: 'Action',
-      key: 'action',
-      dataIndex: 'action',
-      fixed: 'right',
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
     },
   ];
 
@@ -402,16 +432,16 @@ const AllStaffs = () => {
         <Card className="mb-4">
           <CardHeader>
             <Button
-              color={`${view === 0 ? 'warning' : 'primary'}`}
+              color={`${view === 0 ? "warning" : "primary"}`}
               type="button"
               onClick={() => {
                 setView(0);
               }}
             >
               List View
-            </Button>{' '}
+            </Button>{" "}
             <Button
-              color={`${view === 1 ? 'warning' : 'primary'}`}
+              color={`${view === 1 ? "warning" : "primary"}`}
               type="button"
               onClick={() => {
                 setView(1);
@@ -423,7 +453,12 @@ const AllStaffs = () => {
           <CardBody>
             {view === 0 ? (
               <>
-                <AntTable columns={columns} data={staffList} pagination={true} exportFileName="StaffDetails" />
+                <AntTable
+                  columns={columns}
+                  data={staffList}
+                  pagination={true}
+                  exportFileName="StaffDetails"
+                />
               </>
             ) : (
               <>
@@ -434,20 +469,39 @@ const AllStaffs = () => {
                         <Card>
                           <CardHeader align="right">
                             <UncontrolledDropdown>
-                              <DropdownToggle className="btn-icon-only text-light" color="" role="button" size="sm">
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                color=""
+                                role="button"
+                                size="sm"
+                              >
                                 <i className="fas fa-ellipsis-v" />
                               </DropdownToggle>
-                              <DropdownMenu className="dropdown-menu-arrow" right>
-                                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                              <DropdownMenu
+                                className="dropdown-menu-arrow"
+                                right
+                              >
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
                                   Edit
                                 </DropdownItem>
-                                <DropdownItem href="#pablo" onClick={(e) => e.preventDefault()}>
+                                <DropdownItem
+                                  href="#pablo"
+                                  onClick={(e) => e.preventDefault()}
+                                >
                                   Delete
                                 </DropdownItem>
                               </DropdownMenu>
                             </UncontrolledDropdown>
                           </CardHeader>
-                          <CardImg alt="..." src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg" top className="p-4" />
+                          <CardImg
+                            alt="..."
+                            src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                            top
+                            className="p-4"
+                          />
                           <CardBody className="mt-0">
                             <Row>
                               <Col align="center">
@@ -458,27 +512,38 @@ const AllStaffs = () => {
                             <Row>
                               <Col align="center">
                                 <h4 className="mt-3 mb-1">First Name</h4>
-                                <span className="text-md">{staff.first_name}</span>
+                                <span className="text-md">
+                                  {staff.first_name}
+                                </span>
                               </Col>
                               <Col align="center">
                                 <h4 className="mt-3 mb-1">Last Name</h4>
-                                <span className="text-md">{staff.last_name}</span>
+                                <span className="text-md">
+                                  {staff.last_name}
+                                </span>
                               </Col>
                             </Row>
                             <Row>
                               <Col align="center">
                                 <h4 className="mt-3 mb-1">Assign Role</h4>
-                                <span className="text-md">{staff.assign_role}</span>
+                                <span className="text-md">
+                                  {staff.assign_role}
+                                </span>
                               </Col>
                               <Col align="center">
                                 <h4 className="mt-3 mb-1">Department</h4>
-                                <span className="text-md">{staff.department}</span>
+                                <span className="text-md">
+                                  {staff.department}
+                                </span>
                               </Col>
                             </Row>
                             <Row>
                               <Col align="center">
                                 <Button className="mt-3">
-                                  <Link to="/admin/staff-profile" className="mb-1">
+                                  <Link
+                                    to="/admin/staff-profile"
+                                    className="mb-1"
+                                  >
                                     Read More
                                   </Link>
                                 </Button>

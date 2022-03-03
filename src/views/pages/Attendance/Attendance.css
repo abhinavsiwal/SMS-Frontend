@@ -17,16 +17,6 @@
   font-size: 1.2rem;
 }
 
-.start-end-date {
-  float: left;
-  /* margin: 15px; */
-}
-
-.attendance-button {
-  float: right;
-  margin: 5px;
-}
-
 .tags {
   margin-bottom: 20px;
 }
@@ -38,17 +28,38 @@
 .modal-body {
   width: 100%;
   overflow-y: scroll;
-
   /* height: 765px; */
 }
 
-.studentAttendance {
-  font-size: 1.1rem;
-  font-weight: 400;
-  display: flex;
+.start-end {
+  float: left;
 }
 
-.studentAttendance > div > p {
-  font-size: 1.3rem;
+.attendance-button {
+  float: right;
+}
+
+@media only screen and (max-width: 600px) {
+  .start-end,
+  .attendance-button {
+    float: none;
+    text-align: center;
+  }
+}
+
+.studentAttendance {
+  text-align: center;
+}
+
+.studentAttendance > p {
+  font-size: 2rem;
   font-weight: 500;
+  border-radius: 15px;
+  margin: 5px;
+}
+
+.studentAttendance > span {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 5px;
 }
