@@ -23,7 +23,9 @@ import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import { Link } from "react-router-dom";
 
+import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
+import { deleteStaff } from "api/staff";
 
 const AllStaffs = () => {
   // 0 -> List, 1-> Grid
@@ -38,12 +40,13 @@ const AllStaffs = () => {
     const newOffset = (event.selected * itemsPerPage) % staffList.length;
     setItemOffset(newOffset);
   };
+  const userDetails = useSelector((state) => state.authReducer);
   useEffect(() => {
     const fetchStaffs = async () => {
       const endOffset = itemOffset + itemsPerPage;
-      const { user, token } = isAuthenticated();
-      const payload = { school: user.school };
-      const res = await allStaffs(user._id);
+      console.log(userDetails.userDetails);
+      const payload = { school: userDetails.userDetails.school };
+      const res = await allStaffs(userDetails.userDetails._id);
       const data = [];
       for (let i = 0; i < res.length; i++) {
         data.push({
@@ -66,6 +69,7 @@ const AllStaffs = () => {
                 color="primary"
                 type="button"
                 key={"edit" + i + 1}
+                
               >
                 <i className="fas fa-user-edit" />
               </Button>
@@ -74,6 +78,7 @@ const AllStaffs = () => {
                 color="danger"
                 type="button"
                 key={"delete" + i + 1}
+                onClick={()=>{deleteStaffHandler(res[i].SID)}}
               >
                 <i className="fas fa-trash" />
               </Button>
@@ -95,6 +100,11 @@ const AllStaffs = () => {
     };
     fetchStaffs();
   }, [itemOffset, itemsPerPage]);
+
+  const deleteStaffHandler =async (id)=>{
+    const data = await deleteStaff(userDetails.userDetails.id,id);
+    console.log(data);
+  }
 
   const columns = [
     {

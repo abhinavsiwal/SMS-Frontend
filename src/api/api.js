@@ -24,6 +24,8 @@ export const sendRequest = (
     Authorization: `Bearer ${token}`,
   };
 
+
+  
   return axios({ method: method, url: url, data: body, headers: headers })
     .then((response) => {
       console.log(response);
@@ -62,13 +64,18 @@ export const sendRequestWithJson = (
   console.log(body);
 
   // e.preventDefault();
-  let token = JSON.parse(
-    JSON.parse(localStorage.getItem("persist:root")).userReducer
+  let encryptedToken = JSON.parse(
+    JSON.parse(localStorage.getItem("persist:root")).authReducer
   ).token;
-  console.log(token);
 
+
+  let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
+  var token = encryption.toString(CryptoJS.enc.Utf8);
+  
+  console.log(token);
   const headers = {
     "Content-Type": "application/json",
+    Accept:"application/json",
     Authorization: `Bearer ${token}`,
   };
   return axios({ method: method, url: url, data: body, headers: headers })

@@ -1,3 +1,4 @@
+import { sendRequestWithJson } from "api/api";
 import { sendRequest } from "api/api";
 
 export const addStaff = (userId, token, data = {}) => {
@@ -17,7 +18,7 @@ export const addStaff = (userId, token, data = {}) => {
 
 export const allStaffs = async (userId) => {
   try {
-    const data = await sendRequest(
+    const data = await sendRequestWithJson(
       `${process.env.REACT_APP_API_URL}/api/school/staff/all/${userId}`
     );
     console.log(data);
@@ -43,3 +44,15 @@ export const addAttendance = () => {
       throw error;
     });
 };
+
+
+export const deleteStaff=async(staffId,id)=>{
+  try {
+    const data = await sendRequestWithJson(`${process.env.REACT_APP_API_URL}/api/school/staff/delete/${staffId}/${id}`);
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error
+  }
+}
