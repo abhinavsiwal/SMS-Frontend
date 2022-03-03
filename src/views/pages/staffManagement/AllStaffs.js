@@ -26,9 +26,13 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { deleteStaff } from "api/staff";
+import Loader from "components/Loader/Loader";
+import { toast } from "react-toastify";
+import { Popconfirm } from "antd";
 
 const AllStaffs = () => {
   // 0 -> List, 1-> Grid
+  const [editing, setEditing] = useState(false);
   const [view, setView] = useState(0);
   const [staffList, setStaffList] = useState([]);
   // Pagination
@@ -36,6 +40,8 @@ const AllStaffs = () => {
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const itemsPerPage = 9;
+  const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % staffList.length;
     setItemOffset(newOffset);
@@ -46,7 +52,10 @@ const AllStaffs = () => {
       const endOffset = itemOffset + itemsPerPage;
       console.log(userDetails.userDetails);
       const payload = { school: userDetails.userDetails.school };
-      const res = await allStaffs(userDetails.userDetails._id);
+      const res = await allStaffs(
+        userDetails.userDetails.school,
+        userDetails.userDetails._id
+      );
       const data = [];
       for (let i = 0; i < res.length; i++) {
         data.push({
@@ -69,7 +78,6 @@ const AllStaffs = () => {
                 color="primary"
                 type="button"
                 key={"edit" + i + 1}
-                
               >
                 <i className="fas fa-user-edit" />
               </Button>
@@ -78,9 +86,13 @@ const AllStaffs = () => {
                 color="danger"
                 type="button"
                 key={"delete" + i + 1}
-                onClick={()=>{deleteStaffHandler(res[i].SID)}}
               >
-                <i className="fas fa-trash" />
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => deleteStaffHandler(res[i]._id)}
+                >
+                  <i className="fas fa-trash" />
+                </Popconfirm>
               </Button>
               <Button
                 className="btn-sm pull-right"
@@ -99,12 +111,23 @@ const AllStaffs = () => {
       setPageCount(Math.ceil(data.length / itemsPerPage));
     };
     fetchStaffs();
-  }, [itemOffset, itemsPerPage]);
+  }, [itemOffset, itemsPerPage, checked]);
 
-  const deleteStaffHandler =async (id)=>{
-    const data = await deleteStaff(userDetails.userDetails.id,id);
-    console.log(data);
-  }
+  const deleteStaffHandler = async (staffId) => {
+    const { user, token } = isAuthenticated();
+    try {
+      const data = await deleteStaff(staffId, user._id);
+      console.log(data);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    }
+  };
 
   const columns = [
     {

@@ -25,7 +25,7 @@ export const sendRequest = (
   };
 
 
-  
+
   return axios({ method: method, url: url, data: body, headers: headers })
     .then((response) => {
       console.log(response);
@@ -81,7 +81,7 @@ export const sendRequestWithJson = (
   return axios({ method: method, url: url, data: body, headers: headers })
     .then((response) => {
       console.log(response);
-      return response;
+      return response.data;
     })
     .catch((error) => {
       if (error.response) {
