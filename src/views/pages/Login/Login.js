@@ -16,7 +16,7 @@
 */
 import { useState,useEffect } from "react";
 // nodejs library that concatenates classes
-import { Redirect } from "react-router-dom";
+import { Redirect,useHistory } from "react-router-dom";
 import classnames from "classnames";
 import "./styles.css";
 // reactstrap components
@@ -44,6 +44,7 @@ import {login} from '../../../store/reducers/auth'
 
 function Login() {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [errormsg, setErrormsg] = useState("");
   const [redirect, setRedirect] = useState(false);
   const [username, setUsername] = useState("");
@@ -59,13 +60,14 @@ function Login() {
     
   if(token){
     setRedirect(true);
+    
   }
   if(error){
     console.log(error);
     setErrormsg(error.message)
   }
 
-  }, [])
+  }, [token])
   
 
   // function handleSubmit(e) {

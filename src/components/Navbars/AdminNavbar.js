@@ -42,8 +42,15 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import { useHistory } from "react-router-dom";
+import {setToken,setExpiry,setUserDetails} from '../../store/reducers/auth'
+import { useDispatch } from "react-redux";
+
+
 
 function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
+  const dispatch = useDispatch();
+  const history = useHistory();
   // function that on mobile devices makes the search open
   const openSearch = () => {
     document.body.classList.add("g-navbar-search-showing");
@@ -70,6 +77,17 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
       document.body.classList.remove("g-navbar-search-hidden");
     }, 500);
   };
+
+  const logoutHandler=(e)=>{
+    e.preventDefault();
+    console.log("logged out");
+
+
+    dispatch(setToken(""));
+    dispatch(setExpiry(""));
+    dispatch(setUserDetails({}))
+    history.push("/login");
+  }
 
   return (
     <>
@@ -439,8 +457,8 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
+                    href="#"
+                    onClick={(e)=>logoutHandler(e)}
                   >
                     <i className="ni ni-user-run" />
                     <span>Logout</span>
