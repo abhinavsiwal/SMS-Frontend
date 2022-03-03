@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+# Web-Frontened
+Full frontend code- React(ui+Integrations)
+=======
 # [Argon Dashboard PRO React](https://demos.creative-tim.com/argon-dashboard-pro-react/#/) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/intent/tweet?url=https%3A%2F%2Fcreativetimofficial.github.io%2Fargon-dashboard-pro-react&text=Argon%20Dashboard%20PRO%20React%20-%20Premium%20Reactstrap%20Admin%20Template&original_referer=https%3A%2F%2Fdemos.creative-tim.com%argon-dashboard-pro-react%2F%3F_ga%3D2.234372891.44370326.1533641128-1803433978.1528781151&via=creativetim&hashtags=react%2Creactstrap)
 
 ![version](https://img.shields.io/badge/version-1.2.1-blue.svg) [![GitHub issues open](https://img.shields.io/github/issues/creativetimofficial/ct-argon-dashboard-pro-react.svg?maxAge=2592000)](https://github.com/creativetimofficial/ct-argon-dashboard-pro-react/issues?q=is%3Aopen+is%3Aissue) [![GitHub issues closed](https://img.shields.io/github/issues-closed-raw/creativetimofficial/ct-argon-dashboard-pro-react.svg?maxAge=2592000)](https://github.com/creativetimofficial/ct-argon-dashboard-pro/issues-react?q=is%3Aissue+is%3Aclosed) [![Join the chat at https://gitter.im/NIT-dgp/General](https://badges.gitter.im/NIT-dgp/General.svg)](https://gitter.im/creative-tim/) [![Chat](https://img.shields.io/badge/chat-on%20discord-7289da.svg)](https://discord.gg/E4aHAQy)
@@ -275,3 +279,4 @@ Dribbble: <https://dribbble.com/creativetim>
 Google+: <https://plus.google.com/+CreativetimPage>
 
 Instagram: <https://instagram.com/creativetimofficial>
+>>>>>>> d72f6d07b5d8dcfb3f27da366a9457a7cb87bf0f
