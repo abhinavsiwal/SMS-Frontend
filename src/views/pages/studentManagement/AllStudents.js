@@ -45,7 +45,7 @@ const AllStudents = () => {
       const endOffset = itemOffset + itemsPerPage;
       const { user, token } = isAuthenticated();
       const payload = { school: user.school };
-      const res = await allStudents(user._id, token, JSON.stringify(payload));
+      const res = await allStudents(user.school,user._id, token, JSON.stringify(payload));
       console.log(res);
       const data = [];
       for (let i = 0; i < res.length; i++) {

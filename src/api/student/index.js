@@ -13,12 +13,11 @@ export const addStudent = (userId, token, data = {}) => {
     });
 };
 
-export const allStudents = (userId, token, data = {}) => {
-  const url = `http://35.174.4.42:5000/api/school/student/all/${userId}`;
+export const allStudents = (schoolId,userId, token, data = {}) => {
+  const url = `http://35.174.4.42:5000/api/school/student/all/${schoolId}/${userId}`;
   return fetch(url, {
-    method: 'POST',
+    method: 'GET',
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: data,
   })
     .then((data) => {
       return data.json();

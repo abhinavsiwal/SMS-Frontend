@@ -38,7 +38,7 @@ const DepartmentList = () => {
   console.log("setData", data);
   const [classList, setClassList] = useState([]);
   const [editDepartmentName, setEditDepartmentName] = useState("");
-  const [editDepartmentModule, setEditDepartmentModule] = useState([]);
+  // const [editDepartmentModule, setEditDepartmentModule] = useState([]);
   const [deparmentId, setDepartmentId] = useState("");
   const [formData] = useState(new FormData());
   const [name, setName] = useState("");
@@ -52,14 +52,6 @@ const DepartmentList = () => {
       { value: "ocean", label: "Ocean" },
       { value: "science", label: "Blue" },
       { value: "purple", label: "Purple" },
-      { value: "red", label: "Red" },
-      { value: "orange", label: "Orange" },
-      { value: "yellow", label: "Yellow" },
-      { value: "green", label: "Green" },
-      { value: "forest", label: "Forest" },
-      { value: "slate", label: "Slate" },
-      { value: "silver", label: "Silver" },
-      { label: "hurray" },
     ];
     setData(myData);
     getDepartmentsData();
@@ -70,7 +62,7 @@ const DepartmentList = () => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "50%",
+      width: "20%",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -191,7 +183,6 @@ const DepartmentList = () => {
     setEditing(true);
     setEditDepartmentName(name);
     // setEditDepartmentModule(module);
-    // setIsActive(row);
     setDepartmentId(id);
   }
 
@@ -217,7 +208,7 @@ const DepartmentList = () => {
       b.push([items.value, items.label]);
     });
     console.log("b", b);
-    formData.set("module", b);
+    formData.set("module", JSON.stringify(b));
   };
 
   //Edit Department
@@ -292,7 +283,7 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <Col lg="4">
+          <Col lg="3">
             <div className="card-wrapper">
               <Card>
                 <Form onSubmit={handleFormChange} className="mb-4">
@@ -323,7 +314,6 @@ const DepartmentList = () => {
                           Module
                         </label>
                         <Select
-                          // defaultValue={[data[2], data[3]]}
                           isMulti
                           name="colors"
                           options={data}
@@ -345,19 +335,27 @@ const DepartmentList = () => {
               </Card>
             </div>
           </Col>
-          <Col lg="8">
-            {loading ? (
-              <AntTable
-                columns={columns}
-                data={classList}
-                pagination={true}
-                rowSelection={{}}
-              />
-            ) : (
-              <Loader />
-            )}
+          <Col>
+            <div className="card-wrapper">
+              <Card>
+                <CardBody>
+                  {loading ? (
+                    <AntTable
+                      columns={columns}
+                      data={classList}
+                      pagination={true}
+                      exportFileName="ClassDetails"
+                    />
+                  ) : (
+                    <Loader />
+                  )}
+                </CardBody>
+              </Card>
+            </div>
           </Col>
         </Row>
+
+        {/* editDepartment */}
         <Modal
           className="modal-dialog-centered"
           isOpen={editing}

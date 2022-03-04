@@ -13,6 +13,7 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
+  CardHeader,
 } from "reactstrap";
 
 // import { Table } from "ant-table-extensions";
@@ -36,12 +37,7 @@ function Attendance() {
   //start and end date of month
   const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
   const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
-  // console.log("endOfMonth", endOfMonth);
-  const daysOfMonth = Array.from(
-    Array(moment("2020-02").daysInMonth()),
-    (_, i) => i + 1 - 1
-  );
-  //   console.log(daysOfMonth.length);
+  const endOfDayOfMonths = moment().endOf("month").format("DD");
 
   const [attendance, setAttendance] = React.useState({
     dateFrom: startOfMonth,
@@ -53,8 +49,6 @@ function Attendance() {
   });
 
   const [loading, setLoading] = React.useState(true);
-
-  // console.log("attendance", attendance);
 
   const [atd, setAtd] = React.useState({});
   console.log("atd", atd);
@@ -86,7 +80,7 @@ function Attendance() {
     },
   ];
 
-  for (let i = 1; i < daysOfMonth.length; i++) {
+  for (let i = 1; i <= endOfDayOfMonths; i++) {
     columns.push({
       key: i,
       title: i,
@@ -151,8 +145,14 @@ function Attendance() {
                   />
                 </Col>
               </Row>
-              <Row className="mt-4">
+              <Row className="d-flex justify-content-center mb-4">
                 <Col md="3">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Name
+                  </Label>
                   <Input
                     className="form-control-sm"
                     id="example4cols2Input"
@@ -164,6 +164,12 @@ function Attendance() {
                   />
                 </Col>
                 <Col md="3">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    StudentID
+                  </Label>
                   <Input
                     className="form-control-sm"
                     id="example4cols2Input"
@@ -172,10 +178,15 @@ function Attendance() {
                     onChange={handleChange("studentId")}
                     value={attendance.studentId}
                     required
-                    // value={startOfMonth}
                   />
                 </Col>
                 <Col md="3">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Class
+                  </Label>
                   <Input
                     className="form-control-sm"
                     id="exampleFormControlSelect3"
@@ -204,6 +215,12 @@ function Attendance() {
                   </Input>
                 </Col>
                 <Col md="3">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Section
+                  </Label>
                   <Input
                     className="form-control-sm"
                     id="exampleFormControlSelect3"
@@ -221,7 +238,7 @@ function Attendance() {
                     <option>D</option>
                   </Input>
                 </Col>
-                <Col md="3" className="mt-4">
+                <Col className="mt-4">
                   <Button color="primary">Search</Button>
                 </Col>
               </Row>
@@ -229,72 +246,50 @@ function Attendance() {
           </Card>
         </Form>
       </Container>
-
-      <div className="d-flex justify-content-between studentAttendance">
-        <div>
-          <h3>
-            {startOfMonth} - {endOfMonth}
-          </h3>
-        </div>
-
-        <div>
-          <p
-            className="ni ni-single-02"
-            style={{ background: "green", color: "white" }}
-          ></p>
-          <span className="tags"> - Present</span>
-        </div>
-
-        <div>
-          <p
-            className="ni ni-single-02"
-            style={{ background: "rgb(201, 3, 3)", color: "white" }}
-          ></p>
-          <span> - Absent</span>
-        </div>
-
-        <div>
-          <p
-            className="ni ni-single-02"
-            style={{ background: "rgb(243, 243, 71)", color: "white" }}
-          ></p>
-          <span> - Leave</span>
-        </div>
-
-        <div>
-          <Button onClick={toggle} color="primary">
-            Add Attendance
-          </Button>
-        </div>
-
-        {/* <div className="attendance-icons">
-          <p
-            className="ni ni-single-02"
-            style={{ background: "green", color: "white" }}
-          ></p>
-          <span className="tags"> - Present</span>
-          <p
-            className="ni ni-single-02"
-            style={{ background: "rgb(201, 3, 3)", color: "white" }}
-          ></p>
-          <span> - Absent</span>
-          <p
-            className="ni ni-single-02"
-            style={{ background: "rgb(243, 243, 71)", color: "white" }}
-          ></p>
-          <span> - Leave</span>
-
-          <div className="attendance-button">
-            <Button onClick={toggle} color="primary">
-              Add Attendance
-            </Button>
-          </div>
-        </div> */}
-      </div>
       <Container className="mt--0 shadow-lg table-responsive" fluid>
         <Row>
           <Col>
             <Card>
+              <CardHeader>
+                <div class="w-100">
+                  <div class="row">
+                    <div class="col-sm">
+                      <h3 className="start-end">
+                        {startOfMonth} - {endOfMonth}
+                      </h3>
+                    </div>
+                    <div class="col-sm studentAttendance">
+                      <p
+                        className="ni ni-single-02"
+                        style={{ background: "green", color: "white" }}
+                      ></p>
+                      <span className="tags"> - Present</span>
+                      <p
+                        className="ni ni-single-02"
+                        style={{ background: "rgb(201, 3, 3)", color: "white" }}
+                      ></p>
+                      <span> - Absent</span>
+                      <p
+                        className="ni ni-single-02"
+                        style={{
+                          background: "rgb(243, 243, 71)",
+                          color: "white",
+                        }}
+                      ></p>
+                      <span> - Leave</span>
+                    </div>
+                    <div class="col-sm">
+                      <Button
+                        className="attendance-button"
+                        onClick={toggle}
+                        color="primary"
+                      >
+                        Add Attendance
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
               <CardBody>
                 {loading ? (
                   <Table

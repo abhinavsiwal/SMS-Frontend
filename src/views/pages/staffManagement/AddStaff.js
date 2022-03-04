@@ -43,6 +43,8 @@ import { ToastContainer, toast } from "react-toastify";
 
 import { addStaff } from "api/staff";
 import { isAuthenticated } from "api/auth";
+import { getDepartment } from "api/department";
+import { allSubjects } from "api/subjects";
 
 function AddStaff() {
   const [step, setStep] = useState(0);
@@ -80,15 +82,23 @@ function AddStaff() {
     job: "",
     salary: "",
     qualification: "",
+    department: "",
     subject: "",
   });
 
+  console.log("staff", staffData);
   const [formData] = useState(new FormData());
 
+  const [departments, setDeparments] = useState([]);
+  // const [subject, setSubject] = useState([]);
+  // console.log("sub", subject);
+  const [a, setA] = useState([]);
+  console.log("a", a);
+
   const roleOptions = [
-    { value: "physics", label: "Physics" },
-    { value: "chemistry", label: "Chemistry" },
+    // { value: "chemistry", label: "Chemistry" }
   ];
+  console.log("role", roleOptions);
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -102,10 +112,11 @@ function AddStaff() {
 
   const handleSubjectChange = (e) => {
     var value = [];
+    console.log("val", value);
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    // formData.set('subject', value);
+    formData.set("subject", JSON.stringify(value));
   };
 
   // handle Country state city data change
@@ -161,6 +172,9 @@ function AddStaff() {
     try {
       const resp = await addStaff(user._id, token, formData);
       console.log(resp);
+      if (resp.err) {
+        return toast.error(resp.err);
+      }
       toast.success("Staff added successfully");
     } catch (err) {
       toast.error("Something Went Wrong");
@@ -202,6 +216,52 @@ function AddStaff() {
     }));
 
   useEffect(() => {}, [cscd, cpcscd]);
+
+  useEffect(async () => {
+    if (step === 3) {
+      await Departments();
+      // await Subjects();
+      const { user, token } = isAuthenticated();
+      try {
+        const Subjects = await allSubjects(user._id, user.school, token);
+        var list = [];
+        console.log("subject", Subjects);
+        Subjects[0].list.map(async (sub) => {
+          list.push({
+            value: sub,
+            label: sub,
+          });
+        });
+        setA(list);
+        console.log("list", list);
+      } catch (err) {
+        toast.error("Something Went Wrong!");
+      }
+    }
+  }, [step]);
+
+  async function Departments() {
+    const { user, token } = isAuthenticated();
+    try {
+      const dept = await getDepartment(user.school, user._id, token);
+      console.log("dept", dept);
+      setDeparments(dept);
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  }
+
+  // async function Subjects() {
+  //   const { user, token } = isAuthenticated();
+  //   try {
+  //     const Subjects = await allSubjects(user._id, user.school, token);
+  //     console.log("subject", Subjects);
+  //     setSubject(Subjects[0].list);
+  //   } catch (err) {
+  //     toast.error("Something Went Wrong!");
+  //   }
+  // }
+
   return (
     <>
       <SimpleHeader name="Add Staff" parentName="Staff Management" />
@@ -351,6 +411,9 @@ function AddStaff() {
                       value={staffData.gender}
                       required
                     >
+                      <option value="" disabled selected>
+                        Gender
+                      </option>
                       <option>Male</option>
                       <option>Female</option>
                     </Input>
@@ -419,6 +482,9 @@ function AddStaff() {
                       value={staffData.bloodgroup}
                       required
                     >
+                      <option value="" disabled selected>
+                        Blood Group
+                      </option>
                       <option>A+</option>
                       <option>A-</option>
                       <option>B+</option>
@@ -885,10 +951,21 @@ function AddStaff() {
                         Department
                       </label>
                       <Input
-                        id="example4cols2Input"
-                        placeholder="Dept"
-                        type="text"
-                      />
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("department")}
+                        value={staffData.department}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Department
+                        </option>
+                        {departments.map((departments) => (
+                          <option value={departments._id}>
+                            {departments.name}
+                          </option>
+                        ))}
+                      </Input>
                     </Col>
                     <Col md="4">
                       <label
@@ -897,10 +974,11 @@ function AddStaff() {
                       >
                         Subject
                       </label>
+
                       <Select
                         isMulti
                         name="colors"
-                        options={roleOptions}
+                        options={a}
                         onChange={handleSubjectChange}
                         className="basic-multi-select"
                         classNamePrefix="select"
@@ -917,6 +995,8 @@ function AddStaff() {
                       <Input
                         id="example4cols2Input"
                         placeholder="Highest Qualification"
+                        onChange={handleChange("qualification")}
+                        value={staffData.qualification}
                         type="text"
                         required
                       />
