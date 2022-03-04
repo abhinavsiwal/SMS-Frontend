@@ -14,16 +14,17 @@ import storage from "redux-persist/lib/storage";
 import { PersistGate } from "redux-persist/integration/react";
 
 import authReducer from './reducers/auth'
-
+import studentReducer from './reducers/student'
 const reducers = combineReducers({
     authReducer,
+    studentReducer
 });
 
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  whitelist: ["authReducer"],
+  whitelist: ["authReducer","studentReducer"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

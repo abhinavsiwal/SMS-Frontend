@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isAuthenticated } from "api/auth";
-import { allStudents,deleteStudent } from "api/student";
+import { allStudents, deleteStudent } from "api/student";
 
 import {
   Card,
@@ -26,8 +26,11 @@ import Loader from "components/Loader/Loader";
 import { Popconfirm } from "antd";
 import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
+import { useHistory } from "react-router";
+import UpdateStudent from "./UpdateStudent";
 
 const AllStudents = () => {
+  const history = useHistory();
   const [loading, setLoading] = useState(false);
   // 0 -> List, 1-> Grid
   const [view, setView] = useState(0);
@@ -47,7 +50,12 @@ const AllStudents = () => {
       const endOffset = itemOffset + itemsPerPage;
       const { user, token } = isAuthenticated();
       const payload = { school: user.school };
-      const res = await allStudents(user.school,user._id, token, JSON.stringify(payload));
+      const res = await allStudents(
+        user.school,
+        user._id,
+        token,
+        JSON.stringify(payload)
+      );
       console.log(res);
       const data = [];
       for (let i = 0; i < res.length; i++) {
@@ -66,20 +74,22 @@ const AllStudents = () => {
           joining_date: res[i].joining_date.split("T")[0].toString(),
           action: (
             <h5 key={i + 1} className="mb-0">
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-              >
-                <i className="fas fa-user-edit" />
-              </Button>
+              <Link to={`/admin/update-student/${res[i]._id}`}>
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  // onClick={()=>{updateStudentHandler(res[i])}}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
+              </Link>
               <Button
                 className="btn-sm pull-right"
                 color="danger"
                 type="button"
                 key={"delete" + i + 1}
-
               >
                 <Popconfirm
                   title="Sure to delete?"
@@ -87,7 +97,6 @@ const AllStudents = () => {
                 >
                   <i className="fas fa-trash" />
                 </Popconfirm>
-                
               </Button>
               <Button
                 className="btn-sm pull-right"
@@ -107,25 +116,28 @@ const AllStudents = () => {
       setLoading(true);
     };
     fetchStudents();
-  }, [itemOffset, itemsPerPage,checked]);
+  }, [itemOffset, itemsPerPage, checked]);
 
-
-const deleteStudentHandler=async(studentId)=>{
-  const { user } = isAuthenticated();
-  try {
-    const data = await deleteStudent(studentId, user._id);
-    console.log(data);
-    if (checked === false) {
-      setChecked(true);
-    } else {
-      setChecked(false);
+  const deleteStudentHandler = async (studentId) => {
+    const { user } = isAuthenticated();
+    try {
+      const data = await deleteStudent(studentId, user._id);
+      console.log(data);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
     }
-  } catch (err) {
-    console.log(err);
-    toast.error("Something went wrong");
-  }
-}
+  };
 
+  const updateStudentHandler = (studentData) => {
+    console.log("Update Student");
+    return <UpdateStudent studentDetails={studentData} />;
+  };
 
   const columns = [
     {

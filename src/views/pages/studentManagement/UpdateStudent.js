@@ -1,0 +1,1600 @@
+// reactstrap components
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Label,
+  FormGroup,
+  Input,
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+} from "reactstrap";
+// core components
+import SimpleHeader from "components/Headers/SimpleHeader.js";
+
+import { updateStudent, allStudents } from "api/student";
+import { setStudent } from "store/reducers/student";
+import { useDispatch, useSelector } from "react-redux";
+import { Stepper, Step } from "react-form-stepper";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
+import Select from "react-select";
+import { Country, State, City } from "country-state-city";
+
+import "./style.css";
+import { isAuthenticated } from "api/auth";
+
+import { useHistory, useParams } from "react-router-dom";
+// import { allStudents } from "api/student";
+
+function UpdateStudent() {
+  // Stepper form steps
+  const history = useHistory();
+  const params = useParams();
+  const [step, setStep] = useState(0);
+  const dispatch = useDispatch();
+  //   const [student, setStudent] = useState({});
+  const { student } = useSelector((state) => state.studentReducer);
+  const [students, setStudents] = useState([]);
+  const [studentData, setStudentData] = useState({
+    image: "",
+    joining_date: "",
+    firstname: "",
+    lastname: "",
+    date_of_birth: "",
+    gender: "",
+    aadhar_number: "",
+    email: "",
+    phone: "",
+    alternate_phone: "",
+    birth_place: "",
+    caste: "",
+    religion: "",
+    bloodgroup: "",
+    class: "",
+    section: "",
+    session: "",
+    roll_number: "",
+    previous_school: "",
+    present_address: "",
+    permanent_address: "",
+    pincode: "",
+    country: "",
+    state: "",
+    city: "",
+    nationality: "",
+    mother_tongue: "",
+    contact_person_select: "",
+    guardian_name: "",
+    guardian_last_name: "",
+    guardian_dob: "",
+    guardian_blood_group: "",
+    guardian_phone: "",
+    guardian_address: "",
+    guardian_permanent_address: "",
+    guardian_pincode: "",
+    guardian_nationality: "",
+    guardian_mother_tongue: "",
+    father_name: "",
+    father_last_name: "",
+    father_dob: "",
+    father_blood_group: "",
+    father_phone: "",
+    father_address: "",
+    father_permanent_address: "",
+    father_pincode: "",
+    father_nationality: "",
+    father_mother_tongue: "",
+    mother_name: "",
+    mother_last_name: "",
+    mother_dob: "",
+    mother_blood_group: "",
+    mother_phone: "",
+    mother_address: "",
+    mother_permanent_address: "",
+    mother_pincode: "",
+    mother_nationality: "",
+    mother_mother_tongue: "",
+  });
+
+  const studentId = params.id;
+
+  useEffect(() => {
+    console.log(studentId);
+
+    fetchStudents();
+    console.log(student);
+    // console.log(student);
+    // removeFields();
+  }, []);
+
+  const fetchStudents = useCallback(async () => {
+    const { user, token } = isAuthenticated();
+    const payload = { school: user.school };
+    const res = await allStudents(
+      user.school,
+      user._id,
+      token,
+      JSON.stringify(payload)
+    );
+    console.log(res);
+    let student = res.find((student) => student._id === studentId);
+    console.log(student);
+    let dateOfJoining = student.joining_date.slice(0, 10);
+    let dateOfBirth = student.date_of_birth.slice(0, 10);
+    console.log(dateOfJoining);
+    console.log(dateOfBirth);
+    //   setStudent(studentDetail);
+    dispatch(
+      setStudent({
+          _id:student._id,
+        image: student.image,
+        joining_date: dateOfJoining,
+        firstname: student.firstname,
+        lastname: student.lastname,
+        date_of_birth: dateOfJoining,
+        gender: student.gender,
+        aadhar_number: student.aadhar_number,
+        email: student.email,
+        phone: student.phone,
+        alternate_phone: student.alternate_phone,
+        birth_place: student.birth_place,
+        caste: student.caste,
+        religion: student.religion,
+        bloodgroup: student.bloodgroup,
+        class: student.class,
+        section: student.section,
+        session: student.session,
+        roll_number: student.roll_number,
+        previous_school: student.previous_school,
+        present_address: student.present_address,
+        permanent_address: student.permanent_address,
+        pincode: student.pincode,
+        country: student.country,
+        state: student.state,
+        city: student.city,
+        nationality: student.nationality,
+        mother_tongue: student.mother_tongue,
+      })
+    );
+    if (student.father_name || student.mother_name) {
+      dispatch(
+        setStudent({
+          ...student,
+          father_name: student.father_name,
+          father_last_name: student.father_last_name,
+          father_dob: student.father_dob,
+          father_blood_group: student.father_blood_group,
+          father_phone: student.father_phone,
+          father_address: student.father_address,
+          father_permanent_address: student.father_permanent_address,
+          father_pincode: student.father_pincode,
+          father_nationality: student.father_nationality,
+          father_mother_tongue: student.father_mother_tongue,
+          mother_name: student.mother_name,
+          mother_last_name: student.mother_last_name,
+          mother_dob: student.mother_dob,
+          mother_blood_group: student.mother_blood_group,
+          mother_phone: student.mother_phone,
+          mother_address: student.mother_address,
+          mother_permanent_address: student.mother_permanent_address,
+          mother_pincode: student.mother_pincode,
+          mother_nationality: student.mother_nationality,
+          mother_mother_tongue: student.mother_mother_tongue,
+        })
+      );
+    } else if (student.guardian_name) {
+      dispatch(
+        setStudent({
+          ...student,
+          guardian_name: student.guardian_name,
+          guardian_last_name: student.guardian_last_name,
+          guardian_dob: student.guardian_dob,
+          guardian_blood_group: student.guardian_blood_group,
+          guardian_phone: student.guardian_phone,
+          guardian_address: student.guardian_address,
+          guardian_permanent_address: student.guardian_permanent_address,
+          guardian_pincode: student.guardian_pincode,
+          guardian_nationality: student.guardian_nationality,
+          guardian_mother_tongue: student.guardian_mother_tongue,
+        })
+      );
+    }
+  }, []);
+
+  const [formData] = useState(new FormData());
+
+  const handleChange = (name) => (event) => {
+    formData.set(name, event.target.value);
+    dispatch(setStudent({ ...student, [name]: event.target.value }));
+  };
+
+  const handleFileChange = (name) => (event) => {
+    formData.set(name, event.target.files[0]);
+    dispatch(setStudent({ ...student, [name]: event.target.files[0].name }));
+  };
+
+  const handleDeleteFields = (name) => {
+    dispatch(setStudent({ ...student, [name]: "" }));
+    formData.delete(name);
+  };
+
+  const removeFields = (e) => {
+    if (student.guardian_name.length !== 0) {
+      // all parent fields must be deleted
+      handleDeleteFields("father_name");
+      handleDeleteFields("father_last_name");
+      handleDeleteFields("father_dob");
+      handleDeleteFields("father_blood_group");
+      handleDeleteFields("father_phone");
+      handleDeleteFields("father_address");
+      handleDeleteFields("father_permanent_address");
+      handleDeleteFields("father_pincode");
+      handleDeleteFields("father_nationality");
+      handleDeleteFields("father_mother_tongue");
+      handleDeleteFields("mother_name");
+      handleDeleteFields("mother_last_name");
+      handleDeleteFields("mother_dob");
+      handleDeleteFields("mother_blood_group");
+      handleDeleteFields("mother_phone");
+      handleDeleteFields("mother_address");
+      handleDeleteFields("mother_permanent_address");
+      handleDeleteFields("mother_pincode");
+      handleDeleteFields("mother_nationality");
+      handleDeleteFields("mother_mother_tongue");
+    } else if (student.father_name || student.mother_name) {
+      // all guardian fields must be deleted
+      handleDeleteFields("guardian_name");
+      handleDeleteFields("guardian_last_name");
+      handleDeleteFields("guardian_dob");
+      handleDeleteFields("guardian_blood_group");
+      handleDeleteFields("guardian_phone");
+      handleDeleteFields("guardian_address");
+      handleDeleteFields("guardian_permanent_address");
+      handleDeleteFields("guardian_pincode");
+      handleDeleteFields("guardian_nationality");
+      handleDeleteFields("guardian_mother_tongue");
+    }
+    setStudentData({ ...studentData, contact_person_select: e });
+  };
+
+  // handling city state country change
+  const handleCSCChange = (name) => (event) => {
+    if (name === "country") {
+      setCscd({ ...cscd, country: event, state: null, city: null });
+    } else if (name === "state") {
+      setCscd({ ...cscd, state: event, city: null });
+    } else {
+      setCscd({ ...cscd, city: event });
+    }
+    dispatch(setStudent({ ...studentData, [name]: event.name }));
+    formData.set(name, event.name);
+    dispatch(setStudent({ ...studentData, [name]: event.name }));
+  };
+
+  // Stepper next step change
+  const handleFormChange = useCallback((e) => {
+    e.preventDefault();
+    console.log(studentData);
+    setStep((step) => {
+      return step + 1;
+    });
+    window.scrollTo(0, 0);
+  }, []);
+
+  //   const handleFormChange =
+
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+    const { user, token } = isAuthenticated();
+    formData.set("school", user.school);
+    for (let i = 0; i < student.length; i++) {
+        formData.set(student[i].key,student[i].value)
+        console.log(student[i].key,student[i].value);
+        
+    }
+    try {
+      await updateStudent(student._id,user._id, formData);
+      toast.success("Student added successfully");
+      history.push('/admin/all-students')
+    } catch (err) {
+      toast.error("Something Went Wrong");
+    }
+  };
+
+  const contactPersonsSelect = [
+    {
+      label: "Guardian",
+      value: "guardian",
+    },
+    {
+      label: "Parent",
+      value: "parent",
+    },
+  ];
+
+  // Country state city data
+  const [cscd, setCscd] = useState({
+    country: student.country,
+    state: student.country,
+    city: student.city,
+  });
+//   console.log(cscd);
+  const countries = Country.getAllCountries();
+  const updatedCountries = countries.map((country) => ({
+    label: country.name,
+    value: country.isoCode,
+    ...country,
+  }));
+  const updatedStates = (countryId) =>
+    State.getStatesOfCountry(countryId).map((state) => ({
+      label: state.name,
+      value: state.isoCode,
+      ...state,
+    }));
+  const updatedCities = (countryId, stateId) =>
+    City.getCitiesOfState(countryId, stateId).map((city) => ({
+      label: city.name,
+      value: city.stateCode,
+      ...city,
+    }));
+
+  useEffect(() => {}, [cscd]);
+  return (
+    <>
+      <SimpleHeader name="Add Student" parentName="Student Management" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <Container className="mt--6 shadow-lg" fluid>
+        <Card className="mb-4 bg-transparent">
+          <CardHeader>
+            <Row className="d-flex justify-content-center">
+              <Col md="10">
+                <Stepper
+                  activeStep={step}
+                  styleConfig={{
+                    activeBgColor: "#e56813",
+                    completedBgColor: "#1cdc23",
+                    size: "3em",
+                  }}
+                >
+                  <Step label="Student Details" />
+                  <Step label="Admission Details" />
+                  <Step label="Address Details" />
+                  <Step label="Contact Person Details" />
+                </Stepper>
+              </Col>
+            </Row>
+          </CardHeader>
+          {step === 0 && (
+            <Form className="mb-4">
+              <CardBody>
+                <Row md="4" className="d-flex justify-content-center mb-4">
+                  <Col md="8">
+                    <label
+                      className="form-control-label"
+                      htmlFor="example3cols2Input"
+                    >
+                      Upload Image
+                    </label>
+                    <div className="custom-file">
+                      <input
+                        className="custom-file-input"
+                        id="customFileLang"
+                        lang="en"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange("image")}
+                      />
+                      <label
+                        className="custom-file-label"
+                        htmlFor="customFileLang"
+                      >
+                        Select file
+                      </label>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="4">
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      Date of Joining
+                    </Label>
+                    <Input
+                      id="example-date-input"
+                      type="date"
+                      onChange={handleChange("joining_date")}
+                      value={student.joining_date.slice(0, 10)}
+                      required
+                    />
+                  </Col>
+                  <Col md="4">
+                    <FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        First Name
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="First Name"
+                        type="text"
+                        onChange={handleChange("firstname")}
+                        value={student.firstname}
+                        required
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md="4">
+                    <FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Last Name
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Last Name"
+                        type="text"
+                        onChange={handleChange("lastname")}
+                        value={student.lastname}
+                        required
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md="4">
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      DOB
+                    </Label>
+                    <Input
+                      id="example-date-input"
+                      type="date"
+                      onChange={handleChange("date_of_birth")}
+                      value={student.date_of_birth.slice(0, 10)}
+                      required
+                    />
+                  </Col>
+                  <Col md="4">
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Gender
+                    </label>
+                    <Input
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={handleChange("gender")}
+                      required
+                      value={student.gender}
+                    >
+                      <option>Male</option>
+                      <option>Female</option>
+                    </Input>
+                  </Col>
+                  <Col md="4">
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Aadhar Card Number
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Aadhar Card Number"
+                      type="number"
+                      onChange={handleChange("aadhar_number")}
+                      required
+                      value={student.aadhar_number}
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-4">
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Email
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Email"
+                      type="text"
+                      onChange={handleChange("email")}
+                      required
+                      value={student.email}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Phone Number
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Phone Number"
+                      type="number"
+                      onChange={handleChange("phone")}
+                      required
+                      value={student.phone}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Alternate Phone Number
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Alternate Phone Number"
+                      type="number"
+                      onChange={handleChange("alternate_phone")}
+                      value={student.alt_phone}
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-4">
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Birth Place
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Birth Place"
+                      type="text"
+                      onChange={handleChange("birth_place")}
+                      required
+                      value={student.birth_place}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Caste
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Caste"
+                      type="text"
+                      onChange={handleChange("caste")}
+                      required
+                      value={student.caste}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Religion
+                    </label>
+                    <Input
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={handleChange("religion")}
+                      required
+                      value={student.religion}
+                    >
+                      <option>A+</option>
+                      <option>A-</option>
+                      <option>B+</option>
+                      <option>B-</option>
+                      <option>O+</option>
+                      <option>O-</option>
+                      <option>AB+</option>
+                      <option>AB-</option>
+                    </Input>
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Blood Group
+                    </label>
+                    <Input
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={handleChange("bloodgroup")}
+                      required
+                      value={student.bloodgroup}
+                    >
+                      <option>A+</option>
+                      <option>A-</option>
+                      <option>B+</option>
+                      <option>B-</option>
+                      <option>O+</option>
+                      <option>O-</option>
+                      <option>AB+</option>
+                      <option>AB-</option>
+                    </Input>
+                  </Col>
+                </Row>
+                <Row className="mt-4 float-right mr-4">
+                  <Button color="primary" onClick={handleFormChange}>
+                    Next
+                  </Button>
+                </Row>
+              </CardBody>
+            </Form>
+          )}
+          {step === 1 && (
+            <Form onSubmit={handleFormChange} className="mb-4">
+              <CardBody>
+                <Row className="mt-4">
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Class
+                    </label>
+                    <Input
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      required
+                      value={student.class}
+                    >
+                      <option>A+</option>
+                      <option>A-</option>
+                      <option>B+</option>
+                      <option>B-</option>
+                      <option>O+</option>
+                      <option>O-</option>
+                      <option>AB+</option>
+                      <option>AB-</option>
+                    </Input>
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Section
+                    </label>
+                    <Input
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      required
+                      value={student.section}
+                    >
+                      <option>A+</option>
+                      <option>A-</option>
+                      <option>B+</option>
+                      <option>B-</option>
+                      <option>O+</option>
+                      <option>O-</option>
+                      <option>AB+</option>
+                      <option>AB-</option>
+                    </Input>
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Session
+                    </label>
+                    <Input
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      required
+                      value={student.session}
+                    >
+                      <option>A+</option>
+                      <option>A-</option>
+                      <option>B+</option>
+                      <option>B-</option>
+                      <option>O+</option>
+                      <option>O-</option>
+                      <option>AB+</option>
+                      <option>AB-</option>
+                    </Input>
+                  </Col>
+                </Row>
+                <Row className="mt-4">
+                  <Col md="4">
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Roll Number
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Roll Number"
+                      type="number"
+                      onChange={() => {
+                        setStudentData({ ...student, roll_number: 12 });
+                      }}
+                      required
+                      value={student.roll_number}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Previous School
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Previous School"
+                      type="text"
+                      onChange={handleChange("previous_school")}
+                      required
+                      value={student.previous_school}
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-4 d-flex justify-content-between">
+                  <Button
+                    className="ml-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => {
+                      setStep((step) => {
+                        return step - 1;
+                      });
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    Previous
+                  </Button>
+                  <Button className="mr-4" color="primary" type="submit">
+                    Next
+                  </Button>
+                </Row>
+              </CardBody>
+            </Form>
+          )}
+          {step === 2 && (
+            <Form onSubmit={handleFormChange} className="mb-4">
+              <CardBody>
+                <Row>
+                  <Col>
+                    <FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Present Address
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Present Address"
+                        type="text"
+                        onChange={handleChange("present_address")}
+                        required
+                        value={student.present_address}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Permanent Address
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Permanent Address"
+                        type="text"
+                        onChange={handleChange("permanent_address")}
+                        required
+                        value={student.permanent_address}
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row className="mb-4">
+                  <Col md="3">
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Pin Code
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Pin Code"
+                      type="number"
+                      onChange={handleChange("pincode")}
+                      required
+                      value={student.pincode}
+                    />
+                  </Col>
+                  <Col md="3">
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      Country
+                    </label>
+                    <Select
+                      id="country"
+                      name="country"
+                      label="country"
+                      options={updatedCountries}
+                      required
+                      value={cscd.country}
+                      onChange={handleCSCChange("country")}
+                    />
+                  </Col>
+                  <Col md="3">
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      State
+                    </label>
+                    <Select
+                      id="state"
+                      name="state"
+                      label="state"
+                      options={updatedStates(
+                        cscd.country ? cscd.country.isoCode : null
+                      )}
+                      required
+                      value={cscd.state}
+                      onChange={handleCSCChange("state")}
+                    />
+                  </Col>
+                  <Col md="3">
+                    <label
+                      className="form-control-label"
+                      htmlFor="exampleFormControlSelect3"
+                    >
+                      City
+                    </label>
+                    <Select
+                      id="city"
+                      name="city"
+                      label="city"
+                      options={
+                        cscd.state
+                          ? updatedCities(cscd.country.value, cscd.state.value)
+                          : updatedCities(null, null)
+                      }
+                      required
+                      value={cscd.city}
+                      onChange={handleCSCChange("city")}
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Nationality
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Nationality"
+                      type="text"
+                      onChange={handleChange("nationality")}
+                      required
+                      value={student.nationality}
+                    />
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Mother Tongue
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Mother Tongue"
+                      type="text"
+                      onChange={handleChange("mother_tongue")}
+                      required
+                      value={student.mother_tongue}
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-4 d-flex justify-content-between">
+                  <Button
+                    className="ml-4"
+                    color="primary"
+                    type="button"
+                    onClick={() => {
+                      setStep((step) => {
+                        return step - 1;
+                      });
+                      window.scrollTo(0, 0);
+                    }}
+                  >
+                    Previous
+                  </Button>
+                  <Button className="mr-4" color="primary" type="submit">
+                    Next
+                  </Button>
+                </Row>
+              </CardBody>
+            </Form>
+          )}
+          {step === 3 && (
+            <>
+              <Form onSubmit={handleSubmitForm} className="mb-4">
+                {(student.father_name.length ||
+                  student.mother_name.length) && (
+                  <>
+                    <CardBody>
+                      <Row className="mb-4">
+                        <Col align="center">
+                          <h2>Father Details</h2>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              First Name
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="First Name"
+                              type="text"
+                              onChange={handleChange("father_name")}
+                              required
+                              value={student.father_name}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Last Name
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Last Name"
+                              type="text"
+                              onChange={handleChange("father_last_name")}
+                              required
+                              value={student.father_last_name}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row className="mb-4">
+                        <Col>
+                          <Label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            DOB
+                          </Label>
+                          <Input
+                            id="example-date-input"
+                            type="date"
+                            onChange={handleChange("father_dob")}
+                            required
+                            value={student.father_dob}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="exampleFormControlSelect3"
+                          >
+                            Blood Group
+                          </label>
+                          <Input
+                            id="exampleFormControlSelect3"
+                            type="select"
+                            onChange={handleChange("father_blood_group")}
+                            required
+                            value={student.father_blood_group}
+                          >
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                          </Input>
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols3Input"
+                          >
+                            Phone Number
+                          </label>
+                          <Input
+                            id="example4cols3Input"
+                            placeholder="Phone Number"
+                            type="number"
+                            onChange={handleChange("father_phone")}
+                            required
+                            value={student.father_phone}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Present Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Present Address"
+                              type="text"
+                              onChange={handleChange("father_address")}
+                              required
+                              value={student.father_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Permanent Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Permanent Address"
+                              type="text"
+                              onChange={handleChange(
+                                "father_permanent_address"
+                              )}
+                              required
+                              value={student.father_permanent_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row className="mb-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Pin Code
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Pin Code"
+                            type="number"
+                            onChange={handleChange("father_pincode")}
+                            required
+                            value={student.father_pincode}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Nationality
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Nationality"
+                            type="text"
+                            onChange={handleChange("father_nationality")}
+                            required
+                            value={student.father_nationality}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Mother Tongue
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Mother Tongue"
+                            type="text"
+                            onChange={handleChange("father_mother_tongue")}
+                            required
+                            value={student.father_mother_tongue}
+                          />
+                        </Col>
+                      </Row>
+                    </CardBody>
+                    <CardBody>
+                      <Row className="mb-4">
+                        <Col align="center">
+                          <h2>Mother Details</h2>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              First Name
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="First Name"
+                              type="text"
+                              onChange={handleChange("mother_name")}
+                              required
+                              value={student.mother_name}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Last Name
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Last Name"
+                              type="text"
+                              onChange={handleChange("mother_last_name")}
+                              required
+                              value={student.mother_last_name}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row className="mb-4">
+                        <Col>
+                          <Label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            DOB
+                          </Label>
+                          <Input
+                            id="example-date-input"
+                            type="date"
+                            onChange={handleChange("mother_dob")}
+                            required
+                            value={student.mother_dob}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="exampleFormControlSelect3"
+                          >
+                            Blood Group
+                          </label>
+                          <Input
+                            id="exampleFormControlSelect3"
+                            type="select"
+                            onChange={handleChange("mother_blood_group")}
+                            required
+                            value={student.mother_blood_group}
+                          >
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                          </Input>
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols3Input"
+                          >
+                            Phone Number
+                          </label>
+                          <Input
+                            id="example4cols3Input"
+                            placeholder="Phone Number"
+                            type="number"
+                            onChange={handleChange("mother_phone")}
+                            required
+                            value={student.mother_phone}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Present Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Present Address"
+                              type="text"
+                              onChange={handleChange("mother_address")}
+                              required
+                              value={student.mother_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Permanent Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Permanent Address"
+                              type="text"
+                              onChange={handleChange(
+                                "mother_permanent_address"
+                              )}
+                              required
+                              value={student.mother_permanent_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row className="mb-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Pin Code
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Pin Code"
+                            type="number"
+                            onChange={handleChange("mother_pincode")}
+                            required
+                            value={student.mother_pincode}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Nationality
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Nationality"
+                            type="text"
+                            onChange={handleChange("mother_nationality")}
+                            required
+                            value={student.mother_nationality}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Mother Tongue
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Mother Tongue"
+                            type="text"
+                            onChange={handleChange("mother_mother_tongue")}
+                            required
+                            value={student.mother_mother_tongue}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 d-flex justify-content-between">
+                        <Button
+                          className="ml-4"
+                          color="primary"
+                          type="button"
+                          onClick={() => {
+                            setStep((step) => {
+                              return step - 1;
+                            });
+                            window.scrollTo(0, 0);
+                          }}
+                        >
+                          Previous
+                        </Button>
+                        <Button className="mr-4" color="success" type="submit">
+                          Submit
+                        </Button>
+                      </Row>
+                    </CardBody>
+                  </>
+                )}
+                {student.guardian_name && (
+                  <>
+                    <CardBody>
+                      <Row className="mb-4">
+                        <Col align="center">
+                          <h2>Guardian Details</h2>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              First Name
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="First Name"
+                              type="text"
+                              onChange={handleChange("guardian_name")}
+                              required
+                              value={student.guardian_name}
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Last Name
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Last Name"
+                              type="text"
+                              onChange={handleChange("guardian_last_name")}
+                              required
+                              value={student.guardian_last_name}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row className="mb-4">
+                        <Col>
+                          <Label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            DOB
+                          </Label>
+                          <Input
+                            id="example-date-input"
+                            type="date"
+                            onChange={handleChange("guardian_dob")}
+                            required
+                            value={student.guardian_dob}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="exampleFormControlSelect3"
+                          >
+                            Blood Group
+                          </label>
+                          <Input
+                            id="exampleFormControlSelect3"
+                            type="select"
+                            onChange={handleChange("guardian_blood_group")}
+                            required
+                            value={student.guardian_blood_group}
+                          >
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                          </Input>
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols3Input"
+                          >
+                            Phone Number
+                          </label>
+                          <Input
+                            id="example4cols3Input"
+                            placeholder="Phone Number"
+                            type="number"
+                            onChange={handleChange("guardian_phone")}
+                            required
+                            value={student.guardian_phone}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Present Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Present Address"
+                              type="text"
+                              onChange={handleChange("guardian_address")}
+                              required
+                              value={student.guardian_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Permanent Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Permanent Address"
+                              type="text"
+                              onChange={handleChange(
+                                "guardian_permanent_address"
+                              )}
+                              required
+                              value={student.guardian_permanent_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row className="mb-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Pin Code
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Pin Code"
+                            type="number"
+                            onChange={handleChange("guardian_pincode")}
+                            required
+                            value={student.guardian_pincode}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Nationality
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Nationality"
+                            type="text"
+                            onChange={handleChange("guardian_nationality")}
+                            required
+                            value={student.guardian_nationality}
+                          />
+                        </Col>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Mother Tongue
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Mother Tongue"
+                            type="text"
+                            onChange={handleChange("guardian_mother_tongue")}
+                            required
+                            value={student.guardian_mother_tongue}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 d-flex justify-content-between">
+                        <Button
+                          className="ml-4"
+                          color="primary"
+                          type="button"
+                          onClick={() => {
+                            setStep((step) => {
+                              return step - 1;
+                            });
+                            window.scrollTo(0, 0);
+                          }}
+                        >
+                          Previous
+                        </Button>
+                        <Button className="mr-4" color="success" type="submit">
+                          Submit
+                        </Button>
+                      </Row>
+                    </CardBody>
+                  </>
+                )}
+              </Form>
+            </>
+          )}
+        </Card>
+      </Container>
+    </>
+  );
+}
+
+export default UpdateStudent;
