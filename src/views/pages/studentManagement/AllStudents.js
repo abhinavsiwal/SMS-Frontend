@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isAuthenticated } from "api/auth";
-import { allStudents } from "api/student";
+import { allStudents,deleteStudent } from "api/student";
 
 import {
   Card,
@@ -23,7 +23,8 @@ import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import { Link } from "react-router-dom";
 import Loader from "components/Loader/Loader";
-
+import { Popconfirm } from "antd";
+import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 
 const AllStudents = () => {
@@ -31,6 +32,7 @@ const AllStudents = () => {
   // 0 -> List, 1-> Grid
   const [view, setView] = useState(0);
   const [studentList, setStudentList] = useState([]);
+  const [checked, setChecked] = useState(false);
   // Pagination
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
@@ -77,8 +79,15 @@ const AllStudents = () => {
                 color="danger"
                 type="button"
                 key={"delete" + i + 1}
+
               >
-                <i className="fas fa-trash" />
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => deleteStudentHandler(res[i]._id)}
+                >
+                  <i className="fas fa-trash" />
+                </Popconfirm>
+                
               </Button>
               <Button
                 className="btn-sm pull-right"
@@ -98,7 +107,25 @@ const AllStudents = () => {
       setLoading(true);
     };
     fetchStudents();
-  }, [itemOffset, itemsPerPage]);
+  }, [itemOffset, itemsPerPage,checked]);
+
+
+const deleteStudentHandler=async(studentId)=>{
+  const { user } = isAuthenticated();
+  try {
+    const data = await deleteStudent(studentId, user._id);
+    console.log(data);
+    if (checked === false) {
+      setChecked(true);
+    } else {
+      setChecked(false);
+    }
+  } catch (err) {
+    console.log(err);
+    toast.error("Something went wrong");
+  }
+}
+
 
   const columns = [
     {

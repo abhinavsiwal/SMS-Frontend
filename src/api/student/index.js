@@ -1,4 +1,7 @@
+import { sendRequestWithJson } from "api/api";
+
 export const addStudent = (userId, token, data = {}) => {
+
   const url = `http://35.174.4.42:5000/api/school/student/create/${userId}`;
   return fetch(url, {
     method: 'POST',
@@ -26,3 +29,18 @@ export const allStudents = (schoolId,userId, token, data = {}) => {
       throw error;
     });
 };
+
+export const deleteStudent = async(studentId,id)=>{
+  try {
+    const data = await sendRequestWithJson(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/delete/${studentId}/${id}`,
+      {},
+      "DELETE"
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
