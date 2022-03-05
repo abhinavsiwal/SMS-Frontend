@@ -17,7 +17,7 @@ import {
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
 import { updateStudent, allStudents } from "api/student";
-import { setStudent } from "store/reducers/student";
+// import { setStudent } from "store/reducers/student";
 import { useDispatch, useSelector } from "react-redux";
 import { Stepper, Step } from "react-form-stepper";
 import { ToastContainer, toast } from "react-toastify";
@@ -33,195 +33,172 @@ import { isAuthenticated } from "api/auth";
 import { useHistory, useParams } from "react-router-dom";
 // import { allStudents } from "api/student";
 
-function UpdateStudent() {
+function UpdateStudent({ studentDetails }) {
   // Stepper form steps
+  // console.log(studentDetails);
   const history = useHistory();
   const params = useParams();
   const [step, setStep] = useState(0);
   const dispatch = useDispatch();
   //   const [student, setStudent] = useState({});
-  const { student } = useSelector((state) => state.studentReducer);
+  // const { student } = useSelector((state) => state.studentReducer);
   const [students, setStudents] = useState([]);
-  const [studentData, setStudentData] = useState({
-    image: "",
-    joining_date: "",
-    firstname: "",
-    lastname: "",
-    date_of_birth: "",
-    gender: "",
-    aadhar_number: "",
-    email: "",
-    phone: "",
-    alternate_phone: "",
-    birth_place: "",
-    caste: "",
-    religion: "",
-    bloodgroup: "",
-    class: "",
-    section: "",
-    session: "",
-    roll_number: "",
-    previous_school: "",
-    present_address: "",
-    permanent_address: "",
-    pincode: "",
-    country: "",
-    state: "",
-    city: "",
-    nationality: "",
-    mother_tongue: "",
-    contact_person_select: "",
-    guardian_name: "",
-    guardian_last_name: "",
-    guardian_dob: "",
-    guardian_blood_group: "",
-    guardian_phone: "",
-    guardian_address: "",
-    guardian_permanent_address: "",
-    guardian_pincode: "",
-    guardian_nationality: "",
-    guardian_mother_tongue: "",
-    father_name: "",
-    father_last_name: "",
-    father_dob: "",
-    father_blood_group: "",
-    father_phone: "",
-    father_address: "",
-    father_permanent_address: "",
-    father_pincode: "",
-    father_nationality: "",
-    father_mother_tongue: "",
-    mother_name: "",
-    mother_last_name: "",
-    mother_dob: "",
-    mother_blood_group: "",
-    mother_phone: "",
-    mother_address: "",
-    mother_permanent_address: "",
-    mother_pincode: "",
-    mother_nationality: "",
-    mother_mother_tongue: "",
+  const [student, setStudent] = useState({
+    _id: studentDetails._id,
+    image: studentDetails.image,
+    joining_date: studentDetails.joining_date,
+    firstname: studentDetails.firstname,
+    lastname: studentDetails.lastname,
+    date_of_birth: studentDetails.date_of_birth,
+    gender: studentDetails.gender,
+    aadhar_number: studentDetails.aadhar_number,
+    email: studentDetails.email,
+    phone: studentDetails.phone,
+    alternate_phone: studentDetails.alternate_phone,
+    birth_place: studentDetails.birth_place,
+    caste: studentDetails.caste,
+    religion: studentDetails.religion,
+    bloodgroup: studentDetails.bloodgroup,
+    class: studentDetails.class,
+    section: studentDetails.section,
+    session: studentDetails.session,
+    roll_number: studentDetails.roll_number,
+    previous_school: studentDetails.previous_school,
+    present_address: studentDetails.present_address,
+    permanent_address: studentDetails.permanent_address,
+    pincode: studentDetails.pincode,
+    country: studentDetails.country,
+    state: studentDetails.state,
+    city: studentDetails.city,
+    nationality: studentDetails.nationality,
+    mother_tongue: studentDetails.mother_tongue,
+    guardian_name: studentDetails.guardian_name,
+    guardian_last_name: studentDetails.guardian_last_name,
+    guardian_dob: studentDetails.guardian_dob,
+    guardian_blood_group: studentDetails.guardian_blood_group,
+    guardian_phone: studentDetails.guardian_phone,
+    guardian_address: studentDetails.guardian_address,
+    guardian_permanent_address: studentDetails.guardian_permanent_address,
+    guardian_pincode: studentDetails.guardian_pincode,
+    guardian_nationality: studentDetails.guardian_nationality,
+    guardian_mother_tongue: studentDetails.guardian_mother_tongue,
+    father_name: studentDetails.father_name,
+    father_last_name: studentDetails.father_last_name,
+    father_dob: studentDetails.father_dob,
+    father_blood_group: studentDetails.father_blood_group,
+    father_phone: studentDetails.father_phone,
+    father_address: studentDetails.father_address,
+    father_permanent_address: studentDetails.father_permanent_address,
+    father_pincode: studentDetails.father_pincode,
+    father_nationality: studentDetails.father_nationality,
+    father_mother_tongue: studentDetails.father_mother_tongue,
+    mother_name: studentDetails.mother_name,
+    mother_last_name: studentDetails.mother_last_name,
+    mother_dob: studentDetails.mother_dob,
+    mother_blood_group: studentDetails.mother_blood_group,
+    mother_phone: studentDetails.mother_phone,
+    mother_address: studentDetails.mother_address,
+    mother_permanent_address: studentDetails.mother_permanent_address,
+    mother_pincode: studentDetails.mother_pincode,
+    mother_nationality: studentDetails.mother_nationality,
+    mother_mother_tongue: studentDetails.mother_mother_tongue,
   });
 
-  const studentId = params.id;
+  // useEffect(() => {
+  //   dispatch(
+  //     setStudent({
+  //       ...student,
+  //       _id: studentDetails._id,
+  //       image: studentDetails.image,
+  //       joining_date: studentDetails.joining_date,
+  //       firstname: studentDetails.firstname,
+  //       lastname: studentDetails.lastname,
+  //       date_of_birth: studentDetails.date_of_birth,
+  //       gender: studentDetails.gender,
+  //       aadhar_number: studentDetails.aadhar_number,
+  //       email: studentDetails.email,
+  //       phone: studentDetails.phone,
+  //       alternate_phone: studentDetails.alternate_phone,
+  //       birth_place: studentDetails.birth_place,
+  //       caste: studentDetails.caste,
+  //       religion: studentDetails.religion,
+  //       bloodgroup: studentDetails.bloodgroup,
+  //       class: studentDetails.class,
+  //       section: studentDetails.section,
+  //       session: studentDetails.session,
+  //       roll_number: studentDetails.roll_number,
+  //       previous_school: studentDetails.previous_school,
+  //       present_address: studentDetails.present_address,
+  //       permanent_address: studentDetails.permanent_address,
+  //       pincode: studentDetails.pincode,
+  //       country: studentDetails.country,
+  //       state: studentDetails.state,
+  //       city: studentDetails.city,
+  //       nationality: studentDetails.nationality,
+  //       mother_tongue: studentDetails.mother_tongue,
+  //     })
+  //   );
+  //   if (studentDetails.father_name || studentDetails.mother_name) {
+  //     dispatch(
+  //       setStudent({
+  //         ...student,
+  //         father_name: studentDetails.father_name,
+  //         father_last_name: studentDetails.father_last_name,
+  //         father_dob: studentDetails.father_dob,
+  //         father_blood_group: studentDetails.father_blood_group,
+  //         father_phone: studentDetails.father_phone,
+  //         father_address: studentDetails.father_address,
+  //         father_permanent_address: studentDetails.father_permanent_address,
+  //         father_pincode: studentDetails.father_pincode,
+  //         father_nationality: studentDetails.father_nationality,
+  //         father_mother_tongue: studentDetails.father_mother_tongue,
+  //         mother_name: studentDetails.mother_name,
+  //         mother_last_name: studentDetails.mother_last_name,
+  //         mother_dob: studentDetails.mother_dob,
+  //         mother_blood_group: studentDetails.mother_blood_group,
+  //         mother_phone: studentDetails.mother_phone,
+  //         mother_address: studentDetails.mother_address,
+  //         mother_permanent_address: studentDetails.mother_permanent_address,
+  //         mother_pincode: studentDetails.mother_pincode,
+  //         mother_nationality: studentDetails.mother_nationality,
+  //         mother_mother_tongue: studentDetails.mother_mother_tongue,
+  //       })
+  //     );
+  //   } else if (student.guardian_name) {
+  //     dispatch(
+  //       setStudent({
+  //         ...student,
+  //         guardian_name: studentDetails.guardian_name,
+  //         guardian_last_name: studentDetails.guardian_last_name,
+  //         guardian_dob: studentDetails.guardian_dob,
+  //         guardian_blood_group: studentDetails.guardian_blood_group,
+  //         guardian_phone: studentDetails.guardian_phone,
+  //         guardian_address: studentDetails.guardian_address,
+  //         guardian_permanent_address: studentDetails.guardian_permanent_address,
+  //         guardian_pincode: studentDetails.guardian_pincode,
+  //         guardian_nationality: studentDetails.guardian_nationality,
+  //         guardian_mother_tongue: studentDetails.guardian_mother_tongue,
+  //       })
+  //     );
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    console.log(studentId);
+  // const [formData] = useState(new FormData());
 
-    fetchStudents();
-    console.log(student);
-    // console.log(student);
-    // removeFields();
-  }, []);
-
-  const fetchStudents = useCallback(async () => {
-    const { user, token } = isAuthenticated();
-    const payload = { school: user.school };
-    const res = await allStudents(
-      user.school,
-      user._id,
-      token,
-      JSON.stringify(payload)
-    );
-    console.log(res);
-    let student = res.find((student) => student._id === studentId);
-    console.log(student);
-    let dateOfJoining = student.joining_date.slice(0, 10);
-    let dateOfBirth = student.date_of_birth.slice(0, 10);
-    console.log(dateOfJoining);
-    console.log(dateOfBirth);
-    //   setStudent(studentDetail);
-    dispatch(
-      setStudent({
-          _id:student._id,
-        image: student.image,
-        joining_date: dateOfJoining,
-        firstname: student.firstname,
-        lastname: student.lastname,
-        date_of_birth: dateOfJoining,
-        gender: student.gender,
-        aadhar_number: student.aadhar_number,
-        email: student.email,
-        phone: student.phone,
-        alternate_phone: student.alternate_phone,
-        birth_place: student.birth_place,
-        caste: student.caste,
-        religion: student.religion,
-        bloodgroup: student.bloodgroup,
-        class: student.class,
-        section: student.section,
-        session: student.session,
-        roll_number: student.roll_number,
-        previous_school: student.previous_school,
-        present_address: student.present_address,
-        permanent_address: student.permanent_address,
-        pincode: student.pincode,
-        country: student.country,
-        state: student.state,
-        city: student.city,
-        nationality: student.nationality,
-        mother_tongue: student.mother_tongue,
-      })
-    );
-    if (student.father_name || student.mother_name) {
-      dispatch(
-        setStudent({
-          ...student,
-          father_name: student.father_name,
-          father_last_name: student.father_last_name,
-          father_dob: student.father_dob,
-          father_blood_group: student.father_blood_group,
-          father_phone: student.father_phone,
-          father_address: student.father_address,
-          father_permanent_address: student.father_permanent_address,
-          father_pincode: student.father_pincode,
-          father_nationality: student.father_nationality,
-          father_mother_tongue: student.father_mother_tongue,
-          mother_name: student.mother_name,
-          mother_last_name: student.mother_last_name,
-          mother_dob: student.mother_dob,
-          mother_blood_group: student.mother_blood_group,
-          mother_phone: student.mother_phone,
-          mother_address: student.mother_address,
-          mother_permanent_address: student.mother_permanent_address,
-          mother_pincode: student.mother_pincode,
-          mother_nationality: student.mother_nationality,
-          mother_mother_tongue: student.mother_mother_tongue,
-        })
-      );
-    } else if (student.guardian_name) {
-      dispatch(
-        setStudent({
-          ...student,
-          guardian_name: student.guardian_name,
-          guardian_last_name: student.guardian_last_name,
-          guardian_dob: student.guardian_dob,
-          guardian_blood_group: student.guardian_blood_group,
-          guardian_phone: student.guardian_phone,
-          guardian_address: student.guardian_address,
-          guardian_permanent_address: student.guardian_permanent_address,
-          guardian_pincode: student.guardian_pincode,
-          guardian_nationality: student.guardian_nationality,
-          guardian_mother_tongue: student.guardian_mother_tongue,
-        })
-      );
-    }
-  }, []);
-
-  const [formData] = useState(new FormData());
+  const formData = new FormData();
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
-    dispatch(setStudent({ ...student, [name]: event.target.value }));
+    setStudent({ ...student, [name]: event.target.value });
   };
 
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
-    dispatch(setStudent({ ...student, [name]: event.target.files[0].name }));
+    setStudent({ ...student, [name]: event.target.files[0].name });
   };
 
   const handleDeleteFields = (name) => {
-    dispatch(setStudent({ ...student, [name]: "" }));
+    setStudent({ ...student, [name]: "" });
     formData.delete(name);
   };
 
@@ -261,7 +238,7 @@ function UpdateStudent() {
       handleDeleteFields("guardian_nationality");
       handleDeleteFields("guardian_mother_tongue");
     }
-    setStudentData({ ...studentData, contact_person_select: e });
+    // setStudentData({ ...studentData, contact_person_select: e });
   };
 
   // handling city state country change
@@ -273,15 +250,15 @@ function UpdateStudent() {
     } else {
       setCscd({ ...cscd, city: event });
     }
-    dispatch(setStudent({ ...studentData, [name]: event.name }));
+    // dispatch(setStudent({ ...studentData, [name]: event.name }));
     formData.set(name, event.name);
-    dispatch(setStudent({ ...studentData, [name]: event.name }));
+    // dispatch(setStudent({ ...studentData, [name]: event.name }));
   };
 
   // Stepper next step change
   const handleFormChange = useCallback((e) => {
     e.preventDefault();
-    console.log(studentData);
+    // console.log(studentData);
     setStep((step) => {
       return step + 1;
     });
@@ -294,15 +271,12 @@ function UpdateStudent() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    for (let i = 0; i < student.length; i++) {
-        formData.set(student[i].key,student[i].value)
-        console.log(student[i].key,student[i].value);
-        
-    }
+
     try {
-      await updateStudent(student._id,user._id, formData);
-      toast.success("Student added successfully");
-      history.push('/admin/all-students')
+      await updateStudent(student._id, user._id, formData);
+      toast.success("Student updated successfully");
+      history.push("/admin/all-students");
+      
     } catch (err) {
       toast.error("Something Went Wrong");
     }
@@ -325,7 +299,7 @@ function UpdateStudent() {
     state: student.country,
     city: student.city,
   });
-//   console.log(cscd);
+  //   console.log(cscd);
   const countries = Country.getAllCountries();
   const updatedCountries = countries.map((country) => ({
     label: country.name,
@@ -741,7 +715,7 @@ function UpdateStudent() {
                       placeholder="Roll Number"
                       type="number"
                       onChange={() => {
-                        setStudentData({ ...student, roll_number: 12 });
+                        setStudent({ ...student, roll_number: 12 });
                       }}
                       required
                       value={student.roll_number}
@@ -961,8 +935,7 @@ function UpdateStudent() {
           {step === 3 && (
             <>
               <Form onSubmit={handleSubmitForm} className="mb-4">
-                {(student.father_name.length ||
-                  student.mother_name.length) && (
+                {(student.father_name.length || student.mother_name.length) && (
                   <>
                     <CardBody>
                       <Row className="mb-4">

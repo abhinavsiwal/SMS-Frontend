@@ -78,6 +78,7 @@ const AllStaffs = () => {
                 color="primary"
                 type="button"
                 key={"edit" + i + 1}
+                onClick={()=>updateStaff(res[i])}
               >
                 <i className="fas fa-user-edit" />
               </Button>
@@ -128,6 +129,12 @@ const AllStaffs = () => {
       toast.error("Something went wrong");
     }
   };
+
+
+const updateStaff=async(staffDetails)=>{
+  setEditing(true);
+  
+}
 
   const columns = [
     {
