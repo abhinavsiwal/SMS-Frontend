@@ -45,8 +45,6 @@ import {
 
 // import { events as eventsVariables } from "variables/general.js";
 
-import Loader from "components/Loader/Loader";
-
 import { ToastContainer, toast } from "react-toastify";
 
 //React Datepicker
@@ -70,51 +68,23 @@ let calendar;
 
 function CalendarView() {
   const [events, setEvents] = React.useState([]);
-  console.log("events", events);
   const [alert, setAlert] = React.useState(null);
   const [modalAdd, setModalAdd] = React.useState(false);
   const [modalChange, setModalChange] = React.useState(false);
-
-  // const [hours, setHours] = React.useState();
-  // const [minute, setMinutes] = React.useState();
-  // setHours(setMinutes(new Date(), 30), 16)
   const [startDate, setStartDate] = React.useState(new Date());
-  console.log("startDate", startDate);
   const [endDate, setEndDate] = React.useState(new Date());
-  console.log("endDate", endDate);
-
   const [radios, setRadios] = React.useState(null);
-  // console.log("radio", radios);
   const [eventId, setEventId] = React.useState(null);
   const [eventTitle, setEventTitle] = React.useState(null);
   const [eventDescription, setEventDescription] = React.useState(null);
   const [description, setDescription] = React.useState(null);
   const [assignTeachers, setAssignTeachers] = React.useState(null);
-
   // eslint-disable-next-line
   const [event, setEvent] = React.useState(null);
   const [currentDate, setCurrentDate] = React.useState(null);
   const calendarRef = React.useRef(null);
-
-  //loader
-  const [loading, setLoading] = React.useState(true);
-
   const [checked, setChecked] = React.useState(false);
 
-  //start Event Time
-  // const [startTime, setStartTime] = React.useState(new Date());
-  // const hour = startTime.getHours();
-  // const minute = startTime.getMinutes();
-  // const newStartTime = hour + ":" + minute;
-  // console.log("newStartTime", newStartTime);
-
-  // var startDateTime = startDate + startTime;
-  // console.log("startDateTime", startDateTime);
-
-  React.useEffect(() => {
-    createCalendar();
-    // eslint-disable-next-line
-  }, []);
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
       plugins: [interaction, dayGridPlugin],
@@ -171,8 +141,8 @@ function CalendarView() {
       await addCalender(user._id, token, formData);
       setModalAdd(false);
       toast.success("Event addedd successfully");
-      // setChecked(true);
-      window.location.reload();
+      setChecked(true);
+      // window.location.reload();
     } catch (err) {
       toast.error(err);
     }
@@ -183,8 +153,9 @@ function CalendarView() {
     setEventTitle(undefined);
   };
 
+  //Get Events
   useEffect(async () => {
-    setLoading(false);
+    createCalendar();
     const { user, token } = isAuthenticated();
     const events = await getCalender(user._id, user.school, token);
     // console.log("getevents", events);
@@ -201,8 +172,10 @@ function CalendarView() {
       });
     });
     setLoading(true);
+    setChecked(false);
   }, [checked]);
 
+  //Edit Events
   const changeEvent = async () => {
     const { user, token } = isAuthenticated();
     var formData = new FormData();
@@ -222,7 +195,7 @@ function CalendarView() {
         formData
       );
       setEvents(updateEvents);
-      window.location.reload();
+      setChecked(true);
     } catch (err) {
       toast.error("Something went wrong!");
     }
@@ -234,6 +207,7 @@ function CalendarView() {
     setEvent(undefined);
   };
 
+  //Delete Events
   const deleteEventSweetAlert = () => {
     setAlert(
       <ReactBSAlert
@@ -278,7 +252,7 @@ function CalendarView() {
         ></ReactBSAlert>
       );
       setEvents(deleEvents);
-      window.location.reload();
+      setChecked(true);
     } catch (err) {
       toast.error("Something went wrong!");
     }
@@ -417,34 +391,15 @@ function CalendarView() {
                       onChange={(e) => setEventTitle(e.target.value)}
                       required
                     />
-                    {/* <div className="d-flex flex-row my-2">
-                      </div>
-                      <div className="p-2">
-                    </div> */}
                     <Label
                       className="form-control-label"
                       htmlFor="example-date-input"
                     >
                       From
                     </Label>
-                    {/* <div className="p-2 my-1">
-                        <h3>{startDate}</h3>
-                      </div> */}
-                    {/* <DatePicker
-                          className="p-2 datePicker "
-                          selected={startDate}
-                          onChange={(date) => setStartDate(date)}
-                          showTimeSelect
-                          // timeFormat="HH:mm"
-                          timeIntervals={20}
-                          showTimeSelectOnly
-                          timeCaption="time"
-                          dateFormat="yyyy MMMM, dd h:mm aa"
-                        /> */}
                     <DatePicker
                       className="p-2 endDate"
                       showTimeSelect
-                      // dateFormat="MMMM d, yyyy h:mmaa"
                       dateFormat="yyyy MMMM, dd h:mm aa"
                       // dateFormat="'YYYY-MM-dd', h:mm"
                       selected={startDate}
@@ -464,9 +419,7 @@ function CalendarView() {
                     <DatePicker
                       className="p-2 endDate"
                       showTimeSelect
-                      // dateFormat="MMMM d, yyyy h:mmaa"
                       dateFormat="yyyy MMMM, dd h:mm aa"
-                      // dateFormat="'YYYY-MM-dd', h:mm"
                       selected={endDate}
                       selectsStart
                       startDate={endDate}
@@ -510,33 +463,33 @@ function CalendarView() {
                     >
                       <Button
                         className={classnames("bg-info", {
-                          active: radios === "exams",
+                          active: radios === "bg-info",
                         })}
                         color=""
                         id="bg-info"
                         type="button"
-                        onClick={() => setRadios("exams")}
-                        value="exams"
+                        onClick={() => setRadios("bg-info")}
+                        value="bg-info"
                       />
                       <Button
                         className={classnames("bg-warning", {
-                          active: radios === "holiday",
+                          active: radios === "bg-warning",
                         })}
                         color=""
                         id="bg-warning"
                         type="button"
-                        onClick={() => setRadios("holiday")}
-                        value="holiday"
+                        onClick={() => setRadios("bg-warning")}
+                        value="bg-warning"
                       />
                       <Button
                         className={classnames("bg-danger", {
-                          active: radios === "vaccation",
+                          active: radios === "bg-danger",
                         })}
                         color=""
                         id="bg-danger"
                         type="button"
-                        onClick={() => setRadios("vaccation")}
-                        value="vaccation"
+                        onClick={() => setRadios("bg-danger")}
+                        value="bg-danger"
                       />
                     </ButtonGroup>
                   </FormGroup>
@@ -581,36 +534,16 @@ function CalendarView() {
                     />
                   </FormGroup>
                   <FormGroup>
-                    {/* <div className="d-flex flex-row my-2">
-                      </div>
-                      <div className="p-2">
-                    </div> */}
                     <Label
                       className="form-control-label"
                       htmlFor="example-date-input"
                     >
                       From
                     </Label>
-                    {/* <div className="p-2 my-1">
-                        <h3>{startDate}</h3>
-                      </div> */}
-                    {/* <DatePicker
-                          className="p-2 datePicker "
-                          selected={startDate}
-                          onChange={(date) => setStartDate(date)}
-                          showTimeSelect
-                          // timeFormat="HH:mm"
-                          timeIntervals={20}
-                          showTimeSelectOnly
-                          timeCaption="time"
-                          dateFormat="yyyy MMMM, dd h:mm aa"
-                        /> */}
                     <DatePicker
                       className="p-2 endDate"
                       showTimeSelect
-                      // dateFormat="MMMM d, yyyy h:mmaa"
                       dateFormat="yyyy MMMM, dd h:mm aa"
-                      // dateFormat="'YYYY-MM-dd', h:mm"
                       selected={startDate}
                       selectsStart
                       startDate={startDate}
@@ -628,7 +561,6 @@ function CalendarView() {
                     <DatePicker
                       className="p-2 endDate"
                       showTimeSelect
-                      // dateFormat="MMMM d, yyyy h:mmaa"
                       dateFormat="yyyy MMMM, dd h:mm aa"
                       // dateFormat="'YYYY-MM-dd', h:mm"
                       selected={endDate}
@@ -684,32 +616,32 @@ function CalendarView() {
                     >
                       <Button
                         className={classnames("bg-info", {
-                          active: radios === "exams",
+                          active: radios === "bg-info",
                         })}
                         color=""
                         id="bg-info"
                         type="button"
-                        onClick={() => setRadios("exams")}
-                        value="exams"
+                        onClick={() => setRadios("bg-info")}
+                        value="bg-info"
                       />
                       <Button
                         className={classnames("bg-warning", {
-                          active: radios === "holiday",
+                          active: radios === "bg-warning",
                         })}
                         color=""
                         id="bg-warning"
                         type="button"
-                        onClick={() => setRadios("holiday")}
-                        value="holiday"
+                        onClick={() => setRadios("bg-warning")}
+                        value="bg-warning"
                       />
                       <Button
                         className={classnames("bg-danger", {
-                          active: radios === "vaccation",
+                          active: radios === "bg-danger",
                         })}
                         color=""
                         id="bg-danger"
                         type="button"
-                        onClick={() => setRadios("vaccation")}
+                        onClick={() => setRadios("bg-danger")}
                         value="vaccation"
                       />
                     </ButtonGroup>
