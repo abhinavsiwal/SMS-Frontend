@@ -171,7 +171,6 @@ function CalendarView() {
         // assignTeacher: assignTeachers,
       });
     });
-    setLoading(true);
     setChecked(false);
   }, [checked]);
 
