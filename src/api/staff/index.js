@@ -60,3 +60,18 @@ export const deleteStaff = async (staffId, id) => {
     throw error;
   }
 };
+
+export const updateStaff= async(staffId,id,formData)=>{
+  try {
+    const data = await sendRequestWithJson(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/edit/${staffId}/${id}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }  
+}

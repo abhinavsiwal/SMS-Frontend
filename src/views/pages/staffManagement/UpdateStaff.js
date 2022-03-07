@@ -15,9 +15,9 @@ import {
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-
+import { setStaffEditing } from "store/reducers/staff";
 import { Stepper, Step } from "react-form-stepper";
-
+import { useSelector,useDispatch } from "react-redux";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 
@@ -25,49 +25,50 @@ import "./style.css";
 
 import { ToastContainer, toast } from "react-toastify";
 
-import { addStaff } from "api/staff";
+import { updateStaff } from "api/staff";
 import { isAuthenticated } from "api/auth";
 import { getDepartment } from "api/department";
 import { allSubjects } from "api/subjects";
 
-function AddStaff() {
+function UpdateStaff({staffDetails}) {
   const [step, setStep] = useState(0);
-
+const dispatch = useDispatch();
   const [staffData, setStaffData] = useState({
-    image: "",
-    firstname: "",
-    lastname: "",
-    email: "",
-    phone: "",
-    alternate_phone: "",
-    date_of_birth: "",
-    gender: "",
-    birth_place: "",
-    caste: "",
-    religion: "",
-    mother_tongue: "",
-    bloodgroup: "",
-    joining_date: "",
-    present_address: "",
-    permanent_address: "",
-    state: "",
-    city: "",
-    country: "",
-    pincode: "",
-    contact_person_name: "",
-    contact_person_relation: "",
-    contact_person_phone: "",
-    contact_person_address: "",
-    contact_person_state: "",
-    contact_person_city: "",
-    contact_person_country: "",
-    contact_person_pincode: "",
-    assign_role: "",
-    job: "",
-    salary: "",
-    qualification: "",
-    department: "",
-    subject: "",
+      _id:staffDetails._id,
+    image: staffDetails.image,
+    firstname: staffDetails.firstname,
+    lastname: staffDetails.lastname,
+    email: staffDetails.email,
+    phone: staffDetails.phone,
+    alternate_phone: staffDetails.alternate_phone,
+    date_of_birth: staffDetails.date_of_birth,
+    gender: staffDetails.gender,
+    birth_place: staffDetails.birth_place,
+    caste: staffDetails.caste,
+    religion: staffDetails.religion,
+    mother_tongue: staffDetails.mother_tongue,
+    bloodgroup: staffDetails.bloodgroup,
+    joining_date: staffDetails.joining_date,
+    present_address: staffDetails.present_address,
+    permanent_address: staffDetails.permanent_address,
+    state: staffDetails.state,
+    city: staffDetails.city,
+    country: staffDetails.country,
+    pincode: staffDetails.pincode,
+    contact_person_name: staffDetails.contact_person_name,
+    contact_person_relation: staffDetails.contact_person_relation,
+    contact_person_phone: staffDetails.contact_person_phone,
+    contact_person_address: staffDetails.contact_person_address,
+    contact_person_state: staffDetails.contact_person_state,
+    contact_person_city: staffDetails.contact_person_city,
+    contact_person_country: staffDetails.contact_person_country,
+    contact_person_pincode: staffDetails.contact_person_pincode,
+    assign_role: staffDetails.assign_role,
+    job: staffDetails.job,
+    salary: staffDetails.salary,
+    qualification: staffDetails.qualification,
+    department: staffDetails.department,
+    subject: staffDetails.subject,
   });
 
   console.log("staff", staffData);
@@ -154,12 +155,13 @@ function AddStaff() {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
-      const resp = await addStaff(user._id, token, formData);
+      const resp = await updateStaff(staffData._id,user._id, formData);
       console.log(resp);
       if (resp.err) {
         return toast.error(resp.err);
       }
       toast.success("Staff added successfully");
+      dispatch(setStaffEditing(false))
     } catch (err) {
       toast.error("Something Went Wrong");
     }
@@ -167,16 +169,16 @@ function AddStaff() {
 
   // Country state city data
   const [cscd, setCscd] = useState({
-    country: "",
-    state: "",
-    city: "",
+    country: staffData.country,
+    state: staffData.state,
+    city: staffData.city,
   });
 
   // contact person country state city data
   const [cpcscd, setcpCscd] = useState({
-    contact_person_country: "",
-    contact_person_state: "",
-    contact_person_city: "",
+    contact_person_country: staffData.contact_person_country,
+    contact_person_state: staffData.contact_person_state,
+    contact_person_city: staffData.contact_person_city,
   });
 
   const countries = Country.getAllCountries();
@@ -299,7 +301,7 @@ function AddStaff() {
                         id="customFileLang"
                         lang="en"
                         type="file"
-                        required
+                        // required
                         onChange={handleFileChange("image")}
                         accept="image/*"
                       />
@@ -324,7 +326,7 @@ function AddStaff() {
                       id="example-date-input"
                       type="date"
                       onChange={handleChange("joining_date")}
-                      value={staffData.joining_date}
+                      value={staffData.joining_date.slice(0,10)}
                       required
                     />
                   </Col>
@@ -377,7 +379,7 @@ function AddStaff() {
                       id="example-date-input"
                       type="date"
                       onChange={handleChange("date_of_birth")}
-                      value={staffData.date_of_birth}
+                      value={staffData.date_of_birth.slice(0,10)}
                       required
                     />
                   </Col>
@@ -1015,4 +1017,4 @@ function AddStaff() {
   );
 }
 
-export default AddStaff;
+export default UpdateStaff;

@@ -28,9 +28,12 @@ import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import { useHistory } from "react-router";
 import UpdateStudent from "./UpdateStudent";
-
+import { useSelector,useDispatch } from "react-redux";
+import { setStudentEditing } from "store/reducers/student";
 const AllStudents = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const {studentEditing} = useSelector(state=>state.studentReducer)
   const [loading, setLoading] = useState(false);
   // 0 -> List, 1-> Grid
   const [view, setView] = useState(0);
@@ -141,7 +144,7 @@ const AllStudents = () => {
   const updateStudentHandler = (studentData) => {
     console.log("Update Student");
     console.log(studentData);
-    setEditing(true);
+    dispatch(setStudentEditing(true));
     setEditingData(studentData)
     // return <UpdateStudent studentDetails={studentData} />;
   };
@@ -476,7 +479,7 @@ const AllStudents = () => {
 
   return (
     <>
-      {!editing ? (
+      {!studentEditing ? (
         <>
           <SimpleHeader name="All Students" />
           <Container className="mt--6" fluid>

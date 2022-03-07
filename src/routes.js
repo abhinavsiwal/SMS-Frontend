@@ -173,13 +173,7 @@ const routes = [
         component: AllStudents,
         layout: "/admin",
       },
-      {
-        path: "/update-student/:id",
-        name: "Update Student",
-        miniName: "A",
-        component: UpdateStudent,
-        layout: "/admin",
-      },
+    
     ],
   },
   {

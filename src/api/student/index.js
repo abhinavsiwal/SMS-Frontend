@@ -47,10 +47,10 @@ export const deleteStudent = async(studentId,id)=>{
 }
 
 
-export const updateStudent = async(studentId,id,data={})=>{
+export const updateStudent = async(studentId,id,formData)=>{
   try {
     const data = await sendRequest(
-      `${process.env.REACT_APP_API_URL}/api/school/student/edit/${studentId}/${id}`,data,"PUT"
+      `${process.env.REACT_APP_API_URL}/api/school/student/edit/${studentId}/${id}`,formData,"PUT"
     )
 
     console.log(data);;

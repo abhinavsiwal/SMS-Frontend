@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
-    studentEditing:false,
+    staffEditing:false,
 }
 
 export const studentSlice = createSlice({
     name:"student",
     initialState,
     reducers:{
-        setStudentEditing:(state,{payload})=>{
-            state.studentEditing = payload;
+        setStaffEditing:(state,{payload})=>{
+            state.staffEditing = payload;
         }
     }
 })
 
-export const {setStudentEditing} = studentSlice.actions;
+export const {setStaffEditing} = studentSlice.actions;
 export default studentSlice.reducer;

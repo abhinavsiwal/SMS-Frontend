@@ -15,10 +15,10 @@ import {
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-
+import { useSelector,useDispatch } from "react-redux";
 import { updateStudent, allStudents } from "api/student";
-// import { setStudent } from "store/reducers/student";
-import { useDispatch, useSelector } from "react-redux";
+import { setStudentEditing } from "store/reducers/student";
+
 import { Stepper, Step } from "react-form-stepper";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -41,7 +41,7 @@ function UpdateStudent({ studentDetails }) {
   const [step, setStep] = useState(0);
   const dispatch = useDispatch();
   //   const [student, setStudent] = useState({});
-  // const { student } = useSelector((state) => state.studentReducer);
+  const { studentEditing } = useSelector((state) => state.studentReducer);
   const [students, setStudents] = useState([]);
   const [student, setStudent] = useState({
     _id: studentDetails._id,
@@ -275,6 +275,7 @@ function UpdateStudent({ studentDetails }) {
     try {
       await updateStudent(student._id, user._id, formData);
       toast.success("Student updated successfully");
+      dispatch(setStudentEditing(false))
       history.push("/admin/all-students");
       
     } catch (err) {

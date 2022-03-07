@@ -1,19 +1,3 @@
-/*!
-
-=========================================================
-* Argon Dashboard PRO React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React, { useEffect } from "react";
 // nodejs library that concatenates classes
 import classnames from "classnames";
@@ -84,6 +68,7 @@ function CalendarView() {
   const [currentDate, setCurrentDate] = React.useState(null);
   const calendarRef = React.useRef(null);
   const [checked, setChecked] = React.useState(false);
+const [loading, setLoading] = React.useState(false);
 
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
