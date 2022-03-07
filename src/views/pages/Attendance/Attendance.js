@@ -21,11 +21,8 @@ import { Table } from "antd";
 
 import "./Attendance.css";
 
-//api call
-import { addAttendance } from "api/staff";
-
 //Loader
-import Loader from "../../../components/Loader/Loader";
+// import Loader from "../../../components/Loader/Loader";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -47,13 +44,14 @@ function Attendance() {
     selectClass: "",
     selectSection: "",
   });
+  console.log("attendance", attendance);
 
-  const [loading, setLoading] = React.useState(true);
+  // const [loading, setLoading] = React.useState(true);
 
   const [atd, setAtd] = React.useState({});
   console.log("atd", atd);
 
-  //modal window for addAttende]ance
+  //modal window for addAttendance
   const [modal, setModal] = React.useState(false);
   const toggle = () => setModal(!modal);
 
@@ -98,12 +96,9 @@ function Attendance() {
     });
   }
 
-  useEffect(async () => {
-    setLoading(false);
-    const data2 = await addAttendance();
-    console.log("data2", data2);
-    setLoading(true);
-  }, []);
+  // useEffect(async () => {
+
+  // }, []);
 
   return (
     <div>
@@ -251,14 +246,14 @@ function Attendance() {
           <Col>
             <Card>
               <CardHeader>
-                <div class="w-100">
-                  <div class="row">
-                    <div class="col-sm">
+                <div className="w-100">
+                  <div className="row">
+                    <div className="col-sm">
                       <h3 className="start-end">
                         {startOfMonth} - {endOfMonth}
                       </h3>
                     </div>
-                    <div class="col-sm studentAttendance">
+                    <div className="col-sm Student-Attendance-Icons">
                       <p
                         className="ni ni-single-02"
                         style={{ background: "green", color: "white" }}
@@ -278,7 +273,7 @@ function Attendance() {
                       ></p>
                       <span> - Leave</span>
                     </div>
-                    <div class="col-sm">
+                    <div className="col-sm">
                       <Button
                         className="attendance-button"
                         onClick={toggle}
@@ -291,15 +286,11 @@ function Attendance() {
                 </div>
               </CardHeader>
               <CardBody>
-                {loading ? (
-                  <Table
-                    columns={columns}
-                    dataSource={data}
-                    scroll={{ x: 1500, y: 600 }}
-                  />
-                ) : (
-                  <Loader />
-                )}
+                <Table
+                  columns={columns}
+                  dataSource={data}
+                  scroll={{ x: 1300, y: 600 }}
+                />
               </CardBody>
             </Card>
           </Col>
@@ -307,6 +298,7 @@ function Attendance() {
         <Modal
           backdrop="static"
           size="xl"
+          scrollable={true}
           isOpen={modal}
           toggle={toggle}
           className="custom-modal-style"

@@ -156,7 +156,6 @@ const [loading, setLoading] = React.useState(false);
         // assignTeacher: assignTeachers,
       });
     });
-    setLoading(true);
     setChecked(false);
   }, [checked]);
 

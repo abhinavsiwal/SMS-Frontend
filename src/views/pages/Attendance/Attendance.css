@@ -21,10 +21,10 @@
   margin-bottom: 20px;
 }
 
-.custom-modal-style {
+/* .custom-modal-style {
   max-width: 2000px;
   margin-top: -0.5px;
-}
+} */
 .modal-body {
   width: 100%;
   overflow-y: scroll;
@@ -47,11 +47,11 @@
   }
 }
 
-.studentAttendance {
+/* .studentAttendance {
   text-align: center;
-}
+} */
 
-.studentAttendance > p {
+/* .studentAttendance > p {
   font-size: 2rem;
   font-weight: 500;
   border-radius: 15px;
@@ -62,4 +62,34 @@
   font-size: 1.1rem;
   font-weight: 400;
   margin: 5px;
+} */
+
+.Student-Attendance-Icons {
+  text-align: center;
+}
+
+.Student-Attendance-Icons > p {
+  font-size: 2rem;
+  font-weight: 500;
+  border-radius: 15px;
+  margin: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+  .Student-Attendance-Icons > p {
+    font-size: 1rem;
+  }
+}
+
+.Student-Attendance-Icons > span {
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+  .Student-Attendance-Icons > span {
+    font-size: 0.8rem;
+    margin-bottom: 10px;
+  }
 }
