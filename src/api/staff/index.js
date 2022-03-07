@@ -31,19 +31,3 @@ export const allStaffs = (userId, token, data = {}) => {
       throw error;
     });
 };
-
-export const addAttendance = () => {
-  const url = `https://jsonplaceholder.typicode.com/todos/1`;
-  return fetch(url, {
-    method: "GET",
-    headers: { Accept: "application/json", "Content-Type": "application/json" },
-  })
-    .then((data) => data.json())
-    .then((data) => {
-      console.log("data", data);
-      return data;
-    })
-    .catch((error) => {
-      throw error;
-    });
-};
