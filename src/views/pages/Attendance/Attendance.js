@@ -29,6 +29,8 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 
 //import moment from moment for Date
 import moment from "moment";
+import { getAttendence } from "api/attendance";
+import { isAuthenticated } from "api/auth";
 
 function Attendance() {
   //start and end date of month
@@ -57,8 +59,18 @@ function Attendance() {
 
   const handleChange = (name) => (event) => {
     // formData.set(name, event.target.value);
-    setAttendance({ ...attendance, [name]: event.target.value });
+    setAttendance({
+      ...attendance,
+      [name]: event.target.value,
+    });
   };
+
+useEffect(() => {
+  
+setAttendance({...attendance,atd})
+  
+}, [atd])
+
 
   //Columns of ant Table
   const columns = [
@@ -87,18 +99,29 @@ function Attendance() {
   }
 
   //Data of ant Table
-  const data = [];
+  const attendanceData = [];
   for (let i = 1; i < columns.length; i++) {
-    data.push({
+    attendanceData.push({
       key: i,
       hash: `${i}`,
       name: "Ajay",
     });
   }
 
-  // useEffect(async () => {
+  useEffect(() => {
+    getAllAttendance();
+  }, []);
 
-  // }, []);
+  const { user } = isAuthenticated();
+  const getAllAttendance = async () => {
+    const data = await getAttendence(user.school, user._id);
+    console.log(data);
+  };
+
+  const postAttendance = async () => {
+    const data = await postAttendance(user._id, attendanceData);
+    console.log(data);
+  };
 
   return (
     <div>
@@ -288,7 +311,7 @@ function Attendance() {
               <CardBody>
                 <Table
                   columns={columns}
-                  dataSource={data}
+                  dataSource={attendanceData}
                   scroll={{ x: 1300, y: 600 }}
                 />
               </CardBody>
@@ -308,7 +331,7 @@ function Attendance() {
           </ModalHeader>
           <ModalBody className="modal-body">
             <div>
-              {data.map((student, index) => {
+              {attendanceData.map((student, index) => {
                 return (
                   <>
                     <div className="d-flex justify-content-between studentAttendance">
