@@ -58,6 +58,7 @@ import AllStaffs from "views/pages/staffManagement/AllStaffs";
 import Calendar from "views/pages/Calendar.js";
 import Attendance from "views/pages/Attendance/Attendance";
 import TimeTable from "views/pages/Time Table/TimeTable";
+import Canteen from "views/pages/Canteen/Canteen";
 
 const routes = [
   {
@@ -217,6 +218,13 @@ const routes = [
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-red",
     component: TimeTable,
+    layout: "/admin",
+  },
+  {
+    path: "/canteen",
+    name: "Canteen",
+    icon: "ni ni-shop text-primary",
+    component: Canteen,
     layout: "/admin",
   },
 ];

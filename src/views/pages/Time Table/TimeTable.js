@@ -42,6 +42,7 @@ function TimeTable() {
     teachers: "",
     selectMode: "",
     periods: "",
+    period: "",
   });
   console.log("timetable", timeTableData);
   const [startDate, setStartDate] = React.useState(new Date());
@@ -49,6 +50,7 @@ function TimeTable() {
   const [endDate, setEndDate] = React.useState(new Date());
   const endDuration = moment(endDate).format("LT");
   const [days, setDays] = React.useState([]);
+  // const [count, setCount] = React.useState(0);
 
   const roleOptions = [
     { value: "0", label: "Monday" },
@@ -134,83 +136,6 @@ function TimeTable() {
       "Not Selected Yet",
       "Not Selected Yet",
     ],
-    // [
-    //   "Days",
-    //   "period1",
-    //   "period2",
-    //   "period3",
-    //   "LUNCH",
-    //   "period4",
-    //   "period5",
-    //   "period6",
-    //   "period7",
-    // ],
-    // [
-    //   "Mon",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    // ],
-    // [
-    //   "Tue",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    // ],
-    // [
-    //   "Wed",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    // ],
-    // [
-    //   "Thu",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    // ],
-    // [
-    //   "Fri",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    // ],
-    // [
-    //   "Sat",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    //   "Not Selected Yet",
-    // ],
   ]);
 
   const handleData = () => {
@@ -289,6 +214,22 @@ function TimeTable() {
                     required
                   />
                 </Col>
+                <Col md="3">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Periods
+                  </Label>
+                  <Input
+                    className="form-control-sm"
+                    id="exampleFormControlSelect3"
+                    type="select"
+                    onChange={handleChange("Period")}
+                    value={timeTableData.period}
+                    required
+                  ></Input>
+                </Col>
               </Row>
               <Row className="d-flex justify-content-center mb-4">
                 <Col md="3">
@@ -333,10 +274,10 @@ function TimeTable() {
                     <option value="" disabled selected>
                       Teacher
                     </option>
-                    <option>Karmanshu</option>
-                    <option>Ayushi</option>
-                    <option>Sanjay</option>
-                    <option>Kulseep</option>
+                    <option>David</option>
+                    <option>Sam</option>
+                    <option>Mike</option>
+                    <option>Jordan</option>
                   </Input>
                 </Col>
                 <Col md="3">
@@ -417,87 +358,76 @@ function TimeTable() {
                 </tr>
               </thead>
               <tbody>
-                {/* {timePeriod.map((item1, index1) => {
-                  return (
-                    <tr>
-                      {item1.map((item2, index2) => {
-                        if (index1 === 0 || index2 === 0)
-                          return <th>{item2}</th>;
-                        else return <td>{item2}</td>;
-                      })}
-                    </tr>
-                  );
-                })} */}
                 <tr className="Time-Table-Badge">
                   <th scope="row">Mon</th>
                   <td key="1" id="11">
-                    <div>{timePeriod[0][0]}</div>
+                    {timePeriod[0][0]}
                   </td>
                   <td key="2" id="12">
-                    <div>{timePeriod[0][1]}</div>
+                    {timePeriod[0][1]}
                   </td>
                   <td key="3" id="13">
-                    <div>{timePeriod[0][2]}</div>
+                    {timePeriod[0][2]}
                   </td>
                   <td key="4" id="14">
-                    <div>{timePeriod[0][3]}</div>
+                    {timePeriod[0][3]}
                   </td>
                   <td key="5" id="15">
-                    <div>{timePeriod[0][4]}</div>
+                    {timePeriod[0][4]}
                   </td>
                   <td key="6" id="16">
-                    <div>{timePeriod[0][5]}</div>
+                    {timePeriod[0][5]}
                   </td>
                   <td key="7" id="17">
-                    <div>{timePeriod[0][6]}</div>
+                    {timePeriod[0][6]}
                   </td>
                   <td key="7" id="17">
-                    <div>{timePeriod[0][7]}</div>
+                    {timePeriod[0][7]}
                   </td>
                 </tr>
                 <tr>
                   <th scope="row">Tue</th>
                   <td key="8" id="21">
-                    <div>{timePeriod[1][0]}</div>
+                    {timePeriod[1][0]}
                   </td>
                   <td key="9" id="22">
-                    <div>{timePeriod[1][1]}</div>
+                    {timePeriod[1][1]}
                   </td>
                   <td key="10" id="23">
-                    <div>{timePeriod[1][2]}</div>
+                    {timePeriod[1][2]}
                   </td>
                   <td key="11" id="24">
-                    <div>{timePeriod[1][3]}</div>
+                    {timePeriod[1][3]}
                   </td>
                   <td key="12" id="25">
-                    <div>{timePeriod[1][4]}</div>
+                    {timePeriod[1][4]}
                   </td>
                   <td key="13" id="26">
-                    <div>{timePeriod[1][5]}</div>
+                    {timePeriod[1][5]}
                   </td>
                   <td key="14" id="27">
-                    <div>{timePeriod[1][6]}</div>
+                    {timePeriod[1][6]}
                   </td>
                   <td key="7" id="17">
-                    <div>{timePeriod[1][7]}</div>
+                    {timePeriod[1][7]}
                   </td>
                 </tr>
                 <tr>
                   <th scope="row">Wed</th>
                   <td key="15" id="31">
-                    <div>{timePeriod[2][0]}</div>
+                    {timePeriod[2][0]}
                   </td>
                   <td key="16" id="32">
-                    <div>{timePeriod[2][1]}</div>
+                    {timePeriod[2][1]}
                   </td>
                   <td key="17" id="33">
-                    <div>{timePeriod[2][2]}</div>
+                    {timePeriod[2][2]}
                   </td>
                   <td key="18" id="34">
-                    <div>{timePeriod[2][3]}</div>
+                    {timePeriod[2][3]}
                   </td>
                   <td key="19" id="35">
-                    <div>{timePeriod[2][4]}</div>
+                    {timePeriod[2][4]}
                   </td>
                   <td key="20" id="36">
                     {timePeriod[2][5]}
