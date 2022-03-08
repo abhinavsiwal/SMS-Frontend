@@ -32,6 +32,7 @@ import moment from "moment";
 import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
+import {sendRequestWithJson} from 'api/api'
 
 function Attendance() {
   //start and end date of month
@@ -86,9 +87,9 @@ function Attendance() {
   useEffect(() => {
     setAttendance({ ...attendance, atd });
   }, [atd]);
-  let tableData=[]
+  let tableData = [];
+  const { user, token } = isAuthenticated();
   const getAllStudents = async () => {
-    const { user, token } = isAuthenticated();
     const payload = { school: user.school };
     const res = await allStudents(
       user.school,
@@ -99,16 +100,14 @@ function Attendance() {
     //Data of ant Table
     console.log(res);
     for (let i = 0; i < res.length; i++) {
-      console.log(res[i].firstname);
-      tableData.push(
-        {
-          key: i,
-          hash: `${i+1}`,
-          name: res[i].firstname,
-        }
-      )
+      console.log(res[i]._id);
+      tableData.push({
+        key: res[i]._id,
+        hash: `${i + 1}`,
+        name: res[i].firstname,
+      });
     }
-    setAttendanceData(tableData)
+    setAttendanceData(tableData);
   };
   //Columns of ant Table
   const columns = [
@@ -128,7 +127,6 @@ function Attendance() {
     },
   ];
 
-  
   for (let i = 1; i <= endOfDayOfMonths; i++) {
     columns.push({
       key: i,
@@ -141,38 +139,77 @@ function Attendance() {
     getAllAttendance();
   }, []);
 
-  const { user } = isAuthenticated();
   const getAllAttendance = async () => {
     const data = await getAttendence(user.school, user._id);
     console.log(data);
   };
 
-  const postAttendance = async () => {
-    const data = await postAttendance(user._id, attendanceData);
-    console.log(data);
-  };
+
 
   const submitHandler = async () => {
-    const { user, token } = isAuthenticated();
-    const payload = { school: user.school };
+    // let attData = {
+    //   attendance: atd,
+    //   classId: classes[selectedClassIndex].name,
+    //   sectionId: classes[selectedClassIndex].section._id,
+    //   year: 2022,
+    //   schoolId: user.school,
+    // };
 
-    let attData = {
-      attendance: atd,
-      classId: classes[selectedClassIndex].name,
-      sectionId: classes[selectedClassIndex].section._id,
-      year: 2022,
-      schoolId: user.school,
+   
+    console.log(atd);
+    let formattedAttendanceData = {};
+    let presentStudents = [];
+    let absentStudents = [];
+    let halfDayStudents = [];
+    let leaveStudents = [];
+    for (const attd in atd) {
+      console.log(`${attd}:${atd[attd]}`);
+      //  console.log(atd[attd]);
+      if (atd[attd] === "present") {
+        presentStudents.push(attd);
+      } else if (atd[attd] === "absent") {
+        absentStudents.push(attd);
+      } else if (atd[attd] === "halfday") {
+        halfDayStudents.push(attd);
+      } else if (atd[attd] === "leave") {
+        leaveStudents.push(attd);
+      }
+    }
+
+    formattedAttendanceData = {
+      present: presentStudents,
+      absent: absentStudents,
+      halfday: halfDayStudents,
+      leave: leaveStudents,
     };
 
+    console.log(formattedAttendanceData);
+
+    let date = new Date();
+    let today = date.getDate();
+    console.log(today);
+    let formData = {
+      attendance: {
+        today: formattedAttendanceData,
+      },
+      month: date.getMonth()+1,
+      year: date.getFullYear(),
+      school: user.school,
+      class: classes[selectedClassIndex]._id,
+      section: classes[selectedClassIndex].section._id,
+    };
     try {
-      const data = await postAttendance(user._id, attData);
+      const  data  = await sendRequestWithJson(
+        `${process.env.REACT_APP_API_URL}/api/school/attendance/create/${user._id}`,formData,"POST"
+      );
       console.log(data);
     } catch (err) {
-      console.log(err);
+        console.log(err);
+        throw err;
     }
   };
 
-  const attendanceValueChangeHandler = (value) => {};
+  // const attendanceValueChangeHandler = (value) => {};
 
   return (
     <div>
@@ -389,7 +426,7 @@ function Attendance() {
                           onChange={(e) =>
                             setAtd({
                               ...atd,
-                              [index]: e.target.value,
+                              [student.key]: e.target.value,
                             })
                           }
                           value="present"
@@ -404,7 +441,7 @@ function Attendance() {
                           onChange={(e) =>
                             setAtd({
                               ...atd,
-                              [index]: e.target.value,
+                              [student.key]: e.target.value,
                             })
                           }
                           value="absent"
@@ -420,7 +457,7 @@ function Attendance() {
                           onChange={(e) =>
                             setAtd({
                               ...atd,
-                              [index]: e.target.value,
+                              [student.key]: e.target.value,
                             })
                           }
                         />{" "}
@@ -434,7 +471,7 @@ function Attendance() {
                           onChange={(e) =>
                             setAtd({
                               ...atd,
-                              [index]: e.target.value,
+                              [student.key]: e.target.value,
                             })
                           }
                         />{" "}

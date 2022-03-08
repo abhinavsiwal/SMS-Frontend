@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.a6fbfcd7.chunk.css",
-    "main.js": "/static/js/main.a609a2c5.chunk.js",
-    "main.js.map": "/static/js/main.a609a2c5.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.426fb4a1.js",
-    "runtime-main.js.map": "/static/js/runtime-main.426fb4a1.js.map",
-    "static/css/2.dcc03b2e.chunk.css": "/static/css/2.dcc03b2e.chunk.css",
-    "static/js/2.bdeea1dc.chunk.js": "/static/js/2.bdeea1dc.chunk.js",
-    "static/js/2.bdeea1dc.chunk.js.map": "/static/js/2.bdeea1dc.chunk.js.map",
+    "main.css": "/static/css/main.13e779f2.chunk.css",
+    "main.js": "/static/js/main.56269a3f.chunk.js",
+    "main.js.map": "/static/js/main.56269a3f.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.0ad83f49.js",
+    "runtime-main.js.map": "/static/js/runtime-main.0ad83f49.js.map",
+    "static/css/2.4a53b08c.chunk.css": "/static/css/2.4a53b08c.chunk.css",
+    "static/js/2.bf2e2a43.chunk.js": "/static/js/2.bf2e2a43.chunk.js",
+    "static/js/2.bf2e2a43.chunk.js.map": "/static/js/2.bf2e2a43.chunk.js.map",
     "index.html": "/index.html",
-    "static/css/2.dcc03b2e.chunk.css.map": "/static/css/2.dcc03b2e.chunk.css.map",
-    "static/css/main.a6fbfcd7.chunk.css.map": "/static/css/main.a6fbfcd7.chunk.css.map",
-    "static/js/2.bdeea1dc.chunk.js.LICENSE.txt": "/static/js/2.bdeea1dc.chunk.js.LICENSE.txt",
-    "static/js/main.a609a2c5.chunk.js.LICENSE.txt": "/static/js/main.a609a2c5.chunk.js.LICENSE.txt",
+    "static/css/2.4a53b08c.chunk.css.map": "/static/css/2.4a53b08c.chunk.css.map",
+    "static/css/main.13e779f2.chunk.css.map": "/static/css/main.13e779f2.chunk.css.map",
+    "static/js/2.bf2e2a43.chunk.js.LICENSE.txt": "/static/js/2.bf2e2a43.chunk.js.LICENSE.txt",
+    "static/js/main.56269a3f.chunk.js.LICENSE.txt": "/static/js/main.56269a3f.chunk.js.LICENSE.txt",
     "static/media/angular.jpg": "/static/media/angular.b5045666.jpg",
     "static/media/argon-react.png": "/static/media/argon-react.128d71d3.png",
     "static/media/bootstrap.jpg": "/static/media/bootstrap.bd712487.jpg",
@@ -30,10 +30,10 @@
     "static/media/vue.jpg": "/static/media/vue.43bd93a8.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.426fb4a1.js",
-    "static/css/2.dcc03b2e.chunk.css",
-    "static/js/2.bdeea1dc.chunk.js",
-    "static/css/main.a6fbfcd7.chunk.css",
-    "static/js/main.a609a2c5.chunk.js"
+    "static/js/runtime-main.0ad83f49.js",
+    "static/css/2.4a53b08c.chunk.css",
+    "static/js/2.bf2e2a43.chunk.js",
+    "static/css/main.13e779f2.chunk.css",
+    "static/js/main.56269a3f.chunk.js"
   ]
 }
