@@ -26,3 +26,33 @@ export const addSubject = (userId, token, data = {}) => {
       throw error;
     });
 };
+
+export const updateSubject = (subjectId, userId, token, data) => {
+  const url = `http://35.174.4.42:5000/api/school/subject/edit/${subjectId}/${userId}`;
+  return fetch(url, {
+    method: "PUT",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
+    body: data,
+  })
+    .then((data) => {
+      console.log("data", data);
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+};
+
+export const deleteSubject = (subjectId, userId, token) => {
+  const url = `http://35.174.4.42:5000/api/school/subject/delete/${subjectId}/${userId}`;
+  return fetch(url, {
+    method: "DELETE",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
+  })
+    .then((data) => {
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+};

@@ -8,65 +8,124 @@ import {
   Form,
   Input,
   Button,
+  Modal,
+  ModalFooter,
+  ModalBody,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
 import { ToastContainer, toast } from "react-toastify";
-import { allSubjects, addSubject } from "api/subjects";
+import { allSubjects, addSubject,updateSubject,deleteSubject } from "api/subjects";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
+import { Popconfirm } from "antd";
 import Loader from "components/Loader/Loader";
 
 const AddSubject = () => {
   const [subjectList, setSubjectList] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editSubjectName, setEditSubjectName] = useState("");
+  const [subjectId, setSubjectId] = useState("")
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const getAllClasses = () => {
-      const { user, token } = isAuthenticated();
-      allSubjects(user._id, user.school, token)
-        .then((res) => {
-          const data = [];
-          for (let i = 0; i < res[0].list.length; i++) {
-            data.push({
-              key: i,
-              list: res[0].list[i],
-              action: (
-                <h5 key={i + 1} className="mb-0">
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
+  
+    getAllClasses();
+  }, [reload,checked]);
+
+  const getAllClasses = () => {
+    const { user, token } = isAuthenticated();
+    allSubjects(user._id, user.school, token)
+      .then((res) => {
+        const data = [];
+        for (let i = 0; i < res[0].list.length; i++) {
+          data.push({
+            key: i,
+            list: res[0].list[i],
+            action: (
+              <h5 key={i + 1} className="mb-0">
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() =>
+                    rowHandler(res[i]._id, res[i].name)
+                  }
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
                   >
                     <i className="fas fa-trash" />
-                  </Button>
-                </h5>
-              ),
-            });
-          }
-          setSubjectList(data);
-          setLoading(true);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
-    getAllClasses();
-  }, [reload]);
+                  </Popconfirm>
+                </Button>
+              </h5>
+            ),
+          });
+        }
+        setSubjectList(data);
+        setLoading(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const [subjectData, setSubjectData] = useState({
     list: "",
   });
+
+  const handleDelete = async(subjectId) => {
+    console.log("delete");
+    const { user, token } = isAuthenticated();
+    try {
+      await deleteSubject(subjectId, user._id, token);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
+
+  const rowHandler = (id, name) => {
+    setEditing(true);
+    setEditSubjectName(name);
+    setSubjectId(id);
+  };
+
+  const handleEdit = async () => {
+  
+    try {
+      const { user, token } = isAuthenticated();
+      formData.set("name", editSubjectName);
+      const updatedSubject = await updateSubject(subjectId, user._id, token, formData);
+      console.log("updateSubject", updatedSubject);
+      setEditing(false);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+
+
 
   const columns = [
     {
@@ -199,6 +258,46 @@ const AddSubject = () => {
             </div>
           </Col>
         </Row>
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={editing}
+          toggle={() => setEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              {editing ? "Edit Form" : "Create Form"}
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Class Name</label>
+                <Input
+                  id="form-class-name"
+                  value={editSubjectName}
+                  onChange={(e) => setEditSubjectName(e.target.value)}
+                  placeholder="Class Name"
+                  type="text"
+                />
+              </Col>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="button" onClick={handleEdit}>
+              Save changes
+            </Button>
+          </ModalFooter>
+        </Modal>
       </Container>
     </>
   );
