@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Container,
@@ -18,7 +18,7 @@ import {
 
 // import { Table } from "ant-table-extensions";
 import { Table } from "antd";
-
+import { postAttendance } from "api/attendance";
 import "./Attendance.css";
 
 //Loader
@@ -30,6 +30,7 @@ import { useSelector } from "react-redux";
 //import moment from moment for Date
 import moment from "moment";
 import { getAttendence } from "api/attendance";
+import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
 
 function Attendance() {
@@ -37,7 +38,7 @@ function Attendance() {
   const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
   const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
   const endOfDayOfMonths = moment().endOf("month").format("DD");
-  const [selectedClassIndex, setselectedClassIndex] = useState(0)
+  const [selectedClassIndex, setselectedClassIndex] = useState(0);
   const [attendance, setAttendance] = React.useState({
     dateFrom: startOfMonth,
     dateTo: endOfMonth,
@@ -47,7 +48,7 @@ function Attendance() {
     selectSection: "",
   });
   const { classes } = useSelector((state) => state.classReducer);
-
+  const [attendanceData, setAttendanceData] = useState([]);
   console.log("attendance", attendance);
   console.log(classes);
 
@@ -67,23 +68,44 @@ function Attendance() {
       [name]: event.target.value,
     });
     console.log(name);
-    if (name==="selectClass") {
-      console.log("@@@@@@@@=>",event.target.value);
+    if (name === "selectClass") {
+      console.log("@@@@@@@@=>", event.target.value);
       for (let i = 0; i < classes.length; i++) {
-        if(classes[i].name===event.target.value){
+        if (classes[i].name === event.target.value) {
           console.log("#######");
-          setselectedClassIndex(i)
+          setselectedClassIndex(i);
         }
-        
       }
     }
-
   };
+
+  useEffect(() => {
+    getAllStudents();
+  }, []);
 
   useEffect(() => {
     setAttendance({ ...attendance, atd });
   }, [atd]);
 
+  const getAllStudents = async () => {
+    const { user, token } = isAuthenticated();
+    const payload = { school: user.school };
+    const res = await allStudents(
+      user.school,
+      user._id,
+      token,
+      JSON.stringify(payload)
+    );
+    //Data of ant Table
+    console.log(res);
+    for (let i = 0; i < res.length; i++) {
+      console.log(res[i].firstname);
+      setAttendanceData([
+        ...attendanceData,
+        { key: i, hash: `${i}`, name: res[i].firstname },
+      ]);
+    }
+  };
   //Columns of ant Table
   const columns = [
     {
@@ -110,16 +132,6 @@ function Attendance() {
     });
   }
 
-  //Data of ant Table
-  const attendanceData = [];
-  for (let i = 1; i < columns.length; i++) {
-    attendanceData.push({
-      key: i,
-      hash: `${i}`,
-      name: "Ajay",
-    });
-  }
-
   useEffect(() => {
     getAllAttendance();
   }, []);
@@ -133,6 +145,28 @@ function Attendance() {
   const postAttendance = async () => {
     const data = await postAttendance(user._id, attendanceData);
     console.log(data);
+  };
+
+  const submitHandler = async () => {
+    const { user, token } = isAuthenticated();
+    const payload = { school: user.school };
+
+    let attData = {
+      attendance: atd,
+      classId: classes[selectedClassIndex].name,
+      sectionId: classes[selectedClassIndex].section._id,
+      year: 2022,
+      schoolId: user.school,
+    };
+
+
+    try {
+      const data = await postAttendance(user._id, attData);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+    
   };
 
   return (
@@ -226,10 +260,10 @@ function Attendance() {
                     required
                   >
                     {classes &&
-                      classes.map((clas,index) => {
+                      classes.map((clas, index) => {
                         // setselectedClassIndex(index)
                         return (
-                          <option value={clas.name} key={index} >
+                          <option value={clas.name} key={index}>
                             {clas.name}
                           </option>
                         );
@@ -251,16 +285,15 @@ function Attendance() {
                     value={attendance.selectSection}
                     required
                   >
-                    {classes[selectedClassIndex] && classes[selectedClassIndex].section.map(section=>{
-                      console.log(section);
-                      return(
-                        <option value={section} disabled selected>
-                        {section}
-                      </option>
-                      )
-                    })}
-                   
-                 
+                    {classes[selectedClassIndex] &&
+                      classes[selectedClassIndex].section.map((section) => {
+                        console.log(section);
+                        return (
+                          <option value={section} disabled selected>
+                            {section}
+                          </option>
+                        );
+                      })}
                   </Input>
                 </Col>
                 <Col className="mt-4">
@@ -406,6 +439,15 @@ function Attendance() {
                   </>
                 );
               })}
+              <div className="col-sm">
+                <Button
+                  className="attendance-button"
+                  onClick={submitHandler}
+                  color="primary"
+                >
+                  Submit
+                </Button>
+              </div>
             </div>
           </ModalBody>
         </Modal>

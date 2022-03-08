@@ -14,6 +14,8 @@ export const getAttendence = async (schoolId, id) => {
   }
 };
 
+
+
 export const postAttendance = async (id,bodyData) => {
   try {
     const { data } = await sendRequestWithJson(

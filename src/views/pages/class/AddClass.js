@@ -8,10 +8,13 @@ import {
   Form,
   Input,
   Button,
+  Modal,
+  ModalFooter,
+  ModalBody,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
-import { addClass, allClass } from "api/class";
+import { addClass, allClass,updateClass,deleteClass } from "api/class";
 import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
@@ -19,11 +22,19 @@ import Loader from "components/Loader/Loader";
 import { setClass } from "store/reducers/class";
 import { useReducer, useSelector } from "react";
 import { useDispatch } from "react-redux";
+import { Popconfirm } from "antd";
+
+
 
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editClassName, setEditClassName] = useState("");
+  const [classId, setClassId] = useState("");
+  const [editClassAbv, setEditClassAbv] = useState("");
+  const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
 
   const [classData, setClassData] = useState({
@@ -37,7 +48,7 @@ const AddClass = () => {
       allClass(user._id, user.school, token)
         .then((res) => {
           console.log("allClass", res);
-          dispatch(setClass(res))
+          dispatch(setClass(res));
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -51,6 +62,9 @@ const AddClass = () => {
                     color="primary"
                     type="button"
                     key={"edit" + i + 1}
+                    onClick={() =>
+                      rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
+                    }
                   >
                     <i className="fas fa-user-edit" />
                   </Button>
@@ -60,7 +74,12 @@ const AddClass = () => {
                     type="button"
                     key={"delete" + i + 1}
                   >
-                    <i className="fas fa-trash" />
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
                   </Button>
                 </h5>
               ),
@@ -74,7 +93,56 @@ const AddClass = () => {
         });
     };
     getAllClasses();
-  }, [reload]);
+  }, [reload,checked]);
+
+  const handleDelete = async(classId) => {
+    const { user, token } = isAuthenticated();
+    try {
+      await deleteClass(classId, user._id, token);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
+
+  const rowHandler = (id, name, abbreviation) => {
+    setEditing(true);
+    setEditClassName(name);
+    setEditClassAbv(abbreviation);
+    setClassId(id);
+  };
+
+  const handleChangeEdit = (value) => {
+    var b = [];
+    value.map((items) => {
+      b.push([items.value, items.label]);
+    });
+    console.log("b", b);
+    formData.set("class", JSON.stringify(b));
+  };
+
+  const handleEdit = async () => {
+    console.log("inside");
+    try {
+      const { user, token } = isAuthenticated();
+      formData.set("name", editClassName);
+      formData.set("abbrevation", editClassAbv);
+      const updatedClass = await updateClass(classId, user._id, token, formData);
+      console.log("updateClass", updatedClass);
+      setEditing(false);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+  };
 
   const columns = [
     {
@@ -256,6 +324,58 @@ const AddClass = () => {
             </div>
           </Col>
         </Row>
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={editing}
+          toggle={() => setEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              {editing ? "Edit Form" : "Create Form"}
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Class Name</label>
+                <Input
+                  id="form-class-name"
+                  value={editClassName}
+                  onChange={(e) => setEditClassName(e.target.value)}
+                  placeholder="Class Name"
+                  type="text"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <label className="form-control-label">Abbreviation</label>
+                <Input
+                  id="form-abbreviation-name"
+                  value={editClassAbv}
+                  onChange={(e) => setEditClassAbv(e.target.value)}
+                  placeholder="Abbreviation"
+                  type="text"
+                />
+              </Col>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="button" onClick={handleEdit}>
+              Save changes
+            </Button>
+          </ModalFooter>
+        </Modal>
       </Container>
     </>
   );

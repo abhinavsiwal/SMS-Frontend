@@ -26,3 +26,34 @@ export const allClass = (userId, schoolID, token) => {
       throw error;
     });
 };
+
+export const updateClass=async(classId,userId,token,formData)=>{
+  const url = `http://35.174.4.42:5000/api/school/class/edit/${classId}/${userId}`;
+  return fetch(url, {
+    method: "PUT",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
+    body: formData,
+  })
+    .then((data) => {
+      console.log("data", data);
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+}
+
+
+export const deleteClass=async(classId,userId,token)=>{
+  const url = `http://35.174.4.42:5000/api/school/class/delete/${classId}/${userId}`;
+  return fetch(url, {
+    method: "DELETE",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
+  })
+    .then((data) => {
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+}
