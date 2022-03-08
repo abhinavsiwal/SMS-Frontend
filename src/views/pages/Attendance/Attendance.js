@@ -86,7 +86,7 @@ function Attendance() {
   useEffect(() => {
     setAttendance({ ...attendance, atd });
   }, [atd]);
-
+  let tableData=[]
   const getAllStudents = async () => {
     const { user, token } = isAuthenticated();
     const payload = { school: user.school };
@@ -100,11 +100,15 @@ function Attendance() {
     console.log(res);
     for (let i = 0; i < res.length; i++) {
       console.log(res[i].firstname);
-      setAttendanceData([
-        ...attendanceData,
-        { key: i, hash: `${i}`, name: res[i].firstname },
-      ]);
+      tableData.push(
+        {
+          key: i,
+          hash: `${i+1}`,
+          name: res[i].firstname,
+        }
+      )
     }
+    setAttendanceData(tableData)
   };
   //Columns of ant Table
   const columns = [
@@ -124,6 +128,7 @@ function Attendance() {
     },
   ];
 
+  
   for (let i = 1; i <= endOfDayOfMonths; i++) {
     columns.push({
       key: i,
@@ -159,15 +164,15 @@ function Attendance() {
       schoolId: user.school,
     };
 
-
     try {
       const data = await postAttendance(user._id, attData);
       console.log(data);
     } catch (err) {
       console.log(err);
     }
-    
   };
+
+  const attendanceValueChangeHandler = (value) => {};
 
   return (
     <div>
