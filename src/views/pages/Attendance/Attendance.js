@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 
 import {
   Container,
@@ -26,7 +26,7 @@ import "./Attendance.css";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-
+import { useSelector } from "react-redux";
 //import moment from moment for Date
 import moment from "moment";
 import { getAttendence } from "api/attendance";
@@ -37,7 +37,7 @@ function Attendance() {
   const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
   const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
   const endOfDayOfMonths = moment().endOf("month").format("DD");
-
+  const [selectedClassIndex, setselectedClassIndex] = useState(0)
   const [attendance, setAttendance] = React.useState({
     dateFrom: startOfMonth,
     dateTo: endOfMonth,
@@ -46,7 +46,10 @@ function Attendance() {
     selectClass: "",
     selectSection: "",
   });
+  const { classes } = useSelector((state) => state.classReducer);
+
   console.log("attendance", attendance);
+  console.log(classes);
 
   // const [loading, setLoading] = React.useState(true);
 
@@ -63,14 +66,23 @@ function Attendance() {
       ...attendance,
       [name]: event.target.value,
     });
+    console.log(name);
+    if (name==="selectClass") {
+      console.log("@@@@@@@@=>",event.target.value);
+      for (let i = 0; i < classes.length; i++) {
+        if(classes[i].name===event.target.value){
+          console.log("#######");
+          setselectedClassIndex(i)
+        }
+        
+      }
+    }
+
   };
 
-useEffect(() => {
-  
-setAttendance({...attendance,atd})
-  
-}, [atd])
-
+  useEffect(() => {
+    setAttendance({ ...attendance, atd });
+  }, [atd]);
 
   //Columns of ant Table
   const columns = [
@@ -213,23 +225,15 @@ setAttendance({...attendance,atd})
                     value={attendance.selectClass}
                     required
                   >
-                    <option value="" disabled selected>
-                      Select Class
-                    </option>
-                    <option>LKG</option>
-                    <option>UKG</option>
-                    <option>1st</option>
-                    <option>2nd</option>
-                    <option>3rd</option>
-                    <option>4th</option>
-                    <option>5th</option>
-                    <option>6th</option>
-                    <option>7th</option>
-                    <option>8th</option>
-                    <option>9th</option>
-                    <option>10th</option>
-                    <option>11th</option>
-                    <option>12th</option>
+                    {classes &&
+                      classes.map((clas,index) => {
+                        // setselectedClassIndex(index)
+                        return (
+                          <option value={clas.name} key={index} >
+                            {clas.name}
+                          </option>
+                        );
+                      })}
                   </Input>
                 </Col>
                 <Col md="3">
@@ -247,13 +251,16 @@ setAttendance({...attendance,atd})
                     value={attendance.selectSection}
                     required
                   >
-                    <option value="" disabled selected>
-                      Select Section
-                    </option>
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
+                    {classes[selectedClassIndex] && classes[selectedClassIndex].section.map(section=>{
+                      console.log(section);
+                      return(
+                        <option value={section} disabled selected>
+                        {section}
+                      </option>
+                      )
+                    })}
+                   
+                 
                   </Input>
                 </Col>
                 <Col className="mt-4">

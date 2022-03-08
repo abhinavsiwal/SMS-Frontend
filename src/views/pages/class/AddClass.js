@@ -16,11 +16,15 @@ import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
+import { setClass } from "store/reducers/class";
+import { useReducer, useSelector } from "react";
+import { useDispatch } from "react-redux";
 
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
   const [classData, setClassData] = useState({
     name: "",
@@ -33,6 +37,7 @@ const AddClass = () => {
       allClass(user._id, user.school, token)
         .then((res) => {
           console.log("allClass", res);
+          dispatch(setClass(res))
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({

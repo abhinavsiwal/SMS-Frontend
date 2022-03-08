@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
-    setClass:[],
+    classes:[],
 }
 
 export const classSlice = createSlice({
@@ -9,7 +9,7 @@ export const classSlice = createSlice({
     initialState,
     reducers:{
         setClass:(state,{payload})=>{
-            state.setClass = payload;
+            state.classes = payload;
         }
     }
 })
