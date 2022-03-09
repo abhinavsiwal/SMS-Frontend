@@ -43,7 +43,7 @@
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     width: auto;
-    padding: 10px;
+    margin: auto;
   }
 }
 
@@ -61,9 +61,29 @@
 }
 
 .canteen-button {
-  margin-top: 30px;
-  background-color: rgb(204, 204, 27);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(240, 202, 40);
   display: flex;
-  justify-content: space-around;
-  overflow-x: scroll;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+@media only screen and (max-width: 800px) {
+  .canteen-button {
+    overflow-x: scroll;
+  }
+}
+
+.canteen-button > button {
+  background-color: rgba(240, 202, 40);
+  border: none;
+  outline: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.Name,
+.Price {
+  font-weight: 500;
 }

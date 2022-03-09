@@ -1,8 +1,5 @@
-.Time-Table-Coloumns {
-  border: 1px solid black;
-  display: inline-block;
-}
-
-.Time-Table-Badge > td > div {
-  background-color: lightpink;
+.Period-Time {
+  width: 65%;
+  border: 1px solid silver;
+  border-radius: 5px;
 }

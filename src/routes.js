@@ -58,6 +58,7 @@ import Calendar from "views/pages/Calendar.js";
 import Attendance from "views/pages/Attendance/Attendance";
 import TimeTable from "views/pages/Time Table/TimeTable";
 import Canteen from "views/pages/Canteen/Canteen";
+import RolePermissions from "views/pages/Roles&Permissions/RolePermissions";
 
 const routes = [
   {
@@ -214,15 +215,22 @@ const routes = [
   {
     path: "/timeTable",
     name: "Time Table",
-    icon: "ni ni-calendar-grid-58 text-red",
+    icon: "ni ni-calendar-grid-58 text-black",
     component: TimeTable,
     layout: "/admin",
   },
   {
     path: "/canteen",
     name: "Canteen",
-    icon: "ni ni-shop text-primary",
+    icon: "ni ni-basket text-yellow",
     component: Canteen,
+    layout: "/admin",
+  },
+  {
+    path: "/rolesPermissions",
+    name: "Roles&Permissions",
+    icon: "ni ni-settings-gear-65 text-blue",
+    component: RolePermissions,
     layout: "/admin",
   },
 ];
