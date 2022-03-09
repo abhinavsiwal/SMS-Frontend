@@ -27,38 +27,40 @@ import Select from "react-select";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
-//antTabel
-// import { Table } from "antd";
-
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+// import moment Library
 import moment from "moment";
 
 function TimeTable() {
   const [timeTableData, setTimeTableData] = React.useState({
+    class: null,
+    section: null,
+    prd: "",
     subjects: "",
     teachers: "",
     selectMode: "",
-    periods: "",
-    period: "",
   });
+
   console.log("timetable", timeTableData);
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
   const [endDate, setEndDate] = React.useState(new Date());
   const endDuration = moment(endDate).format("LT");
-  const [days, setDays] = React.useState([]);
-  // const [count, setCount] = React.useState(0);
+  const [startTimeRecises, setStartTimeRecises] = React.useState(new Date());
+  const startTime = moment(startTimeRecises).format("LT");
+  const [endTimeRecises, setEndTimeRecises] = React.useState(new Date());
+  const endTime = moment(endTimeRecises).format("LT");
 
   const roleOptions = [
-    { value: "0", label: "Monday" },
-    { value: "1", label: "Tuesday" },
-    { value: "2", label: "Wednesday" },
-    { value: "3", label: "Thursday" },
-    { value: "4", label: "Friday" },
-    { value: "5", label: "Saturday" },
+    { value: "Monday", label: "Monday" },
+    { value: "Tuesday", label: "Tuesday" },
+    { value: "Wednesday", label: "Wednesday" },
+    { value: "Thursday", label: "Thursday" },
+    { value: "Friday", label: "Friday" },
+    { value: "Saturday", label: "Saturday" },
   ];
 
   const handleChange = (name) => (event) => {
@@ -72,84 +74,11 @@ function TimeTable() {
       value.push(e[i].value);
     }
     // formData.set("subject", JSON.stringify(value));
-    setDays(value);
   };
 
-  const [timePeriod, setTimePeriod] = React.useState([
-    [
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Lunch",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-    ],
-    [
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Lunch",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-    ],
-    [
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Lunch",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-    ],
-    [
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Lunch",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-    ],
-    [
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Lunch",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-    ],
-    [
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Lunch",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-      "Not Selected Yet",
-    ],
-  ]);
+  const [timePeriod, setTimePeriod] = React.useState([]);
 
-  const handleData = () => {
-    for (var i = 0; i < days.length; i++) {
-      let row = i;
-      let column = parseInt(timeTableData.periods);
-      let copy = [...timePeriod];
-      copy[row][
-        column
-      ] = `${startDuration} - ${endDuration} Subject: ${timeTableData.subjects} Teacher: ${timeTableData.teachers} `;
-      // startDuration + "-" + endDuration + "<br/>" + timeTableData.subjects;
-      setTimePeriod(copy);
-    }
-  };
+  const handleData = () => {};
 
   return (
     <div>
@@ -158,183 +87,284 @@ function TimeTable() {
         <Form>
           <Card>
             <CardBody>
-              <Row md="4" className="d-flex justify-content-center mb-4">
+              <Row className="m-4">
                 <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
                   >
-                    From
-                  </Label>
-                  <DatePicker
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                  />
-                </Col>
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="example-date-input"
-                  >
-                    To
-                  </Label>
-                  <DatePicker
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                  />
-                </Col>
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Days
-                  </Label>
-                  <Select
-                    isMulti
-                    name="colors"
-                    options={roleOptions}
-                    onChange={handleSubjectChange}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    required
-                  />
-                </Col>
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Periods
+                    Select Class
                   </Label>
                   <Input
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
+                    id="example4cols3Input"
                     type="select"
-                    onChange={handleChange("Period")}
-                    value={timeTableData.period}
+                    onChange={handleChange("class")}
+                    value={timeTableData.class}
                     required
-                  ></Input>
+                  >
+                    <option value="" disabled selected>
+                      Select Class
+                    </option>
+                    <option>LKG</option>
+                    <option>UKG</option>
+                    <option>1st</option>
+                    <option>2nd</option>
+                    <option>3rd</option>
+                    <option>4th</option>
+                    <option>5th</option>
+                    <option>6th</option>
+                    <option>7th</option>
+                    <option>8th</option>
+                    <option>9th</option>
+                    <option>10th</option>
+                    <option>11th</option>
+                    <option>12th</option>
+                  </Input>
+                </Col>
+                <Col md="3">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Section
+                  </Label>
+                  <Input
+                    id="example4cols3Input"
+                    type="select"
+                    onChange={handleChange("section")}
+                    value={timeTableData.section}
+                    required
+                    placeholder="Add Periods"
+                  >
+                    <option value="" disabled selected>
+                      Select Section
+                    </option>
+                    <option>A</option>
+                    <option>B</option>
+                    <option>C</option>
+                    <option>D</option>
+                  </Input>
                 </Col>
               </Row>
-              <Row className="d-flex justify-content-center mb-4">
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Subjects
-                  </Label>
-                  <Input
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
-                    type="select"
-                    onChange={handleChange("subjects")}
-                    value={timeTableData.subjects}
-                    required
-                  >
-                    <option value="" disabled selected>
-                      Subjects
-                    </option>
-                    <option>Physics</option>
-                    <option>Chemistry</option>
-                    <option>Maths</option>
-                    <option>Hindi</option>
-                  </Input>
-                </Col>
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Teachers
-                  </Label>
-                  <Input
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
-                    type="select"
-                    onChange={handleChange("teachers")}
-                    value={timeTableData.teachers}
-                    required
-                  >
-                    <option value="" disabled selected>
-                      Teacher
-                    </option>
-                    <option>David</option>
-                    <option>Sam</option>
-                    <option>Mike</option>
-                    <option>Jordan</option>
-                  </Input>
-                </Col>
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Periods
-                  </Label>
-                  <Input
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
-                    type="select"
-                    onChange={handleChange("periods")}
-                    value={timeTableData.periods}
-                    required
-                  >
-                    <option value="" disabled selected>
-                      Periods
-                    </option>
-                    <option value="0">Period1</option>
-                    <option value="1">Period2</option>
-                    <option value="2">Period3</option>
-                    <option value="3">Period4</option>
-                    <option value="4">Period5</option>
-                    <option value="5">Period6</option>
-                    <option value="6">Period7</option>
-                  </Input>
-                </Col>
-                <Col md="3">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Mode
-                  </Label>
-                  <Input
-                    className="form-control-sm"
-                    id="exampleFormControlSelect3"
-                    type="select"
-                    onChange={handleChange("selectMode")}
-                    value={timeTableData.selectMode}
-                    required
-                  >
-                    <option value="" disabled selected>
-                      Select Mode
-                    </option>
-                    <option>Offline</option>
-                    <option>Online</option>
-                  </Input>
-                </Col>
-                <Col className="mt-4">
-                  <Button color="primary" onClick={handleData}>
-                    Add
-                  </Button>
-                </Col>
-              </Row>
+
+              {timeTableData.class !== null && timeTableData.section !== null && (
+                <>
+                  <Row className="m-4">
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Select Days
+                      </Label>
+                      <Select
+                        isMulti
+                        name="colors"
+                        options={roleOptions}
+                        onChange={handleSubjectChange}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        required
+                      />
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Add Periods
+                      </Label>
+                      <Input
+                        id="example4cols3Input"
+                        type="Number"
+                        onChange={handleChange("prd")}
+                        value={timeTableData.prd}
+                        placeholder="Add Periods"
+                        required
+                      ></Input>
+                    </Col>
+                  </Row>
+                  <Row className="m-4">
+                    <Col md="1">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      ></Label>
+                      <p
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Period
+                      </p>
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        From
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                      />
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example-date-input"
+                      >
+                        To
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="m-4">
+                    <Col md="1">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      ></Label>
+                      <p
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Recises
+                      </p>
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        From
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={startTimeRecises}
+                        onChange={(date) => setStartTimeRecises(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                      />
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example-date-input"
+                      >
+                        To
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={endTimeRecises}
+                        onChange={(date) => setEndTimeRecises(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                      />
+                    </Col>
+                  </Row>
+
+                  <Row className="d-flex justify-content-center mb-4 m-4">
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Subjects
+                      </Label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("subjects")}
+                        value={timeTableData.subjects}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Subjects
+                        </option>
+                        <option>Physics</option>
+                        <option>Chemistry</option>
+                        <option>Maths</option>
+                        <option>Hindi</option>
+                      </Input>
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Teachers
+                      </Label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("teachers")}
+                        value={timeTableData.teachers}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Teacher
+                        </option>
+                        <option>David</option>
+                        <option>Sam</option>
+                        <option>Mike</option>
+                        <option>Jordan</option>
+                      </Input>
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Select Mode
+                      </Label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("selectMode")}
+                        value={timeTableData.selectMode}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Select Mode
+                        </option>
+                        <option>Offline</option>
+                        <option>Online</option>
+                      </Input>
+                    </Col>
+                    <Col className="mt-4">
+                      <Button color="primary" onClick={handleData}>
+                        Add
+                      </Button>
+                    </Col>
+                  </Row>
+                </>
+              )}
             </CardBody>
           </Card>
         </Form>
@@ -343,185 +373,7 @@ function TimeTable() {
         <Card>
           <CardHeader>Time Table</CardHeader>
           <CardBody>
-            <Table bordered>
-              <thead>
-                <tr>
-                  <th>Days</th>
-                  <th>Period1</th>
-                  <th>Period2</th>
-                  <th>Period3</th>
-                  <th>Lunch</th>
-                  <th>Period4</th>
-                  <th>Period5</th>
-                  <th>Period6</th>
-                  <th>Period7</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="Time-Table-Badge">
-                  <th scope="row">Mon</th>
-                  <td key="1" id="11">
-                    {timePeriod[0][0]}
-                  </td>
-                  <td key="2" id="12">
-                    {timePeriod[0][1]}
-                  </td>
-                  <td key="3" id="13">
-                    {timePeriod[0][2]}
-                  </td>
-                  <td key="4" id="14">
-                    {timePeriod[0][3]}
-                  </td>
-                  <td key="5" id="15">
-                    {timePeriod[0][4]}
-                  </td>
-                  <td key="6" id="16">
-                    {timePeriod[0][5]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[0][6]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[0][7]}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Tue</th>
-                  <td key="8" id="21">
-                    {timePeriod[1][0]}
-                  </td>
-                  <td key="9" id="22">
-                    {timePeriod[1][1]}
-                  </td>
-                  <td key="10" id="23">
-                    {timePeriod[1][2]}
-                  </td>
-                  <td key="11" id="24">
-                    {timePeriod[1][3]}
-                  </td>
-                  <td key="12" id="25">
-                    {timePeriod[1][4]}
-                  </td>
-                  <td key="13" id="26">
-                    {timePeriod[1][5]}
-                  </td>
-                  <td key="14" id="27">
-                    {timePeriod[1][6]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[1][7]}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Wed</th>
-                  <td key="15" id="31">
-                    {timePeriod[2][0]}
-                  </td>
-                  <td key="16" id="32">
-                    {timePeriod[2][1]}
-                  </td>
-                  <td key="17" id="33">
-                    {timePeriod[2][2]}
-                  </td>
-                  <td key="18" id="34">
-                    {timePeriod[2][3]}
-                  </td>
-                  <td key="19" id="35">
-                    {timePeriod[2][4]}
-                  </td>
-                  <td key="20" id="36">
-                    {timePeriod[2][5]}
-                  </td>
-                  <td key="21" id="37">
-                    {timePeriod[2][6]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[2][7]}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Thurs</th>
-                  <td key="21" id="41">
-                    {timePeriod[3][0]}
-                  </td>
-                  <td key="22" id="42">
-                    {timePeriod[3][1]}
-                  </td>
-                  <td key="23" id="43">
-                    {timePeriod[3][2]}
-                  </td>
-                  <td key="24" id="44">
-                    {timePeriod[3][3]}
-                  </td>
-                  <td key="25" id="45">
-                    {timePeriod[3][4]}
-                  </td>
-                  <td key="26" id="46">
-                    {timePeriod[3][5]}
-                  </td>
-                  <td key="27" id="47">
-                    {timePeriod[3][6]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[3][7]}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Fri</th>
-                  <td key="28" id="51">
-                    {timePeriod[4][0]}
-                  </td>
-                  <td key="29" id="52">
-                    {timePeriod[4][1]}
-                  </td>
-                  <td key="30" id="53">
-                    {timePeriod[4][2]}
-                  </td>
-                  <td key="31" id="54">
-                    {timePeriod[4][3]}
-                  </td>
-                  <td key="32" id="55">
-                    {timePeriod[4][4]}
-                  </td>
-                  <td key="33" id="56">
-                    {timePeriod[4][5]}
-                  </td>
-                  <td key="34" id="57">
-                    {timePeriod[4][6]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[4][7]}
-                  </td>
-                </tr>
-                <tr>
-                  <th scope="row">Sat</th>
-                  <td key="35" id="61">
-                    {timePeriod[5][0]}
-                  </td>
-                  <td key="36" id="62">
-                    {timePeriod[5][1]}
-                  </td>
-                  <td key="37" id="63">
-                    {timePeriod[5][2]}
-                  </td>
-                  <td key="38" id="64">
-                    {timePeriod[5][3]}
-                  </td>
-                  <td key="39" id="65">
-                    {timePeriod[5][4]}
-                  </td>
-                  <td key="40" id="66">
-                    {timePeriod[5][5]}
-                  </td>
-                  <td key="41" id="67">
-                    {timePeriod[5][6]}
-                  </td>
-                  <td key="7" id="17">
-                    {timePeriod[5][7]}
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
+            <Table bordered></Table>
           </CardBody>
         </Card>
       </Container>
