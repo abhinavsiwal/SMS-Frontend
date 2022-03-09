@@ -6,7 +6,7 @@ export const getAttendence = async (schoolId, id) => {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/attendance/all/${schoolId}/${id}`
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.log(error);

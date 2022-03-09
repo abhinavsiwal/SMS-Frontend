@@ -32,7 +32,7 @@ import moment from "moment";
 import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
-import {sendRequestWithJson} from 'api/api'
+import {sendRequest} from 'api/api'
 
 function Attendance() {
   //start and end date of month
@@ -50,13 +50,14 @@ function Attendance() {
   });
   const { classes } = useSelector((state) => state.classReducer);
   const [attendanceData, setAttendanceData] = useState([]);
-  console.log("attendance", attendance);
-  console.log(classes);
+  const [allAttendance, setAllAttendance] = useState({})
+  // console.log("attendance", attendance);
+  // console.log(classes);
 
   // const [loading, setLoading] = React.useState(true);
 
   const [atd, setAtd] = React.useState({});
-  console.log("atd", atd);
+  // console.log("atd", atd);
 
   //modal window for addAttendance
   const [modal, setModal] = React.useState(false);
@@ -68,12 +69,12 @@ function Attendance() {
       ...attendance,
       [name]: event.target.value,
     });
-    console.log(name);
+    // console.log(name);
     if (name === "selectClass") {
       console.log("@@@@@@@@=>", event.target.value);
       for (let i = 0; i < classes.length; i++) {
         if (classes[i].name === event.target.value) {
-          console.log("#######");
+          // console.log("#######");
           setselectedClassIndex(i);
         }
       }
@@ -98,9 +99,11 @@ function Attendance() {
       JSON.stringify(payload)
     );
     //Data of ant Table
-    console.log(res);
+    // console.log(res);
+
     for (let i = 0; i < res.length; i++) {
-      console.log(res[i]._id);
+      // console.log(res[i]._id);
+
       tableData.push({
         key: res[i]._id,
         hash: `${i + 1}`,
@@ -132,6 +135,7 @@ function Attendance() {
       key: i,
       title: i,
       width: 110,
+      dataIndex:"status"
     });
   }
 
@@ -156,14 +160,14 @@ function Attendance() {
     // };
 
    
-    console.log(atd);
+    // console.log(atd);
     let formattedAttendanceData = {};
     let presentStudents = [];
     let absentStudents = [];
     let halfDayStudents = [];
     let leaveStudents = [];
     for (const attd in atd) {
-      console.log(`${attd}:${atd[attd]}`);
+      // console.log(`${attd}:${atd[attd]}`);
       //  console.log(atd[attd]);
       if (atd[attd] === "present") {
         presentStudents.push(attd);
@@ -183,14 +187,14 @@ function Attendance() {
       leave: leaveStudents,
     };
 
-    console.log(formattedAttendanceData);
+    // console.log(formattedAttendanceData);
 
     let date = new Date();
     let today = date.getDate();
-    console.log(today);
-    let formData = {
+    // console.log(today);
+    let formData1 = {
       attendance: {
-        today: formattedAttendanceData,
+        10: formattedAttendanceData,
       },
       month: date.getMonth()+1,
       year: date.getFullYear(),
@@ -198,8 +202,26 @@ function Attendance() {
       class: classes[selectedClassIndex]._id,
       section: classes[selectedClassIndex].section._id,
     };
+    console.log(classes[selectedClassIndex]);
+    let attendance =  {
+      4: formattedAttendanceData,
+    };
+    let month = date.getMonth()+1;
+    let year = date.getFullYear();
+    let school = user.school;
+    let classId =  classes[selectedClassIndex]._id;
+    let sectionId =  classes[selectedClassIndex].section[0]._id;
+
+    let formData = new FormData();
+    formData.set("attendance",JSON.stringify(attendance))
+    formData.set("month",month);
+    formData.set("year",year);
+    formData.set("school",school);
+    formData.set("class",classId);
+    formData.set("section",sectionId);
+
     try {
-      const  data  = await sendRequestWithJson(
+      const  data  = await sendRequest(
         `${process.env.REACT_APP_API_URL}/api/school/attendance/create/${user._id}`,formData,"POST"
       );
       console.log(data);
@@ -329,10 +351,10 @@ function Attendance() {
                   >
                     {classes[selectedClassIndex] &&
                       classes[selectedClassIndex].section.map((section) => {
-                        console.log(section);
+                        // console.log(section.name);
                         return (
-                          <option value={section} disabled selected>
-                            {section}
+                          <option value={section.name} key={section._id} disabled selected>
+                            {section.name}
                           </option>
                         );
                       })}
