@@ -13,12 +13,18 @@ import {
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import AntTable from "../tables/AntTable";
 
+//Ant Table
 import { SearchOutlined } from "@ant-design/icons";
-import { isAuthenticated } from "api/auth";
 import { Popconfirm } from "antd";
+
+//Loader
+import Loader from "components/Loader/Loader";
+
+import { isAuthenticated } from "api/auth";
 
 function ViewCanteen() {
   const [viewCanteen, setViewCanteen] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
   const columns = [
     {
       title: "Items",
@@ -221,7 +227,7 @@ function ViewCanteen() {
   // }
 
   React.useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchStaff = async () => {
       const { user, token } = isAuthenticated();
       const res = "a"; // Call your function here
       console.log(res);
@@ -263,8 +269,9 @@ function ViewCanteen() {
         });
       }
       setViewCanteen(data);
+      setLoading(true);
     };
-    fetchStudents();
+    fetchStaff();
   }, []);
 
   return (
@@ -276,12 +283,16 @@ function ViewCanteen() {
             <h3>View Canteen</h3>
           </CardHeader>
           <CardBody>
-            <AntTable
-              columns={columns}
-              data={viewCanteen}
-              pagination={true}
-              exportFileName="StudentDetails"
-            />
+            {loading ? (
+              <AntTable
+                columns={columns}
+                data={viewCanteen}
+                pagination={true}
+                exportFileName="StudentDetails"
+              />
+            ) : (
+              <Loader />
+            )}
           </CardBody>
         </Card>
       </Container>

@@ -61,6 +61,8 @@ import RolePermissions from "views/pages/Roles&Permissions/RolePermissions";
 import AddCanteen from "views/pages/Canteen/AddCanteen";
 import ViewCanteen from "views/pages/Canteen/ViewCanteen";
 import ViewAllCanteen from "views/pages/Canteen/ViewAllCanteen";
+import ViewRoute from "views/pages/Transportation/ViewRoute";
+import AddRoute from "views/pages/Transportation/AddRoute";
 
 const routes = [
   {
@@ -257,6 +259,29 @@ const routes = [
     icon: "ni ni-settings-gear-65 text-blue",
     component: RolePermissions,
     layout: "/admin",
+  },
+
+  {
+    collapse: true,
+    name: "Transporte",
+    icon: "ni ni-bus-front-12 text-red",
+    state: "transportationCollapse",
+    views: [
+      {
+        path: "/add-route",
+        name: "Add Route",
+        miniName: "A",
+        component: AddRoute,
+        layout: "/admin",
+      },
+      {
+        path: "/view-route",
+        name: "View Route",
+        miniName: "V",
+        component: ViewRoute,
+        layout: "/admin",
+      },
+    ],
   },
 ];
 

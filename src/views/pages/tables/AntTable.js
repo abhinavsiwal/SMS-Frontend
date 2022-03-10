@@ -1,5 +1,6 @@
 import React from "react";
 import { Table } from "ant-table-extensions";
+import ReactToPrint from "react-to-print";
 
 const AntTable = ({ columns, data, exportFileName }) => {
   return (

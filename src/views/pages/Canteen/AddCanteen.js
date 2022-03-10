@@ -67,7 +67,7 @@ function AddCanteen() {
 
   return (
     <>
-      <SimpleHeader name="Student" parentName="Attendance" />
+      <SimpleHeader name="Canteen" parentName="Add Canteen" />
       <Container className="mt--6" fluid>
         <Row>
           <Col lg="4">
