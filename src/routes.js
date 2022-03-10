@@ -57,8 +57,10 @@ import AllStaffs from "views/pages/staffManagement/AllStaffs";
 import Calendar from "views/pages/Calendar.js";
 import Attendance from "views/pages/Attendance/Attendance";
 import TimeTable from "views/pages/Time Table/TimeTable";
-import Canteen from "views/pages/Canteen/Canteen";
 import RolePermissions from "views/pages/Roles&Permissions/RolePermissions";
+import AddCanteen from "views/pages/Canteen/AddCanteen";
+import ViewCanteen from "views/pages/Canteen/ViewCanteen";
+import ViewAllCanteen from "views/pages/Canteen/ViewAllCanteen";
 
 const routes = [
   {
@@ -219,12 +221,35 @@ const routes = [
     component: TimeTable,
     layout: "/admin",
   },
+
   {
-    path: "/canteen",
+    collapse: true,
     name: "Canteen",
     icon: "ni ni-basket text-yellow",
-    component: Canteen,
-    layout: "/admin",
+    state: "canteenCollapse",
+    views: [
+      {
+        path: "/add-canteen",
+        name: "Add Canteen",
+        miniName: "A",
+        component: AddCanteen,
+        layout: "/admin",
+      },
+      {
+        path: "/view-canteen",
+        name: "View Canteen",
+        miniName: "V",
+        component: ViewCanteen,
+        layout: "/admin",
+      },
+      {
+        path: "/view-all-canteen",
+        name: "View All Canteen",
+        miniName: "V",
+        component: ViewAllCanteen,
+        layout: "/admin",
+      },
+    ],
   },
   {
     path: "/rolesPermissions",
