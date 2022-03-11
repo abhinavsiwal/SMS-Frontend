@@ -18,11 +18,12 @@ import {
 } from "reactstrap";
 
 import "./RolePermissions.css";
-
+import { isAuthenticated } from "api/auth";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
+import { addRole } from "api/rolesAndPermission";
 function RolePermissions() {
-  const [editing, setEditing] = React.useState(false);
+  const [addRoleModal, setAddRoleModal] = React.useState(false);
   const [modal2, setModal2] = React.useState(false);
   const [modal3, setModal3] = React.useState(false);
   const [role, setRole] = React.useState();
@@ -34,6 +35,7 @@ function RolePermissions() {
     "Field Engineers",
   ]);
   console.log(roleName);
+  const { user } = isAuthenticated();
   const [Permissions, setPermissions] = React.useState([
     "View",
     "Export",
@@ -47,13 +49,16 @@ function RolePermissions() {
     "Organization",
   ]);
 
-  const addRoleName = () => {
-    if (role.length === 0) return;
-    let arr = roleName;
-    arr.push(role);
-    setRoleName(arr);
-    setRole("");
-    setEditing(false);
+  const addRoleHandler = async() => {
+    console.log(role);
+    const formData = new FormData();
+    formData.set("name",role)
+    try {
+      const data = await addRole(user._id,formData)
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const addPermissionName = () => {
@@ -109,7 +114,7 @@ function RolePermissions() {
                   <Button
                     color="primary"
                     type="button"
-                    onClick={() => setEditing(true)}
+                    onClick={() => setAddRoleModal(true)}
                   >
                     Add Roles
                   </Button>
@@ -288,20 +293,20 @@ function RolePermissions() {
 
         <Modal
           className="modal-dialog-centered"
-          isOpen={editing}
-          toggle={() => setEditing(false)}
+          isOpen={addRoleModal}
+          toggle={() => setAddRoleModal(false)}
           size="sm"
         >
           <div className="modal-header">
             <h2 className="modal-title" id="modal-title-default">
-              {editing ? "Role Name" : ""}
+              Role Name
             </h2>
             <button
               aria-label="Close"
               className="close"
               data-dismiss="modal"
               type="button"
-              onClick={() => setEditing(false)}
+              onClick={() => setAddRoleModal(false)}
             >
               <span aria-hidden={true}>×</span>
             </button>
@@ -321,7 +326,7 @@ function RolePermissions() {
             </Row>
           </ModalBody>
           <ModalFooter>
-            <Button color="success" type="button" onClick={addRoleName}>
+            <Button color="success" type="button" onClick={addRoleHandler}>
               Add Role
             </Button>
           </ModalFooter>

@@ -32,7 +32,7 @@ import moment from "moment";
 import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
-import {sendRequest} from 'api/api'
+import { sendRequest } from "api/api";
 
 function Attendance() {
   //start and end date of month
@@ -50,7 +50,7 @@ function Attendance() {
   });
   const { classes } = useSelector((state) => state.classReducer);
   const [attendanceData, setAttendanceData] = useState([]);
-  const [allAttendance, setAllAttendance] = useState({})
+  const [allAttendance, setAllAttendance] = useState([]);
   // console.log("attendance", attendance);
   // console.log(classes);
 
@@ -135,7 +135,7 @@ function Attendance() {
       key: i,
       title: i,
       width: 110,
-      dataIndex:"status"
+      dataIndex: "status",
     });
   }
 
@@ -146,9 +146,9 @@ function Attendance() {
   const getAllAttendance = async () => {
     const data = await getAttendence(user.school, user._id);
     console.log(data);
+    setAllAttendance(data);
+
   };
-
-
 
   const submitHandler = async () => {
     // let attData = {
@@ -159,7 +159,6 @@ function Attendance() {
     //   schoolId: user.school,
     // };
 
-   
     // console.log(atd);
     let formattedAttendanceData = {};
     let presentStudents = [];
@@ -196,38 +195,40 @@ function Attendance() {
       attendance: {
         10: formattedAttendanceData,
       },
-      month: date.getMonth()+1,
+      month: date.getMonth() + 1,
       year: date.getFullYear(),
       school: user.school,
       class: classes[selectedClassIndex]._id,
       section: classes[selectedClassIndex].section._id,
     };
     console.log(classes[selectedClassIndex]);
-    let attendance =  {
+    let attendance = {
       4: formattedAttendanceData,
     };
-    let month = date.getMonth()+1;
+    let month = date.getMonth() + 1;
     let year = date.getFullYear();
     let school = user.school;
-    let classId =  classes[selectedClassIndex]._id;
-    let sectionId =  classes[selectedClassIndex].section[0]._id;
+    let classId = classes[selectedClassIndex]._id;
+    let sectionId = classes[selectedClassIndex].section[0]._id;
 
     let formData = new FormData();
-    formData.set("attendance",JSON.stringify(attendance))
-    formData.set("month",month);
-    formData.set("year",year);
-    formData.set("school",school);
-    formData.set("class",classId);
-    formData.set("section",sectionId);
+    formData.set("attendance", JSON.stringify(attendance));
+    formData.set("month", month);
+    formData.set("year", year);
+    formData.set("school", school);
+    formData.set("class", classId);
+    formData.set("section", sectionId);
 
     try {
-      const  data  = await sendRequest(
-        `${process.env.REACT_APP_API_URL}/api/school/attendance/create/${user._id}`,formData,"POST"
+      const data = await sendRequest(
+        `${process.env.REACT_APP_API_URL}/api/school/attendance/create/${user._id}`,
+        formData,
+        "POST"
       );
       console.log(data);
     } catch (err) {
-        console.log(err);
-        throw err;
+      console.log(err);
+      throw err;
     }
   };
 
@@ -353,7 +354,12 @@ function Attendance() {
                       classes[selectedClassIndex].section.map((section) => {
                         // console.log(section.name);
                         return (
-                          <option value={section.name} key={section._id} disabled selected>
+                          <option
+                            value={section.name}
+                            key={section._id}
+                            disabled
+                            selected
+                          >
                             {section.name}
                           </option>
                         );
