@@ -19,7 +19,6 @@ import {
 import { Popconfirm, TimePicker } from "antd";
 import "./RolePermissions.css";
 import { isAuthenticated } from "api/auth";
-import Select from "react-select";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { addRole, updateRole } from "api/rolesAndPermission";
@@ -45,9 +44,12 @@ function RolePermissions() {
   const [checked, setChecked] = useState(false);
   console.log(roleName);
   const { user } = isAuthenticated();
-  const [permissions, setPermissions] = React.useState([]);
-  console.log("per", permissions);
-
+  const [Permissions, setPermissions] = React.useState([
+    "View",
+    "Export",
+    "Delete",
+    "Import",
+  ]);
   const [application, setApplication] = React.useState([
     "Pricing",
     "Owner",
@@ -56,25 +58,6 @@ function RolePermissions() {
   ]);
 
   useEffect(() => {
-    const myData = [
-      {
-        value: "view",
-        label: "View",
-      },
-      {
-        value: "export",
-        label: "Export",
-      },
-      {
-        value: "delete",
-        label: "Delete",
-      },
-      {
-        value: "import",
-        label: "Import",
-      },
-    ];
-    setPermissions(myData);
     getAllRolesHandler();
   }, [checked]);
 
@@ -137,7 +120,7 @@ function RolePermissions() {
 
   const addPermissionName = () => {
     if (permissionName.length === 0) return;
-    let arr = permissions;
+    let arr = Permissions;
     arr.push(permissionName);
     setPermissions(arr);
     setPermissionName("");
@@ -170,7 +153,7 @@ function RolePermissions() {
 
   return (
     <>
-      <SimpleHeader name="Roles-permissions" />
+      <SimpleHeader name="Roles-Permissions" />
       <Container className="mt--6" fluid>
         <Row>
           <Col className="m-1">
@@ -179,7 +162,7 @@ function RolePermissions() {
               type="button"
               onClick={() => setManageModal(true)}
             >
-              Manage Role permissions Mapping
+              Manage Role Permissions Mapping
             </Button>
           </Col>
         </Row>
@@ -187,7 +170,7 @@ function RolePermissions() {
           <Col lg="4">
             <Card>
               <CardHeader>
-                <div className="d-flex justify-content-between Role-permissions">
+                <div className="d-flex justify-content-between Role-Permissions">
                   <p>Manage Roles</p>
                   <Button
                     color="primary"
@@ -199,7 +182,7 @@ function RolePermissions() {
                 </div>
               </CardHeader>
               <CardBody>
-                <Col className="d-flex justify-content-between Role-permissions">
+                <Col className="d-flex justify-content-between Role-Permissions">
                   <p>Role Name</p>
                   <p>Actions</p>
                 </Col>
@@ -257,20 +240,20 @@ function RolePermissions() {
           <Col lg="4">
             <Card>
               <CardHeader>
-                <div className="d-flex justify-content-between Role-permissions">
-                  <p>Manage permissions</p>
+                <div className="d-flex justify-content-between Role-Permissions">
+                  <p>Manage Permissions</p>
                   <Button
                     color="primary"
                     type="button"
                     onClick={() => setModal3(true)}
                   >
-                    Add permissions
+                    Add Permissions
                   </Button>
                 </div>
               </CardHeader>
               <CardBody>
-                <Col className="d-flex justify-content-between Role-permissions">
-                  <p>permissions Name</p>
+                <Col className="d-flex justify-content-between Role-Permissions">
+                  <p>Permissions Name</p>
                   <p>Actions</p>
                 </Col>
                 <Col md="6">
@@ -283,12 +266,12 @@ function RolePermissions() {
                   />
                 </Col>
                 <ListGroup className="m-1">
-                  {permissions.map((permissions) => {
+                  {Permissions.map((Permissions) => {
                     return (
                       <>
                         <ListGroupItem>
                           <Col className="d-flex justify-content-between">
-                            <div>{permissions.value}</div>
+                            <div>{Permissions}</div>
                             <div className="d-flex justify-content-between">
                               <Button
                                 className="btn-sm pull-right"
@@ -318,7 +301,7 @@ function RolePermissions() {
           <Col lg="4">
             <Card>
               <CardHeader>
-                <div className="d-flex justify-content-between Role-permissions">
+                <div className="d-flex justify-content-between Role-Permissions">
                   <p>Manage Applications</p>
                   <Button
                     color="primary"
@@ -330,7 +313,7 @@ function RolePermissions() {
                 </div>
               </CardHeader>
               <CardBody>
-                <Col className="d-flex justify-content-between Role-permissions">
+                <Col className="d-flex justify-content-between Role-Permissions">
                   <p>Applications Name</p>
                   <p>Actions</p>
                 </Col>
@@ -456,20 +439,26 @@ function RolePermissions() {
                   ))}
                 </Input>
               </Col>
-            </Row>
-            <Row>
+              </Row>
+              <Row>
+
               <Col>
-                <label className="form-control-label">permissions</label>
-                <Select
-                  isMulti
-                  name="permissions"
-                  // options={}
-                  // onChange={handleChange}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                />
+                <label className="form-control-label">Role</label>
+                <Input
+                  id="example4cols2Input"
+                  type="select"
+                  // onChange={}
+                  required
+                >
+                  {allRoles?.map((role, index) => (
+                    <option key={index} value={role.name}>
+                      {role.name}
+                    </option>
+                  ))}
+                </Input>
               </Col>
-            </Row>
+              </Row>
+
           </ModalBody>
           <ModalFooter>
             <Button color="success" type="button" onClick={addRoleHandler}>
