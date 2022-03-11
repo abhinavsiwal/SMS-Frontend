@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 //ReactStrap Components
 import {
@@ -16,17 +16,24 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-
+import { Popconfirm, TimePicker } from "antd";
 import "./RolePermissions.css";
 import { isAuthenticated } from "api/auth";
+import Select from "react-select";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import { addRole } from "api/rolesAndPermission";
+import { addRole, updateRole } from "api/rolesAndPermission";
+import { getAllRoles } from "api/rolesAndPermission";
+import { deleteRole } from "api/rolesAndPermission";
 function RolePermissions() {
   const [addRoleModal, setAddRoleModal] = React.useState(false);
+  const [editRoleModal, setEditRoleModal] = useState(false);
+  const [manageModal, setManageModal] = useState(false);
   const [modal2, setModal2] = React.useState(false);
   const [modal3, setModal3] = React.useState(false);
   const [role, setRole] = React.useState();
+  const [editRole, setEditRole] = useState("");
+  const [editRoleId, setEditRoleId] = useState("");
   const [permissionName, setPermissionName] = React.useState();
   const [applicationName, setApplicationName] = React.useState();
   const [roleName, setRoleName] = React.useState([
@@ -34,28 +41,92 @@ function RolePermissions() {
     "Admin",
     "Field Engineers",
   ]);
+  const [allRoles, setAllRoles] = useState([]);
+  const [checked, setChecked] = useState(false);
   console.log(roleName);
   const { user } = isAuthenticated();
-  const [Permissions, setPermissions] = React.useState([
-    "View",
-    "Export",
-    "Delete",
-    "Import",
-  ]);
+  const [permissions, setPermissions] = React.useState([]);
+
   const [application, setApplication] = React.useState([
     "Pricing",
     "Owner",
     "Vendor",
     "Organization",
   ]);
+  const myData =[{
+    value: "view",
+    label: "View",
+  },
+  {
+    value: "export",
+    label: "Export",
+  },
+  {
+    value: "delete",
+    label: "Delete",
+  },
+  {
+    value: "import",
+    label: "Import",
+  }]
+  useEffect(() => {
+  
+    setPermissions(myData);
+    getAllRolesHandler();
+  }, [checked]);
 
-  const addRoleHandler = async() => {
+  const addRoleHandler = async () => {
     console.log(role);
     const formData = new FormData();
-    formData.set("name",role)
+    formData.set("name", role);
+    formData.set("school", user.school);
     try {
-      const data = await addRole(user._id,formData)
+      const data = await addRole(user._id, formData);
       console.log(data);
+      setRole("");
+      setAddRoleModal(false);
+      setChecked(!checked);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getAllRolesHandler = async () => {
+    try {
+      const data = await getAllRoles(user._id, user.school);
+      console.log(data);
+      setAllRoles(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const editRoleHandler = (role, roleId) => {
+    setEditRoleModal(true);
+    setEditRole(role);
+    setEditRoleId(roleId);
+  };
+
+  const editRoleSubmit = async () => {
+    try {
+      const formData = new FormData();
+      formData.set("name", editRole);
+      const data = await updateRole(user._id, editRoleId, formData);
+      console.log(data);
+      setChecked(!checked);
+      setEditRoleModal(false);
+      setEditRole("");
+      setEditRoleId("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const deleteRoleHandler = async (roleId) => {
+    try {
+      const data = await deleteRole(user._id, roleId);
+      console.log(data);
+      setChecked(!checked);
     } catch (err) {
       console.log(err);
     }
@@ -63,7 +134,7 @@ function RolePermissions() {
 
   const addPermissionName = () => {
     if (permissionName.length === 0) return;
-    let arr = Permissions;
+    let arr = permissions;
     arr.push(permissionName);
     setPermissions(arr);
     setPermissionName("");
@@ -96,12 +167,16 @@ function RolePermissions() {
 
   return (
     <>
-      <SimpleHeader name="Roles-Permissions" />
+      <SimpleHeader name="Roles-permissions" />
       <Container className="mt--6" fluid>
         <Row>
           <Col className="m-1">
-            <Button color="primary" type="button">
-              Manage Role Permissions Mapping
+            <Button
+              color="primary"
+              type="button"
+              onClick={() => setManageModal(true)}
+            >
+              Manage Role permissions Mapping
             </Button>
           </Col>
         </Row>
@@ -109,7 +184,7 @@ function RolePermissions() {
           <Col lg="4">
             <Card>
               <CardHeader>
-                <div className="d-flex justify-content-between Role-Permissions">
+                <div className="d-flex justify-content-between Role-permissions">
                   <p>Manage Roles</p>
                   <Button
                     color="primary"
@@ -121,7 +196,7 @@ function RolePermissions() {
                 </div>
               </CardHeader>
               <CardBody>
-                <Col className="d-flex justify-content-between Role-Permissions">
+                <Col className="d-flex justify-content-between Role-permissions">
                   <p>Role Name</p>
                   <p>Actions</p>
                 </Col>
@@ -136,17 +211,20 @@ function RolePermissions() {
                 </Col>
 
                 <ListGroup className="m-1">
-                  {roleName.map((roll) => {
+                  {allRoles.map((role) => {
                     return (
                       <>
                         <ListGroupItem>
                           <Col className="d-flex justify-content-between">
-                            <div>{roll}</div>
+                            <div>{role.name}</div>
                             <div className="d-flex justify-content-between">
                               <Button
                                 className="btn-sm pull-right"
                                 color="primary"
                                 type="button"
+                                onClick={() =>
+                                  editRoleHandler(role.name, role._id)
+                                }
                               >
                                 <i className="fas fa-user-edit" />
                               </Button>
@@ -155,7 +233,12 @@ function RolePermissions() {
                                 color="danger"
                                 type="button"
                               >
-                                <i className="fas fa-trash" />
+                                <Popconfirm
+                                  title="Sure to delete?"
+                                  onConfirm={() => deleteRoleHandler(role._id)}
+                                >
+                                  <i className="fas fa-trash" />
+                                </Popconfirm>
                               </Button>
                             </div>
                           </Col>
@@ -171,20 +254,20 @@ function RolePermissions() {
           <Col lg="4">
             <Card>
               <CardHeader>
-                <div className="d-flex justify-content-between Role-Permissions">
-                  <p>Manage Permissions</p>
+                <div className="d-flex justify-content-between Role-permissions">
+                  <p>Manage permissions</p>
                   <Button
                     color="primary"
                     type="button"
                     onClick={() => setModal3(true)}
                   >
-                    Add Permissions
+                    Add permissions
                   </Button>
                 </div>
               </CardHeader>
               <CardBody>
-                <Col className="d-flex justify-content-between Role-Permissions">
-                  <p>Permissions Name</p>
+                <Col className="d-flex justify-content-between Role-permissions">
+                  <p>permissions Name</p>
                   <p>Actions</p>
                 </Col>
                 <Col md="6">
@@ -197,12 +280,12 @@ function RolePermissions() {
                   />
                 </Col>
                 <ListGroup className="m-1">
-                  {Permissions.map((Permissions) => {
+                  {permissions.map((permissions) => {
                     return (
                       <>
                         <ListGroupItem>
                           <Col className="d-flex justify-content-between">
-                            <div>{Permissions}</div>
+                            <div>{permissions}</div>
                             <div className="d-flex justify-content-between">
                               <Button
                                 className="btn-sm pull-right"
@@ -232,7 +315,7 @@ function RolePermissions() {
           <Col lg="4">
             <Card>
               <CardHeader>
-                <div className="d-flex justify-content-between Role-Permissions">
+                <div className="d-flex justify-content-between Role-permissions">
                   <p>Manage Applications</p>
                   <Button
                     color="primary"
@@ -244,7 +327,7 @@ function RolePermissions() {
                 </div>
               </CardHeader>
               <CardBody>
-                <Col className="d-flex justify-content-between Role-Permissions">
+                <Col className="d-flex justify-content-between Role-permissions">
                   <p>Applications Name</p>
                   <p>Actions</p>
                 </Col>
@@ -290,7 +373,108 @@ function RolePermissions() {
             </Card>
           </Col>
         </Row>
-
+        {/* Edit role modal */}
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={editRoleModal}
+          toggle={() => setEditRoleModal(false)}
+          size="sm"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              Role Name
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditRoleModal(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Role Name</label>
+                <Input
+                  id="form-department-name"
+                  onChange={(e) => setEditRole(e.target.value)}
+                  value={editRole}
+                  placeholder="Role Name"
+                  type="text"
+                  required
+                />
+              </Col>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="button" onClick={editRoleSubmit}>
+              Edit Role
+            </Button>
+          </ModalFooter>
+        </Modal>
+        {/* Mangae role modal */}
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={manageModal}
+          toggle={() => setManageModal(false)}
+          size="sm"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              Role Name
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setManageModal(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Role</label>
+                <Input
+                  id="example4cols2Input"
+                  type="select"
+                  // onChange={}
+                  required
+                >
+                  {allRoles?.map((role, index) => (
+                    <option key={index} value={role.name}>
+                      {role.name}
+                    </option>
+                  ))}
+                </Input>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <label className="form-control-label">permissions</label>
+                <Select
+                  isMulti
+                  name="permissions"
+                  // options={}
+                  // onChange={handleChange}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                />
+              </Col>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="button" onClick={addRoleHandler}>
+              Add Role
+            </Button>
+          </ModalFooter>
+        </Modal>
+        {/* Add roles model */}
         <Modal
           className="modal-dialog-centered"
           isOpen={addRoleModal}

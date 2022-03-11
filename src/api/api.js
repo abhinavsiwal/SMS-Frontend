@@ -35,7 +35,7 @@ export const sendRequest = (
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        if (error.response.status == 401) {
+        if (error.response.status === 401) {
           // localStorage.clear();
           //  Router.push("/");
           return error.response;
@@ -90,7 +90,7 @@ export const sendRequestWithJson = (
         // console.log(error.response.status);
         // console.log(error.response.data);
         // console.log(error.response.headers);
-        if (error.response.status == 401) {
+        if (error.response.status === 401) {
           // localStorage.clear();
           //  Router.push("/");
           return error.response;
@@ -129,7 +129,7 @@ export const sendRequestWithoutAuth = (
         console.log(error.response.status);
         console.log(error.response.data);
         console.log(error.response.headers);
-        if (error.response.status == 401) {
+        if (error.response.status === 401) {
           // localStorage.clear();
           //  Router.push("/");
           return error.response;
