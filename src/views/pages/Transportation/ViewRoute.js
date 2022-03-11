@@ -28,6 +28,10 @@ function ViewRoute() {
 
   const columns = [
     {
+      title: "S No.",
+      dataIndex: "s_no",
+    },
+    {
       title: "Route Name",
       dataIndex: "route_name",
       sorter: (a, b) => a.route_name > b.route_name,
@@ -145,70 +149,70 @@ function ViewRoute() {
     },
 
     {
-      title: "StartTime/EndTime",
-      children: [
-        {
-          title: "Start Time",
-          dataIndex: "start_time",
-          sorter: (a, b) => a.start_time > b.start_time,
-          filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-            return (
-              <>
-                <Input
-                  autoFocus
-                  placeholder="Type text here"
-                  value={selectedKeys[0]}
-                  onChange={(e) => {
-                    setSelectedKeys(e.target.value ? [e.target.value] : []);
-                    confirm({ closeDropdown: false });
-                  }}
-                  onBlur={() => {
-                    confirm();
-                  }}
-                ></Input>
-              </>
-            );
-          },
-          filterIcon: () => {
-            return <SearchOutlined />;
-          },
-          onFilter: (value, record) => {
-            return record.start_time
-              .toLowerCase()
-              .includes(value.toLowerCase());
-          },
-        },
+      title: "Start Time",
+      dataIndex: "start_time",
+      sorter: (a, b) => a.start_time > b.start_time,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.start_time.toLowerCase().includes(value.toLowerCase());
+      },
+    },
 
-        {
-          title: "End Time",
-          dataIndex: "end_time",
-          sorter: (a, b) => a.end_time > b.end_time,
-          filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-            return (
-              <>
-                <Input
-                  autoFocus
-                  placeholder="Type text here"
-                  value={selectedKeys[0]}
-                  onChange={(e) => {
-                    setSelectedKeys(e.target.value ? [e.target.value] : []);
-                    confirm({ closeDropdown: false });
-                  }}
-                  onBlur={() => {
-                    confirm();
-                  }}
-                ></Input>
-              </>
-            );
-          },
-          filterIcon: () => {
-            return <SearchOutlined />;
-          },
-          onFilter: (value, record) => {
-            return record.end_time.toLowerCase().includes(value.toLowerCase());
-          },
-        },
-      ],
+    {
+      title: "End Time",
+      dataIndex: "end_time",
+      sorter: (a, b) => a.end_time > b.end_time,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.end_time.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
     },
   ];
 
@@ -221,11 +225,14 @@ function ViewRoute() {
       for (let i = 0; i < res.length; i++) {
         data.push({
           key: i,
+          s_no: i + 1,
           route_name: res[i].route_name,
           description: res[i].description,
           bus_no: res[i].bus_no,
           staff_members: res[i].staff_members,
-          start_time: (
+          start_time: res[i].start_time,
+          end_time: res[i].end_time,
+          action: (
             <>
               <h5 key={i + 1} className="mb-0">
                 <span>{res[i].startTime}</span>
@@ -233,7 +240,7 @@ function ViewRoute() {
                   className="btn-sm pull-right"
                   color="primary"
                   type="button"
-                  // key={"edit" + i + 1}
+                  key={"edit" + i + 1}
                 >
                   <i className="fas fa-user-edit" />
                 </Button>
@@ -241,36 +248,7 @@ function ViewRoute() {
                   className="btn-sm pull-right"
                   color="danger"
                   type="button"
-                  // key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    // onConfirm={() => handleDelete(res[i]._id)}
-                  >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
-              </h5>
-            </>
-          ),
-
-          end_time: (
-            <>
-              <h5 key={i + 1} className="mb-0">
-                <span>{res[i].endTime}</span>
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  // key={"edit" + i + 1}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  // key={"delete" + i + 1}
+                  key={"delete" + i + 1}
                 >
                   <Popconfirm
                     title="Sure to delete?"

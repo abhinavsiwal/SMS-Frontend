@@ -1,21 +1,5 @@
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  Form,
-  Label,
-  Input,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  CardHeader,
-  CardGroup,
-  CardImg,
-} from "reactstrap";
+import { Card, CardBody, Button, Container } from "reactstrap";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -41,17 +25,17 @@ function ViewAllCanteen() {
       price: 35,
     },
     {
-      img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8OHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
       name: "ghgvgh",
       price: 35,
     },
     {
-      img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8OHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
       name: "ghgvgh",
       price: 35,
     },
     {
-      img: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8OHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
       name: "ghgvgh",
       price: 35,
     },
@@ -59,66 +43,110 @@ function ViewAllCanteen() {
   const [count, setCount] = React.useState(0);
   console.log("count", count);
 
-  const handleChange = (e, steps) => {
-    setCount(steps);
-  };
+  const [canteenName, setCanteenName] = React.useState([
+    {
+      name: "Canteen Name",
+    },
+    {
+      name: "Canteen Name",
+    },
+    {
+      name: "Canteen Name",
+    },
+    {
+      name: "Canteen Name",
+    },
+    {
+      name: "Canteen Name",
+    },
+    {
+      name: "Canteen Name",
+    },
+    {
+      name: "Canteen Name",
+    },
+  ]);
+
+  // const handleChange = (e, steps) => {
+  //   setCount(steps);
+  // };
+
+  const [check, setCheck] = React.useState(false);
   return (
     <>
       {/* <SimpleHeader name="Canteen" /> */}
-      <Card>
-        <CardBody>
-          <img
-            className="Header-Image"
-            src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8N3x8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60"
-          />
-          <div className="Canteen-Name">
-            <h1>Canteen Name</h1>
-            <h3>
-              <span>
-                <i className="ni ni-watch-time"></i>
-              </span>{" "}
-              10:30AM - 11:30AM
-            </h3>
-          </div>
-          <div className="canteen-button">
-            <button onClick={() => setCount(0)}>POPULAR</button>
-            <button onClick={() => setCount(1)}>BREAKFAST</button>
-            <button onClick={() => setCount(2)}>SOUPS</button>
-            <button onClick={() => setCount(3)}>SNACKS</button>
-            <button onClick={() => setCount(4)}>CHINESE</button>
-            <button onClick={() => setCount(5)}>SOUTHINDIAN</button>
-            <button onClick={() => setCount(6)}>DESSERTS</button>
-          </div>
+      <div className="items ">
+        {canteenName.map((canteenName) => {
+          return (
+            <Button fluid onClick={() => setCheck(true)}>
+              <Card>
+                <CardBody>
+                  <p>{canteenName.name}</p>
+                </CardBody>
+              </Card>
+            </Button>
+          );
+        })}
+      </div>
 
-          {count === 0 && (
-            <div className="items">
-              {images.map((images) => {
-                return (
-                  <>
-                    <div>
-                      <img className="imgs" src={images.img} />
-                      <div className="Name-Price">
-                        <p className="Name">{images.name}</p>
-                        <p className="Price">{images.price}₹</p>
-                      </div>
-                    </div>
-                  </>
-                );
-              })}
-            </div>
-          )}
-          {count === 1 && (
-            <div>
-              <Loader />
-            </div>
-          )}
-          {count === 2 && <div>dkjcdndn</div>}
-          {count === 3 && <div>nc nmd dv</div>}
-          {count === 4 && <div>,mv, mf v</div>}
-          {count === 5 && <div>mdnckdn</div>}
-          {count === 6 && <div>kcdncn</div>}
-        </CardBody>
-      </Card>
+      {check && (
+        <>
+          <Card>
+            <CardBody>
+              <img
+                className="Header-Image"
+                src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8N3x8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60"
+              />
+              <div className="Canteen-Name">
+                <h1>Canteen Name</h1>
+                <h3>
+                  <span>
+                    <i className="ni ni-watch-time"></i>
+                  </span>{" "}
+                  10:30AM - 11:30AM
+                </h3>
+              </div>
+              <div className="canteen-button">
+                <button onClick={() => setCount(0)}>POPULAR</button>
+                <button onClick={() => setCount(1)}>BREAKFAST</button>
+                <button onClick={() => setCount(2)}>SOUPS</button>
+                <button onClick={() => setCount(3)}>SNACKS</button>
+                <button onClick={() => setCount(4)}>CHINESE</button>
+                <button onClick={() => setCount(5)}>SOUTHINDIAN</button>
+                <button onClick={() => setCount(6)}>DESSERTS</button>
+              </div>
+
+              {count === 0 && (
+                <div className="items">
+                  {images.map((images) => {
+                    return (
+                      <>
+                        <div>
+                          <img className="imgs" src={images.img} />
+                          <div className="Name-Price">
+                            <p className="Name">{images.name}</p>
+                            <p className="Price">{images.price}₹</p>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })}
+                </div>
+              )}
+              {count === 1 && (
+                <div>
+                  <Loader />
+                </div>
+              )}
+              {count === 2 && <div>dkjcdndn</div>}
+              {count === 3 && <div>nc nmd dv</div>}
+              {count === 4 && <div>,mv, mf v</div>}
+              {count === 5 && <div>mdnckdn</div>}
+              {count === 6 && <div>kcdncn</div>}
+            </CardBody>
+          </Card>
+        </>
+      )}
     </>
   );
 }

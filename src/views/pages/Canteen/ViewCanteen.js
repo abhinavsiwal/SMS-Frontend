@@ -27,6 +27,10 @@ function ViewCanteen() {
   const [loading, setLoading] = React.useState(false);
   const columns = [
     {
+      title: "S No.",
+      dataIndex: "s_no",
+    },
+    {
       title: "Items",
       dataIndex: "items",
       sorter: (a, b) => a.items > b.items,
@@ -209,23 +213,6 @@ function ViewCanteen() {
     },
   ];
 
-  // const data = [];
-  // for (let i = 1; i < 20; i++) {
-  // data.push({
-  //   key: "2",
-  //   items: "Aloo",
-  //   description: "addfdfdddffdfd",
-  //   image: "sun.jpg",
-  //   prize: "15",
-  //   publish: "Yes",
-  //   time: "11:00AM",
-
-  //   key: i,
-  //   hash: `${i}`,
-  //   name: "Ajay",
-  // });
-  // }
-
   React.useEffect(() => {
     const fetchStaff = async () => {
       const { user, token } = isAuthenticated();
@@ -235,6 +222,7 @@ function ViewCanteen() {
       for (let i = 0; i < res.length; i++) {
         data.push({
           key: i,
+          s_no: [i + 1],
           items: res[i].items,
           description: res[i].description,
           image: res[i].image,

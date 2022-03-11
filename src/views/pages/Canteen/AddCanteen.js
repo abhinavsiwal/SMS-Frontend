@@ -27,13 +27,19 @@ import TextArea from "antd/lib/input/TextArea";
 // import moment Library
 import moment from "moment";
 
+//React-Select
+import Select from "react-select";
+
 function AddCanteen() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
+  console.log("start", startDuration);
+  const [endDate, setEndDate] = React.useState(new Date());
+  const endDuration = moment(endDate).format("LT");
+  console.log("end", endDuration);
 
   const [addCanteen, setAddCanteen] = React.useState({
     canteenName: "",
-    canteenStaff: "",
   });
   console.log("addCanteen", addCanteen);
 
@@ -47,10 +53,23 @@ function AddCanteen() {
   });
   console.log("addMenu", addMenu);
 
+  const roleOptions = [
+    { value: "0", label: "Shyamlal" },
+    { value: "1", label: "Ramlal" },
+  ];
+
   //Values of addCanteen
   const handleChangeCanteen = (name) => (event) => {
     // formData.set(name, event.target.value);
     setAddCanteen({ ...addCanteen, [name]: event.target.value });
+  };
+
+  const handleSubjectChange = (e) => {
+    var value = [];
+    for (var i = 0, l = e.length; i < l; i++) {
+      value.push(e[i].value);
+    }
+    // formData.set("subject", JSON.stringify(value));
   };
 
   //values of addMenu
@@ -100,27 +119,19 @@ function AddCanteen() {
                       <Col>
                         <Label
                           className="form-control-label"
-                          htmlFor="exampleFormControlSelect3"
+                          htmlFor="xample-date-input"
                         >
-                          Canteen Staff
+                          Select Staff Member
                         </Label>
-                        <Input
-                          id="exampleFormControlSelect3"
-                          type="select"
-                          onChange={handleChangeCanteen("canteenStaff")}
-                          value={addCanteen.canteenStaff}
+                        <Select
+                          isMulti
+                          name="colors"
+                          options={roleOptions}
+                          onChange={handleSubjectChange}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
                           required
-                        >
-                          <option value="" disabled selected>
-                            Canteen Staff
-                          </option>
-                          <option>Sam</option>
-                          <option>David</option>
-                          <option>Sam</option>
-                          <option>David</option>
-                          <option>Sam</option>
-                          <option>David</option>
-                        </Input>
+                        />
                       </Col>
                     </Row>
                     <Row className="mt-4 float-right">
@@ -253,18 +264,38 @@ function AddCanteen() {
                       </Col>
                     </Row>
                     <Row className="mt-4">
-                      <Col md="6">
+                      <Col md="3">
                         <Label
                           className="form-control-label"
                           htmlFor="xample-date-input"
                         >
-                          Time
+                          From
                         </Label>
                         <DatePicker
                           id="exampleFormControlSelect3"
-                          className="Time"
+                          className="Period-Time"
                           selected={startDate}
                           onChange={(date) => setStartDate(date)}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                          required
+                        />
+                      </Col>
+                      <Col md="3">
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          To
+                        </Label>
+                        <DatePicker
+                          id="exampleFormControlSelect3"
+                          className="Period-Time"
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
                           showTimeSelect
                           showTimeSelectOnly
                           timeIntervals={15}

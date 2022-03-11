@@ -11,6 +11,7 @@ import {
   Input,
   Button,
   CardHeader,
+  Table,
 } from "reactstrap";
 
 //React Datepicker
@@ -34,16 +35,20 @@ function AddRoute() {
   const [endDate, setEndDate] = React.useState(new Date());
   const endDuration = moment(endDate).format("LT");
   console.log("end", endDuration);
+
   const [startTimePickup, setStartTimePickup] = React.useState(new Date());
   const startTime = moment(startTimePickup).format("LT");
   const [endTimePickup, setEndTimePickup] = React.useState(new Date());
   const endTime = moment(endTimePickup).format("LT");
 
-  const [addRoute, setAddRoute] = React.useState({
-    routeName: "",
-    placeName: "",
-  });
-  console.log(addRoute);
+  const [addRoute, setAddRoute] = React.useState("");
+  const [placeName, setPlaceName] = React.useState("");
+  const [multiSelect, setMultiSelect] = React.useState();
+
+  const [check, setCheck] = React.useState(false);
+
+  const [addStops, setAddStops] = React.useState([]);
+  console.log("addStops", addStops);
 
   const roleOptions = [
     { value: "0", label: "Shyamlal" },
@@ -55,26 +60,49 @@ function AddRoute() {
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    // formData.set("subject", JSON.stringify(value));
+    setMultiSelect(value);
   };
 
-  const handleChange = (name) => (event) => {
-    // formData.set(name, event.target.value);
-    setAddRoute({ ...addRoute, [name]: event.target.value });
+  const addStop = () => {
+    let obj = {
+      stopName: placeName,
+      pickupTime: startTime,
+      dropTime: endTime,
+    };
+    let arr = addStops;
+    arr.push(obj);
+    setAddStops(arr);
+    if (check === true) {
+      setCheck(false);
+    } else {
+      setCheck(true);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const obj2 = {
+      routName: addRoute,
+      staffMember: multiSelect,
+      startTime: startDuration,
+      endTime: endDuration,
+      addStop: addStops,
+    };
+    console.log("obj2", obj2);
   };
 
   return (
     <>
       <SimpleHeader name="Transport" parentName="Add Route" />
       <Container className="mt--6" fluid>
-        <Row className="d-flex justify-content-center">
+        <Row>
           <Col lg="6">
             <div className="card-wrapper">
               <Card>
                 <CardHeader>
                   <h3>Add Route</h3>
                 </CardHeader>
-                <Form className="mb-4">
+                <Form className="mb-4" onSubmit={handleSubmit}>
                   <CardBody>
                     <Row className="d-flex justify-content-center">
                       <Col md="6">
@@ -88,8 +116,7 @@ function AddRoute() {
                           id="example4cols2Input"
                           placeholder="Class"
                           type="text"
-                          onChange={handleChange("routeName")}
-                          value={addRoute.routeName}
+                          onChange={(e) => setAddRoute(e.target.value)}
                           required
                         />
                       </Col>
@@ -171,8 +198,7 @@ function AddRoute() {
                           id="example4cols2Input"
                           placeholder="Class"
                           type="text"
-                          onChange={handleChange("placeName")}
-                          value={addRoute.placeName}
+                          onChange={(e) => setPlaceName(e.target.value)}
                           required
                         />
                       </Col>
@@ -183,7 +209,7 @@ function AddRoute() {
                           className="form-control-label"
                           htmlFor="xample-date-input"
                         >
-                          From
+                          Pickup Time
                         </Label>
                         <DatePicker
                           id="exampleFormControlSelect3"
@@ -203,7 +229,7 @@ function AddRoute() {
                           className="form-control-label"
                           htmlFor="example-date-input"
                         >
-                          To
+                          Drop Time
                         </Label>
                         <DatePicker
                           id="exampleFormControlSelect3"
@@ -221,16 +247,53 @@ function AddRoute() {
                     </Row>
                   </CardBody>
 
-                  <Row className="mt-4 ml-3 ">
+                  <Row>
+                    <Col className="ml-3">
+                      <Button color="primary" onClick={addStop}>
+                        Add
+                      </Button>
+                    </Col>
                     <Col>
                       <Button color="primary" type="submit">
-                        Add
+                        Submit
                       </Button>
                     </Col>
                   </Row>
                 </Form>
               </Card>
             </div>
+          </Col>
+
+          <Col lg="6">
+            <Card>
+              <CardHeader>
+                <h3>Add Stops</h3>
+              </CardHeader>
+              <CardBody>
+                <Table bordered>
+                  <thead>
+                    <tr>
+                      <th>S No.</th>
+                      <th>Place Name</th>
+                      <th>pickup Time</th>
+                      <th>DropTime</th>
+                    </tr>
+                  </thead>
+                  {addStops.map((stops, index) => {
+                    return (
+                      <tbody>
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{stops.stopName}</td>
+                          <td>{stops.pickupTime}</td>
+                          <td>{stops.dropTime}</td>
+                        </tr>
+                      </tbody>
+                    );
+                  })}
+                </Table>
+              </CardBody>
+            </Card>
           </Col>
         </Row>
       </Container>

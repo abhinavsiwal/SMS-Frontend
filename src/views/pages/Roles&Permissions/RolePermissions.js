@@ -46,6 +46,7 @@ function RolePermissions() {
   console.log(roleName);
   const { user } = isAuthenticated();
   const [permissions, setPermissions] = React.useState([]);
+  console.log("per", permissions);
 
   const [application, setApplication] = React.useState([
     "Pricing",
@@ -53,24 +54,26 @@ function RolePermissions() {
     "Vendor",
     "Organization",
   ]);
-  const myData =[{
-    value: "view",
-    label: "View",
-  },
-  {
-    value: "export",
-    label: "Export",
-  },
-  {
-    value: "delete",
-    label: "Delete",
-  },
-  {
-    value: "import",
-    label: "Import",
-  }]
+
   useEffect(() => {
-  
+    const myData = [
+      {
+        value: "view",
+        label: "View",
+      },
+      {
+        value: "export",
+        label: "Export",
+      },
+      {
+        value: "delete",
+        label: "Delete",
+      },
+      {
+        value: "import",
+        label: "Import",
+      },
+    ];
     setPermissions(myData);
     getAllRolesHandler();
   }, [checked]);
@@ -285,7 +288,7 @@ function RolePermissions() {
                       <>
                         <ListGroupItem>
                           <Col className="d-flex justify-content-between">
-                            <div>{permissions}</div>
+                            <div>{permissions.value}</div>
                             <div className="d-flex justify-content-between">
                               <Button
                                 className="btn-sm pull-right"
