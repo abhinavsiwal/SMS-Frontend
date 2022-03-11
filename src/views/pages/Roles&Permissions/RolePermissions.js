@@ -55,6 +55,17 @@ function RolePermissions() {
     "Organization",
   ]);
 
+  const roleOption = [
+    {
+      value: "view",
+      label: "View",
+    },
+    {
+      value: "export",
+      label: "Export",
+    },
+  ];
+
   useEffect(() => {
     const myData = [
       {
@@ -463,7 +474,7 @@ function RolePermissions() {
                 <Select
                   isMulti
                   name="permissions"
-                  // options={}
+                  options={roleOption}
                   // onChange={handleChange}
                   className="basic-multi-select"
                   classNamePrefix="select"
