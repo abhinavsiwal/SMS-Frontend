@@ -57,6 +57,17 @@ function RolePermissions() {
     "Organization",
   ]);
 
+  const roleOption = [
+    {
+      value: "view",
+      label: "View",
+    },
+    {
+      value: "export",
+      label: "Export",
+    },
+  ];
+
   useEffect(() => {
     getAllRolesHandler();
   }, [checked]);
@@ -443,19 +454,15 @@ function RolePermissions() {
               <Row>
 
               <Col>
-                <label className="form-control-label">Role</label>
-                <Input
-                  id="example4cols2Input"
-                  type="select"
-                  // onChange={}
-                  required
-                >
-                  {allRoles?.map((role, index) => (
-                    <option key={index} value={role.name}>
-                      {role.name}
-                    </option>
-                  ))}
-                </Input>
+                <label className="form-control-label">permissions</label>
+                <Select
+                  isMulti
+                  name="permissions"
+                  options={roleOption}
+                  // onChange={handleChange}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                />
               </Col>
               </Row>
 

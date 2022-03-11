@@ -12,10 +12,6 @@ import {
   Button,
   CardHeader,
   Table,
-  // Modal,
-  // ModalHeader,
-  // ModalBody,
-  // CardHeader,
 } from "reactstrap";
 
 //css

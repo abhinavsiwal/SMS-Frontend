@@ -64,6 +64,7 @@ import ViewCanteen from "views/pages/Canteen/ViewCanteen";
 import ViewAllCanteen from "views/pages/Canteen/ViewAllCanteen";
 import ViewRoute from "views/pages/Transportation/ViewRoute";
 import AddRoute from "views/pages/Transportation/AddRoute";
+import Ecommerce from "views/pages/Ecommerce/Ecommerce";
 
 const routes = [
   {
@@ -180,7 +181,6 @@ const routes = [
         component: AllStudents,
         layout: "/admin",
       },
-    
     ],
   },
   {
@@ -284,6 +284,13 @@ const routes = [
         layout: "/admin",
       },
     ],
+  },
+  {
+    path: "/ecommerce",
+    name: "Ecommerce",
+    icon: "ni ni-bag-17 text-pink",
+    component: Ecommerce,
+    layout: "/admin",
   },
 ];
 
