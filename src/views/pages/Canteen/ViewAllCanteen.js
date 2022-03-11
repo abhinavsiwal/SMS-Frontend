@@ -20,10 +20,10 @@ import {
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
-import "./Canteen.css";
+import "./Styles.css";
 import Loader from "components/Loader/Loader";
 
-function Canteen() {
+function ViewAllCanteen() {
   const [images, setImages] = useState([
     {
       img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
@@ -123,4 +123,4 @@ function Canteen() {
   );
 }
 
-export default Canteen;
+export default ViewAllCanteen;
