@@ -19,35 +19,53 @@ import {
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
+//import CSS
+import "./Ecommerce.css";
+
 function Ecommerce() {
   const [cardItems, setCardItems] = React.useState([
     {
-      img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "french fries",
       price: 15,
     },
     {
-      img: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "DDD",
       price: 20,
     },
     {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
+      name: "ghgvgh",
+      price: 35,
+    },
+    {
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
+      name: "ghgvgh",
+      price: 35,
+    },
+    {
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
+      name: "ghgvgh",
+      price: 35,
+    },
+    {
+      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
@@ -57,13 +75,18 @@ function Ecommerce() {
     <div>
       <SimpleHeader name="Student" parentName="Time Table" />
       <Container className="mt--6" fluid>
-        <Col className="mt-4">
-          <Button color="primary">Add</Button>
-        </Col>
+        <Row>
+          <Col className="mt-4 ">
+            <Button className="float-right" color="success">
+              <i className="ni ni-cart">Cart</i>
+            </Button>
+          </Col>
+        </Row>
+
         <div className="items ">
           {cardItems.map((cardItems) => {
             return (
-              <Card>
+              <Card className="mt-4">
                 <CardBody>
                   <CardImg
                     alt="..."
@@ -73,6 +96,21 @@ function Ecommerce() {
                     style={{ width: "100%", height: "100%" }}
                   />
                 </CardBody>
+                <div className="pb-4">
+                  <h2 className="ml-3">{cardItems.name}</h2>
+                </div>
+                <div className="mb-3 ml-2 d-flex justify-content-between">
+                  <div>
+                    <button className="Add_Value_Button">-</button>
+                    <span className="ml-2 mr-2 Span_Value">2</span>
+                    <button className="Add_Value_Button">+</button>
+                  </div>
+                  <div>
+                    <h3 className="mr-3">{cardItems.price} Rs</h3>
+                  </div>
+                </div>
+
+                <Button color="success">Add Cart</Button>
               </Card>
             );
           })}

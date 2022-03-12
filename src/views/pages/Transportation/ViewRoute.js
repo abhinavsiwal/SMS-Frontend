@@ -7,6 +7,9 @@ import {
   Input,
   Button,
   CardHeader,
+  Modal,
+  ModalBody,
+  Table,
 } from "reactstrap";
 
 // core components
@@ -24,7 +27,14 @@ import { isAuthenticated } from "api/auth";
 
 function ViewRoute() {
   const [viewRoute, setViewRoute] = React.useState([]);
+  const [modalState, setModalState] = React.useState(false);
+  const [modalSupport, setModalSupport] = React.useState({});
   const [loading, setLoading] = React.useState(false);
+
+  const openModal = (support) => {
+    setModalSupport(support);
+    setModalState(true);
+  };
 
   const columns = [
     {
@@ -257,6 +267,17 @@ function ViewRoute() {
                     <i className="fas fa-trash" />
                   </Popconfirm>
                 </Button>
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"view" + i + 1}
+                  onClick={() => {
+                    openModal(res[i]);
+                  }}
+                >
+                  View More
+                </Button>
               </h5>
             </>
           ),
@@ -289,6 +310,57 @@ function ViewRoute() {
             )}
           </CardBody>
         </Card>
+
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={modalState}
+          toggle={() => setModalState(false)}
+        >
+          <div className="modal-header">
+            <h6 className="modal-title" id="modal-title-default">
+              Canteen Details
+            </h6>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setModalState(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Table bordered responsive>
+              <thead>
+                <tr>
+                  <th>S No.</th>
+                  <th>Place Name</th>
+                  <th>pickup Time</th>
+                  <th>DropTime</th>
+                </tr>
+              </thead>
+              {/* {addStops !== null ? (
+                    <>
+                      {addStops.map((stops, index) => {
+                        return (
+                          <tbody>
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{stops.stopName}</td>
+                              <td>{stops.pickupTime}</td>
+                              <td>{stops.dropTime}</td>
+                            </tr>
+                          </tbody>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <h3>No Data</h3>
+                  )} */}
+            </Table>
+          </ModalBody>
+        </Modal>
       </Container>
     </>
   );

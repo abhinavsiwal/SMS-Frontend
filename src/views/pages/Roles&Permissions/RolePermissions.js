@@ -15,6 +15,7 @@ import {
   Modal,
   ModalBody,
   ModalFooter,
+  Table,
 } from "reactstrap";
 import { Popconfirm, TimePicker } from "antd";
 import "./RolePermissions.css";
@@ -55,6 +56,12 @@ function RolePermissions() {
     "Organization",
   ]);
 
+  const [manageRolePermissions, setManageRolePermissions] = React.useState([
+    "bshjb",
+    "cnjdc",
+    "jdnkjnc",
+  ]);
+
   const roleOption = [
     {
       value: "view",
@@ -63,6 +70,14 @@ function RolePermissions() {
     {
       value: "export",
       label: "Export",
+    },
+    {
+      value: "delete",
+      label: "Delete",
+    },
+    {
+      value: "import",
+      label: "Import",
     },
   ];
 
@@ -431,14 +446,16 @@ function RolePermissions() {
         </Modal>
         {/* Mangae role modal */}
         <Modal
-          className="modal-dialog-centered"
+          // className="modal-dialog-centered"
           isOpen={manageModal}
           toggle={() => setManageModal(false)}
-          size="sm"
+          size="lg"
+          className="custom-modal-style"
+          scrollable
         >
           <div className="modal-header">
             <h2 className="modal-title" id="modal-title-default">
-              Role Name
+              Role Permissions Mapping
             </h2>
             <button
               aria-label="Close"
@@ -451,40 +468,29 @@ function RolePermissions() {
             </button>
           </div>
           <ModalBody>
-            <Row>
-              <Col>
-                <label className="form-control-label">Role</label>
-                <Input
-                  id="example4cols2Input"
-                  type="select"
-                  // onChange={}
-                  required
-                >
-                  {allRoles?.map((role, index) => (
-                    <option key={index} value={role.name}>
-                      {role.name}
-                    </option>
-                  ))}
-                </Input>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <label className="form-control-label">permissions</label>
-                <Select
-                  isMulti
-                  name="permissions"
-                  options={roleOption}
-                  // onChange={handleChange}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                />
-              </Col>
-            </Row>
+            <Table>
+              <tbody>
+                {manageRolePermissions.map((role) => (
+                  <tr key={role._id}>
+                    <td className="mt-4">{role}</td>
+                    <td>
+                      <Select
+                        isMulti
+                        name="permissions"
+                        options={roleOption}
+                        // onChange={handleChange}
+                        className="basic-multi-select "
+                        classNamePrefix="select"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
           </ModalBody>
           <ModalFooter>
             <Button color="success" type="button" onClick={addRoleHandler}>
-              Add Role
+              Submit
             </Button>
           </ModalFooter>
         </Modal>
