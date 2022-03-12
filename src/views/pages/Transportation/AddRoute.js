@@ -88,6 +88,8 @@ function AddRoute() {
       endTime: endDuration,
       addStop: addStops,
     };
+    setAddRoute("");
+    setPlaceName("");
     console.log("obj2", obj2);
   };
 
