@@ -1,0 +1,25 @@
+.Cart-Card {
+  border: 1px solid black;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+}
+
+.Add_Value_Button {
+  outline: none;
+  border: none;
+  font-size: 1.3rem;
+  padding: 0px 15px;
+  font-weight: 600;
+  background-color: orange;
+  color: white;
+  border-radius: 5px;
+}
+
+.Add_Value_Button:hover {
+  background-color: rgb(207, 141, 17);
+}
+
+.Span_Value {
+  font-size: 1rem;
+  font-weight: 600;
+}

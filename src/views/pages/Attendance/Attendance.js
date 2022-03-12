@@ -147,7 +147,6 @@ function Attendance() {
     const data = await getAttendence(user.school, user._id);
     console.log(data);
     setAllAttendance(data);
-
   };
 
   const submitHandler = async () => {
@@ -431,7 +430,7 @@ function Attendance() {
         <Modal
           backdrop="static"
           size="xl"
-          scrollable={true}
+          scrollable
           isOpen={modal}
           toggle={toggle}
           className="custom-modal-style"

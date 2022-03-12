@@ -24,11 +24,42 @@ import { isAuthenticated } from "api/auth";
 
 function ViewCanteen() {
   const [viewCanteen, setViewCanteen] = React.useState([]);
+
   const [loading, setLoading] = React.useState(false);
+
   const columns = [
     {
       title: "S No.",
       dataIndex: "s_no",
+    },
+    {
+      title: "Canteen Name",
+      dataIndex: "canteen_name",
+      sorter: (a, b) => a.canteen_name > b.canteen_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.canteen_name.toLowerCase().includes(value.toLowerCase());
+      },
     },
     {
       title: "Items",
@@ -223,6 +254,7 @@ function ViewCanteen() {
         data.push({
           key: i,
           s_no: [i + 1],
+          canteen_name: res[i].canteen_name,
           items: res[i].items,
           description: res[i].description,
           image: res[i].image,

@@ -270,7 +270,7 @@ function AddRoute() {
                 <h3>Add Stops</h3>
               </CardHeader>
               <CardBody>
-                <Table bordered>
+                <Table bordered responsive>
                   <thead>
                     <tr>
                       <th>S No.</th>
@@ -279,18 +279,24 @@ function AddRoute() {
                       <th>DropTime</th>
                     </tr>
                   </thead>
-                  {addStops.map((stops, index) => {
-                    return (
-                      <tbody>
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{stops.stopName}</td>
-                          <td>{stops.pickupTime}</td>
-                          <td>{stops.dropTime}</td>
-                        </tr>
-                      </tbody>
-                    );
-                  })}
+                  {addStops !== null ? (
+                    <>
+                      {addStops.map((stops, index) => {
+                        return (
+                          <tbody>
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{stops.stopName}</td>
+                              <td>{stops.pickupTime}</td>
+                              <td>{stops.dropTime}</td>
+                            </tr>
+                          </tbody>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <h3>No Data</h3>
+                  )}
                 </Table>
               </CardBody>
             </Card>
