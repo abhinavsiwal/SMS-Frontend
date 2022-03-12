@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import Select from "react-select";
 //ReactStrap Components
 import {
   Card,
@@ -20,10 +20,12 @@ import { Popconfirm, TimePicker } from "antd";
 import "./RolePermissions.css";
 import { isAuthenticated } from "api/auth";
 // core components
+
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { addRole, updateRole } from "api/rolesAndPermission";
 import { getAllRoles } from "api/rolesAndPermission";
 import { deleteRole } from "api/rolesAndPermission";
+
 function RolePermissions() {
   const [addRoleModal, setAddRoleModal] = React.useState(false);
   const [editRoleModal, setEditRoleModal] = useState(false);
@@ -35,6 +37,8 @@ function RolePermissions() {
   const [editRoleId, setEditRoleId] = useState("");
   const [permissionName, setPermissionName] = React.useState();
   const [applicationName, setApplicationName] = React.useState();
+  const [mappingPermissions, setMappingPermissions] = useState([]);
+  const [mappingRoleName, setMappingRoleName] = useState("");
   const [roleName, setRoleName] = React.useState([
     "Super Admin",
     "Admin",
@@ -70,6 +74,7 @@ function RolePermissions() {
 
   useEffect(() => {
     getAllRolesHandler();
+    // setMappingRoleName(allRoles[0].name)
   }, [checked]);
 
   const addRoleHandler = async () => {
@@ -93,6 +98,7 @@ function RolePermissions() {
       const data = await getAllRoles(user._id, user.school);
       console.log(data);
       setAllRoles(data);
+      setMappingRoleName(data[0].name)
     } catch (err) {
       console.log(err);
     }
@@ -146,6 +152,31 @@ function RolePermissions() {
     setApplicationName("");
     setModal2(false);
   };
+
+  const managePermissionChangeHandler = (e) => {
+    let value = [];
+    for (let i = 0; i < e.length; i++) {
+      value.push(e[i].value);
+      console.log(value);
+      setMappingPermissions(value);
+    }
+  };
+
+const managePermissonSubmit=async()=>{
+  try {
+    console.log(mappingRoleName,mappingPermissions);
+    const formData = new FormData();
+    formData.set("name", mappingRoleName);
+    formData.set("permissions",JSON.stringify(mappingPermissions))
+    const data = await updateRole(user._id, allRoles[0]._id, formData);
+    console.log(data);
+    setChecked(!checked);
+    setManageModal(false);
+    setMappingPermissions([]);
+  } catch (err) {
+    console.log(err);
+  }
+}
 
   const handleChangeRoleName = (e) => {
     if (e.target.key === "Enter") return;
@@ -440,35 +471,33 @@ function RolePermissions() {
                 <Input
                   id="example4cols2Input"
                   type="select"
-                  // onChange={}
+                  onChange={e=>setMappingRoleName(e.target.value)}
                   required
                 >
                   {allRoles?.map((role, index) => (
-                    <option key={index} value={role.name}>
+                    <option key={role._id} value={role.name}>
                       {role.name}
                     </option>
                   ))}
                 </Input>
               </Col>
-              </Row>
-              <Row>
-
+            </Row>
+            <Row>
               <Col>
                 <label className="form-control-label">permissions</label>
                 <Select
                   isMulti
                   name="permissions"
                   options={roleOption}
-                  // onChange={handleChange}
+                  onChange={managePermissionChangeHandler}
                   className="basic-multi-select"
                   classNamePrefix="select"
                 />
               </Col>
-              </Row>
-
+            </Row>
           </ModalBody>
           <ModalFooter>
-            <Button color="success" type="button" onClick={addRoleHandler}>
+            <Button color="success" type="button" onClick={managePermissonSubmit}>
               Add Role
             </Button>
           </ModalFooter>
