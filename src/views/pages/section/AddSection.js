@@ -20,6 +20,8 @@ import Select from "react-select";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
+import PermissionsGate from "routeGuard/PermissionGate";
+import { SCOPES } from "routeGuard/permission-maps";
 
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
@@ -188,6 +190,8 @@ const AddSection = () => {
               subject: res[i].subject.toString(),
               action: (
                 <h5 key={i + 1} className="mb-0">
+                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+
                   <Button
                     className="btn-sm pull-right"
                     color="primary"
@@ -196,6 +200,9 @@ const AddSection = () => {
                   >
                     <i className="fas fa-user-edit" />
                   </Button>
+                    </PermissionsGate>
+                    <PermissionsGate scopes={[SCOPES.canDelete]} >
+
                   <Button
                     className="btn-sm pull-right"
                     color="danger"
@@ -204,6 +211,7 @@ const AddSection = () => {
                   >
                     <i className="fas fa-trash" />
                   </Button>
+                    </PermissionsGate>
                 </h5>
               ),
             });
@@ -282,98 +290,101 @@ const AddSection = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Class
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          type="select"
-                          onChange={handleChange("class")}
-                          required
-                        >
-                          {classList?.map((clas, index) => (
-                            <option key={index} value={clas.value}>
-                              {clas.label}
-                            </option>
-                          ))}
-                        </Input>
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Section
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Section"
-                          type="text"
-                          onChange={handleChange("name")}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Section Abbreviation
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Section Abbreviation"
-                          type="text"
-                          onChange={handleChange("abbreviation")}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Subject
-                        </label>
-                        <Select
-                          isMulti
-                          name="colors"
-                          options={roleOptions}
-                          onChange={handleSubjectChange}
-                          className="basic-multi-select"
-                          classNamePrefix="select"
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
+          <PermissionsGate scopes={[SCOPES.canCreate]}>
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Class
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            type="select"
+                            onChange={handleChange("class")}
+                            required
+                          >
+                            {classList?.map((clas, index) => (
+                              <option key={index} value={clas.value}>
+                                {clas.label}
+                              </option>
+                            ))}
+                          </Input>
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Section
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Section"
+                            type="text"
+                            onChange={handleChange("name")}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Section Abbreviation
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Section Abbreviation"
+                            type="text"
+                            onChange={handleChange("abbreviation")}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Subject
+                          </label>
+                          <Select
+                            isMulti
+                            name="colors"
+                            options={roleOptions}
+                            onChange={handleSubjectChange}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 float-right">
+                        <Col>
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          </PermissionsGate>
+
           <Col>
             <div className="card-wrapper">
               <Card>

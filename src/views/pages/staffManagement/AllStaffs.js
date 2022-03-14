@@ -31,6 +31,8 @@ import { Popconfirm } from "antd";
 import UpdateStaff from "./UpdateStaff";
 import { useSelector,useDispatch } from "react-redux";
 import { setStaffEditing } from "store/reducers/staff";
+import PermissionsGate from "routeGuard/PermissionGate";
+import { SCOPES } from "routeGuard/permission-maps";
 
 const AllStaffs = () => {
   const dispatch = useDispatch();
@@ -77,15 +79,20 @@ const AllStaffs = () => {
           joining_date: res[i].joining_date.split("T")[0].toString(),
           action: (
             <h5 key={i + 1} className="mb-0">
+              <PermissionsGate  scopes={[SCOPES.canEdit]} >
+
               <Button
                 className="btn-sm pull-right"
                 color="primary"
                 type="button"
                 key={"edit" + i + 1}
                 onClick={()=>updateStaff(res[i])}
-              >
+                >
                 <i className="fas fa-user-edit" />
               </Button>
+                </PermissionsGate>
+                <PermissionsGate scopes={[SCOPES.canDelete]}>
+
               <Button
                 className="btn-sm pull-right"
                 color="danger"
@@ -99,6 +106,7 @@ const AllStaffs = () => {
                   <i className="fas fa-trash" />
                 </Popconfirm>
               </Button>
+              </PermissionsGate>
               <Button
                 className="btn-sm pull-right"
                 color="success"

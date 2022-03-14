@@ -1,19 +1,4 @@
-/*!
 
-=========================================================
-* Argon Dashboard PRO React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 // react library for routing
 import { useLocation, Route, Switch } from "react-router-dom";
@@ -22,7 +7,7 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
-import routes from "routes.js";
+import routes,{adminRoutes,viewerRoutes,e} from "routes.js";
 
 function Admin() {
   const [sidenavOpen, setSidenavOpen] = React.useState(true);
@@ -78,7 +63,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={routes}
+        routes={viewerRoutes}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

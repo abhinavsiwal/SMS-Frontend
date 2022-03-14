@@ -33,6 +33,8 @@ import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
 import { sendRequest } from "api/api";
+import PermissionsGate from "routeGuard/PermissionGate";
+import { SCOPES } from "routeGuard/permission-maps";
 
 function Attendance() {
   //start and end date of month
@@ -236,6 +238,8 @@ function Attendance() {
   return (
     <div>
       <SimpleHeader name="Student" parentName="Attendance" />
+      <PermissionsGate scopes={[SCOPES.canCreate]} >
+
       <Container className="mt--6 shadow-lg" fluid>
         <Form>
           <Card>
@@ -373,6 +377,8 @@ function Attendance() {
           </Card>
         </Form>
       </Container>
+      </PermissionsGate>
+
       <Container className="mt--0 shadow-lg table-responsive" fluid>
         <Row>
           <Col>
@@ -405,15 +411,18 @@ function Attendance() {
                       ></p>
                       <span> - Leave</span>
                     </div>
+                    <PermissionsGate scopes={[SCOPES.canEdit]} >
+
                     <div className="col-sm">
                       <Button
                         className="attendance-button"
                         onClick={toggle}
                         color="primary"
-                      >
+                        >
                         Add Attendance
                       </Button>
                     </div>
+                        </PermissionsGate>
                   </div>
                 </div>
               </CardHeader>

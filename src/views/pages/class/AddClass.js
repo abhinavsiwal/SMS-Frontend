@@ -14,7 +14,7 @@ import {
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
-import { addClass, allClass,updateClass,deleteClass } from "api/class";
+import { addClass, allClass, updateClass, deleteClass } from "api/class";
 import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
@@ -23,8 +23,8 @@ import { setClass } from "store/reducers/class";
 import { useReducer, useSelector } from "react";
 import { useDispatch } from "react-redux";
 import { Popconfirm } from "antd";
-
-
+import PermissionsGate from "routeGuard/PermissionGate";
+import { SCOPES } from "routeGuard/permission-maps";
 
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
@@ -57,30 +57,34 @@ const AddClass = () => {
               abbreviation: res[i].abbreviation,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() =>
-                      rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
-                    }
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
+                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                      onClick={() =>
+                        rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
+                      }
                     >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  </PermissionsGate>
+                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => handleDelete(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
+                    </Button>
+                  </PermissionsGate>
                 </h5>
               ),
             });
@@ -93,9 +97,9 @@ const AddClass = () => {
         });
     };
     getAllClasses();
-  }, [reload,checked]);
+  }, [reload, checked]);
 
-  const handleDelete = async(classId) => {
+  const handleDelete = async (classId) => {
     const { user, token } = isAuthenticated();
     try {
       await deleteClass(classId, user._id, token);
@@ -131,7 +135,12 @@ const AddClass = () => {
       const { user, token } = isAuthenticated();
       formData.set("name", editClassName);
       formData.set("abbrevation", editClassAbv);
-      const updatedClass = await updateClass(classId, user._id, token, formData);
+      const updatedClass = await updateClass(
+        classId,
+        user._id,
+        token,
+        formData
+      );
       console.log("updateClass", updatedClass);
       setEditing(false);
       if (checked === false) {
@@ -252,6 +261,8 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
+          <PermissionsGate scopes={[SCOPES.canCreate]} >
+
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
@@ -305,6 +316,8 @@ const AddClass = () => {
               </Card>
             </div>
           </Col>
+          </PermissionsGate>
+
           <Col>
             <div className="card-wrapper">
               <Card>

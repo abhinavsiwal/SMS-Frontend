@@ -30,6 +30,8 @@ import { Popconfirm } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import Loader from "components/Loader/Loader";
+import PermissionsGate from "routeGuard/PermissionGate";
+import { SCOPES } from "routeGuard/permission-maps";
 
 const DepartmentList = () => {
   const [editing, setEditing] = useState(false);
@@ -141,6 +143,8 @@ const DepartmentList = () => {
             module: res[i].module,
             action: (
               <h5 key={i + 1} className="mb-0">
+                <PermissionsGate scopes={[SCOPES.canEdit]} >
+
                 <Button
                   className="btn-sm pull-right"
                   color="primary"
@@ -152,6 +156,8 @@ const DepartmentList = () => {
                 >
                   <i className="fas fa-user-edit" />
                 </Button>
+                  </PermissionsGate>
+                  <PermissionsGate scopes={[SCOPES.canDelete]} >
                 <Button
                   className="btn-sm pull-right"
                   color="danger"
@@ -165,6 +171,7 @@ const DepartmentList = () => {
                     <i className="fas fa-trash" />
                   </Popconfirm>
                 </Button>
+                </PermissionsGate>
               </h5>
             ),
           });
@@ -283,6 +290,9 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
+          <PermissionsGate scopes={[SCOPES.canCreate]} >
+
+         
           <Col lg="3">
             <div className="card-wrapper">
               <Card>
@@ -335,6 +345,7 @@ const DepartmentList = () => {
               </Card>
             </div>
           </Col>
+          </PermissionsGate>
           <Col>
             <div className="card-wrapper">
               <Card>

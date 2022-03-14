@@ -29,7 +29,11 @@ import ReactPaginate from "react-paginate";
 import { useHistory } from "react-router";
 import UpdateStudent from "./UpdateStudent";
 import { useSelector,useDispatch } from "react-redux";
+
+import PermissionsGate from "routeGuard/PermissionGate";
+
 import { setStudentEditing } from "store/reducers/student";
+import { SCOPES } from "routeGuard/permission-maps";
 const AllStudents = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -80,6 +84,8 @@ const AllStudents = () => {
           action: (
             <h5 key={i + 1} className="mb-0">
               {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
+              <PermissionsGate scopes={[SCOPES.canEdit]} >
+
               <Button
                 className="btn-sm pull-right"
                 color="primary"
@@ -88,10 +94,13 @@ const AllStudents = () => {
                 onClick={() => {
                   updateStudentHandler(res[i]);
                 }}
-              >
+                >
                 <i className="fas fa-user-edit" />
               </Button>
+                </PermissionsGate>
               {/* </Link> */}
+              <PermissionsGate scopes={[SCOPES.canDelete]} >
+
               <Button
                 className="btn-sm pull-right"
                 color="danger"
@@ -105,6 +114,7 @@ const AllStudents = () => {
                   <i className="fas fa-trash" />
                 </Popconfirm>
               </Button>
+              </PermissionsGate>
               <Button
                 className="btn-sm pull-right"
                 color="success"
