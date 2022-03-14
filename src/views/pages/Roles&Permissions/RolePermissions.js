@@ -109,6 +109,7 @@ function RolePermissions() {
   };
 
   const getAllRolesHandler = async () => {
+    console.log(user);
     try {
       const data = await getAllRoles(user._id, user.school);
       console.log(data);
@@ -482,42 +483,6 @@ const managePermissonSubmit=async()=>{
             </button>
           </div>
           <ModalBody>
-<<<<<<< HEAD
-            <Row>
-              <Col>
-                <label className="form-control-label">Role</label>
-                <Input
-                  id="example4cols2Input"
-                  type="select"
-                  onChange={e=>setMappingRoleName(e.target.value)}
-                  required
-                >
-                  {allRoles?.map((role, index) => (
-                    <option key={role._id} value={role.name}>
-                      {role.name}
-                    </option>
-                  ))}
-                </Input>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <label className="form-control-label">permissions</label>
-                <Select
-                  isMulti
-                  name="permissions"
-                  options={roleOption}
-                  onChange={managePermissionChangeHandler}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                />
-              </Col>
-            </Row>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="success" type="button" onClick={managePermissonSubmit}>
-              Add Role
-=======
             <Table>
               <tbody>
                 {manageRolePermissions.map((role) => (
@@ -541,7 +506,6 @@ const managePermissonSubmit=async()=>{
           <ModalFooter>
             <Button color="success" type="button" onClick={addRoleHandler}>
               Submit
->>>>>>> c31aac1de3d0fe283092d0c5ccfc6e569d966e78
             </Button>
           </ModalFooter>
         </Modal>
