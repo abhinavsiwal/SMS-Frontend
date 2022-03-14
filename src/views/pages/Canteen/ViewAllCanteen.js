@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, CardBody, Button, Container } from "reactstrap";
+import { Card, CardBody, Button, Container, NavLink } from "reactstrap";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -63,7 +63,7 @@ function ViewAllCanteen() {
       name: "Canteen Name",
     },
     {
-      name: "Canteen Name",
+      name: "Canteen Name jdkjnvjfjbvjfnjvbfvfjnvnfkjnvnfknvn",
     },
   ]);
 
@@ -74,24 +74,27 @@ function ViewAllCanteen() {
   const [check, setCheck] = React.useState(false);
   return (
     <>
-      {/* <SimpleHeader name="Canteen" /> */}
-      <div className="items ">
-        {canteenName.map((canteenName) => {
-          return (
-            <Button fluid onClick={() => setCheck(true)}>
-              <Card>
-                <CardBody>
-                  <p>{canteenName.name}</p>
-                </CardBody>
-              </Card>
-            </Button>
-          );
-        })}
-      </div>
-
+      <SimpleHeader name="Canteen" parentName />
+      {check === false && (
+        <div className="mt--6 items">
+          {canteenName.map((canteenName) => {
+            return (
+              <NavLink fluid onClick={() => setCheck(true)}>
+                <Card className="h-100 w-100">
+                  <CardBody>
+                    <p className="d-flex justify-content-around">
+                      {canteenName.name}
+                    </p>
+                  </CardBody>
+                </Card>
+              </NavLink>
+            );
+          })}
+        </div>
+      )}
       {check && (
         <>
-          <Card>
+          <Card className="mt--6">
             <CardBody>
               <img
                 className="Header-Image"

@@ -25,51 +25,64 @@ import "./Ecommerce.css";
 function Ecommerce() {
   const [cardItems, setCardItems] = React.useState([
     {
+      key: 0,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "french fries",
       price: 15,
     },
     {
+      key: 1,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "DDD",
       price: 20,
     },
     {
+      key: 2,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
+      key: 3,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
+      key: 4,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
+      key: 5,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
+      key: 6,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
+      key: 7,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
     {
+      key: 8,
       img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
       name: "ghgvgh",
       price: 35,
     },
   ]);
+
+  const Add_To_Cart = (e) => {
+    console.log("ind", e.target.value);
+  };
 
   return (
     <div>
@@ -84,7 +97,7 @@ function Ecommerce() {
         </Row>
 
         <div className="items ">
-          {cardItems.map((cardItems) => {
+          {cardItems.map((cardItems, index) => {
             return (
               <Card className="mt-4">
                 <CardBody>
@@ -110,7 +123,13 @@ function Ecommerce() {
                   </div>
                 </div>
 
-                <Button color="success">Add Cart</Button>
+                <Button
+                  value={cardItems.key}
+                  color="success"
+                  onClick={Add_To_Cart}
+                >
+                  Add Cart
+                </Button>
               </Card>
             );
           })}
