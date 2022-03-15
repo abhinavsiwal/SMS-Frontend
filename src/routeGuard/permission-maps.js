@@ -11,6 +11,8 @@ export const ROLES = {
     canView: "can-view"
   };
   
+
+  
   export const PERMISSIONS = {
     [ROLES.viewer]: [SCOPES.canView],
     [ROLES.editor]: [SCOPES.canView, SCOPES.canEdit],

@@ -10,13 +10,14 @@ import {
   Button,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
-
+import PermissionsGate from "routeGuard/PermissionGate";
 import { isAuthenticated } from "api/auth";
 import { allSessions, addSession } from "api/session";
 import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
+import { SCOPES } from "routeGuard/permission-maps";
 
 const AddSession = () => {
   const [sessionList, setSessionList] = useState([]);
@@ -45,22 +46,26 @@ const AddSession = () => {
               year: res[i].year,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <i className="fas fa-trash" />
-                  </Button>
+                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                    >
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  </PermissionsGate>
+                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <i className="fas fa-trash" />
+                    </Button>
+                  </PermissionsGate>
                 </h5>
               ),
             });
@@ -251,75 +256,78 @@ const AddSession = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Session
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Session"
-                          type="text"
-                          onChange={handleChange("name")}
-                          value={sessionData.name}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example-date-input"
-                        >
-                          Starting Date
-                        </label>
-                        <Input
-                          id="example-date-input"
-                          type="date"
-                          onChange={handleChange("start_date")}
-                          required
-                          value={sessionData.start_date}
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example-date-input"
-                        >
-                          Ending Date
-                        </label>
-                        <Input
-                          id="example-date-input"
-                          value={sessionData.end_date}
-                          type="date"
-                          onChange={handleChange("end_date")}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
+          <PermissionsGate scopes={[SCOPES.canCreate]}>
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Session
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Session"
+                            type="text"
+                            onChange={handleChange("name")}
+                            value={sessionData.name}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Starting Date
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            type="date"
+                            onChange={handleChange("start_date")}
+                            required
+                            value={sessionData.start_date}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Ending Date
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            value={sessionData.end_date}
+                            type="date"
+                            onChange={handleChange("end_date")}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 float-right">
+                        <Col>
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          </PermissionsGate>
+
           <Col>
             <div className="card-wrapper">
               <Card>

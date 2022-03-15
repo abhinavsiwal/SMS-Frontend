@@ -1,5 +1,6 @@
 // reactstrap components
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import PermissionsGate from "routeGuard/PermissionGate";
 import {
   Card,
   CardHeader,
@@ -18,32 +19,32 @@ import {
   ListGroup,
 } from "reactstrap";
 // core components
+
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { schoolProfile } from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
+import { SCOPES } from "routeGuard/permission-maps";
 
 function SchoolProfile() {
   // 1 -> Details 2 -> Contact
   const [activeTab, setActiveTab] = useState("1");
-  const [schoolDetails, setSchoolDetails] = useState({})
-  const {user} = isAuthenticated();
+  const [schoolDetails, setSchoolDetails] = useState({});
+  const { user } = isAuthenticated();
   useEffect(() => {
-    
-  getSchoolDetails()
-   
-  }, [])
-  
-  const getSchoolDetails = async()=>{
+    getSchoolDetails();
+  }, []);
+
+  const getSchoolDetails = async () => {
     try {
-      const {data} = await schoolProfile(user.school,user._id)
+      const { data } = await schoolProfile(user.school, user._id);
       console.log(user);
       console.log(data);
       setSchoolDetails(data);
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   return (
     <>
@@ -66,19 +67,25 @@ function SchoolProfile() {
                   <Row>
                     <Col align="center">
                       <h4 class="mt-0 mb-1">School Name</h4>
-                      <span className="text-md">{schoolDetails.schoolname}</span>
+                      <span className="text-md">
+                        {schoolDetails.schoolname}
+                      </span>
                     </Col>
                   </Row>
                   <Row>
                     <Col align="center">
                       <h4 class="mt-3 mb-1">Abbreviation</h4>
-                      <span className="text-md">{schoolDetails.abbreviation}</span>
+                      <span className="text-md">
+                        {schoolDetails.abbreviation}
+                      </span>
                     </Col>
                   </Row>
                   <Row>
                     <Col align="center">
                       <h4 class="mt-3 mb-1">Affiliated Board</h4>
-                      <span className="text-md">{schoolDetails.affiliateBoard}</span>
+                      <span className="text-md">
+                        {schoolDetails.affiliateBoard}
+                      </span>
                     </Col>
                   </Row>
                 </CardBody>
@@ -110,17 +117,19 @@ function SchoolProfile() {
                         </NavItem>
                       </Nav>
                     </Col>
-                    <Col className="text-right">
-                      <Button
-                        className="btn-icon"
-                        color="primary"
-                        type="button"
-                      >
-                        <span className="btn-inner--icon">
-                          <FaEdit />
-                        </span>
-                      </Button>
-                    </Col>
+                    <PermissionsGate scopes={[SCOPES.canEdit]}>
+                      <Col className="text-right">
+                        <Button
+                          className="btn-icon"
+                          color="primary"
+                          type="button"
+                        >
+                          <span className="btn-inner--icon">
+                            <FaEdit />
+                          </span>
+                        </Button>
+                      </Col>
+                    </PermissionsGate>
                   </Row>
                 </CardHeader>
                 <CardBody>
