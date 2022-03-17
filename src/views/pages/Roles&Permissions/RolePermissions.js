@@ -38,7 +38,7 @@ function RolePermissions() {
   const [editRoleId, setEditRoleId] = useState("");
   const [permissionName, setPermissionName] = React.useState();
   const [applicationName, setApplicationName] = React.useState();
-  const [mappingPermissions, setMappingPermissions] = useState([]);
+  const [mappingPermissions, setMappingPermissions] = useState({});
   const [mappingRoleName, setMappingRoleName] = useState("");
   const [roleName, setRoleName] = React.useState([
     "Super Admin",
@@ -114,7 +114,7 @@ function RolePermissions() {
       const data = await getAllRoles(user._id, user.school);
       console.log(data);
       setAllRoles(data);
-      setMappingRoleName(data[0].name)
+      setMappingRoleName(data[0].name);
     } catch (err) {
       console.log(err);
     }
@@ -169,30 +169,22 @@ function RolePermissions() {
     setModal2(false);
   };
 
-  const managePermissionChangeHandler = (e) => {
-    let value = [];
-    for (let i = 0; i < e.length; i++) {
-      value.push(e[i].value);
-      console.log(value);
-      setMappingPermissions(value);
-    }
+  const managePermissonSubmit = async () => {
+    console.log(mappingRoleName, mappingPermissions.obj);
+    // try {
+    //   const formData = new FormData();
+    //   formData.set("name", mappingRoleName);
+    //   // formData.set("permissions", JSON.stringify(mappingPermissions.obj));
+    //   formData.set("permissions", JSON.stringify(permissionObj));
+    //   const data = await updateRole(user._id, allRoles[0]._id, formData);
+    //   console.log(data);
+    //   setChecked(!checked);
+    //   setManageModal(false);
+    //   setMappingPermissions([]);
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
-
-const managePermissonSubmit=async()=>{
-  try {
-    console.log(mappingRoleName,mappingPermissions);
-    const formData = new FormData();
-    formData.set("name", mappingRoleName);
-    formData.set("permissions",JSON.stringify(mappingPermissions))
-    const data = await updateRole(user._id, allRoles[0]._id, formData);
-    console.log(data);
-    setChecked(!checked);
-    setManageModal(false);
-    setMappingPermissions([]);
-  } catch (err) {
-    console.log(err);
-  }
-}
 
   const handleChangeRoleName = (e) => {
     if (e.target.key === "Enter") return;
@@ -207,6 +199,22 @@ const managePermissonSubmit=async()=>{
   const handleChangeApplicationName = (e) => {
     if (e.target.key === "Enter") return;
     setApplicationName(e.target.value);
+  };
+
+  const handlePermissionChange = (name) => (value) => {
+    let obj = {};
+    let a = [];
+    console.log(name);
+    console.log(value);
+
+    value.map((items) => {
+      a.push(items.value);
+    });
+
+    obj[name] = a;
+    let obj1 = obj[name];  
+    console.log("a", obj);
+    setMappingPermissions({ ...mappingPermissions, obj });
   };
 
   return (
@@ -472,6 +480,22 @@ const managePermissonSubmit=async()=>{
             <h2 className="modal-title" id="modal-title-default">
               Role Permissions Mapping
             </h2>
+            <Input
+              id="example4cols2Input"
+              type="select"
+              // onChange={handleChange("class")}
+              required
+            >
+              {allRoles?.map((role, index) => (
+                <option
+                  key={index}
+                  value={role.name}
+                  onChange={(e) => setMappingRoleName(e.target.value)}
+                >
+                  {role.name}
+                </option>
+              ))}
+            </Input>
             <button
               aria-label="Close"
               className="close"
@@ -485,15 +509,15 @@ const managePermissonSubmit=async()=>{
           <ModalBody>
             <Table>
               <tbody>
-                {manageRolePermissions.map((role) => (
-                  <tr key={role._id}>
-                    <td className="mt-4">{role}</td>
+                {user.module.map((module, index) => (
+                  <tr key={index}>
+                    <td className="mt-4">{module}</td>
                     <td>
                       <Select
                         isMulti
                         name="permissions"
                         options={roleOption}
-                        // onChange={handleChange}
+                        onChange={handlePermissionChange(module)}
                         className="basic-multi-select "
                         classNamePrefix="select"
                       />
@@ -504,7 +528,11 @@ const managePermissonSubmit=async()=>{
             </Table>
           </ModalBody>
           <ModalFooter>
-            <Button color="success" type="button" onClick={addRoleHandler}>
+            <Button
+              color="success"
+              type="button"
+              onClick={managePermissonSubmit}
+            >
               Submit
             </Button>
           </ModalFooter>
