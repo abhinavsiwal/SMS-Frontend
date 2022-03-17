@@ -1,5 +1,5 @@
 export const support = (userId, token, data = {}) => {
-  const url = `http://35.174.4.42:5000/api/school/support/create/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/support/create/${userId}`;
   return fetch(url, {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
@@ -14,7 +14,7 @@ export const support = (userId, token, data = {}) => {
 };
 
 export const allSupports = (userId, schoolID, token) => {
-  const url = `http://35.174.4.42:5000/api/school/support/details/all/${schoolID}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/support/details/all/${schoolID}/${userId}`;
   return fetch(url, {
     method: 'GET',
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/json', 'Content-Type': 'application/json' },

@@ -36,7 +36,7 @@ const adminLogin = (username, password) => {
 const staffLogin = async (username, password) => {
   try {
     const res = axios.post(
-      "http://35.174.4.42:5000/api/school/student/signin",
+      `${process.env.REACT_APP_API_URL}/api/school/student/signin`,
       {
         SID: username,
         password: password,
@@ -50,7 +50,7 @@ const staffLogin = async (username, password) => {
 
 const studentLogin = async (username, password) => {
   try {
-    const res = axios.post("http://35.174.4.42:5000/api/school/staff/signin", {
+    const res = axios.post(`${process.env.REACT_APP_API_URL}/api/school/staff/signin`, {
       SID: username,
       password: password,
     });

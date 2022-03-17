@@ -13,7 +13,7 @@ const hasPermission = ({ permissions, scopes }) => {
 
 export default function PermissionsGate({ children, scopes = [] }) {
   const role = useGetRole();
-  const permissions = PERMISSIONS[ROLES.viewer];
+  const permissions = PERMISSIONS[ROLES.owner];
   console.log(role);
 
   const permissionGranted = hasPermission({ permissions, scopes });

@@ -8,22 +8,34 @@ import {
   Form,
   Input,
   Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
+import { Popconfirm } from "antd";
 import PermissionsGate from "routeGuard/PermissionGate";
 import { isAuthenticated } from "api/auth";
-import { allSessions, addSession } from "api/session";
+import { allSessions, addSession,editSession } from "api/session";
 import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
 import { SCOPES } from "routeGuard/permission-maps";
 
+import { deleteSession } from "api/session";
+
 const AddSession = () => {
   const [sessionList, setSessionList] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
 
+  const [editing, setEditing] = useState(false);
+  const [editSessionName, setEditSessionName] = useState("");
+  const [editStartDate, setEditStartDate] = useState("");
+  const [editEndDate, setEditEndDate] = useState("");
+  const [editSessionId, setEditSessionId] = useState("");
   const [sessionData, setSessionData] = useState({
     name: "",
     start_date: "",
@@ -36,6 +48,7 @@ const AddSession = () => {
       // All Sections
       allSessions(user._id, user.school, token)
         .then((res) => {
+          console.log(res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -52,6 +65,14 @@ const AddSession = () => {
                       color="primary"
                       type="button"
                       key={"edit" + i + 1}
+                      onClick={() =>
+                        rowHandler(
+                          res[i]._id,
+                          res[i].name,
+                          res[i].start_date.split("T")[0],
+                          res[i].start_date.split("T")[0]
+                        )
+                      }
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
@@ -63,7 +84,12 @@ const AddSession = () => {
                       type="button"
                       key={"delete" + i + 1}
                     >
-                      <i className="fas fa-trash" />
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => handleDelete(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
                     </Button>
                   </PermissionsGate>
                 </h5>
@@ -78,7 +104,60 @@ const AddSession = () => {
         });
     };
     getAllSessions();
-  }, [reload]);
+  }, [reload, checked]);
+
+  async function handleDelete(sessionId) {
+    const { user, token } = isAuthenticated();
+    try {
+      await deleteSession(sessionId, user._id, token);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  }
+
+  const handleEditSubmit=async()=>{
+    console.log("clicked");
+    const { user, token } = isAuthenticated();
+    let formData = new FormData();
+    formData.set("name",editSessionName);
+    formData.set("start_date",editStartDate);
+    formData.set("end_date",editEndDate);
+
+    try {
+      
+      const updateSession = await editSession(
+        editSessionId,
+        user._id,
+        token,
+        formData
+      );
+      console.log("updateDepartments", updateSession);
+      setEditing(false);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+
+    } catch (err) {
+      toast.error(err);
+    }
+  }
+
+  //Getting values from fetch
+  function rowHandler(id, name, startDate, endDate) {
+    // e.stopPropagation();
+    setEditing(true);
+    setEditSessionName(name);
+    setEditStartDate(startDate);
+    setEditEndDate(endDate);
+    setEditSessionId(id);
+  }
 
   const columns = [
     {
@@ -349,6 +428,84 @@ const AddSession = () => {
             </div>
           </Col>
         </Row>
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={editing}
+          toggle={() => setEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              {editing ? "Edit Form" : "Create Form"}
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Session Name</label>
+                <Input
+                  id="form-department-name"
+                  value={editSessionName}
+                  onChange={(e) => setEditSessionName(e.target.value)}
+                  placeholder="School Address"
+                  type="text"
+                />
+              </Col>
+            </Row>
+            <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Starting Date
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            type="date"
+                            onChange={(e)=>setEditStartDate(e.target.value)}
+                            required
+                            value={editStartDate}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Ending Date
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            value={editEndDate}
+                            type="date"
+                            onChange={(e)=>setEditEndDate(e.target.value)}
+                            required
+                          />
+                        </Col>
+                      </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="success"
+              type="button"
+              onClick={handleEditSubmit}
+            >
+              Save changes
+            </Button>
+          </ModalFooter>
+        </Modal>
       </Container>
     </>
   );

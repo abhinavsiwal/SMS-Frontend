@@ -1,5 +1,5 @@
 export const addCalender = (userId, token, data) => {
-  const url = `http://35.174.4.42:5000/api/school/event/create/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/event/create/${userId}`;
   return fetch(url, {
     method: "POST",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
@@ -14,7 +14,7 @@ export const addCalender = (userId, token, data) => {
 };
 
 export const getCalender = (userId, schoolId, token) => {
-  const url = `http://35.174.4.42:5000/api/school/event/all/${schoolId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/event/all/${schoolId}/${userId}`;
   return fetch(url, {
     method: "GET",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
@@ -28,7 +28,7 @@ export const getCalender = (userId, schoolId, token) => {
 };
 
 export const updateEvent = (userId, eventId, token, data) => {
-  const url = `http://35.174.4.42:5000/api/school/event/edit/${eventId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/event/edit/${eventId}/${userId}`;
   return fetch(url, {
     method: "PUT",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
@@ -44,7 +44,7 @@ export const updateEvent = (userId, eventId, token, data) => {
 };
 
 export const deleteEvents = (eventId, userId, token) => {
-  const url = `http://35.174.4.42:5000/api/school/event/delete/${eventId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/event/delete/${eventId}/${userId}`;
   return fetch(url, {
     method: "DELETE",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },

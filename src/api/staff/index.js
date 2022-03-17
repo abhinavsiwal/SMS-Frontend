@@ -2,8 +2,8 @@ import { sendRequestWithJson } from "api/api";
 import { sendRequest } from "api/api";
 
 export const addStaff = (userId, token, data = {}) => {
-  const url = `http://35.174.4.42:5000/api/school/staff/create/${userId}`;
-  return fetch(url, {
+  const url = `${process.env.REACT_APP_API_URL}/api/school/staff/create/${userId}`;
+   return fetch(url, {
     method: "POST",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
     body: data,

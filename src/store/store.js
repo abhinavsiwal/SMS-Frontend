@@ -17,18 +17,20 @@ import authReducer from './reducers/auth'
 import studentReducer from './reducers/student'
 import staffReducer from './reducers/staff'
 import classReducer from './reducers/class'
+import cartReducer from './reducers/cart';
 const reducers = combineReducers({
     authReducer,
     studentReducer,
     staffReducer,
-    classReducer
+    classReducer,
+    cartReducer
 });
 
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
-  whitelist: ["authReducer","classReducer",],
+  whitelist: ["authReducer","classReducer","cartReducer"],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

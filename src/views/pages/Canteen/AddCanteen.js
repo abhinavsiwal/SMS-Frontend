@@ -30,6 +30,8 @@ import moment from "moment";
 //React-Select
 import Select from "react-select";
 
+import {canteenAdd} from '../../../api/canteen/index'
+
 function AddCanteen() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
@@ -71,6 +73,15 @@ function AddCanteen() {
     }
     // formData.set("subject", JSON.stringify(value));
   };
+
+  const addCanteenHandler=async()=>{
+    try {
+      const data = await canteenAdd();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   //values of addMenu
   const handleChangeMenu = (name) => (event) => {

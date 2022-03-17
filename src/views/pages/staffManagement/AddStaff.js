@@ -66,7 +66,7 @@ function AddStaff() {
     job: "",
     salary: "",
     qualification: "",
-    department: "",
+    // department: "",
     subject: "",
   });
 
@@ -937,7 +937,7 @@ function AddStaff() {
                       <Input
                         id="exampleFormControlSelect3"
                         type="select"
-                        onChange={handleChange("department")}
+                        // onChange={handleChange("department")}
                         value={staffData.department}
                         required
                       >

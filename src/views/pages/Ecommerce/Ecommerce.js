@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 
 //React-Strap
 import {
@@ -22,7 +22,11 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 //import CSS
 import "./Ecommerce.css";
 
+import {useDispatch,useSelector} from 'react-redux';
+import {addItemsToCart} from '../../../store/reducers/cart'
+
 function Ecommerce() {
+  const [qty, setQty] = useState(1);
   const [cardItems, setCardItems] = React.useState([
     {
       key: 0,
@@ -80,6 +84,19 @@ function Ecommerce() {
     },
   ]);
 
+  const increaseQty = () => {
+    // if (qty >= product.stock) {
+    //   return;
+    // }
+    setQty(qty + 1);
+  };
+  const decreaseQty = () => {
+    if (qty <= 1) {
+      return;
+    }
+    setQty(qty - 1);
+  };
+
   const Add_To_Cart = (e) => {
     console.log("ind", e.target.value);
   };
@@ -114,9 +131,9 @@ function Ecommerce() {
                 </div>
                 <div className="mb-3 ml-2 d-flex justify-content-between">
                   <div>
-                    <button className="Add_Value_Button">-</button>
-                    <span className="ml-2 mr-2 Span_Value">2</span>
-                    <button className="Add_Value_Button">+</button>
+                    <button className="Add_Value_Button" onClick={decreaseQty} >-</button>
+                    <span className="ml-2 mr-2 Span_Value">{qty}</span>
+                    <button className="Add_Value_Button" onClick={increaseQty} >+</button>
                   </div>
                   <div>
                     <h3 className="mr-3">{cardItems.price} Rs</h3>

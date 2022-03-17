@@ -3,7 +3,7 @@ import { sendRequestWithJson } from "api/api";
 
 export const addStudent = (userId, token, data = {}) => {
 
-  const url = `http://35.174.4.42:5000/api/school/student/create/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/student/create/${userId}`;
   return fetch(url, {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
@@ -18,7 +18,7 @@ export const addStudent = (userId, token, data = {}) => {
 };
 
 export const allStudents = (schoolId,userId, token, data = {}) => {
-  const url = `http://35.174.4.42:5000/api/school/student/all/${schoolId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/student/all/${schoolId}/${userId}`;
   return fetch(url, {
     method: 'GET',
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/json', 'Content-Type': 'application/json' },

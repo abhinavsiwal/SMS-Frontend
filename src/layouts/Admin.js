@@ -7,7 +7,7 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 
-import routes,{adminRoutes,viewerRoutes,e} from "routes.js";
+import routes,{adminRoutes,viewerRoutes} from "routes.js";
 
 function Admin() {
   const [sidenavOpen, setSidenavOpen] = React.useState(true);
@@ -63,7 +63,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={viewerRoutes}
+        routes={adminRoutes}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{
