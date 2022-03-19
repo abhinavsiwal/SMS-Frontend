@@ -12,14 +12,16 @@ import {
   Input,
   Button,
   CardHeader,
-  Table,
   CardImg,
+  CardFooter,
 } from "reactstrap";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
+import Viewcart from "./Viewcart";
 
 function Addtocart() {
+  const [checked, setChecked] = React.useState(false);
   const [cardItems, setCardItems] = React.useState([
     {
       key: 0,
@@ -41,53 +43,86 @@ function Addtocart() {
     },
   ]);
 
+  const Cart_Back = () => {
+    setChecked(true);
+  };
+
   return (
     <div>
-      <SimpleHeader name="Student" parentName="Time Table" />
-      <Container className="mt--6" fluid>
-        {/* <Row>
-          <Col className="mt-4 ">
-            <Button className="float-right" color="success" onClick={Cart}>
-              <i className="ni ni-cart">Cart</i>
-            </Button>
-          </Col>
-        </Row> */}
-
-        <div className="items ">
-          {cardItems.map((cardItems, index) => {
-            return (
-              <Card className="mt-4">
-                <CardBody>
-                  <CardImg
-                    alt="..."
-                    src={cardItems.img}
-                    top
-                    className="p-4"
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </CardBody>
-                <div className="pb-4">
-                  <h2 className="ml-3">{cardItems.name}</h2>
-                </div>
-                <div className="mb-3 ml-2 d-flex justify-content-between">
-                  <div>
-                    <button className="Add_Value_Button">-</button>
-                    <span className="ml-2 mr-2 Span_Value">2</span>
-                    <button className="Add_Value_Button">+</button>
-                  </div>
-                  <div>
-                    <h3 className="mr-3">{cardItems.price} Rs</h3>
-                  </div>
-                </div>
-
-                <Button value={cardItems.key} color="success">
-                  Remove
+      {checked ? (
+        <Viewcart />
+      ) : (
+        <>
+          <SimpleHeader name="Student" parentName="Time Table" />
+          <Container className="mt--6" fluid>
+            <Row>
+              <Col className="mt--3 ">
+                <Button
+                  className="float-left mb-2"
+                  color="dark"
+                  onClick={Cart_Back}
+                >
+                  <i className="ni ni-bold-left"></i>
                 </Button>
-              </Card>
-            );
-          })}
-        </div>
-      </Container>
+              </Col>
+            </Row>
+
+            <div className="cart_items">
+              {cardItems.map((cardItems, index) => {
+                return (
+                  <Card>
+                    <CardHeader>
+                      <div className="d-flex justify-content-between">
+                        <h3>Shopping Cart</h3>
+                        <h5>Price</h5>
+                      </div>
+                    </CardHeader>
+                    <CardBody>
+                      <div className="d-flex">
+                        <div className="p-2">
+                          <img
+                            className="Shopping_Cart_Img"
+                            src={cardItems.img}
+                          />
+                        </div>
+                        <div className="p-2">
+                          <h4>{cardItems.name}</h4>
+                        </div>
+                        <div className="ml-auto p-2">
+                          {" "}
+                          <h3>{cardItems.price} Rs</h3>
+                        </div>
+                      </div>
+                      <div className="d-flex justify-content-between">
+                        <div className="ml-2">
+                          <button className="Add_Value_Button">-</button>
+                          <span className="ml-2 mr-2 Span_Value">2</span>
+                          <button className="Add_Value_Button">+</button>
+                        </div>
+                        <Button color="danger" className="float-right">
+                          Remove
+                        </Button>
+                      </div>
+                    </CardBody>
+                  </Card>
+                );
+              })}
+            </div>
+
+            <Card>
+              <CardBody>
+                <div className="d-flex justify-content-between">
+                  <Button color="warning">Checkout&Proceed</Button>
+                  <div className="d-flex justify-content-between">
+                    <h2 className="mr-2">Sub Total:</h2>
+                    <h3 className="mt-1">300Rs</h3>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          </Container>
+        </>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@
   outline: none;
   border: none;
   font-size: 1.3rem;
-  padding: 0px 15px;
+  padding: 0px 10px;
   font-weight: 600;
   background-color: orange;
   color: white;
@@ -22,4 +22,17 @@
 .Span_Value {
   font-size: 1rem;
   font-weight: 600;
+}
+
+.Shopping_Cart_Img {
+  width: 200px;
+  height: 200px;
+  border-radius: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+  .Shopping_Cart_Img {
+    width: 100px;
+    height: 100px;
+  }
 }

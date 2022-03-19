@@ -64,9 +64,11 @@ import ViewCanteen from "views/pages/Canteen/ViewCanteen";
 import ViewAllCanteen from "views/pages/Canteen/ViewAllCanteen";
 import ViewRoute from "views/pages/Transportation/ViewRoute";
 import AddRoute from "views/pages/Transportation/AddRoute";
-import Ecommerce from "views/pages/Ecommerce/Ecommerce";
+// import Ecommerce from "views/pages/Ecommerce/Ecommerce";z
+import Addcart from "views/pages/Ecommerce/Addcart";
+import Viewcart from "views/pages/Ecommerce/Viewcart";
 
- export const adminRoutes = [
+export const adminRoutes = [
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -285,12 +287,28 @@ import Ecommerce from "views/pages/Ecommerce/Ecommerce";
       },
     ],
   },
+
   {
-    path: "/ecommerce",
-    name: "Ecommerce",
+    collapse: true,
+    name: "Ecomme",
     icon: "ni ni-bag-17 text-pink",
-    component: Ecommerce,
-    layout: "/admin",
+    state: "ecommerceCollapse",
+    views: [
+      {
+        path: "/add-cart",
+        name: "Add To Cart",
+        miniName: "A",
+        component: Addcart,
+        layout: "/admin",
+      },
+      {
+        path: "/viewCart",
+        name: "View Cart",
+        miniName: "V",
+        component: Viewcart,
+        layout: "/admin",
+      },
+    ],
   },
 ];
 
@@ -514,11 +532,26 @@ export const editorRoutes = [
     ],
   },
   {
-    path: "/ecommerce",
-    name: "Ecommerce",
+    collapse: true,
+    name: "Ecomme",
     icon: "ni ni-bag-17 text-pink",
-    component: Ecommerce,
-    layout: "/admin",
+    state: "ecommerceCollapse",
+    views: [
+      {
+        path: "/add-cart",
+        name: "Add To Cart",
+        miniName: "A",
+        component: Addcart,
+        layout: "/admin",
+      },
+      {
+        path: "/viewCart",
+        name: "View Cart",
+        miniName: "V",
+        component: Viewcart,
+        layout: "/admin",
+      },
+    ],
   },
 ];
 
@@ -679,11 +712,26 @@ export const viewerRoutes = [
     ],
   },
   {
-    path: "/ecommerce",
-    name: "Ecommerce",
+    collapse: true,
+    name: "Ecomme",
     icon: "ni ni-bag-17 text-pink",
-    component: Ecommerce,
-    layout: "/admin",
+    state: "ecommerceCollapse",
+    views: [
+      {
+        path: "/add-cart",
+        name: "Add To Cart",
+        miniName: "A",
+        component: Addcart,
+        layout: "/admin",
+      },
+      {
+        path: "/viewCart",
+        name: "View Cart",
+        miniName: "V",
+        component: Viewcart,
+        layout: "/admin",
+      },
+    ],
   },
 ];
 
@@ -907,11 +955,26 @@ const routes = [
     ],
   },
   {
-    path: "/ecommerce",
-    name: "Ecommerce",
+    collapse: true,
+    name: "Ecomme",
     icon: "ni ni-bag-17 text-pink",
-    component: Ecommerce,
-    layout: "/admin",
+    state: "ecommerceCollapse",
+    views: [
+      {
+        path: "/add-cart",
+        name: "Add To Cart",
+        miniName: "A",
+        component: Addcart,
+        layout: "/admin",
+      },
+      {
+        path: "/viewCart",
+        name: "View Cart",
+        miniName: "V",
+        component: Viewcart,
+        layout: "/admin",
+      },
+    ],
   },
 ];
 
