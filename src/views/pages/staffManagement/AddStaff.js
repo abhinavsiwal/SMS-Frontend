@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -25,14 +24,16 @@ import "./style.css";
 
 import { ToastContainer, toast } from "react-toastify";
 
+// import { isAuthenticated } from "api/auth";
 import { addStaff } from "api/staff";
 import { isAuthenticated } from "api/auth";
 import { getDepartment } from "api/department";
 import { allSubjects } from "api/subjects";
+import { getAllRoles } from "api/rolesAndPermission";
 
 function AddStaff() {
   const [step, setStep] = useState(0);
-
+  const { user } = isAuthenticated();
   const [staffData, setStaffData] = useState({
     image: "",
     firstname: "",
@@ -69,10 +70,9 @@ function AddStaff() {
     // department: "",
     subject: "",
   });
-
+  const [allRoles, setAllRoles] = useState([]);
   console.log("staff", staffData);
   const [formData] = useState(new FormData());
-
   const [departments, setDeparments] = useState([]);
   // const [subject, setSubject] = useState([]);
   // console.log("sub", subject);
@@ -83,6 +83,22 @@ function AddStaff() {
     // { value: "chemistry", label: "Chemistry" }
   ];
   console.log("role", roleOptions);
+
+  useEffect(() => {
+    getAllRolesHandler();
+  }, []);
+
+  const getAllRolesHandler = async () => {
+    console.log(user);
+    try {
+      const data = await getAllRoles(user._id, user.school);
+      console.log(data);
+      setAllRoles(data);
+      setStaffData({ ...staffData, assign_role: data[0].name });
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -219,7 +235,8 @@ function AddStaff() {
         setA(list);
         console.log("list", list);
       } catch (err) {
-        toast.error("Something Went Wrong!");
+        // toast.error("Something Went Wrong!");
+ console.log(err);       
       }
     }
   }, [step]);
@@ -231,7 +248,8 @@ function AddStaff() {
       console.log("dept", dept);
       setDeparments(dept);
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      // toast.error("Something Went Wrong!");
+      console.log(err);
     }
   }
 
@@ -240,9 +258,10 @@ function AddStaff() {
   //   try {
   //     const Subjects = await allSubjects(user._id, user.school, token);
   //     console.log("subject", Subjects);
-  //     setSubject(Subjects[0].list);
+  //     // setSubject(Subjects[0].list);
   //   } catch (err) {
-  //     toast.error("Something Went Wrong!");
+  //     // toast.error("Something Went Wrong!");
+  //     console.log(err);
   //   }
   // }
 
@@ -885,8 +904,14 @@ function AddStaff() {
                         value={staffData.assign_role}
                         required
                       >
-                        <option value="canteen">Canteen</option>
-                        <option value="teacher">Teacher</option>
+                        {allRoles &&
+                          allRoles.map((role) => {
+                            return (
+                              <option key={role._id} value={role.name}>
+                                {role.name}
+                              </option>
+                            );
+                          })}
                       </Input>
                     </FormGroup>
                   </Col>
@@ -925,7 +950,7 @@ function AddStaff() {
                     />
                   </Col>
                 </Row>
-                {staffData.assign_role === "teacher" ? (
+                {staffData.assign_role === "Teacher" ? (
                   <Row>
                     <Col md="4">
                       <label

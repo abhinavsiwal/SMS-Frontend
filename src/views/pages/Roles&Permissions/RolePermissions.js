@@ -40,6 +40,7 @@ function RolePermissions() {
   const [applicationName, setApplicationName] = React.useState();
   const [mappingPermissions, setMappingPermissions] = useState({});
   const [mappingRoleName, setMappingRoleName] = useState("");
+  const [mappingRoleId, setMappingRoleId] = useState("")
   const [roleName, setRoleName] = React.useState([
     "Super Admin",
     "Admin",
@@ -115,6 +116,7 @@ function RolePermissions() {
       console.log(data);
       setAllRoles(data);
       setMappingRoleName(data[0].name);
+      setMappingRoleId(data[0]._id);
     } catch (err) {
       console.log(err);
     }
@@ -170,20 +172,23 @@ function RolePermissions() {
   };
 
   const managePermissonSubmit = async () => {
-    console.log(mappingRoleName, mappingPermissions);
-    // try {
-    //   const formData = new FormData();
-    //   formData.set("name", mappingRoleName);
-    //   // formData.set("permissions", JSON.stringify(mappingPermissions.obj));
-    //   formData.set("permissions", JSON.stringify(permissionObj));
-    //   const data = await updateRole(user._id, allRoles[0]._id, formData);
-    //   console.log(data);
-    //   setChecked(!checked);
-    //   setManageModal(false);
-    //   setMappingPermissions([]);
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    console.log(mappingRoleId);
+    console.log(mappingPermissions);
+    let selectedRole = allRoles.find(role=>role._id===mappingRoleId);
+    console.log(selectedRole.name);
+    try {
+      const formData = new FormData();
+      formData.set("name", selectedRole.name);
+      // formData.set("permissions", JSON.stringify(mappingPermissions.obj));
+      formData.set("permissions", JSON.stringify(mappingPermissions));
+      const data = await updateRole(user._id, mappingRoleId, formData);
+      console.log(data);
+      setChecked(!checked);
+      setManageModal(false);
+      setMappingPermissions([]);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleChangeRoleName = (e) => {
@@ -486,12 +491,12 @@ function RolePermissions() {
               type="select"
               // onChange={handleChange("class")}
               required
+              onChange={(e) => setMappingRoleId(e.target.value)}
             >
               {allRoles?.map((role, index) => (
                 <option
                   key={index}
-                  value={role.name}
-                  onChange={(e) => setMappingRoleName(e.target.value)}
+                  value={role._id}
                 >
                   {role.name}
                 </option>
