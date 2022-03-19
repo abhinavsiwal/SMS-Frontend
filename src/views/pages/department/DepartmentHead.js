@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Table, Card, Input, CardBody } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
-import { getDepartment } from "api/department";
+import { getDepartment,departmentHead } from "api/department";
 import { isAuthenticated } from "api/auth";
 import Loader from "components/Loader/Loader";
 import { allStaffs } from "api/staff";
@@ -39,7 +39,6 @@ const DepartmentHead = () => {
 
   const getAllStaff=async()=>{
     try {
-      const { user, token } = isAuthenticated();
       const payload = { school: user.school };
 
       const staffData = await allStaffs(
@@ -61,19 +60,28 @@ const DepartmentHead = () => {
 
   const [selectStaff, setSelectStaff] = useState([]);
 
-  console.log("selectStaff", selectStaff);
   const [formData] = useState(new FormData());
 
-  const handleChange = (name) => (event) => {
-    formData.set(name, event.target.value);
-    setSelectStaff({ ...selectStaff, [name]: event.target.value });
-    // setStaff(
-    //   staff.filter((staff) => {
-    //     return staff._id !== event.target.value;
-    //   })
-    // );
-  };
-  console.log("staff", staff);
+ 
+
+
+const departmentHeadHandler=departmentId=>async(e)=>{
+  console.log(departmentId);
+  console.log(e.target.value);
+let formData = new FormData();
+formData.set("departmentHead",e.target.value);
+
+try {
+  const data = await departmentHead(departmentId,user._id,token,formData)
+  console.log(data);
+} catch (err) {
+  console.log(err);
+}
+
+
+  
+}
+
   return (
     <>
       <SimpleHeader name="Dept Head" parentName="Department Management" />
@@ -91,7 +99,7 @@ const DepartmentHead = () => {
                           <Input
                             id={clas._id}
                             type="select"
-                            onChange={handleChange("head")}
+                            onChange={departmentHeadHandler(clas._id)}
                             // value={subject[clas._id] || ""}
                             value={[selectStaff.head]}
                             placeholder="Select Staff"

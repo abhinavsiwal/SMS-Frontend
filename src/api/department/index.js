@@ -56,3 +56,19 @@ export const deleteDepartment = (departmentId, userId, token) => {
       throw error;
     });
 };
+
+export const departmentHead=(departmentId,userId,token,formData)=>{
+  const url = `${process.env.REACT_APP_API_URL}/api/department/edit/${departmentId}/${userId}`;
+  return fetch(url, {
+    method: "PUT",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
+    body: formData,
+  })
+    .then((data) => {
+      console.log("data", data);
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+}
