@@ -69,7 +69,7 @@ const departmentHeadHandler=departmentId=>async(e)=>{
   console.log(departmentId);
   console.log(e.target.value);
 let formData = new FormData();
-formData.set("departmentHead",e.target.value);
+formData.set("head",e.target.value);
 
 try {
   const data = await departmentHead(departmentId,user._id,token,formData)
