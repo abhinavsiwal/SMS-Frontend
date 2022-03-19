@@ -12,28 +12,39 @@ const DepartmentHead = () => {
   const [departments, setDepartments] = useState([]);
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { user, token } = isAuthenticated();
 
-  useEffect(async () => {
+  useEffect( () => {
+ 
+    getAllDepartments();
+    getAllStaff();
+   
+  }, []);
+
+  const getAllDepartments=async()=>{
     try {
-      const { user, token } = isAuthenticated();
       const dept = await getDepartment(user.school, user._id, token);
       if (dept.err) {
         return toast.error(dept.err);
       }
+      console.log(dept);
       setDepartments(dept);
       setLoading(true);
     } catch (err) {
       toast.error(err);
     }
 
+
+  }
+
+  const getAllStaff=async()=>{
     try {
       const { user, token } = isAuthenticated();
       const payload = { school: user.school };
 
       const staffData = await allStaffs(
+        user.school,
         user._id,
-        token,
-        JSON.stringify(payload)
       );
       console.log("staffData", staffData);
       if (staffData.err) {
@@ -44,7 +55,9 @@ const DepartmentHead = () => {
     } catch (err) {
       toast.error(err);
     }
-  }, []);
+  }
+
+
 
   const [selectStaff, setSelectStaff] = useState([]);
 

@@ -30,10 +30,10 @@ const ClassTeacher = () => {
       const payload = { school: user.school };
 
       const teachers = await allStaffs(
+        user.school,
         user._id,
-        token,
-        JSON.stringify(payload)
       );
+      console.log(teachers);
       if (teachers.err) {
         return toast.error(teachers.err);
       }
