@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Container,
@@ -7,6 +7,8 @@ import {
   Input,
   Button,
   CardHeader,
+  Col,
+  Label,
 } from "reactstrap";
 
 // core components
@@ -16,7 +18,7 @@ import AntTable from "../tables/AntTable";
 //Ant Table
 import { SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
-
+import { canteenAdd, allCanteens } from "../../../api/canteen/index";
 //Loader
 import Loader from "components/Loader/Loader";
 
@@ -24,8 +26,9 @@ import { isAuthenticated } from "api/auth";
 
 function ViewCanteen() {
   const [viewCanteen, setViewCanteen] = React.useState([]);
-
+  const [allCanteen, setAllCanteen] = useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [selectedCanteenId, setSelectedCanteenId] = useState();
 
   const columns = [
     {
@@ -149,8 +152,8 @@ function ViewCanteen() {
       },
     },
     {
-      title: "Prize",
-      dataIndex: "prize",
+      title: "Price",
+      dataIndex: "price",
       sorter: (a, b) => a.prize > b.prize,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -244,23 +247,94 @@ function ViewCanteen() {
     },
   ];
 
+  const { user, token } = isAuthenticated();
   React.useEffect(() => {
-    const fetchStaff = async () => {
-      const { user, token } = isAuthenticated();
-      const res = "a"; // Call your function here
-      console.log(res);
-      const data = [];
-      for (let i = 0; i < res.length; i++) {
+    fetchStaff();
+
+    // tableData();
+  }, []);
+  const fetchStaff = async () => {
+    const res = await allCanteens(user._id, user.school); // Call your function here
+    console.log(res);
+    setAllCanteen(res);
+    setSelectedCanteenId(res[0]._id);
+    let selectedCanteen = allCanteen.find(
+      (canteen) => canteen._id === selectedCanteenId
+    );
+    let data=[];
+
+    for (let i = 0; i < selectedCanteen.menu.length; i++) {
+      // if(selectedCanteen.menu.length===0){
+      //   return
+      // }
+    
+      data.push({
+        key: i,
+        s_no: [i + 1],
+        canteen_name: selectedCanteen.menu[i].name,
+        items: selectedCanteen.menu[i].items,
+        description: selectedCanteen.menu[i].description,
+        image: selectedCanteen.menu[i].image,
+        price: selectedCanteen.menu[i].price,
+        publish: selectedCanteen.menu[i].publish,
+        time: selectedCanteen.menu[i].time,
+        action: (
+          <h5 key={i + 1} className="mb-0">
+            <Button
+              className="btn-sm pull-right"
+              color="primary"
+              type="button"
+              key={"edit" + i + 1}
+            >
+              <i className="fas fa-user-edit" />
+            </Button>
+            <Button
+              className="btn-sm pull-right"
+              color="danger"
+              type="button"
+              key={"delete" + i + 1}
+            >
+              <Popconfirm
+                title="Sure to delete?"
+                // onConfirm={() => handleDelete(res[i]._id)}
+              >
+                <i className="fas fa-trash" />
+              </Popconfirm>
+            </Button>
+          </h5>
+        ),
+      });
+      setViewCanteen(data);
+      setLoading(true);
+    }
+  };
+  // useEffect(() => {
+
+  // }, [selectedCanteenId])
+
+  const tableData = () => {
+    console.log(selectedCanteenId);
+    console.log(allCanteen);
+    let selectedCanteen = allCanteen.find(
+      (canteen) => canteen._id === selectedCanteenId
+    );
+    console.log(selectedCanteen);
+    const data = [];
+    if (selectedCanteen.menu) {
+      for (let i = 0; i < selectedCanteen.menu.length; i++) {
+        // if(selectedCanteen.menu.length===0){
+        //   return
+        // }
         data.push({
           key: i,
           s_no: [i + 1],
-          canteen_name: res[i].canteen_name,
-          items: res[i].items,
-          description: res[i].description,
-          image: res[i].image,
-          prize: res[i].prize,
-          publish: res[i].publish,
-          time: res[i].time,
+          canteen_name: selectedCanteen.menu[i].name,
+          items: selectedCanteen.menu[i].items,
+          description: selectedCanteen.menu[i].description,
+          image: selectedCanteen.menu[i].image,
+          price: selectedCanteen.menu[i].price,
+          publish: selectedCanteen.menu[i].publish,
+          time: selectedCanteen.menu[i].time,
           action: (
             <h5 key={i + 1} className="mb-0">
               <Button
@@ -290,9 +364,8 @@ function ViewCanteen() {
       }
       setViewCanteen(data);
       setLoading(true);
-    };
-    fetchStaff();
-  }, []);
+    }
+  };
 
   return (
     <>
@@ -301,6 +374,23 @@ function ViewCanteen() {
         <Card>
           <CardHeader>
             <h3>View Canteen</h3>
+
+            <Input
+              id="exampleFormControlSelect3"
+              type="select"
+              onChange={(e) => setSelectedCanteenId(e.target.value)}
+              value={selectedCanteenId}
+              required
+              style={{ maxWidth: "10rem" }}
+            >
+              {allCanteen.map((canteen) => {
+                return (
+                  <option key={canteen._id} value={canteen._id} selected>
+                    {canteen.name}
+                  </option>
+                );
+              })}
+            </Input>
           </CardHeader>
           <CardBody>
             {loading ? (
