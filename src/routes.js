@@ -296,14 +296,14 @@ export const adminRoutes = [
     views: [
       {
         path: "/add-cart",
-        name: "Add To Cart",
+        name: "Add Product",
         miniName: "A",
         component: Addcart,
         layout: "/admin",
       },
       {
         path: "/viewCart",
-        name: "View Cart",
+        name: "View Product",
         miniName: "V",
         component: Viewcart,
         layout: "/admin",
@@ -539,14 +539,14 @@ export const editorRoutes = [
     views: [
       {
         path: "/add-cart",
-        name: "Add To Cart",
+        name: "Add Product",
         miniName: "A",
         component: Addcart,
         layout: "/admin",
       },
       {
         path: "/viewCart",
-        name: "View Cart",
+        name: "View Product",
         miniName: "V",
         component: Viewcart,
         layout: "/admin",
@@ -719,14 +719,14 @@ export const viewerRoutes = [
     views: [
       {
         path: "/add-cart",
-        name: "Add To Cart",
+        name: "Add Product",
         miniName: "A",
         component: Addcart,
         layout: "/admin",
       },
       {
         path: "/viewCart",
-        name: "View Cart",
+        name: "View Product",
         miniName: "V",
         component: Viewcart,
         layout: "/admin",
@@ -962,14 +962,14 @@ const routes = [
     views: [
       {
         path: "/add-cart",
-        name: "Add To Cart",
+        name: "Add Product",
         miniName: "A",
         component: Addcart,
         layout: "/admin",
       },
       {
         path: "/viewCart",
-        name: "View Cart",
+        name: "View Product",
         miniName: "V",
         component: Viewcart,
         layout: "/admin",
