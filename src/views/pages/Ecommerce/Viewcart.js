@@ -15,10 +15,11 @@ import {
   Table,
   CardImg,
 } from "reactstrap";
-
+import { useDispatch,useSelector } from "react-redux";
+import {addItemsToCart} from '../../../store/reducers/cart'
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-
+import { cartItems } from "./productList";
 //import CSS
 import "./Ecommerce.css";
 
@@ -27,65 +28,22 @@ import Addtocart from "./Addtocart";
 
 function Viewcart() {
   const [checked, setChecked] = React.useState(false);
-  const [cardItems, setCardItems] = React.useState([
-    {
-      key: 0,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "french fries",
-      price: 15,
-    },
-    {
-      key: 1,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "DDD",
-      price: 20,
-    },
-    {
-      key: 2,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      key: 3,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      key: 4,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      key: 5,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      key: 6,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      key: 7,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      key: 8,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-  ]);
+ const dispatch = useDispatch();
+const {cartTotalQuantity} = useSelector(state=>state.cartReducer);
 
-  const Add_To_Cart = (e) => {
-    // console.log("ind", e.target.value);
+  const addToCart = (product) => {
+    console.log("clicked");
+    let item={
+      id:product._id,
+      name:product.name,
+      price:product.price,
+      image:product.img,
+      quantity:1,
+      stock:100, 
+    }
+    console.log(product);
+    console.log(item);
+    dispatch(addItemsToCart(item));
   };
 
   const Cart = (e) => {
@@ -104,19 +62,19 @@ function Viewcart() {
               <Col className="mt--3 ">
                 <Button className="float-right" color="success" onClick={Cart}>
                   <i className="ni ni-cart">Cart</i>
-                  <span>3</span>
+                  <span>{cartTotalQuantity}</span>
                 </Button>
               </Col>
             </Row>
 
             <div className="items ">
-              {cardItems.map((cardItems, index) => {
+              {cartItems.map((product, index) => {
                 return (
                   <Card className="mt-4">
                     <CardBody>
                       <CardImg
                         alt="..."
-                        src={cardItems.img}
+                        src={product.img}
                         top
                         className="p-4"
                         style={{ width: "100%", height: "100%" }}
@@ -124,17 +82,17 @@ function Viewcart() {
                     </CardBody>
                     <div className="mb-3 ml-2 d-flex justify-content-between">
                       <div>
-                        <h2 className="ml-3">{cardItems.name}</h2>
+                        <h2 className="ml-3">{product.name}</h2>
                       </div>
                       <div>
-                        <h3 className="mr-3">{cardItems.price} Rs</h3>
+                        <h3 className="mr-3">{product.price} Rs</h3>
                       </div>
                     </div>
 
                     <Button
-                      value={cardItems.key}
+                      // value={cardItems.key}
                       color="success"
-                      onClick={Add_To_Cart}
+                      onClick={()=>addToCart(product)}
                     >
                       Add Cart
                     </Button>

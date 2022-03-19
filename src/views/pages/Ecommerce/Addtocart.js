@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 //React-Strap
 import {
@@ -19,34 +19,46 @@ import {
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import Viewcart from "./Viewcart";
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+  addItemsToCart,
+  removeFromCart,
+  decreaseCart,
+  increaseCart,
+  getTotal,
+} from "../../../store/reducers/cart";
 
 function Addtocart() {
+  const dispatch = useDispatch();
+
   const [checked, setChecked] = React.useState(false);
-  const [cardItems, setCardItems] = React.useState([
-    {
-      key: 0,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "french fries",
-      price: 15,
-    },
-    {
-      key: 1,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "DDD",
-      price: 20,
-    },
-    {
-      key: 2,
-      img: "https://images-na.ssl-images-amazon.com/images/I/A1+5aIrAiYL.jpg",
-      name: "ghgvgh",
-      price: 35,
-    },
-  ]);
+  const { cartItems,cartTotalAmount } = useSelector((state) => state.cartReducer);
 
   const Cart_Back = () => {
     setChecked(true);
   };
+  useEffect(() => {
+    console.log(cartItems);
+    dispatch(getTotal());
+  }, [dispatch, cartItems]);
 
+  const increaseQty = (product) => {
+    console.log("clicked");
+    if (product.quantity < product.stock) {
+      dispatch(increaseCart(product));
+    } else {
+      // alert.error("Item out of stock");
+      console.log("Item out of stock");
+    }
+  };
+  const decreaseQty = (product) => {
+    dispatch(decreaseCart(product));
+  };
+
+  const removeItemFromCart = (product) => {
+    dispatch(removeFromCart(product));
+  };
   return (
     <div>
       {checked ? (
@@ -68,7 +80,7 @@ function Addtocart() {
             </Row>
 
             <div className="cart_items">
-              {cardItems.map((cardItems, index) => {
+              {cartItems.map((product, index) => {
                 return (
                   <Card>
                     <CardHeader>
@@ -82,24 +94,41 @@ function Addtocart() {
                         <div className="p-2">
                           <img
                             className="Shopping_Cart_Img"
-                            src={cardItems.img}
+                            src={product.image}
                           />
                         </div>
                         <div className="p-2">
-                          <h4>{cardItems.name}</h4>
+                          <h4>{product.name}</h4>
                         </div>
                         <div className="ml-auto p-2">
                           {" "}
-                          <h3>{cardItems.price} Rs</h3>
+                          <h3>{product.price} Rs</h3>
                         </div>
                       </div>
                       <div className="d-flex justify-content-between">
                         <div className="ml-2">
-                          <button className="Add_Value_Button">-</button>
-                          <span className="ml-2 mr-2 Span_Value">2</span>
-                          <button className="Add_Value_Button">+</button>
+                          <button
+                            className="Add_Value_Button"
+                            onClick={() => decreaseQty(product)}
+                          >
+                            -
+                          </button>
+                          <span className="ml-2 mr-2 Span_Value">
+                            {" "}
+                            {product.quantity}
+                          </span>
+                          <button
+                            className="Add_Value_Button"
+                            onClick={() => increaseQty(product)}
+                          >
+                            +
+                          </button>
                         </div>
-                        <Button color="danger" className="float-right">
+                        <Button
+                          color="danger"
+                          className="float-right"
+                          onClick={() => removeItemFromCart(product)}
+                        >
                           Remove
                         </Button>
                       </div>
@@ -115,7 +144,7 @@ function Addtocart() {
                   <Button color="warning">Checkout&Proceed</Button>
                   <div className="d-flex justify-content-between">
                     <h2 className="mr-2">Sub Total:</h2>
-                    <h3 className="mt-1">300Rs</h3>
+                    <h3 className="mt-1">{cartTotalAmount}Rs</h3>
                   </div>
                 </div>
               </CardBody>

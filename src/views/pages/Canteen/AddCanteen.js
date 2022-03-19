@@ -30,7 +30,7 @@ import { allStaffs } from "api/staff";
 //React-Select
 import Select from "react-select";
 
-import { canteenAdd,allCanteens } from "../../../api/canteen/index";
+import { canteenAdd, allCanteens,menuAdd } from "../../../api/canteen/index";
 
 function AddCanteen() {
   const [startDate, setStartDate] = React.useState(new Date());
@@ -42,37 +42,37 @@ function AddCanteen() {
   const { user } = isAuthenticated();
   const [roleOptions, setRoleOptions] = useState([]);
   const [canteenName, setCanteenName] = useState("");
+  const [allCanteen, setAllCanteen] = useState([]);
 
   const getAllStaffs = async () => {
     const res = await allStaffs(user.school, user._id);
     console.log(res);
     let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
     setAllStaff(canteenStaff);
-    let options=[];
+    let options = [];
     for (let i = 0; i < res.length; i++) {
-      options.push({value:res[i]._id,label:res[i].firstname})
-      
+      options.push({ value: res[i]._id, label: res[i].firstname });
     }
     console.log(options);
-    setRoleOptions(options)
+    setRoleOptions(options);
   };
 
-  const getAllCanteens=async()=>{
+  const getAllCanteens = async () => {
     try {
-      let data = await allCanteens(user._id,user.school)
+      let data = await allCanteens(user._id, user.school);
       console.log(data);
+      setAllCanteen(data);
     } catch (err) {
-console.log(err);      
+      console.log(err);
     }
-  }
+  };
 
   useEffect(() => {
     getAllStaffs();
     getAllCanteens();
     console.log(allStaff);
-    
   }, []);
-  
+
   console.log(roleOptions);
   console.log("end", endDuration);
 
@@ -80,18 +80,17 @@ console.log(err);
     canteenName: "",
   });
   console.log("addCanteen", addCanteen);
-
+  const [selectedCanteenId, setSelectedCanteenId] = useState("");
   const [addMenu, setAddMenu] = React.useState({
     image: "",
     items: "",
-    addCanteen: "",
     description: "",
-    prize: "",
+    price: "",
     publish: "",
   });
   console.log("addMenu", addMenu);
 
-const addCanteenFormData = new FormData();
+  const addCanteenFormData = new FormData();
 
   //Values of addCanteen
 
@@ -105,10 +104,10 @@ const addCanteenFormData = new FormData();
   };
 
   const addCanteenHandler = async () => {
-    addCanteenFormData.set("name",canteenName);
-    addCanteenFormData.set("schoolId",user.school);
+    addCanteenFormData.set("name", canteenName);
+    addCanteenFormData.set("school", user.school);
     try {
-      const data = await canteenAdd(user._id,addCanteenFormData);
+      const data = await canteenAdd(user._id, addCanteenFormData);
       console.log(data);
     } catch (err) {
       console.log(err);
@@ -126,6 +125,26 @@ const addCanteenFormData = new FormData();
     // formData.set(name, event.target.files[0]);
     setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
   };
+
+  const addMenuHandler=async()=>{
+    console.log(addMenu);
+    let formData= new FormData();
+   
+    formData.set("school",user.school);
+    let menuData = {...addMenu,startTime:startDuration,endTime:endDuration};
+    console.log(menuData);
+    console.log(selectedCanteenId);
+    formData.set("menu",JSON.stringify(menuData))
+    formData.set("id",selectedCanteenId)
+    
+    try {
+      let data = await menuAdd(user._id,formData);
+      console.log(data);
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <>
@@ -152,7 +171,7 @@ const addCanteenFormData = new FormData();
                           id="example4cols2Input"
                           placeholder="Class"
                           type="text"
-                          onChange={e=>setCanteenName(e.target.value)}
+                          onChange={(e) => setCanteenName(e.target.value)}
                           value={canteenName}
                           required
                         />
@@ -251,19 +270,21 @@ const addCanteenFormData = new FormData();
                         <Input
                           id="exampleFormControlSelect3"
                           type="select"
-                          onChange={handleChangeMenu("addCanteen")}
+                          onChange={(e)=>setSelectedCanteenId(e.target.value)}
                           value={addMenu.addCanteen}
                           required
                         >
-                          <option value="" disabled selected>
-                            Add Canteen
-                          </option>
-                          <option>Sam</option>
-                          <option>David</option>
-                          <option>Sam</option>
-                          <option>David</option>
-                          <option>Sam</option>
-                          <option>David</option>
+                          {allCanteen.map((canteen) => {
+                            return (
+                              <option
+                                key={canteen._id}
+                                value={canteen._id}
+                                selected
+                              >
+                                {canteen.name}
+                              </option>
+                            );
+                          })}
                         </Input>
                       </Col>
                     </Row>
@@ -273,14 +294,14 @@ const addCanteenFormData = new FormData();
                           className="form-control-label"
                           htmlFor="example4cols2Input"
                         >
-                          Prize
+                          Price
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Class"
+                          placeholder="Price"
                           type="Number"
-                          onChange={handleChangeMenu("prize")}
-                          value={addMenu.prize}
+                          onChange={handleChangeMenu("price")}
+                          value={addMenu.price}
                           required
                         />
                       </Col>
@@ -356,7 +377,7 @@ const addCanteenFormData = new FormData();
                         </Label>
                         <TextArea
                           id="example4cols2Input"
-                          placeholder="Class"
+                          placeholder="Description"
                           type="Number"
                           onChange={handleChangeMenu("description")}
                           value={addMenu.description}
@@ -365,7 +386,7 @@ const addCanteenFormData = new FormData();
                     </Row>
                     <Row className="mt-4 float-right">
                       <Col>
-                        <Button color="primary" type="submit">
+                        <Button color="primary" onClick={addMenuHandler}>
                           Add Menu
                         </Button>
                       </Col>
