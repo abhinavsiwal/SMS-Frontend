@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Input } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
-import { allClass } from "api/class";
+import { allClass, assignClassTeacher } from "api/class";
 import { toast } from "react-toastify";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
@@ -11,9 +11,9 @@ const ClassTeacher = () => {
   const [classList, setClassList] = useState([]);
   console.log(classList);
   const [teacherList, setTeacherList] = useState([]);
+  const { user, token } = isAuthenticated();
 
   useEffect(async () => {
-    const { user, token } = isAuthenticated();
     try {
       const classess = await allClass(user._id, user.school, token);
       console.log("classes", classess);
@@ -29,10 +29,7 @@ const ClassTeacher = () => {
       const { user, token } = isAuthenticated();
       const payload = { school: user.school };
 
-      const teachers = await allStaffs(
-        user.school,
-        user._id,
-      );
+      const teachers = await allStaffs(user.school, user._id);
       console.log(teachers);
       if (teachers.err) {
         return toast.error(teachers.err);
@@ -42,6 +39,21 @@ const ClassTeacher = () => {
       toast.error(err);
     }
   }, []);
+
+  const assignClassTeacherHandler = (classId) => async (e) => {
+    console.log(classId);
+    console.log(e.target.value);
+    let formData = new FormData();
+    formData.set("classTeacher",e.target.value)
+    try {
+      const data = await assignClassTeacher(classId,user._id,token,formData);
+      console.log(data);    
+    } catch (err) {
+      console.log(err);
+    }
+  
+  };
+
   return (
     <>
       <SimpleHeader name="Class Teacher" parentName="Class Management" />
@@ -53,7 +65,11 @@ const ClassTeacher = () => {
                 <tr key={clas._id} className="teacher-table-row">
                   <td className="teacher-table-class">{clas.name}</td>
                   <td>
-                    <Input id={clas._id} type="select">
+                    <Input
+                      id={clas._id}
+                      type="select"
+                      onChange={assignClassTeacherHandler(clas._id)}
+                    >
                       {teacherList.map((tech, i) => (
                         <option key={i} value={tech._id}>
                           {tech.firstname} {tech.lastname}

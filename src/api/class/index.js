@@ -1,4 +1,5 @@
 export const addClass = (userId, token, data = {}) => {
+
   const url = `${process.env.REACT_APP_API_URL}/api/school/class/create/${userId}`;
   return fetch(url, {
     method: "POST",
@@ -28,7 +29,7 @@ export const allClass = (userId, schoolID, token) => {
 };
 
 export const updateClass=async(classId,userId,token,formData)=>{
-  const url = `http://35.174.4.42:5000/api/school/class/edit/${classId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/class/edit/${classId}/${userId}`;
   return fetch(url, {
     method: "PUT",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
@@ -45,12 +46,29 @@ export const updateClass=async(classId,userId,token,formData)=>{
 
 
 export const deleteClass=async(classId,userId,token)=>{
-  const url = `http://35.174.4.42:5000/api/school/class/delete/${classId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/class/delete/${classId}/${userId}`;
   return fetch(url, {
     method: "DELETE",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
   })
     .then((data) => {
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+}
+
+
+export const assignClassTeacher=async(classId,userId,token,formData)=>{
+  const url = `${process.env.REACT_APP_API_URL}/api/school/class/edit/${classId}/${userId}`;
+ return fetch(url, {
+    method: "PUT",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
+    body: formData,
+  })
+    .then((data) => {
+      console.log("data", data);
       return data.json();
     })
     .catch((error) => {
