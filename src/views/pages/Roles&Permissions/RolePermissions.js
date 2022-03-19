@@ -170,7 +170,7 @@ function RolePermissions() {
   };
 
   const managePermissonSubmit = async () => {
-    console.log(mappingRoleName, mappingPermissions.obj);
+    console.log(mappingRoleName, mappingPermissions);
     // try {
     //   const formData = new FormData();
     //   formData.set("name", mappingRoleName);
@@ -211,10 +211,11 @@ function RolePermissions() {
       a.push(items.value);
     });
 
-    obj[name] = a;
-    let obj1 = obj[name];  
-    console.log("a", obj);
-    setMappingPermissions({ ...mappingPermissions, obj });
+    obj[name] = a;  
+    console.log("a", obj[name]);
+
+
+    setMappingPermissions({...mappingPermissions,...obj});
   };
 
   return (

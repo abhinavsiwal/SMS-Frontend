@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Container,
@@ -16,7 +16,7 @@ import {
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { isAuthenticated } from "api/auth";
 //css
 import "./Styles.css";
 
@@ -26,11 +26,11 @@ import TextArea from "antd/lib/input/TextArea";
 
 // import moment Library
 import moment from "moment";
-
+import { allStaffs } from "api/staff";
 //React-Select
 import Select from "react-select";
 
-import {canteenAdd} from '../../../api/canteen/index'
+import { canteenAdd,allCanteens } from "../../../api/canteen/index";
 
 function AddCanteen() {
   const [startDate, setStartDate] = React.useState(new Date());
@@ -38,6 +38,42 @@ function AddCanteen() {
   console.log("start", startDuration);
   const [endDate, setEndDate] = React.useState(new Date());
   const endDuration = moment(endDate).format("LT");
+  const [allStaff, setAllStaff] = useState([]);
+  const { user } = isAuthenticated();
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [canteenName, setCanteenName] = useState("");
+
+  const getAllStaffs = async () => {
+    const res = await allStaffs(user.school, user._id);
+    console.log(res);
+    let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
+    setAllStaff(canteenStaff);
+    let options=[];
+    for (let i = 0; i < res.length; i++) {
+      options.push({value:res[i]._id,label:res[i].firstname})
+      
+    }
+    console.log(options);
+    setRoleOptions(options)
+  };
+
+  const getAllCanteens=async()=>{
+    try {
+      let data = await allCanteens(user._id,user.school)
+      console.log(data);
+    } catch (err) {
+console.log(err);      
+    }
+  }
+
+  useEffect(() => {
+    getAllStaffs();
+    getAllCanteens();
+    console.log(allStaff);
+    
+  }, []);
+  
+  console.log(roleOptions);
   console.log("end", endDuration);
 
   const [addCanteen, setAddCanteen] = React.useState({
@@ -55,33 +91,29 @@ function AddCanteen() {
   });
   console.log("addMenu", addMenu);
 
-  const roleOptions = [
-    { value: "0", label: "Shyamlal" },
-    { value: "1", label: "Ramlal" },
-  ];
+const addCanteenFormData = new FormData();
 
   //Values of addCanteen
-  const handleChangeCanteen = (name) => (event) => {
-    // formData.set(name, event.target.value);
-    setAddCanteen({ ...addCanteen, [name]: event.target.value });
-  };
 
-  const handleSubjectChange = (e) => {
+  const handleStaffChange = (e) => {
     var value = [];
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    // formData.set("subject", JSON.stringify(value));
+    console.log(value);
+    addCanteenFormData.set("staff", JSON.stringify(value));
   };
 
-  const addCanteenHandler=async()=>{
+  const addCanteenHandler = async () => {
+    addCanteenFormData.set("name",canteenName);
+    addCanteenFormData.set("schoolId",user.school);
     try {
-      const data = await canteenAdd();
+      const data = await canteenAdd(user._id,addCanteenFormData);
       console.log(data);
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   //values of addMenu
   const handleChangeMenu = (name) => (event) => {
@@ -120,8 +152,8 @@ function AddCanteen() {
                           id="example4cols2Input"
                           placeholder="Class"
                           type="text"
-                          onChange={handleChangeCanteen("canteenName")}
-                          value={addCanteen.canteenName}
+                          onChange={e=>setCanteenName(e.target.value)}
+                          value={canteenName}
                           required
                         />
                       </Col>
@@ -138,7 +170,7 @@ function AddCanteen() {
                           isMulti
                           name="colors"
                           options={roleOptions}
-                          onChange={handleSubjectChange}
+                          onChange={handleStaffChange}
                           className="basic-multi-select"
                           classNamePrefix="select"
                           required
@@ -147,7 +179,7 @@ function AddCanteen() {
                     </Row>
                     <Row className="mt-4 float-right">
                       <Col>
-                        <Button color="primary" type="submit">
+                        <Button color="primary" onClick={addCanteenHandler}>
                           Add
                         </Button>
                       </Col>
