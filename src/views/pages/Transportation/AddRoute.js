@@ -129,7 +129,7 @@ function AddRoute() {
     formData.set("end",endDuration);
     formData.set("school",user.school);
     formData.set("staff",JSON.stringify(multiSelect));
-    formData.set("stop",JSON.stringify(addStops));
+    formData.set("stops",JSON.stringify(addStops));
 
     console.log("obj2", obj2);
 

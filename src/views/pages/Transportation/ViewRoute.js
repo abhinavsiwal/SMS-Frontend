@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 
 import {
   Container,
@@ -17,19 +17,23 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 import AntTable from "../tables/AntTable";
 
 //Ant Table
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteRowOutlined, SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
 
 //Loader
 import Loader from "components/Loader/Loader";
 
 import { isAuthenticated } from "api/auth";
+import {routeAdd,routesAll,deleteRoute} from 'api/transportation'
+
 
 function ViewRoute() {
   const [viewRoute, setViewRoute] = React.useState([]);
   const [modalState, setModalState] = React.useState(false);
   const [modalSupport, setModalSupport] = React.useState({});
   const [loading, setLoading] = React.useState(false);
+  const [allRoutes, setAllRoutes] = useState([]);
+  const [checked, setChecked] = useState(false);
 
   const openModal = (support) => {
     setModalSupport(support);
@@ -68,35 +72,6 @@ function ViewRoute() {
       },
       onFilter: (value, record) => {
         return record.route_name.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      sorter: (a, b) => a.description > b.description,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.description.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
@@ -227,67 +202,82 @@ function ViewRoute() {
   ];
 
   React.useEffect(() => {
-    const fetchStaff = async () => {
-      const { user, token } = isAuthenticated();
-      const res = "a"; // Call your function here
-      console.log(res);
-      const data = [];
-      for (let i = 0; i < res.length; i++) {
-        data.push({
-          key: i,
-          s_no: i + 1,
-          route_name: res[i].route_name,
-          description: res[i].description,
-          bus_no: res[i].bus_no,
-          staff_members: res[i].staff_members,
-          start_time: res[i].start_time,
-          end_time: res[i].end_time,
-          action: (
-            <>
-              <h5 key={i + 1} className="mb-0">
-                <span>{res[i].startTime}</span>
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
+   
+    fetchRoutes();
+  }, [checked]);
+
+
+  const { user } = isAuthenticated();
+
+  const fetchRoutes = async () => {
+    let res = await routesAll(user._id, user.school);
+    console.log(res);
+    const data = [];
+    for (let i = 0; i < res.length; i++) {
+      data.push({
+        key: i,
+        s_no: i + 1,
+        route_name: res[i].name,
+        bus_no: res[i].bus_number,
+        staff_members: res[i].staff.firstName,
+        start_time: res[i].start,
+        end_time: res[i].end,
+        action: (
+          <>
+            <h5 key={i + 1} className="mb-0">
+              <span>{res[i].startTime}</span>
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+              >
+                <i className="fas fa-user-edit" />
+              </Button>
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => handleDelete(res[i]._id)}
                 >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    // onConfirm={() => handleDelete(res[i]._id)}
-                  >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"view" + i + 1}
-                  onClick={() => {
-                    openModal(res[i]);
-                  }}
-                >
-                  View More
-                </Button>
-              </h5>
-            </>
-          ),
-        });
-      }
-      setViewRoute(data);
-      setLoading(true);
-    };
-    fetchStaff();
-  }, []);
+                  <i className="fas fa-trash" />
+                </Popconfirm>
+              </Button>
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"view" + i + 1}
+                onClick={() => {
+                  openModal(res[i]);
+                }}
+              >
+                View More
+              </Button>
+            </h5>
+          </>
+        ),
+      });
+    }
+    setViewRoute(data);
+    setLoading(true);
+  };
+
+
+const handleDelete=async(routeId)=>{
+  try {
+    const data = await deleteRoute(user._id,routeId)
+    console.log(data);
+    setChecked(!checked);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 
   return (
     <>
@@ -318,7 +308,7 @@ function ViewRoute() {
         >
           <div className="modal-header">
             <h6 className="modal-title" id="modal-title-default">
-              Canteen Details
+              Route Details
             </h6>
             <button
               aria-label="Close"
@@ -340,16 +330,16 @@ function ViewRoute() {
                   <th>DropTime</th>
                 </tr>
               </thead>
-              {/* {addStops !== null ? (
+              {modalSupport.stops ? (
                     <>
-                      {addStops.map((stops, index) => {
+                      {modalSupport.stops.map((stop, index) => {
                         return (
                           <tbody>
                             <tr key={index}>
                               <td>{index + 1}</td>
-                              <td>{stops.stopName}</td>
-                              <td>{stops.pickupTime}</td>
-                              <td>{stops.dropTime}</td>
+                              <td>{stop.stopName}</td>
+                              <td>{stop.pickupTime}</td>
+                              <td>{stop.dropTime}</td>
                             </tr>
                           </tbody>
                         );
@@ -357,7 +347,7 @@ function ViewRoute() {
                     </>
                   ) : (
                     <h3>No Data</h3>
-                  )} */}
+                  )}
             </Table>
           </ModalBody>
         </Modal>
