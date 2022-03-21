@@ -280,7 +280,7 @@ function CalendarView() {
         );
       },
       filterIcon: () => {
-        return <SearchOutlined />;
+        // return <SearchOutlined />;
       },
       onFilter: (value, record) => {
         return record.event_name.toLowerCase().includes(value.toLowerCase());
@@ -310,7 +310,7 @@ function CalendarView() {
         );
       },
       filterIcon: () => {
-        return <SearchOutlined />;
+        // return <SearchOutlined />;
       },
       onFilter: (value, record) => {
         return record.start_date.toLowerCase().includes(value.toLowerCase());
@@ -340,7 +340,7 @@ function CalendarView() {
         );
       },
       filterIcon: () => {
-        return <SearchOutlined />;
+        // return <SearchOutlined />;
       },
       onFilter: (value, record) => {
         return record.end_date.toLowerCase().includes(value.toLowerCase());
