@@ -9,7 +9,6 @@ import { allStaffs } from "api/staff";
 
 const ClassTeacher = () => {
   const [classList, setClassList] = useState([]);
-  console.log(classList);
   const [teacherList, setTeacherList] = useState([]);
   const { user, token } = isAuthenticated();
 

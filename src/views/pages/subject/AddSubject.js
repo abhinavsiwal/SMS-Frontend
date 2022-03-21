@@ -15,7 +15,12 @@ import {
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
 import { ToastContainer, toast } from "react-toastify";
-import { allSubjects, addSubject,updateSubject,deleteSubject } from "api/subjects";
+import {
+  allSubjects,
+  addSubject,
+  updateSubject,
+  deleteSubject,
+} from "api/subjects";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
@@ -27,18 +32,18 @@ const AddSubject = () => {
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editSubjectName, setEditSubjectName] = useState("");
-  const [subjectId, setSubjectId] = useState("")
+  const [subjectId, setSubjectId] = useState("");
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-  
     getAllClasses();
-  }, [reload,checked]);
+  }, [reload, checked]);
 
   const getAllClasses = () => {
     const { user, token } = isAuthenticated();
     allSubjects(user._id, user.school, token)
       .then((res) => {
+        console.log("res", res);
         const data = [];
         for (let i = 0; i < res[0].list.length; i++) {
           data.push({
@@ -51,9 +56,7 @@ const AddSubject = () => {
                   color="primary"
                   type="button"
                   key={"edit" + i + 1}
-                  onClick={() =>
-                    rowHandler(res[i]._id, res[i].name)
-                  }
+                  onClick={() => rowHandler(res[i]._id, res[i].name)}
                 >
                   <i className="fas fa-user-edit" />
                 </Button>
@@ -86,7 +89,7 @@ const AddSubject = () => {
     list: "",
   });
 
-  const handleDelete = async(subjectId) => {
+  const handleDelete = async (subjectId) => {
     console.log("delete");
     const { user, token } = isAuthenticated();
     try {
@@ -102,17 +105,22 @@ const AddSubject = () => {
   };
 
   const rowHandler = (id, name) => {
+    console.log(id);
     setEditing(true);
     setEditSubjectName(name);
     setSubjectId(id);
   };
 
   const handleEdit = async () => {
-  
     try {
       const { user, token } = isAuthenticated();
       formData.set("name", editSubjectName);
-      const updatedSubject = await updateSubject(subjectId, user._id, token, formData);
+      const updatedSubject = await updateSubject(
+        subjectId,
+        user._id,
+        token,
+        formData
+      );
       console.log("updateSubject", updatedSubject);
       setEditing(false);
       if (checked === false) {
@@ -124,8 +132,6 @@ const AddSubject = () => {
       toast.error(err);
     }
   };
-
-
 
   const columns = [
     {
@@ -177,10 +183,18 @@ const AddSubject = () => {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
-      await addSubject(user._id, token, formData);
+      const subject = await addSubject(user._id, token, formData);
+      if (subject.err) {
+        return toast.error(subject.err);
+      }
       setSubjectData({
         list: "",
       });
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
       toast.success("Subject added successfully");
       setReload(true);
     } catch (err) {

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+
+//import reactstrap
 import {
   Card,
   CardHeader,
@@ -12,6 +14,7 @@ import {
   Button,
   Form,
 } from "reactstrap";
+
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
@@ -20,6 +23,7 @@ import { Stepper, Step } from "react-form-stepper";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 
+//import CSS file here
 import "./style.css";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -51,7 +55,7 @@ function AddStaff() {
     joining_date: "",
     present_address: "",
     permanent_address: "",
-    state: "",
+    state: "", 
     city: "",
     country: "",
     pincode: "",
@@ -67,22 +71,21 @@ function AddStaff() {
     job: "",
     salary: "",
     qualification: "",
-    // department: "",
+    department: "",
     subject: "",
   });
   const [allRoles, setAllRoles] = useState([]);
   console.log("staff", staffData);
+
   const [formData] = useState(new FormData());
   const [departments, setDeparments] = useState([]);
-  // const [subject, setSubject] = useState([]);
-  // console.log("sub", subject);
   const [a, setA] = useState([]);
   console.log("a", a);
 
-  const roleOptions = [
-    // { value: "chemistry", label: "Chemistry" }
-  ];
-  console.log("role", roleOptions);
+  // const roleOptions = [
+  //   // { value: "chemistry", label: "Chemistry" }
+  // ];
+  // console.log("role", roleOptions);
 
   useEffect(() => {
     getAllRolesHandler();
@@ -110,6 +113,7 @@ function AddStaff() {
     setStaffData({ ...staffData, [name]: event.target.files[0].name });
   };
 
+  //react-select
   const handleSubjectChange = (e) => {
     var value = [];
     console.log("val", value);
@@ -165,19 +169,19 @@ function AddStaff() {
     window.scrollTo(0, 0);
   };
 
+  //Submiting Form Data
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
       const resp = await addStaff(user._id, token, formData);
-      console.log(resp);
       if (resp.err) {
         return toast.error(resp.err);
       }
-      toast.success("Staff added successfully");
+      toast.success("Staff Added successfully");
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong!");
     }
   };
 
@@ -217,6 +221,7 @@ function AddStaff() {
 
   useEffect(() => {}, [cscd, cpcscd]);
 
+  //Get Subject data
   useEffect(async () => {
     if (step === 3) {
       await Departments();
@@ -224,6 +229,7 @@ function AddStaff() {
       const { user, token } = isAuthenticated();
       try {
         const Subjects = await allSubjects(user._id, user.school, token);
+        console.log("sub", Subjects);
         var list = [];
         console.log("subject", Subjects);
         Subjects[0].list.map(async (sub) => {
@@ -232,8 +238,11 @@ function AddStaff() {
             label: sub,
           });
         });
+        if (Subjects.err) {
+          return toast.error(Subjects.err);
+        }
         setA(list);
-        console.log("list", list);
+        // console.log("list", list);
       } catch (err) {
         // toast.error("Something Went Wrong!");
  console.log(err);       
@@ -241,10 +250,14 @@ function AddStaff() {
     }
   }, [step]);
 
+  //Get deparment data
   async function Departments() {
     const { user, token } = isAuthenticated();
     try {
       const dept = await getDepartment(user.school, user._id, token);
+      if (dept.err) {
+        return toast.error(dept.err);
+      }
       console.log("dept", dept);
       setDeparments(dept);
     } catch (err) {
@@ -282,7 +295,7 @@ function AddStaff() {
       />
       <Container className="mt--6 shadow-lg" fluid>
         <Card className="mb-4 bg-transparent">
-          <CardHeader>
+          <CardHeader className="Step_Header">
             <Row className="d-flex justify-content-center">
               <Col md="10">
                 <Stepper
@@ -962,7 +975,7 @@ function AddStaff() {
                       <Input
                         id="exampleFormControlSelect3"
                         type="select"
-                        // onChange={handleChange("department")}
+                        onChange={handleChange("department")}
                         value={staffData.department}
                         required
                       >

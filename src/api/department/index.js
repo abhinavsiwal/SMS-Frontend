@@ -21,7 +21,6 @@ export const updateDepartment = (departmentId, userId, token, data) => {
     body: data,
   })
     .then((data) => {
-      console.log("data", data);
       return data.json();
     })
     .catch((error) => {

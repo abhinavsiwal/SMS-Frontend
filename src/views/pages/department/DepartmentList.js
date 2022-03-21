@@ -64,7 +64,7 @@ const DepartmentList = () => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "20%",
+      width: "30%",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -94,7 +94,7 @@ const DepartmentList = () => {
     {
       title: "Module",
       dataIndex: "module",
-      width: "50%",
+      width: "60%",
       sorter: (a, b) => a.abbreviation > b.abbreviation,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -125,6 +125,7 @@ const DepartmentList = () => {
       title: "Action",
       key: "action",
       dataIndex: "action",
+      width: "10%",
       fixed: "right",
     },
   ];
@@ -143,34 +144,33 @@ const DepartmentList = () => {
             module: res[i].module,
             action: (
               <h5 key={i + 1} className="mb-0">
-                <PermissionsGate scopes={[SCOPES.canEdit]} >
-
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  onClick={() =>
-                    rowHandler(res[i]._id, res[i].name, res[i].module)
-                  }
-                  key={"edit" + i + 1}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                  </PermissionsGate>
-                  <PermissionsGate scopes={[SCOPES.canDelete]} >
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete(res[i]._id)}
+                <PermissionsGate scopes={[SCOPES.canEdit]}>
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    onClick={() =>
+                      rowHandler(res[i]._id, res[i].name, res[i].module)
+                    }
+                    key={"edit" + i + 1}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                </PermissionsGate>
+                <PermissionsGate scopes={[SCOPES.canDelete]}>
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
                 </PermissionsGate>
               </h5>
             ),
@@ -261,15 +261,17 @@ const DepartmentList = () => {
       formData.set("name", name);
       // formData.set("module", JSON.stringify(data));
       const createDepartment = await addDepartment(user._id, token, formData);
-      console.log("createDeparment", createDepartment);
+      if (createDepartment.err) {
+        return toast.error(createDepartment.err);
+      }
       if (checked === false) {
         setChecked(true);
       } else {
         setChecked(false);
       }
-      toast.success("Deparment added Successfully");
+      toast.success("Deparment Added Successfully");
     } catch (err) {
-      toast.error(err);
+      toast.error("Something Went Wrong!");
     }
   };
 
@@ -290,61 +292,59 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <PermissionsGate scopes={[SCOPES.canCreate]} >
-
-         
-          <Col lg="3">
-            <div className="card-wrapper">
-              <Card>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Department Name
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Department Name"
-                          type="text"
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Module
-                        </label>
-                        <Select
-                          isMulti
-                          name="colors"
-                          options={data}
-                          onChange={handleChange}
-                          className="basic-multi-select"
-                          classNamePrefix="select"
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
+          <PermissionsGate scopes={[SCOPES.canCreate]}>
+            <Col lg="3">
+              <div className="card-wrapper">
+                <Card>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Department Name
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Department Name"
+                            type="text"
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Module
+                          </label>
+                          <Select
+                            isMulti
+                            name="colors"
+                            options={data}
+                            onChange={handleChange}
+                            className="basic-multi-select"
+                            classNamePrefix="select"
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 float-right">
+                        <Col>
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
           </PermissionsGate>
           <Col>
             <div className="card-wrapper">
@@ -368,10 +368,11 @@ const DepartmentList = () => {
 
         {/* editDepartment */}
         <Modal
-          className="modal-dialog-centered"
           isOpen={editing}
           toggle={() => setEditing(false)}
           size="lg"
+          style={{ height: "50vh" }}
+          scrollable
         >
           <div className="modal-header">
             <h2 className="modal-title" id="modal-title-default">

@@ -62,7 +62,7 @@ function Addtocart() {
   return (
     <div>
       {checked ? (
-        <Viewcart />
+        <Viewproduct />
       ) : (
         <>
           <SimpleHeader name="Student" parentName="Time Table" />

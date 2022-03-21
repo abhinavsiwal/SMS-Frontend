@@ -36,14 +36,12 @@ export const updateClass=async(classId,userId,token,formData)=>{
     body: formData,
   })
     .then((data) => {
-      console.log("data", data);
       return data.json();
     })
     .catch((error) => {
       throw error;
     });
-}
-
+};
 
 export const deleteClass=async(classId,userId,token)=>{
   const url = `${process.env.REACT_APP_API_URL}/api/school/class/delete/${classId}/${userId}`;

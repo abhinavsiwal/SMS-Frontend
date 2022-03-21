@@ -26,7 +26,7 @@ import "./Ecommerce.css";
 //Add to cart
 import Addtocart from "./Addtocart";
 
-function Viewcart() {
+function Viewproduct() {
   const [checked, setChecked] = React.useState(false);
  const dispatch = useDispatch();
 const {cartTotalQuantity} = useSelector(state=>state.cartReducer);
@@ -107,4 +107,4 @@ const {cartTotalQuantity} = useSelector(state=>state.cartReducer);
   );
 }
 
-export default Viewcart;
+export default Viewproduct;

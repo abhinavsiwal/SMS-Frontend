@@ -15,7 +15,7 @@ import {
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
-function Addcart() {
+function Addproduct() {
   //Value for image
   const handleFileChange = (name) => (event) => {
     // formData.set(name, event.target.files[0]);
@@ -218,4 +218,4 @@ function Addcart() {
   );
 }
 
-export default Addcart;
+export default Addproduct;

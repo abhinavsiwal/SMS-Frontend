@@ -14,6 +14,21 @@ import {
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
+<<<<<<< HEAD
+
+import { addStudent } from "api/student";
+
+import { Stepper, Step } from "react-form-stepper";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
+import Select from "react-select";
+import { Country, State, City } from "country-state-city";
+
+import "./style.css";
+import { isAuthenticated } from "api/auth";
+=======
 
 import { addStudent } from "api/student";
 
@@ -28,9 +43,16 @@ import { Country, State, City } from "country-state-city";
 import "./style.css";
 import { isAuthenticated } from "api/auth";
 
+import { useSelector } from "react-redux";
+>>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
+
 function AddStudent() {
   // Stepper form steps
   const [step, setStep] = useState(0);
+
+  const { classes } = useSelector((state) => state.classReducer);
+  console.log("clsss", classes);
+  const [selectedClassIndex, setselectedClassIndex] = useState(0);
 
   const [studentData, setStudentData] = useState({
     image: "",
@@ -93,11 +115,22 @@ function AddStudent() {
     mother_mother_tongue: "",
   });
 
+  console.log("studentData", studentData);
+
   const [formData] = useState(new FormData());
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
     setStudentData({ ...studentData, [name]: event.target.value });
+    // if (name === "selectClass") {
+    //   console.log("@@@@@@@@=>", event.target.value);
+    //   for (let i = 0; i < classes.length; i++) {
+    //     if (classes[i].name === event.target.value) {
+    //       // console.log("#######");
+    //       setselectedClassIndex(i);
+    //     }
+    //   }
+    // }
   };
 
   const handleFileChange = (name) => (event) => {
@@ -177,7 +210,15 @@ function AddStudent() {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
+<<<<<<< HEAD
       await addStudent(user._id, token, formData);
+=======
+      const addStudent = await addStudent(user._id, token, formData);
+      console.log("addStudent", addStudent);
+      if (addStudent.err) {
+        return toast.error(addStudent.err);
+      }
+>>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
       toast.success("Student added successfully");
     } catch (err) {
       toast.error("Something Went Wrong");
@@ -239,7 +280,7 @@ function AddStudent() {
       />
       <Container className="mt--6 shadow-lg" fluid>
         <Card className="mb-4 bg-transparent">
-          <CardHeader>
+          <CardHeader className="Step_Header">
             <Row className="d-flex justify-content-center">
               <Col md="10">
                 <Stepper
@@ -547,6 +588,7 @@ function AddStudent() {
                       id="exampleFormControlSelect3"
                       type="select"
                       required
+<<<<<<< HEAD
                       value={studentData.class}
                     >
                       <option>A+</option>
@@ -557,6 +599,20 @@ function AddStudent() {
                       <option>O-</option>
                       <option>AB+</option>
                       <option>AB-</option>
+=======
+                      onChange={handleChange("class")}
+                      value={studentData.class}
+                    >
+                      {classes &&
+                        classes.map((clas, index) => {
+                          // setselectedClassIndex(index)
+                          return (
+                            <option value={clas._id} key={index}>
+                              {clas.name}
+                            </option>
+                          );
+                        })}
+>>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
                     </Input>
                   </Col>
                   <Col>
@@ -570,6 +626,7 @@ function AddStudent() {
                       id="exampleFormControlSelect3"
                       type="select"
                       required
+<<<<<<< HEAD
                       value={studentData.section}
                     >
                       <option>A+</option>
@@ -580,6 +637,20 @@ function AddStudent() {
                       <option>O-</option>
                       <option>AB+</option>
                       <option>AB-</option>
+=======
+                      onChange={handleChange("section")}
+                      value={studentData.section}
+                    >
+                      {classes[selectedClassIndex] &&
+                        classes[selectedClassIndex].section.map((section) => {
+                          // console.log(section.name);
+                          return (
+                            <option value={section._id} key={section._id}>
+                              {section.name}
+                            </option>
+                          );
+                        })}
+>>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
                     </Input>
                   </Col>
                   <Col>
@@ -593,6 +664,10 @@ function AddStudent() {
                       id="exampleFormControlSelect3"
                       type="select"
                       required
+<<<<<<< HEAD
+=======
+                      onChange={handleChange("session")}
+>>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
                       value={studentData.session}
                     >
                       <option>A+</option>

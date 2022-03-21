@@ -25,6 +25,7 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   Label,
+  ModalBody,
 } from "reactstrap";
 // core components
 
@@ -70,7 +71,8 @@ function CalendarView() {
   const [currentDate, setCurrentDate] = React.useState(null);
   const calendarRef = React.useRef(null);
   const [checked, setChecked] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+
+  const [editing, setEditing] = React.useState(false);
 
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
@@ -146,7 +148,7 @@ function CalendarView() {
     createCalendar();
     const { user, token } = isAuthenticated();
     const events = await getCalender(user._id, user.school, token);
-    // console.log("getevents", events);
+    console.log("getevents", events);
     setEvents(events);
     events.map((events) => {
       return calendar.addEvent({
@@ -194,7 +196,7 @@ function CalendarView() {
     setEvent(undefined);
   };
 
-  //Delete Events
+  //Delete Events Confirm Box
   const deleteEventSweetAlert = () => {
     setAlert(
       <ReactBSAlert
@@ -221,6 +223,7 @@ function CalendarView() {
     );
   };
 
+  //Delete Events
   const deleteEvent = async () => {
     try {
       const { user, token } = isAuthenticated();
@@ -251,9 +254,133 @@ function CalendarView() {
     setEvent(undefined);
   };
 
+  //Ant Table Column
+  const columns = [
+    {
+      title: "Event Name",
+      dataIndex: "event_name",
+      width: 150,
+      sorter: (a, b) => a.event_name > b.event_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.event_name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Start Date",
+      dataIndex: "start_date",
+      width: 150,
+      sorter: (a, b) => a.start_date > b.start_date,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.start_date.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "End Date",
+      dataIndex: "end_date",
+      width: 150,
+      sorter: (a, b) => a.end_date > b.end_date,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.end_date.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
+
   return (
     <>
       {alert}
+
+      <Modal
+        className="modal-dialog-centered"
+        isOpen={editing}
+        toggle={() => setEditing(false)}
+        size="lg"
+      >
+        <div className="modal-header">
+          <h2 className="modal-title" id="modal-title-default">
+            {editing ? "Edit Form" : "Create Form"}
+          </h2>
+          <button
+            aria-label="Close"
+            className="close"
+            data-dismiss="modal"
+            type="button"
+            onClick={() => setEditing(false)}
+          >
+            <span aria-hidden={true}>×</span>
+          </button>
+        </div>
+        <ModalBody></ModalBody>
+      </Modal>
+
       <ToastContainer
         position="bottom-right"
         autoClose={1000}
@@ -295,6 +422,14 @@ function CalendarView() {
               </Col>
               <Col className="mt-3 mt-md-0 text-md-right" lg="6">
                 <Button
+                  className="btn-neutral"
+                  color="default"
+                  onClick={() => setEditing(true)}
+                  size="sm"
+                >
+                  View Events
+                </Button>
+                <Button
                   className="fullcalendar-btn-prev btn-neutral"
                   color="default"
                   onClick={() => {
@@ -318,6 +453,15 @@ function CalendarView() {
                   className="btn-neutral"
                   color="default"
                   data-calendar-view="month"
+                  onClick={() => changeView("dayGridYear")}
+                  size="sm"
+                >
+                  Year
+                </Button>
+                <Button
+                  className="btn-neutral"
+                  color="default"
+                  data-calendar-view="year"
                   onClick={() => changeView("dayGridMonth")}
                   size="sm"
                 >
@@ -389,7 +533,6 @@ function CalendarView() {
                         className="p-2 endDate"
                         showTimeSelect
                         dateFormat="yyyy MMMM, dd h:mm aa"
-                        // dateFormat="'YYYY-MM-dd', h:mm"
                         selected={startDate}
                         selectsStart
                         startDate={startDate}
@@ -488,7 +631,6 @@ function CalendarView() {
                     className="new-event--add"
                     color="primary"
                     type="button"
-                    // onClick={addNewEvent}
                     onClick={handleSubmitEvent}
                   >
                     Add event
