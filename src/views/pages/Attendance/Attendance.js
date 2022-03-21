@@ -190,8 +190,6 @@ function Attendance() {
     // console.log(formattedAttendanceData);
 
     let date = new Date();
-    let today = date.getDate();
-    // console.log(today);
     let formData1 = {
       attendance: {
         10: formattedAttendanceData,
@@ -202,10 +200,11 @@ function Attendance() {
       class: classes[selectedClassIndex]._id,
       section: classes[selectedClassIndex].section._id,
     };
+    let today = date.getDate();
+    console.log(today);
     console.log(classes[selectedClassIndex]);
-    let attendance = {
-      4: formattedAttendanceData,
-    };
+    let attendance = {};
+    attendance[today]=attendanceData;
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
     let school = user.school;

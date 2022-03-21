@@ -46,6 +46,7 @@ function TimeTable() {
     subjects: "",
     teachers: "",
     selectMode: "",
+    link: "",
   });
 
   console.log("timetable", timeTableData);
@@ -57,6 +58,9 @@ function TimeTable() {
   const startTime = moment(startTimeRecises).format("LT");
   const [endTimeRecises, setEndTimeRecises] = React.useState(new Date());
   const endTime = moment(endTimeRecises).format("LT");
+  const [classess, setClassess] = React.useState([]);
+  const [selectMultipleDays, setSelectMultipleDays] = React.useState();
+  console.log("selectDays", selectMultipleDays);
 
   const roleOptions = [
     { value: "Monday", label: "Monday" },
@@ -77,11 +81,13 @@ function TimeTable() {
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
+    setSelectMultipleDays(value);
     // formData.set("subject", JSON.stringify(value));
   };
 
   const [timePeriod, setTimePeriod] = React.useState([]);
-  const [classess, setClassess] = React.useState([]);
+
+  console.log("clas", classess);
 
   const [formData] = React.useState(new FormData());
 
@@ -100,12 +106,35 @@ function TimeTable() {
   const handleData = async (e) => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
-    formData.set("school", user.school);
+    let lecture = {
+      class: timeTableData.class,
+      section: timeTableData.section,
+      school: user.school,
+      lectures: {},
+    };
+    let lectDays = {
+      name: timeTableData.prd,
+      time: startDuration + " - " + endDuration,
+      teacher: timeTableData.teachers,
+      type: timeTableData.selectMode,
+    };
+    if (lectDays.type === "Online") {
+      lectDays.link = timeTableData.link;
+    }
+
+    for (let key in selectMultipleDays) {
+      lecture.lectures[selectMultipleDays[key]] = [lectDays];
+    }
+
+    formData.set("lecture", JSON.stringify(lecture));
     try {
       const resp = await createTimeTable(user._id, token, formData);
-      console.log(resp);
+      console.log("resp", resp);
+      if (resp.err) {
+        toast.error(resp.err);
+      }
     } catch (err) {
-      // toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong");
     }
   };
 
@@ -130,7 +159,7 @@ function TimeTable() {
             <Card>
               <CardBody>
                 <Row className="m-4">
-                  <Col md="3">
+                  <Col md="6">
                     <Label
                       className="form-control-label"
                       htmlFor="xample-date-input"
@@ -148,11 +177,15 @@ function TimeTable() {
                         Select Class
                       </option>
                       {classess.map((clas) => {
-                        return <option value={clas._id}>{clas.name}</option>;
+                        return (
+                          <option key={clas._id} value={clas._id}>
+                            {clas.name}
+                          </option>
+                        );
                       })}
                     </Input>
                   </Col>
-                  <Col md="3">
+                  <Col md="6">
                     <Label
                       className="form-control-label"
                       htmlFor="xample-date-input"
@@ -170,10 +203,15 @@ function TimeTable() {
                       <option value="" disabled selected>
                         Select Section
                       </option>
-                      <option>A</option>
-                      <option>B</option>
-                      <option>C</option>
-                      <option>D</option>
+                      {classess.map((sections) => {
+                        return sections.section.map((sec) => {
+                          return (
+                            <option value={sec._id} key={sec._id}>
+                              {sec.name}
+                            </option>
+                          );
+                        });
+                      })}
                     </Input>
                   </Col>
                 </Row>
@@ -182,7 +220,7 @@ function TimeTable() {
                   timeTableData.section !== null && (
                     <>
                       <Row className="m-4">
-                        <Col md="3">
+                        <Col md="6">
                           <Label
                             className="form-control-label"
                             htmlFor="xample-date-input"
@@ -199,16 +237,16 @@ function TimeTable() {
                             required
                           />
                         </Col>
-                        <Col md="3">
+                        <Col md="6">
                           <Label
                             className="form-control-label"
                             htmlFor="xample-date-input"
                           >
-                            Add Periods
+                            Add Lecture
                           </Label>
                           <Input
                             id="example4cols3Input"
-                            type="Number"
+                            type="text"
                             onChange={handleChange("prd")}
                             value={timeTableData.prd}
                             placeholder="Add Periods"
@@ -217,7 +255,7 @@ function TimeTable() {
                         </Col>
                       </Row>
                       <Row className="m-4">
-                        <Col md="1">
+                        <Col md="2">
                           <Label
                             className="form-control-label"
                             htmlFor="xample-date-input"
@@ -226,10 +264,10 @@ function TimeTable() {
                             className="form-control-label"
                             htmlFor="xample-date-input"
                           >
-                            Period
+                            Lecture Time
                           </p>
                         </Col>
-                        <Col md="3">
+                        <Col md="2">
                           <Label
                             className="form-control-label"
                             htmlFor="xample-date-input"
@@ -248,7 +286,7 @@ function TimeTable() {
                             dateFormat="h:mm aa"
                           />
                         </Col>
-                        <Col md="3">
+                        <Col md="2">
                           <Label
                             className="form-control-label"
                             htmlFor="example-date-input"
@@ -268,7 +306,7 @@ function TimeTable() {
                           />
                         </Col>
                       </Row>
-                      <Row className="m-4">
+                      {/* <Row className="m-4">
                         <Col md="1">
                           <Label
                             className="form-control-label"
@@ -319,7 +357,7 @@ function TimeTable() {
                             dateFormat="h:mm aa"
                           />
                         </Col>
-                      </Row>
+                      </Row> */}
 
                       <Row className="d-flex justify-content-center mb-4 m-4">
                         <Col md="3">
@@ -368,6 +406,7 @@ function TimeTable() {
                             <option>Jordan</option>
                           </Input>
                         </Col>
+
                         <Col md="3">
                           <Label
                             className="form-control-label"
@@ -389,6 +428,24 @@ function TimeTable() {
                             <option>Online</option>
                           </Input>
                         </Col>
+                        {timeTableData.selectMode === "Online" && (
+                          <Col md="3">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Link
+                            </Label>
+                            <Input
+                              id="exampleFormControlSelect3"
+                              type="text"
+                              onChange={handleChange("link")}
+                              value={timeTableData.link}
+                              placeholder="Enter Link here"
+                              required
+                            ></Input>
+                          </Col>
+                        )}
                         <Col className="mt-4">
                           <Button color="primary" onClick={handleData}>
                             Add
