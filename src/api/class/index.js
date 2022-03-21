@@ -27,7 +27,7 @@ export const allClass = (userId, schoolID, token) => {
     });
 };
 
-export const updateClass=async(classId,userId,token,formData)=>{
+export const updateClass = async (classId, userId, token, formData) => {
   const url = `http://35.174.4.42:5000/api/school/class/edit/${classId}/${userId}`;
   return fetch(url, {
     method: "PUT",
@@ -35,16 +35,14 @@ export const updateClass=async(classId,userId,token,formData)=>{
     body: formData,
   })
     .then((data) => {
-      console.log("data", data);
       return data.json();
     })
     .catch((error) => {
       throw error;
     });
-}
+};
 
-
-export const deleteClass=async(classId,userId,token)=>{
+export const deleteClass = async (classId, userId, token) => {
   const url = `http://35.174.4.42:5000/api/school/class/delete/${classId}/${userId}`;
   return fetch(url, {
     method: "DELETE",
@@ -56,4 +54,4 @@ export const deleteClass=async(classId,userId,token)=>{
     .catch((error) => {
       throw error;
     });
-}
+};

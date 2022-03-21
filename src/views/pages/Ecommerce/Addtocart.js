@@ -18,7 +18,7 @@ import {
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import Viewcart from "./Viewcart";
+import Viewproduct from "./Viewproduct";
 
 function Addtocart() {
   const [checked, setChecked] = React.useState(false);
@@ -50,7 +50,7 @@ function Addtocart() {
   return (
     <div>
       {checked ? (
-        <Viewcart />
+        <Viewproduct />
       ) : (
         <>
           <SimpleHeader name="Student" parentName="Time Table" />

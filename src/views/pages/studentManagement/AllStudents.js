@@ -28,7 +28,7 @@ import { toast } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import { useHistory } from "react-router";
 import UpdateStudent from "./UpdateStudent";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import PermissionsGate from "routeGuard/PermissionGate";
 
@@ -37,7 +37,7 @@ import { SCOPES } from "routeGuard/permission-maps";
 const AllStudents = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const {studentEditing} = useSelector(state=>state.studentReducer)
+  const { studentEditing } = useSelector((state) => state.studentReducer);
   const [loading, setLoading] = useState(false);
   // 0 -> List, 1-> Grid
   const [view, setView] = useState(0);
@@ -48,7 +48,7 @@ const AllStudents = () => {
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const [editing, setEditing] = useState(false);
-  const [editingData, setEditingData] = useState({})
+  const [editingData, setEditingData] = useState({});
   const itemsPerPage = 9;
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % studentList.length;
@@ -65,7 +65,7 @@ const AllStudents = () => {
         token,
         JSON.stringify(payload)
       );
-      console.log(res);
+      console.log("res", res);
       const data = [];
       for (let i = 0; i < res.length; i++) {
         data.push({
@@ -84,36 +84,34 @@ const AllStudents = () => {
           action: (
             <h5 key={i + 1} className="mb-0">
               {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
-              <PermissionsGate scopes={[SCOPES.canEdit]} >
-
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-                onClick={() => {
-                  updateStudentHandler(res[i]);
-                }}
+              <PermissionsGate scopes={[SCOPES.canEdit]}>
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => {
+                    updateStudentHandler(res[i]);
+                  }}
                 >
-                <i className="fas fa-user-edit" />
-              </Button>
-                </PermissionsGate>
+                  <i className="fas fa-user-edit" />
+                </Button>
+              </PermissionsGate>
               {/* </Link> */}
-              <PermissionsGate scopes={[SCOPES.canDelete]} >
-
-              <Button
-                className="btn-sm pull-right"
-                color="danger"
-                type="button"
-                key={"delete" + i + 1}
-              >
-                <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => deleteStudentHandler(res[i]._id)}
+              <PermissionsGate scopes={[SCOPES.canDelete]}>
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
                 >
-                  <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => deleteStudentHandler(res[i]._id)}
+                  >
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
               </PermissionsGate>
               <Button
                 className="btn-sm pull-right"
@@ -146,7 +144,6 @@ const AllStudents = () => {
         setChecked(false);
       }
     } catch (err) {
-      console.log(err);
       toast.error("Something went wrong");
     }
   };
@@ -155,7 +152,7 @@ const AllStudents = () => {
     console.log("Update Student");
     console.log(studentData);
     dispatch(setStudentEditing(true));
-    setEditingData(studentData)
+    setEditingData(studentData);
     // return <UpdateStudent studentDetails={studentData} />;
   };
 

@@ -25,6 +25,7 @@ import { SCOPES } from "routeGuard/permission-maps";
 
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
+  console.log("sectionList", sectionList);
   const [classList, setClassList] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
   const [reload, setReload] = useState(false);
@@ -180,6 +181,7 @@ const AddSection = () => {
       // All Sections
       allSections(user._id, user.school, token)
         .then((res) => {
+          console.log("res", res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -191,32 +193,31 @@ const AddSection = () => {
               action: (
                 <h5 key={i + 1} className="mb-0">
                   <PermissionsGate scopes={[SCOPES.canEdit]}>
-
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                    </PermissionsGate>
-                    <PermissionsGate scopes={[SCOPES.canDelete]} >
-
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <i className="fas fa-trash" />
-                  </Button>
-                    </PermissionsGate>
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                    >
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  </PermissionsGate>
+                  <PermissionsGate scopes={[SCOPES.canDelete]}>
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <i className="fas fa-trash" />
+                    </Button>
+                  </PermissionsGate>
                 </h5>
               ),
             });
+            console.log("data", data);
+            setSectionList(data);
           }
-          setSectionList(data);
         })
         .catch((err) => {
           console.log(err);

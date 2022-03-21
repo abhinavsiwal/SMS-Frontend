@@ -66,7 +66,7 @@ function SchoolProfile() {
                 <CardBody className="mt-0">
                   <Row>
                     <Col align="center">
-                      <h4 class="mt-0 mb-1">School Name</h4>
+                      <h4 className="mt-0 mb-1">School Name</h4>
                       <span className="text-md">
                         {schoolDetails.schoolname}
                       </span>
@@ -74,7 +74,7 @@ function SchoolProfile() {
                   </Row>
                   <Row>
                     <Col align="center">
-                      <h4 class="mt-3 mb-1">Abbreviation</h4>
+                      <h4 className="mt-3 mb-1">Abbreviation</h4>
                       <span className="text-md">
                         {schoolDetails.abbreviation}
                       </span>
@@ -82,7 +82,7 @@ function SchoolProfile() {
                   </Row>
                   <Row>
                     <Col align="center">
-                      <h4 class="mt-3 mb-1">Affiliated Board</h4>
+                      <h4 className="mt-3 mb-1">Affiliated Board</h4>
                       <span className="text-md">
                         {schoolDetails.affiliateBoard}
                       </span>

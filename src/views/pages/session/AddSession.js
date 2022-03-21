@@ -16,7 +16,7 @@ import SimpleHeader from "components/Headers/SimpleHeader";
 import { Popconfirm } from "antd";
 import PermissionsGate from "routeGuard/PermissionGate";
 import { isAuthenticated } from "api/auth";
-import { allSessions, addSession,editSession } from "api/session";
+import { allSessions, addSession, editSession } from "api/session";
 import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
@@ -48,7 +48,6 @@ const AddSession = () => {
       // All Sections
       allSessions(user._id, user.school, token)
         .then((res) => {
-          console.log(res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -120,16 +119,15 @@ const AddSession = () => {
     }
   }
 
-  const handleEditSubmit=async()=>{
+  const handleEditSubmit = async () => {
     console.log("clicked");
     const { user, token } = isAuthenticated();
     let formData = new FormData();
-    formData.set("name",editSessionName);
-    formData.set("start_date",editStartDate);
-    formData.set("end_date",editEndDate);
+    formData.set("name", editSessionName);
+    formData.set("start_date", editStartDate);
+    formData.set("end_date", editEndDate);
 
     try {
-      
       const updateSession = await editSession(
         editSessionId,
         user._id,
@@ -143,11 +141,10 @@ const AddSession = () => {
       } else {
         setChecked(false);
       }
-
     } catch (err) {
       toast.error(err);
     }
-  }
+  };
 
   //Getting values from fetch
   function rowHandler(id, name, startDate, endDate) {
@@ -462,46 +459,42 @@ const AddSession = () => {
               </Col>
             </Row>
             <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Starting Date
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            type="date"
-                            onChange={(e)=>setEditStartDate(e.target.value)}
-                            required
-                            value={editStartDate}
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Ending Date
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            value={editEndDate}
-                            type="date"
-                            onChange={(e)=>setEditEndDate(e.target.value)}
-                            required
-                          />
-                        </Col>
-                      </Row>
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example-date-input"
+                >
+                  Starting Date
+                </label>
+                <Input
+                  id="example-date-input"
+                  type="date"
+                  onChange={(e) => setEditStartDate(e.target.value)}
+                  required
+                  value={editStartDate}
+                />
+              </Col>
+            </Row>
+            <Row className="mt-4">
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example-date-input"
+                >
+                  Ending Date
+                </label>
+                <Input
+                  id="example-date-input"
+                  value={editEndDate}
+                  type="date"
+                  onChange={(e) => setEditEndDate(e.target.value)}
+                  required
+                />
+              </Col>
+            </Row>
           </ModalBody>
           <ModalFooter>
-            <Button
-              color="success"
-              type="button"
-              onClick={handleEditSubmit}
-            >
+            <Button color="success" type="button" onClick={handleEditSubmit}>
               Save changes
             </Button>
           </ModalFooter>

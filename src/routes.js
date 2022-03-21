@@ -64,9 +64,8 @@ import ViewCanteen from "views/pages/Canteen/ViewCanteen";
 import ViewAllCanteen from "views/pages/Canteen/ViewAllCanteen";
 import ViewRoute from "views/pages/Transportation/ViewRoute";
 import AddRoute from "views/pages/Transportation/AddRoute";
-// import Ecommerce from "views/pages/Ecommerce/Ecommerce";z
-import Addcart from "views/pages/Ecommerce/Addcart";
-import Viewcart from "views/pages/Ecommerce/Viewcart";
+import Viewproduct from "views/pages/Ecommerce/Viewproduct";
+import Addproduct from "views/pages/Ecommerce/Addproduct";
 
 export const adminRoutes = [
   {
@@ -298,14 +297,14 @@ export const adminRoutes = [
         path: "/add-cart",
         name: "Add Product",
         miniName: "A",
-        component: Addcart,
+        component: Addproduct,
         layout: "/admin",
       },
       {
         path: "/viewCart",
         name: "View Product",
         miniName: "V",
-        component: Viewcart,
+        component: Viewproduct,
         layout: "/admin",
       },
     ],
@@ -541,14 +540,14 @@ export const editorRoutes = [
         path: "/add-cart",
         name: "Add Product",
         miniName: "A",
-        component: Addcart,
+        component: Addproduct,
         layout: "/admin",
       },
       {
         path: "/viewCart",
         name: "View Product",
         miniName: "V",
-        component: Viewcart,
+        component: Viewproduct,
         layout: "/admin",
       },
     ],
@@ -721,14 +720,14 @@ export const viewerRoutes = [
         path: "/add-cart",
         name: "Add Product",
         miniName: "A",
-        component: Addcart,
+        component: Addproduct,
         layout: "/admin",
       },
       {
         path: "/viewCart",
         name: "View Product",
         miniName: "V",
-        component: Viewcart,
+        component: Viewproduct,
         layout: "/admin",
       },
     ],
@@ -964,14 +963,14 @@ const routes = [
         path: "/add-cart",
         name: "Add Product",
         miniName: "A",
-        component: Addcart,
+        component: Addproduct,
         layout: "/admin",
       },
       {
         path: "/viewCart",
         name: "View Product",
         miniName: "V",
-        component: Viewcart,
+        component: Viewproduct,
         layout: "/admin",
       },
     ],

@@ -25,7 +25,7 @@ import "./Ecommerce.css";
 //Add to cart
 import Addtocart from "./Addtocart";
 
-function Viewcart() {
+function Viewproduct() {
   const [checked, setChecked] = React.useState(false);
   const [cardItems, setCardItems] = React.useState([
     {
@@ -149,4 +149,4 @@ function Viewcart() {
   );
 }
 
-export default Viewcart;
+export default Viewproduct;

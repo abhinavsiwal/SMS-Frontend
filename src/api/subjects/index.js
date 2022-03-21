@@ -1,8 +1,8 @@
 export const allSubjects = (userId, schoolID, token) => {
   const url = `${process.env.REACT_APP_API_URL}/api/school/subject/all/${schoolID}/${userId}`;
   return fetch(url, {
-    method: 'GET',
-    headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
+    method: "GET",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
   })
     .then((data) => {
       return data.json();
@@ -15,8 +15,8 @@ export const allSubjects = (userId, schoolID, token) => {
 export const addSubject = (userId, token, data = {}) => {
   const url = `${process.env.REACT_APP_API_URL}/api/school/subject/create/${userId}`;
   return fetch(url, {
-    method: 'POST',
-    headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
+    method: "POST",
+    headers: { Authorization: "Bearer " + token, Accept: "application/json" },
     body: data,
   })
     .then((data) => {

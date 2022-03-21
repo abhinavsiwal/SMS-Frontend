@@ -39,6 +39,7 @@ import { allSupports } from "api/support";
 import Loader from "components/Loader/Loader";
 
 function Support() {
+  const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [supportData, setSupportData] = useState({
     priority: "",
@@ -90,7 +91,7 @@ function Support() {
         });
     };
     getAllSupports();
-  }, []);
+  }, [checked]);
 
   const columns = [
     {
@@ -203,6 +204,14 @@ function Support() {
     try {
       const resp = await support(user._id, token, formData);
       console.log(resp);
+      if (resp.err) {
+        return toast.error(resp.err);
+      }
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
       setSupportData({
         priority: "",
         root_caused: "",
