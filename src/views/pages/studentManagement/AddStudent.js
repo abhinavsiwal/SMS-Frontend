@@ -30,13 +30,17 @@ import { isAuthenticated } from "api/auth";
 
 import { useSelector } from "react-redux";
 
+import { allSessions } from "api/session";
+
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
 
   const { classes } = useSelector((state) => state.classReducer);
   console.log("clsss", classes);
   const [selectedClassIndex, setselectedClassIndex] = useState(0);
+
+  const [session, setsession] = useState([]);
 
   const [studentData, setStudentData] = useState({
     image: "",
@@ -102,6 +106,15 @@ function AddStudent() {
   console.log("studentData", studentData);
 
   const [formData] = useState(new FormData());
+
+  React.useEffect(async () => {
+    const { user, token } = isAuthenticated();
+    const sessions = await allSessions(user._id, user.school, token);
+    if (sessions.err) {
+      return toast.error(sessions.err);
+    }
+    setsession(sessions);
+  }, []);
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -194,13 +207,14 @@ function AddStudent() {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
-      const addStudent = await addStudent(user._id, token, formData);
-      console.log("addStudent", addStudent);
-      if (addStudent.err) {
-        return toast.error(addStudent.err);
+      const addStudents = await addStudent(user._id, token, formData);
+      console.log("addStudent", addStudents);
+      if (addStudents.err) {
+        return toast.error(addStudents.err);
       }
       toast.success("Student added successfully");
     } catch (err) {
+      console.log("err", err);
       toast.error("Something Went Wrong");
     }
   };
@@ -596,15 +610,15 @@ function AddStudent() {
                       onChange={handleChange("section")}
                       value={studentData.section}
                     >
-                      {classes[selectedClassIndex] &&
-                        classes[selectedClassIndex].section.map((section) => {
-                          // console.log(section.name);
+                      {classes.map((sections) => {
+                        return sections.section.map((sec) => {
                           return (
-                            <option value={section._id} key={section._id}>
-                              {section.name}
+                            <option value={sec._id} key={sec._id}>
+                              {sec.name}
                             </option>
                           );
-                        })}
+                        });
+                      })}
                     </Input>
                   </Col>
                   <Col>
@@ -621,14 +635,14 @@ function AddStudent() {
                       onChange={handleChange("session")}
                       value={studentData.session}
                     >
-                      <option>A+</option>
-                      <option>A-</option>
-                      <option>B+</option>
-                      <option>B-</option>
-                      <option>O+</option>
-                      <option>O-</option>
-                      <option>AB+</option>
-                      <option>AB-</option>
+                      <option disabled>Select Session</option>
+                      {session.map((session) => {
+                        return (
+                          <option key={session._id} value={session._id}>
+                            {session.name}
+                          </option>
+                        );
+                      })}
                     </Input>
                   </Col>
                 </Row>

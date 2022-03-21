@@ -9,8 +9,15 @@ import {
   CardHeader,
   Modal,
   ModalBody,
+  Row,
+  Col,
+  Label,
   Table,
+  Form,
 } from "reactstrap";
+
+//React-Select
+import Select from "react-select";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -25,15 +32,55 @@ import Loader from "components/Loader/Loader";
 
 import { isAuthenticated } from "api/auth";
 
+//React Datepicker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+// import moment Library
+import moment from "moment";
+
 function ViewRoute() {
+  const [startDate, setStartDate] = React.useState(new Date());
+  const startDuration = moment(startDate).format("LT");
+  console.log("start", startDuration);
+  const [endDate, setEndDate] = React.useState(new Date());
+  const endDuration = moment(endDate).format("LT");
+  console.log("end", endDuration);
   const [viewRoute, setViewRoute] = React.useState([]);
   const [modalState, setModalState] = React.useState(false);
   const [modalSupport, setModalSupport] = React.useState({});
   const [loading, setLoading] = React.useState(false);
+  const [editing, setEditing] = React.useState(false);
+  const [formData] = React.useState(new FormData());
+
+  const [route, setRoute] = React.useState({
+    route_name: "",
+    description: "",
+    bus_no: "",
+  });
+
+  console.log("route", route);
 
   const openModal = (support) => {
     setModalSupport(support);
     setModalState(true);
+  };
+
+  const roleOptions = [
+    { value: "0", label: "Shyamlal" },
+    { value: "1", label: "Ramlal" },
+  ];
+
+  const handleSubjectChange = (e) => {
+    var value = [];
+    for (var i = 0, l = e.length; i < l; i++) {
+      value.push(e[i].value);
+    }
+  };
+
+  const handleChange = (name) => (event) => {
+    formData.set(name, event.target.value);
+    setRoute({ ...route, [name]: event.target.value });
   };
 
   const columns = [
@@ -251,6 +298,7 @@ function ViewRoute() {
                   color="primary"
                   type="button"
                   key={"edit" + i + 1}
+                  onClick={() => setEditing(true)}
                 >
                   <i className="fas fa-user-edit" />
                 </Button>
@@ -292,6 +340,147 @@ function ViewRoute() {
   return (
     <>
       <SimpleHeader name="Transport" parentName="View Route" />
+      <Modal
+        style={{ height: "50vh" }}
+        isOpen={editing}
+        toggle={() => setEditing(false)}
+        size="lg"
+        scrollable
+      >
+        <div className="modal-header">
+          <h2 className="modal-title" id="modal-title-default">
+            {editing ? "Edit Form" : "Create Form"}
+          </h2>
+          <button
+            aria-label="Close"
+            className="close"
+            data-dismiss="modal"
+            type="button"
+            onClick={() => setEditing(false)}
+          >
+            <span aria-hidden={true}>×</span>
+          </button>
+        </div>
+        <ModalBody>
+          <Container>
+            <Form>
+              <Row>
+                <Col>
+                  {" "}
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Route Name
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("route_name")}
+                    value={route.route_name}
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Staff Member
+                  </Label>
+                  <Select
+                    isMulti
+                    name="colors"
+                    options={roleOptions}
+                    onChange={handleSubjectChange}
+                    className="basic-multi-select"
+                    classNamePrefix="select"
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Description
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("description")}
+                    value={route.description}
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Bus No.
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="bus_no"
+                    type="Number"
+                    onChange={handleChange("bus_no")}
+                    value={route.bus_no}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    From
+                  </Label>
+                  <DatePicker
+                    id="exampleFormControlSelect3"
+                    className="Period-Time"
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption="Time"
+                    dateFormat="h:mm aa"
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example-date-input"
+                  >
+                    To
+                  </Label>
+                  <DatePicker
+                    id="exampleFormControlSelect3"
+                    className="Period-Time"
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption="Time"
+                    dateFormat="h:mm aa"
+                    required
+                  />
+                </Col>
+              </Row>
+            </Form>
+          </Container>
+        </ModalBody>
+      </Modal>
+
       <Container className="mt--6 shadow-lg" fluid>
         <Card>
           <CardHeader>
