@@ -18,7 +18,8 @@ import {
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import Viewcart from "./Viewcart";
+// import Viewcart from "./Viewcart";
+import Viewproduct from './Viewproduct'
 import { useSelector, useDispatch } from "react-redux";
 
 import {
