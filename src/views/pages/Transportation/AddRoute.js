@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import {
   Container,
@@ -28,10 +28,6 @@ import Select from "react-select";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import TextArea from "antd/lib/input/TextArea";
 
-import { routeAdd,routesAll } from "api/transportation";
-import { isAuthenticated } from "api/auth";
-import { allStaffs } from "api/staff";
-
 function AddRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
@@ -48,44 +44,18 @@ function AddRoute() {
   const [addRoute, setAddRoute] = React.useState("");
   const [placeName, setPlaceName] = React.useState("");
   const [multiSelect, setMultiSelect] = React.useState();
-  const [busNumber, setBusNumber] = useState();
-  const [check, setCheck] = React.useState(false);
-  const [roleOptions, setRoleOptions] = useState([]);
-  const [allStaff, setAllStaff] = useState([]);
-  const { user } = isAuthenticated();
-  const [allRoutes, setAllRoutes] = useState([]);
-  const [selectedRouteId, setSelectedRouteId] = useState("")
-  const [addStops, setAddStops] = React.useState([]);
 
+  const [check, setCheck] = React.useState(false);
+
+  const [addStops, setAddStops] = React.useState([]);
   console.log("addStops", addStops);
 
-  const getAllStaffs = async () => {
-    const res = await allStaffs(user.school, user._id);
-    console.log(res);
-    let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
-    setAllStaff(canteenStaff);
-    let options = [];
-    for (let i = 0; i < res.length; i++) {
-      options.push({ value: res[i]._id, label: res[i].firstname });
-    }
-    console.log(options);
-    setRoleOptions(options);
-  };
+  const [busNo, setBusNo] = React.useState("");
 
-  const getAllRoutes = async () => {
-    try {
-      let data = await routesAll(user._id, user.school);
-      console.log(data);
-      setAllRoutes(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getAllStaffs();
-    getAllRoutes();
-  }, []);
+  const roleOptions = [
+    { value: "0", label: "Shyamlal" },
+    { value: "1", label: "Ramlal" },
+  ];
 
   const handleSubjectChange = (e) => {
     var value = [];
@@ -95,14 +65,12 @@ function AddRoute() {
     setMultiSelect(value);
   };
 
-  const addStopHandler = () => {
+  const addStop = () => {
     let obj = {
       stopName: placeName,
       pickupTime: startTime,
       dropTime: endTime,
-      id:selectedRouteId,
     };
-    
     let arr = addStops;
     arr.push(obj);
     setAddStops(arr);
@@ -113,36 +81,19 @@ function AddRoute() {
     }
   };
 
-  const addRouteHandler = async () => {
-    // e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const obj2 = {
       routName: addRoute,
       staffMember: multiSelect,
+      bus_no: busNo,
       startTime: startDuration,
       endTime: endDuration,
       addStop: addStops,
     };
-    console.log(obj2);
-    const formData = new FormData();
-
-    formData.set("name", addRoute);
-    formData.set("bus_number", busNumber);
-    formData.set("start", startDuration);
-    formData.set("end", endDuration);
-    formData.set("staff", JSON.stringify(multiSelect));
-    formData.set("school", user.school);
-
-    try {
-      const data = await routeAdd(user._id, formData);
-      console.log(data);
-
-      setAddRoute("");
-      setPlaceName("");
-      setBusNumber("");
-      setMultiSelect([]);
-    } catch (err) {
-      console.log(err);
-    }
+    setAddRoute("");
+    setPlaceName("");
+    console.log("obj2", obj2);
   };
 
   return (
@@ -156,7 +107,7 @@ function AddRoute() {
                 <CardHeader>
                   <h3>Add Route</h3>
                 </CardHeader>
-                <Form className="mb-4">
+                <Form className="mb-4" onSubmit={handleSubmit}>
                   <CardBody>
                     <Row className="d-flex justify-content-center">
                       <Col md="6">
@@ -191,23 +142,24 @@ function AddRoute() {
                           required
                         />
                       </Col>
-                      <Col md="6">
+                    </Row>
+                    <Row>
+                      <Col md="12">
                         <Label
                           className="form-control-label"
-                          htmlFor="xample-date-input"
+                          htmlFor="example4cols2Input"
                         >
-                          Bus Number
+                          Bus No.
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Bus Number"
-                          type="number"
-                          onChange={(e) => setBusNumber(e.target.value)}
+                          placeholder="Class"
+                          type="Number"
+                          onChange={(e) => setBusNo(e.target.value)}
                           required
                         />
                       </Col>
                     </Row>
-
                     <Row className="d-flex justify-content-center">
                       <Col md="6">
                         <Label
@@ -249,11 +201,6 @@ function AddRoute() {
                           required
                         />
                       </Col>
-                      <Col className="ml-3 mt-4">
-                        <Button color="primary" onClick={addRouteHandler}>
-                          Add Route
-                        </Button>
-                      </Col>
                     </Row>
                   </CardBody>
                   <CardHeader>
@@ -261,33 +208,6 @@ function AddRoute() {
                   </CardHeader>
                   <CardBody>
                     <Row>
-                    {/* <Col md="6">
-                        <Label
-                          className="form-control-label"
-                          htmlFor="exampleFormControlSelect3"
-                        >
-                          Route Name
-                        </Label>
-                        <Input
-                          id="exampleFormControlSelect3"
-                          type="select"
-                          onChange={(e)=>setSelectedRouteId(e.target.value)}
-                          value={selectedRouteId}
-                          required
-                        >
-                          {allRoutes.map((route) => {
-                            return (
-                              <option
-                                key={route._id}
-                                value={route._id}
-                                selected
-                              >
-                                {route.name}
-                              </option>
-                            );
-                          })}
-                        </Input>
-                      </Col> */}
                       <Col md="12">
                         <Label
                           className="form-control-label"
@@ -297,7 +217,7 @@ function AddRoute() {
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Place Name"
+                          placeholder="Class"
                           type="text"
                           onChange={(e) => setPlaceName(e.target.value)}
                           required
@@ -349,9 +269,14 @@ function AddRoute() {
                   </CardBody>
 
                   <Row>
+                    <Col className="ml-3">
+                      <Button color="primary" onClick={addStop}>
+                        Add
+                      </Button>
+                    </Col>
                     <Col>
-                      <Button color="primary">
-                        Add Stop
+                      <Button color="primary" type="submit">
+                        Submit
                       </Button>
                     </Col>
                   </Row>

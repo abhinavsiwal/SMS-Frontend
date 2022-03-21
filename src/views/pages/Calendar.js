@@ -51,6 +51,11 @@ import {
 import "./Calender.css";
 import { SCOPES } from "routeGuard/permission-maps";
 
+//import Ant Table
+// import AntTable from "./tables/AntTable";
+import { Table } from "ant-table-extensions";
+import { SearchOutlined } from "@ant-design/icons";
+
 let calendar;
 
 function CalendarView() {
@@ -73,6 +78,7 @@ function CalendarView() {
   const [checked, setChecked] = React.useState(false);
 
   const [editing, setEditing] = React.useState(false);
+  const [eventList, setEventList] = React.useState([]);
 
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
@@ -132,7 +138,6 @@ function CalendarView() {
       setModalAdd(false);
       toast.success("Event addedd successfully");
       setChecked(true);
-      // window.location.reload();
     } catch (err) {
       toast.error(err);
     }
@@ -161,6 +166,18 @@ function CalendarView() {
         // assignTeacher: assignTeachers,
       });
     });
+
+    //Ant Table Data Source
+    const data = [];
+    events.map((events) => {
+      data.push({
+        key: events._id,
+        event_name: events.name,
+        start_date: events.event_from.split("T")[0],
+        end_date: events.event_to.split("T")[0],
+      });
+    });
+    setEventList(data);
     setChecked(false);
   }, [checked]);
 
@@ -254,19 +271,113 @@ function CalendarView() {
     setEvent(undefined);
   };
 
+  //Ant Table Column
+  const columns = [
+    {
+      title: "Event Name",
+      dataIndex: "event_name",
+      width: 150,
+      sorter: (a, b) => a.event_name > b.event_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.event_name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Start Date",
+      dataIndex: "start_date",
+      width: 150,
+      sorter: (a, b) => a.start_date > b.start_date,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.start_date.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "End Date",
+      dataIndex: "end_date",
+      width: 150,
+      sorter: (a, b) => a.end_date > b.end_date,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.end_date.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+  ];
+
   return (
     <>
       {alert}
-
       <Modal
-        className="modal-dialog-centered"
+        style={{ height: "75vh" }}
         isOpen={editing}
         toggle={() => setEditing(false)}
         size="lg"
+        scrollable
       >
         <div className="modal-header">
           <h2 className="modal-title" id="modal-title-default">
-            {editing ? "Edit Form" : "Create Form"}
+            {editing ? "Event List" : ""}
           </h2>
           <button
             aria-label="Close"
@@ -278,9 +389,10 @@ function CalendarView() {
             <span aria-hidden={true}>×</span>
           </button>
         </div>
-        <ModalBody></ModalBody>
+        <ModalBody>
+          <Table columns={columns} dataSource={eventList} />
+        </ModalBody>
       </Modal>
-
       <ToastContainer
         position="bottom-right"
         autoClose={1000}
@@ -324,8 +436,7 @@ function CalendarView() {
                 <Button
                   className="btn-neutral"
                   color="default"
-                  // data-calendar-view="month"
-                  // onClick={() => changeView("dayGridYear")}
+                  onClick={() => setEditing(true)}
                   size="sm"
                 >
                   View Events
@@ -353,7 +464,7 @@ function CalendarView() {
                 <Button
                   className="btn-neutral"
                   color="default"
-                  data-calendar-view="month"
+                  data-calendar-view="basicYear"
                   onClick={() => changeView("dayGridYear")}
                   size="sm"
                 >
@@ -362,7 +473,7 @@ function CalendarView() {
                 <Button
                   className="btn-neutral"
                   color="default"
-                  data-calendar-view="year"
+                  data-calendar-view="basicMonth"
                   onClick={() => changeView("dayGridMonth")}
                   size="sm"
                 >

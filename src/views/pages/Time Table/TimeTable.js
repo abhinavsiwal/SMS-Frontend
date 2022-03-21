@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   Container,
@@ -30,6 +30,13 @@ import "react-datepicker/dist/react-datepicker.css";
 // import moment Library
 import moment from "moment";
 import { SCOPES } from "routeGuard/permission-maps";
+import { createTimeTable } from "../../../api/Time Table";
+
+import { isAuthenticated } from "api/auth";
+
+import { allClass } from "api/class";
+
+import { ToastContainer, toast } from "react-toastify";
 
 function TimeTable() {
   const [timeTableData, setTimeTableData] = React.useState({
@@ -74,11 +81,48 @@ function TimeTable() {
   };
 
   const [timePeriod, setTimePeriod] = React.useState([]);
+  const [classess, setClassess] = React.useState([]);
 
-  const handleData = () => {};
+  const [formData] = React.useState(new FormData());
+
+  React.useEffect(() => {
+    getClass();
+  }, []);
+  const getClass = async () => {
+    const { user, token } = isAuthenticated();
+    const classes = await allClass(user._id, user.school, token);
+    if (classes.err) {
+      return toast.error(classes.err);
+    }
+    setClassess(classes);
+  };
+
+  const handleData = async (e) => {
+    e.preventDefault();
+    const { user, token } = isAuthenticated();
+    formData.set("school", user.school);
+    try {
+      const resp = await createTimeTable(user._id, token, formData);
+      console.log(resp);
+    } catch (err) {
+      // toast.error("Something Went Wrong");
+    }
+  };
 
   return (
     <div>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <SimpleHeader name="Student" parentName="Time Table" />
       <PermissionsGate scopes={[SCOPES.canCreate]}>
         <Container className="mt--6 shadow-lg" fluid>
@@ -103,20 +147,9 @@ function TimeTable() {
                       <option value="" disabled selected>
                         Select Class
                       </option>
-                      <option>LKG</option>
-                      <option>UKG</option>
-                      <option>1st</option>
-                      <option>2nd</option>
-                      <option>3rd</option>
-                      <option>4th</option>
-                      <option>5th</option>
-                      <option>6th</option>
-                      <option>7th</option>
-                      <option>8th</option>
-                      <option>9th</option>
-                      <option>10th</option>
-                      <option>11th</option>
-                      <option>12th</option>
+                      {classess.map((clas) => {
+                        return <option value={clas._id}>{clas.name}</option>;
+                      })}
                     </Input>
                   </Col>
                   <Col md="3">

@@ -32,7 +32,7 @@ import { useSelector } from "react-redux";
 
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
 
   const { classes } = useSelector((state) => state.classReducer);
   console.log("clsss", classes);
