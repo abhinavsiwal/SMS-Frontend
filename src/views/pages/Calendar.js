@@ -254,106 +254,6 @@ function CalendarView() {
     setEvent(undefined);
   };
 
-  //Ant Table Column
-  const columns = [
-    {
-      title: "Event Name",
-      dataIndex: "event_name",
-      width: 150,
-      sorter: (a, b) => a.event_name > b.event_name,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        // return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.event_name.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Start Date",
-      dataIndex: "start_date",
-      width: 150,
-      sorter: (a, b) => a.start_date > b.start_date,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        // return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.start_date.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "End Date",
-      dataIndex: "end_date",
-      width: 150,
-      sorter: (a, b) => a.end_date > b.end_date,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        // return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.end_date.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Action",
-      key: "action",
-      dataIndex: "action",
-      fixed: "right",
-    },
-  ];
-
   return (
     <>
       {alert}
@@ -424,7 +324,8 @@ function CalendarView() {
                 <Button
                   className="btn-neutral"
                   color="default"
-                  onClick={() => setEditing(true)}
+                  // data-calendar-view="month"
+                  // onClick={() => changeView("dayGridYear")}
                   size="sm"
                 >
                   View Events
