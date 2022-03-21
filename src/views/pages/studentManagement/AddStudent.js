@@ -14,21 +14,6 @@ import {
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-<<<<<<< HEAD
-
-import { addStudent } from "api/student";
-
-import { Stepper, Step } from "react-form-stepper";
-import { ToastContainer, toast } from "react-toastify";
-
-import "react-toastify/dist/ReactToastify.css";
-
-import Select from "react-select";
-import { Country, State, City } from "country-state-city";
-
-import "./style.css";
-import { isAuthenticated } from "api/auth";
-=======
 
 import { addStudent } from "api/student";
 
@@ -44,7 +29,6 @@ import "./style.css";
 import { isAuthenticated } from "api/auth";
 
 import { useSelector } from "react-redux";
->>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
 
 function AddStudent() {
   // Stepper form steps
@@ -210,15 +194,11 @@ function AddStudent() {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
-<<<<<<< HEAD
-      await addStudent(user._id, token, formData);
-=======
       const addStudent = await addStudent(user._id, token, formData);
       console.log("addStudent", addStudent);
       if (addStudent.err) {
         return toast.error(addStudent.err);
       }
->>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
       toast.success("Student added successfully");
     } catch (err) {
       toast.error("Something Went Wrong");
@@ -588,18 +568,6 @@ function AddStudent() {
                       id="exampleFormControlSelect3"
                       type="select"
                       required
-<<<<<<< HEAD
-                      value={studentData.class}
-                    >
-                      <option>A+</option>
-                      <option>A-</option>
-                      <option>B+</option>
-                      <option>B-</option>
-                      <option>O+</option>
-                      <option>O-</option>
-                      <option>AB+</option>
-                      <option>AB-</option>
-=======
                       onChange={handleChange("class")}
                       value={studentData.class}
                     >
@@ -612,7 +580,6 @@ function AddStudent() {
                             </option>
                           );
                         })}
->>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
                     </Input>
                   </Col>
                   <Col>
@@ -626,18 +593,6 @@ function AddStudent() {
                       id="exampleFormControlSelect3"
                       type="select"
                       required
-<<<<<<< HEAD
-                      value={studentData.section}
-                    >
-                      <option>A+</option>
-                      <option>A-</option>
-                      <option>B+</option>
-                      <option>B-</option>
-                      <option>O+</option>
-                      <option>O-</option>
-                      <option>AB+</option>
-                      <option>AB-</option>
-=======
                       onChange={handleChange("section")}
                       value={studentData.section}
                     >
@@ -650,7 +605,6 @@ function AddStudent() {
                             </option>
                           );
                         })}
->>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
                     </Input>
                   </Col>
                   <Col>
@@ -664,10 +618,7 @@ function AddStudent() {
                       id="exampleFormControlSelect3"
                       type="select"
                       required
-<<<<<<< HEAD
-=======
                       onChange={handleChange("session")}
->>>>>>> 65079146f802592682dbbf389525684c8a8f1d29
                       value={studentData.session}
                     >
                       <option>A+</option>
