@@ -27,7 +27,7 @@ import {
 // core components
 
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import { schoolProfile } from "api/school";
+import { schoolProfile,editProfile } from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
 import { SCOPES } from "routeGuard/permission-maps";
@@ -39,6 +39,7 @@ function SchoolProfile() {
   const [editing, setEditing] = useState(false);
   const { user } = isAuthenticated();
   const [formData] = useState(new FormData());
+  const [checked, setChecked] = useState(false);
   const [editSchoolProfile, setEditSchoolProfile] = useState({
     school_name: "",
     abbreviation: "",
@@ -51,10 +52,11 @@ function SchoolProfile() {
     primary_contact_no: "",
     telephone: "",
     fax_no: "",
+    affiliate_board: "",
   });
   useEffect(() => {
     getSchoolDetails();
-  }, []);
+  }, [checked]);
 
   const getSchoolDetails = async () => {
     try {
@@ -62,17 +64,56 @@ function SchoolProfile() {
       console.log(user);
       console.log(data);
       setSchoolDetails(data);
+      setEditSchoolProfile({
+        ...editSchoolProfile,
+        school_name: data.schoolname,
+        abbreviation: data.abbreviation,
+        school_address: data.address,
+        pin_code: data.pincode,
+        country: data.country,
+        city: data.city,
+        state: data.state,
+        school_email: data.email,
+        primary_contact_no: data.phone,
+        telephone: data.telephone,
+        fax_no: "",
+        affiliate_board: data.affiliate_board,
+      });
     } catch (err) {
       console.log(err);
     }
   };
 
   const handleChange = (name) => (event) => {
-    formData.set(name, event.target.value);
+    // formData.set(name, event.target.value);
     setEditSchoolProfile({ ...editSchoolProfile, [name]: event.target.value });
   };
 
-  const handleEdit = () => {};
+  const handleEdit = async() => {
+    console.log(editSchoolProfile);
+
+    formData.set("schoolname",editSchoolProfile.school_name);
+    formData.set("abbreviation",editSchoolProfile.abbreviation);
+    formData.set("address",editSchoolProfile.school_address)
+    formData.set("affiliate_board",editSchoolProfile.affiliate_board);
+    formData.set("city",editSchoolProfile.city);
+    formData.set("country",editSchoolProfile.country);
+    formData.set("email",editSchoolProfile.school_email);
+    formData.set("phone",editSchoolProfile.primary_contact_no);
+    formData.set("pincode",editSchoolProfile.pin_code)
+    formData.set("state",editSchoolProfile.state);
+    formData.set("telephone",editSchoolProfile.telephone);
+
+try {
+  const data = await editProfile(user.school,user._id,formData);
+  console.log(data);
+  setEditing(false)
+  setChecked(!checked)
+} catch (err) {
+  console.log(err);
+}
+
+  };
 
   return (
     <>
@@ -140,14 +181,14 @@ function SchoolProfile() {
                   className="form-control-label"
                   htmlFor="example4cols2Input"
                 >
-                  Route Name
+                  Affiliated Board
                 </Label>
                 <Input
                   id="example4cols2Input"
                   placeholder="Class"
                   type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
+                  onChange={handleChange("affialiate_board")}
+                  value={editSchoolProfile.affiliate_board}
                   required
                 />
               </Col>
@@ -156,48 +197,14 @@ function SchoolProfile() {
                   className="form-control-label"
                   htmlFor="example4cols2Input"
                 >
-                  Route Name
+                  School Address
                 </Label>
                 <Input
                   id="example4cols2Input"
                   placeholder="Class"
                   type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Route Name
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Route Name
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
+                  onChange={handleChange("school_address")}
+                  value={editSchoolProfile.school_address}
                   required
                 />
               </Col>
@@ -208,14 +215,14 @@ function SchoolProfile() {
                   className="form-control-label"
                   htmlFor="example4cols2Input"
                 >
-                  Route Name
+                  Pin Code
                 </Label>
                 <Input
                   id="example4cols2Input"
                   placeholder="Class"
                   type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
+                  onChange={handleChange("pin_code")}
+                  value={editSchoolProfile.pin_code}
                   required
                 />
               </Col>
@@ -224,48 +231,14 @@ function SchoolProfile() {
                   className="form-control-label"
                   htmlFor="example4cols2Input"
                 >
-                  Route Name
+                  Country
                 </Label>
                 <Input
                   id="example4cols2Input"
                   placeholder="Class"
                   type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Route Name
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Route Name
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
+                  onChange={handleChange("country")}
+                  value={editSchoolProfile.country}
                   required
                 />
               </Col>
@@ -276,14 +249,14 @@ function SchoolProfile() {
                   className="form-control-label"
                   htmlFor="example4cols2Input"
                 >
-                  Route Name
+                  State
                 </Label>
                 <Input
                   id="example4cols2Input"
                   placeholder="Class"
                   type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
+                  onChange={handleChange("state")}
+                  value={editSchoolProfile.state}
                   required
                 />
               </Col>
@@ -292,14 +265,82 @@ function SchoolProfile() {
                   className="form-control-label"
                   htmlFor="example4cols2Input"
                 >
-                  Route Name
+                  City
                 </Label>
                 <Input
                   id="example4cols2Input"
                   placeholder="Class"
                   type="text"
-                  // onChange={handleChange("route_name")}
-                  // value={route.route_name}
+                  onChange={handleChange("city")}
+                  value={editSchoolProfile.city}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  SchoolEmail
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  onChange={handleChange("school_email")}
+                  value={editSchoolProfile.school_email}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Primary Contact No
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  onChange={handleChange("primary_contact_no")}
+                  value={editSchoolProfile.primary_contact_no}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Telephone
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  onChange={handleChange("telephone")}
+                  value={editSchoolProfile.telephone}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Fax No
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  onChange={handleChange("fax_no")}
+                  value={editSchoolProfile.fax_no}
                   required
                 />
               </Col>

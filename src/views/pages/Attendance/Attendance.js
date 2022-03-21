@@ -61,6 +61,10 @@ function Attendance() {
   const [atd, setAtd] = React.useState({});
   // console.log("atd", atd);
 
+
+
+
+
   //modal window for addAttendance
   const [modal, setModal] = React.useState(false);
   const toggle = () => setModal(!modal);
@@ -207,7 +211,7 @@ function Attendance() {
     attendance[10]=formattedAttendanceData;
     // let month = date.getMonth() + 1;
     let month = 4
-    let year = date.getFullYear();
+    let year = date.getFullYear(); 
     let school = user.school;
     let classId = classes[selectedClassIndex]._id;
     let sectionId = classes[selectedClassIndex].section[0]._id;
