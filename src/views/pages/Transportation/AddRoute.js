@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Container,
@@ -28,6 +28,10 @@ import Select from "react-select";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import TextArea from "antd/lib/input/TextArea";
 
+import { routeAdd } from "api/transportation";
+import { isAuthenticated } from "api/auth";
+import { allStaffs,routesAll } from "api/staff";
+
 function AddRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
@@ -44,16 +48,31 @@ function AddRoute() {
   const [addRoute, setAddRoute] = React.useState("");
   const [placeName, setPlaceName] = React.useState("");
   const [multiSelect, setMultiSelect] = React.useState();
-
+  const [busNumber, setBusNumber] = useState();
   const [check, setCheck] = React.useState(false);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [allStaff, setAllStaff] = useState([]);
+  const { user } = isAuthenticated();
 
   const [addStops, setAddStops] = React.useState([]);
   console.log("addStops", addStops);
 
-  const roleOptions = [
-    { value: "0", label: "Shyamlal" },
-    { value: "1", label: "Ramlal" },
-  ];
+  const getAllStaffs = async () => {
+    const res = await allStaffs(user.school, user._id);
+    console.log(res);
+    let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
+    setAllStaff(canteenStaff);
+    let options = [];
+    for (let i = 0; i < res.length; i++) {
+      options.push({ value: res[i]._id, label: res[i].firstname });
+    }
+    console.log(options);
+    setRoleOptions(options);
+  };
+
+  useEffect(() => {
+    getAllStaffs();
+  }, []);
 
   const handleSubjectChange = (e) => {
     var value = [];
@@ -79,8 +98,8 @@ function AddRoute() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const addRouteHandler = async () => {
+    // e.preventDefault();
     const obj2 = {
       routName: addRoute,
       staffMember: multiSelect,
@@ -88,9 +107,27 @@ function AddRoute() {
       endTime: endDuration,
       addStop: addStops,
     };
+    console.log(obj2);
+    const formData = new FormData();
+
+    formData.set("name", addRoute);
+    formData.set("bus_number", busNumber);
+    formData.set("start", startDuration);
+    formData.set("end", endDuration);
+    formData.set("staff", JSON.stringify(multiSelect));
+    formData.set("school", user.school);
+  
+    try {
+      const data = await routeAdd(user._id, formData);
+      console.log(data);
+      
     setAddRoute("");
     setPlaceName("");
-    console.log("obj2", obj2);
+    setBusNumber("");
+    setMultiSelect([]);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -104,7 +141,7 @@ function AddRoute() {
                 <CardHeader>
                   <h3>Add Route</h3>
                 </CardHeader>
-                <Form className="mb-4" onSubmit={handleSubmit}>
+                <Form className="mb-4">
                   <CardBody>
                     <Row className="d-flex justify-content-center">
                       <Col md="6">
@@ -136,6 +173,21 @@ function AddRoute() {
                           onChange={handleSubjectChange}
                           className="basic-multi-select"
                           classNamePrefix="select"
+                          required
+                        />
+                      </Col>
+                      <Col md="6">
+                        <Label
+                          className="form-control-label"
+                          htmlFor="xample-date-input"
+                        >
+                          Bus Number
+                        </Label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Bus Number"
+                          type="number"
+                          onChange={(e) => setBusNumber(e.target.value)}
                           required
                         />
                       </Col>
@@ -181,6 +233,11 @@ function AddRoute() {
                           dateFormat="h:mm aa"
                           required
                         />
+                      </Col>
+                      <Col className="ml-3 mt-4">
+                        <Button color="primary" onClick={addRouteHandler}>
+                          Add Route
+                        </Button>
                       </Col>
                     </Row>
                   </CardBody>
@@ -250,11 +307,6 @@ function AddRoute() {
                   </CardBody>
 
                   <Row>
-                    <Col className="ml-3">
-                      <Button color="primary" onClick={addStop}>
-                        Add
-                      </Button>
-                    </Col>
                     <Col>
                       <Button color="primary" type="submit">
                         Submit
