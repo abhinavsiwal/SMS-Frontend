@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 
 import {
   Container,
@@ -28,6 +28,10 @@ import Select from "react-select";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import TextArea from "antd/lib/input/TextArea";
 
+import {routeAdd,routesAll} from 'api/transportation'
+import { isAuthenticated } from "api/auth";
+import { allStaffs } from "api/staff";
+
 function AddRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
@@ -40,22 +44,48 @@ function AddRoute() {
   const startTime = moment(startTimePickup).format("LT");
   const [endTimePickup, setEndTimePickup] = React.useState(new Date());
   const endTime = moment(endTimePickup).format("LT");
-
+  const [roleOptions, setRoleOptions] = useState([]);
   const [addRoute, setAddRoute] = React.useState("");
   const [placeName, setPlaceName] = React.useState("");
   const [multiSelect, setMultiSelect] = React.useState();
 
   const [check, setCheck] = React.useState(false);
-
+  const [allRoutes, setAllRoutes] = useState([]);
+  // const [selectedRouteId, setSelectedRouteId] = useState("")
   const [addStops, setAddStops] = React.useState([]);
   console.log("addStops", addStops);
+  const [allStaff, setAllStaff] = useState([]);
 
   const [busNo, setBusNo] = React.useState("");
+  const { user } = isAuthenticated();
+  const getAllStaffs = async () => {
+    const res = await allStaffs(user.school, user._id);
+    console.log(res);
+    let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
+    setAllStaff(canteenStaff);
+    let options = [];
+    for (let i = 0; i < res.length; i++) {
+      options.push({ value: res[i]._id, label: res[i].firstname });
+    }
+    console.log(options);
+    setRoleOptions(options);
+  };
 
-  const roleOptions = [
-    { value: "0", label: "Shyamlal" },
-    { value: "1", label: "Ramlal" },
-  ];
+  const getAllRoutes = async () => {
+    try {
+      let data = await routesAll(user._id, user.school);
+      console.log(data);
+      setAllRoutes(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getAllStaffs();
+    getAllRoutes();
+  }, []);
+
 
   const handleSubjectChange = (e) => {
     var value = [];
@@ -81,7 +111,7 @@ function AddRoute() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
     const obj2 = {
       routName: addRoute,
@@ -91,9 +121,30 @@ function AddRoute() {
       endTime: endDuration,
       addStop: addStops,
     };
-    setAddRoute("");
-    setPlaceName("");
+
+    let formData = new FormData();
+    formData.set("name",addRoute);
+    formData.set("bus_number",busNo);
+    formData.set("start",startDuration);
+    formData.set("end",endDuration);
+    formData.set("school",user.school);
+    formData.set("staff",JSON.stringify(multiSelect));
+    formData.set("stop",JSON.stringify(addStops));
+
     console.log("obj2", obj2);
+
+    try {
+      const data = await routeAdd(user._id, formData);
+      console.log(data);
+      setAddRoute("");
+      setPlaceName("");
+    } catch (err) {
+      console.log(err);
+
+    }
+
+
+
   };
 
   return (
@@ -119,7 +170,7 @@ function AddRoute() {
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Class"
+                          placeholder="Route Name"
                           type="text"
                           onChange={(e) => setAddRoute(e.target.value)}
                           required
@@ -153,7 +204,7 @@ function AddRoute() {
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Class"
+                          placeholder="Bus No"
                           type="Number"
                           onChange={(e) => setBusNo(e.target.value)}
                           required
