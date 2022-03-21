@@ -204,12 +204,14 @@ function Attendance() {
     console.log(today);
     console.log(classes[selectedClassIndex]);
     let attendance = {};
-    attendance[today]=attendanceData;
+    attendance[today]=formattedAttendanceData;
     let month = date.getMonth() + 1;
     let year = date.getFullYear();
     let school = user.school;
     let classId = classes[selectedClassIndex]._id;
     let sectionId = classes[selectedClassIndex].section[0]._id;
+
+    console.log(JSON.stringify(attendance));
 
     let formData = new FormData();
     formData.set("attendance", JSON.stringify(attendance));
