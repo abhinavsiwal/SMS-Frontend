@@ -28,9 +28,9 @@ import Select from "react-select";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import TextArea from "antd/lib/input/TextArea";
 
-import { routeAdd } from "api/transportation";
+import { routeAdd,routesAll } from "api/transportation";
 import { isAuthenticated } from "api/auth";
-import { allStaffs,routesAll } from "api/staff";
+import { allStaffs } from "api/staff";
 
 function AddRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
@@ -53,8 +53,10 @@ function AddRoute() {
   const [roleOptions, setRoleOptions] = useState([]);
   const [allStaff, setAllStaff] = useState([]);
   const { user } = isAuthenticated();
-
+  const [allRoutes, setAllRoutes] = useState([]);
+  const [selectedRouteId, setSelectedRouteId] = useState("")
   const [addStops, setAddStops] = React.useState([]);
+
   console.log("addStops", addStops);
 
   const getAllStaffs = async () => {
@@ -70,8 +72,19 @@ function AddRoute() {
     setRoleOptions(options);
   };
 
+  const getAllRoutes = async () => {
+    try {
+      let data = await routesAll(user._id, user.school);
+      console.log(data);
+      setAllRoutes(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     getAllStaffs();
+    getAllRoutes();
   }, []);
 
   const handleSubjectChange = (e) => {
@@ -82,12 +95,14 @@ function AddRoute() {
     setMultiSelect(value);
   };
 
-  const addStop = () => {
+  const addStopHandler = () => {
     let obj = {
       stopName: placeName,
       pickupTime: startTime,
       dropTime: endTime,
+      id:selectedRouteId,
     };
+    
     let arr = addStops;
     arr.push(obj);
     setAddStops(arr);
@@ -116,15 +131,15 @@ function AddRoute() {
     formData.set("end", endDuration);
     formData.set("staff", JSON.stringify(multiSelect));
     formData.set("school", user.school);
-  
+
     try {
       const data = await routeAdd(user._id, formData);
       console.log(data);
-      
-    setAddRoute("");
-    setPlaceName("");
-    setBusNumber("");
-    setMultiSelect([]);
+
+      setAddRoute("");
+      setPlaceName("");
+      setBusNumber("");
+      setMultiSelect([]);
     } catch (err) {
       console.log(err);
     }
@@ -246,6 +261,33 @@ function AddRoute() {
                   </CardHeader>
                   <CardBody>
                     <Row>
+                    {/* <Col md="6">
+                        <Label
+                          className="form-control-label"
+                          htmlFor="exampleFormControlSelect3"
+                        >
+                          Route Name
+                        </Label>
+                        <Input
+                          id="exampleFormControlSelect3"
+                          type="select"
+                          onChange={(e)=>setSelectedRouteId(e.target.value)}
+                          value={selectedRouteId}
+                          required
+                        >
+                          {allRoutes.map((route) => {
+                            return (
+                              <option
+                                key={route._id}
+                                value={route._id}
+                                selected
+                              >
+                                {route.name}
+                              </option>
+                            );
+                          })}
+                        </Input>
+                      </Col> */}
                       <Col md="12">
                         <Label
                           className="form-control-label"
@@ -255,7 +297,7 @@ function AddRoute() {
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Class"
+                          placeholder="Place Name"
                           type="text"
                           onChange={(e) => setPlaceName(e.target.value)}
                           required
@@ -308,8 +350,8 @@ function AddRoute() {
 
                   <Row>
                     <Col>
-                      <Button color="primary" type="submit">
-                        Submit
+                      <Button color="primary">
+                        Add Stop
                       </Button>
                     </Col>
                   </Row>
