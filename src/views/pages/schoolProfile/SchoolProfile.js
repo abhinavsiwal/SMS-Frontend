@@ -17,6 +17,12 @@ import {
   TabPane,
   ListGroupItem,
   ListGroup,
+  ModalFooter,
+  Modal,
+  ModalBody,
+  Form,
+  Label,
+  Input,
 } from "reactstrap";
 // core components
 
@@ -30,7 +36,22 @@ function SchoolProfile() {
   // 1 -> Details 2 -> Contact
   const [activeTab, setActiveTab] = useState("1");
   const [schoolDetails, setSchoolDetails] = useState({});
+  const [editing, setEditing] = useState(false);
   const { user } = isAuthenticated();
+  const [formData] = useState(new FormData());
+  const [editSchoolProfile, setEditSchoolProfile] = useState({
+    school_name: "",
+    abbreviation: "",
+    school_address: "",
+    pin_code: "",
+    country: "",
+    city: "",
+    state: "",
+    school_email: "",
+    primary_contact_no: "",
+    telephone: "",
+    fax_no: "",
+  });
   useEffect(() => {
     getSchoolDetails();
   }, []);
@@ -46,9 +67,251 @@ function SchoolProfile() {
     }
   };
 
+  const handleChange = (name) => (event) => {
+    formData.set(name, event.target.value);
+    setEditSchoolProfile({ ...editSchoolProfile, [name]: event.target.value });
+  };
+
+  const handleEdit = () => {};
+
   return (
     <>
       <SimpleHeader name="School Profile" />
+      <Modal
+        style={{ height: "75vh" }}
+        isOpen={editing}
+        toggle={() => setEditing(false)}
+        size="lg"
+        scrollable
+      >
+        <div className="modal-header">
+          <h2 className="modal-title" id="modal-title-default">
+            {editing ? "Event List" : ""}
+          </h2>
+          <button
+            aria-label="Close"
+            className="close"
+            data-dismiss="modal"
+            type="button"
+            onClick={() => setEditing(false)}
+          >
+            <span aria-hidden={true}>×</span>
+          </button>
+        </div>
+        <ModalBody>
+          <Form>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  School Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  onChange={handleChange("school_name")}
+                  value={editSchoolProfile.school_name}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Abbreviation
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  onChange={handleChange("abbreviation")}
+                  value={editSchoolProfile.abbreviation}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+              <Col>
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Route Name
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="text"
+                  // onChange={handleChange("route_name")}
+                  // value={route.route_name}
+                  required
+                />
+              </Col>
+            </Row>
+          </Form>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="success" type="button" onClick={handleEdit}>
+            Save changes
+          </Button>
+        </ModalFooter>
+      </Modal>
       <Container className="mt--6" fluid>
         <Row>
           <Col lg="4">
@@ -123,6 +386,7 @@ function SchoolProfile() {
                           className="btn-icon"
                           color="primary"
                           type="button"
+                          onClick={() => setEditing(true)}
                         >
                           <span className="btn-inner--icon">
                             <FaEdit />
