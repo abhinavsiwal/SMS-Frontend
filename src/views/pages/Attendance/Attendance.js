@@ -204,8 +204,9 @@ function Attendance() {
     console.log(today);
     console.log(classes[selectedClassIndex]);
     let attendance = {};
-    attendance[today]=formattedAttendanceData;
-    let month = date.getMonth() + 1;
+    attendance[10]=formattedAttendanceData;
+    // let month = date.getMonth() + 1;
+    let month = 4
     let year = date.getFullYear();
     let school = user.school;
     let classId = classes[selectedClassIndex]._id;
