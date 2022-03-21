@@ -907,7 +907,7 @@ function AddStaff() {
                         {allRoles &&
                           allRoles.map((role) => {
                             return (
-                              <option key={role._id} value={role.name}>
+                              <option key={role._id} value={role._id}>
                                 {role.name}
                               </option>
                             );
