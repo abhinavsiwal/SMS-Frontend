@@ -27,6 +27,7 @@ export const routesAll = async (userId, schoolId) => {
 
 export const deleteRoute = async (userId, routeId) => {
   const url = `${process.env.REACT_APP_API_URL}/api/school/transportation/delete/${routeId}/${userId}`;
+
     try {
         const {data} = await sendRequest(url,{},"DELETE");
         console.log(data);
@@ -36,3 +37,15 @@ export const deleteRoute = async (userId, routeId) => {
         throw new err();
     }
 };
+
+export const editRoute=async(userId,routeId,formData)=>{
+  const url = `${process.env.REACT_APP_API_URL}/api/school/transportation/edit/${routeId}/${userId}`;
+try {
+  const {data} = await sendRequest(url,formData,"PUT");
+  console.log(data);
+  return data;
+} catch (err) {
+  console.log(err);
+  throw new err();
+}
+}

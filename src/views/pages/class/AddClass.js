@@ -26,6 +26,7 @@ import { Popconfirm } from "antd";
 import PermissionsGate from "routeGuard/PermissionGate";
 import { SCOPES } from "routeGuard/permission-maps";
 
+
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
   const [reload, setReload] = useState(false);
@@ -108,6 +109,7 @@ const AddClass = () => {
       } else {
         setChecked(false);
       }
+    toast.success("Class Deleted Successfully")
     } catch (err) {
       toast.error("Something Went Wrong!");
     }
@@ -142,7 +144,8 @@ const AddClass = () => {
         formData
       );
       console.log("updateClass", updatedClass);
-      setEditing(false);
+      setEditing(false)
+      toast.success("Class Edited Successfully")
       if (checked === false) {
         setChecked(true);
       } else {

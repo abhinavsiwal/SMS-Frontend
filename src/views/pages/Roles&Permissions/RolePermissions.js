@@ -21,7 +21,6 @@ import { Popconfirm, TimePicker } from "antd";
 import "./RolePermissions.css";
 import { isAuthenticated } from "api/auth";
 // core components
-
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { addRole, updateRole } from "api/rolesAndPermission";
 import { getAllRoles } from "api/rolesAndPermission";

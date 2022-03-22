@@ -205,7 +205,7 @@ function AddRoute() {
                         <Input
                           id="example4cols2Input"
                           placeholder="Bus No"
-                          type="Number"
+                          type="text"
                           onChange={(e) => setBusNo(e.target.value)}
                           required
                         />

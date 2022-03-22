@@ -261,7 +261,7 @@ const AddSection = () => {
       setReload(true);
       toast.success("Section added successfully");
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong"); 
     }
   };
 

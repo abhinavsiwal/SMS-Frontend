@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Container,
@@ -31,13 +31,17 @@ import { Popconfirm } from "antd";
 import Loader from "components/Loader/Loader";
 
 import { isAuthenticated } from "api/auth";
-import {routeAdd,routesAll,deleteRoute} from 'api/transportation'
-
+import {
+  routeAdd,
+  routesAll,
+  deleteRoute,
+  editRoute,
+} from "api/transportation";
 
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { allStaffs } from "api/staff";
 // import moment Library
 import moment from "moment";
 
@@ -56,35 +60,34 @@ function ViewRoute() {
   const [checked, setChecked] = useState(false);
   const [editing, setEditing] = React.useState(false);
   const [formData] = React.useState(new FormData());
-
-  const [route, setRoute] = React.useState({
+  const { user } = isAuthenticated();
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [editingRouteData, setEditingRouteData] = React.useState({
     route_name: "",
-    description: "",
+    id: "",
     bus_no: "",
   });
-
-  console.log("route", route);
+const [staff, setStaff] = useState([])
+  // console.log("route", route);
 
   const openModal = (support) => {
     setModalSupport(support);
+
     setModalState(true);
   };
-
-  const roleOptions = [
-    { value: "0", label: "Shyamlal" },
-    { value: "1", label: "Ramlal" },
-  ];
 
   const handleSubjectChange = (e) => {
     var value = [];
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
+    console.log(value);
+    setStaff(value);
   };
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
-    setRoute({ ...route, [name]: event.target.value });
+    setEditingRouteData({ ...editingRouteData, [name]: event.target.value });
   };
 
   const columns = [
@@ -249,12 +252,20 @@ function ViewRoute() {
   ];
 
   React.useEffect(() => {
-   
     fetchRoutes();
+    getAllStaffs();
   }, [checked]);
 
-
-  const { user } = isAuthenticated();
+  const getAllStaffs = async () => {
+    const res = await allStaffs(user.school, user._id);
+    console.log(res);
+    let options = [];
+    for (let i = 0; i < res.length; i++) {
+      options.push({ value: res[i]._id, label: res[i].firstname });
+    }
+    console.log(options);
+    setRoleOptions(options);
+  };
 
   const fetchRoutes = async () => {
     let res = await routesAll(user._id, user.school);
@@ -266,7 +277,7 @@ function ViewRoute() {
         s_no: i + 1,
         route_name: res[i].name,
         bus_no: res[i].bus_number,
-        staff_members: res[i].staff.firstName,
+        staff_members: res[i].staff[0].firstName,
         start_time: res[i].start,
         end_time: res[i].end,
         action: (
@@ -278,6 +289,9 @@ function ViewRoute() {
                 color="primary"
                 type="button"
                 key={"edit" + i + 1}
+                onClick={() => {
+                  setEditData(res[i]);
+                }}
               >
                 <i className="fas fa-user-edit" />
               </Button>
@@ -314,17 +328,49 @@ function ViewRoute() {
     setLoading(true);
   };
 
+  const setEditData = (editingData) => {
+    setEditing(true);
+    console.log("clicked");
+    console.log(editingData);
+    setEditingRouteData({
+      ...editingRouteData,
+      route_name: editingData.name,
+      bus_no: editingData.bus_number,
+      id:editingData._id,
+    });
+  };
 
-const handleDelete=async(routeId)=>{
-  try {
-    const data = await deleteRoute(user._id,routeId)
-    console.log(data);
-    setChecked(!checked);
-  } catch (err) {
-    console.log(err);
-  }
+  const handleDelete = async (routeId) => {
+    try {
+      const data = await deleteRoute(user._id, routeId);
+      console.log(data);
+      setChecked(!checked);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const editRouteHandler = async() => {
+    console.log(editingRouteData);
+    console.log(staff);
+    const formData = new FormData();
+    formData.set("bus_number",editingRouteData.bus_no);
+    formData.set("name",editingRouteData.route_name);
+    formData.set("end",endDuration);
+    formData.set("start",startDuration)
+    formData.set("staff",JSON.stringify(staff))
+    formData.set("school",user.school)
+    // formData.set("",)
+
+try {
+  const data = await editRoute(user._id,editingRouteData.id,formData)
+  console.log(data);
+  setChecked(!checked)
+} catch (err) {
+  console.log(err)
+  ;
 }
 
+  };
 
   return (
     <>
@@ -367,7 +413,7 @@ const handleDelete=async(routeId)=>{
                     placeholder="Class"
                     type="text"
                     onChange={handleChange("route_name")}
-                    value={route.route_name}
+                    value={editingRouteData.route_name}
                     required
                   />
                 </Col>
@@ -395,30 +441,14 @@ const handleDelete=async(routeId)=>{
                     className="form-control-label"
                     htmlFor="example4cols2Input"
                   >
-                    Description
-                  </Label>
-                  <Input
-                    id="example4cols2Input"
-                    placeholder="Class"
-                    type="text"
-                    onChange={handleChange("description")}
-                    value={route.description}
-                    required
-                  />
-                </Col>
-                <Col>
-                  <Label
-                    className="form-control-label"
-                    htmlFor="example4cols2Input"
-                  >
                     Bus No.
                   </Label>
                   <Input
                     id="example4cols2Input"
                     placeholder="bus_no"
-                    type="Number"
+                    type="text"
                     onChange={handleChange("bus_no")}
-                    value={route.bus_no}
+                    value={editingRouteData.bus_no}
                     required
                   />
                 </Col>
@@ -463,6 +493,17 @@ const handleDelete=async(routeId)=>{
                     dateFormat="h:mm aa"
                     required
                   />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Button
+                    className="primary mt-5"
+                    color="primary"
+                    onClick={editRouteHandler}
+                  >
+                    Edit Route
+                  </Button>
                 </Col>
               </Row>
             </Form>
@@ -519,23 +560,23 @@ const handleDelete=async(routeId)=>{
                 </tr>
               </thead>
               {modalSupport.stops ? (
-                    <>
-                      {modalSupport.stops.map((stop, index) => {
-                        return (
-                          <tbody>
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{stop.stopName}</td>
-                              <td>{stop.pickupTime}</td>
-                              <td>{stop.dropTime}</td>
-                            </tr>
-                          </tbody>
-                        );
-                      })}
-                    </>
-                  ) : (
-                    <h3>No Data</h3>
-                  )}
+                <>
+                  {modalSupport.stops.map((stop, index) => {
+                    return (
+                      <tbody>
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{stop.stopName}</td>
+                          <td>{stop.pickupTime}</td>
+                          <td>{stop.dropTime}</td>
+                        </tr>
+                      </tbody>
+                    );
+                  })}
+                </>
+              ) : (
+                <h3>No Data</h3>
+              )}
             </Table>
           </ModalBody>
         </Modal>
