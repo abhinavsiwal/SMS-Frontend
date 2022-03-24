@@ -33,11 +33,10 @@ import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
 import { sendRequest } from "api/api";
-import PermissionsGate from "routeGuard/PermissionGate";
-import { SCOPES } from "routeGuard/permission-maps";
 
 function Attendance() {
   //start and end date of month
+  const { user, token } = isAuthenticated();
   const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
   const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
   const endOfDayOfMonths = moment().endOf("month").format("DD");
@@ -60,10 +59,13 @@ function Attendance() {
 
   const [atd, setAtd] = React.useState({});
   // console.log("atd", atd);
-
-
-
-
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Attendance"]) {
+      permissions = user.role["Attendance"];
+      console.log(permissions);
+    }
+  }, []);
 
   //modal window for addAttendance
   const [modal, setModal] = React.useState(false);
@@ -95,7 +97,6 @@ function Attendance() {
     setAttendance({ ...attendance, atd });
   }, [atd]);
   let tableData = [];
-  const { user, token } = isAuthenticated();
   const getAllStudents = async () => {
     const payload = { school: user.school };
     const res = await allStudents(
@@ -196,7 +197,7 @@ function Attendance() {
     let date = new Date();
     let formData1 = {
       attendance: {
-        10: formattedAttendanceData,
+        today: formattedAttendanceData,
       },
       month: date.getMonth() + 1,
       year: date.getFullYear(),
@@ -208,10 +209,10 @@ function Attendance() {
     console.log(today);
     console.log(classes[selectedClassIndex]);
     let attendance = {};
-    attendance[10]=formattedAttendanceData;
+    attendance[20] = formattedAttendanceData;
     // let month = date.getMonth() + 1;
-    let month = 4
-    let year = date.getFullYear(); 
+    let month = 5;
+    let year = date.getFullYear();
     let school = user.school;
     let classId = classes[selectedClassIndex]._id;
     let sectionId = classes[selectedClassIndex].section[0]._id;
@@ -244,7 +245,7 @@ function Attendance() {
   return (
     <div>
       <SimpleHeader name="Student" parentName="Attendance" />
-      <PermissionsGate scopes={[SCOPES.canCreate]}>
+      {permissions && permissions.includes("add") && (
         <Container className="mt--6 shadow-lg" fluid>
           <Form>
             <Card>
@@ -381,7 +382,7 @@ function Attendance() {
             </Card>
           </Form>
         </Container>
-      </PermissionsGate>
+      )}
 
       <Container className="mt--0 shadow-lg table-responsive" fluid>
         <Row>
@@ -415,7 +416,8 @@ function Attendance() {
                       ></p>
                       <span> - Leave</span>
                     </div>
-                    <PermissionsGate scopes={[SCOPES.canEdit]}>
+                    {permissions && permissions.includes("edit") && (
+
                       <div className="col-sm">
                         <Button
                           className="attendance-button"
@@ -425,7 +427,7 @@ function Attendance() {
                           Add Attendance
                         </Button>
                       </div>
-                    </PermissionsGate>
+                          )}
                   </div>
                 </div>
               </CardHeader>

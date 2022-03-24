@@ -1,3 +1,5 @@
+import {sendRequest} from '../api'
+
 export const allSections = (userId, schoolID, token) => {
   const url = `${process.env.REACT_APP_API_URL}/api/school/section/all/${schoolID}/${userId}`;
   return fetch(url, {
@@ -29,6 +31,7 @@ export const addSection = (userId, token, data) => {
 
 export const addClassToSection = (userId, classId, token, data) => {
   const url = `${process.env.REACT_APP_API_URL}/api/school/class/section/edit/${classId}/${userId}`;
+
   return fetch(url, {
     method: 'PUT',
     headers: { Authorization: 'Bearer ' + token, Accept: 'application/json' },
@@ -41,3 +44,15 @@ export const addClassToSection = (userId, classId, token, data) => {
       throw error;
     });
 };
+
+export const deleteSection=async(userId,sectionId)=>{
+  const url = `${process.env.REACT_APP_API_URL}/api/school/section/delete/${sectionId}/${userId}`;
+try {
+  const {data } = await sendRequest(url,{},"DELETE");
+  console.log(data);
+  return data;
+} catch (err) {
+  console.log(err);
+  throw err;
+}
+}

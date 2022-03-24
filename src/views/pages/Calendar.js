@@ -6,7 +6,7 @@ import { Calendar } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interaction from "@fullcalendar/interaction";
 // react component used to create sweet alerts
-import PermissionsGate from "routeGuard/PermissionGate";
+
 import ReactBSAlert from "react-bootstrap-sweetalert";
 // reactstrap components
 import {
@@ -49,7 +49,6 @@ import {
 } from "api/calender";
 
 import "./Calender.css";
-import { SCOPES } from "routeGuard/permission-maps";
 
 //import Ant Table
 // import AntTable from "./tables/AntTable";
@@ -59,6 +58,7 @@ import { SearchOutlined } from "@ant-design/icons";
 let calendar;
 
 function CalendarView() {
+  const { user, token } = isAuthenticated();
   const [events, setEvents] = React.useState([]);
   const [alert, setAlert] = React.useState(null);
   const [modalAdd, setModalAdd] = React.useState(false);
@@ -79,6 +79,14 @@ function CalendarView() {
 
   const [editing, setEditing] = React.useState(false);
   const [eventList, setEventList] = React.useState([]);
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Calendar"]) {
+      permissions = user.role["Calendar"];
+      console.log(permissions);
+    }
+  }, []);
 
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
@@ -120,8 +128,6 @@ function CalendarView() {
   };
 
   const handleSubmitEvent = async () => {
-    const { user, token } = isAuthenticated();
-
     var formData = new FormData();
     formData.set("name", eventTitle);
     formData.set("event_from", new Date(startDate));
@@ -518,7 +524,7 @@ function CalendarView() {
                 />
               </CardBody>
             </Card>
-            <PermissionsGate scopes={[SCOPES.canCreate]}>
+            {permissions && permissions.includes("add") && (
               <Modal
                 isOpen={modalAdd}
                 toggle={() => setModalAdd(false)}
@@ -657,8 +663,9 @@ function CalendarView() {
                   </Button>
                 </div>
               </Modal>
-            </PermissionsGate>
-            <PermissionsGate scopes={[SCOPES.canEdit]}>
+            )}
+
+            {permissions && permissions.includes("edit") && (
               <Modal
                 isOpen={modalChange}
                 toggle={() => setModalChange(false)}
@@ -814,7 +821,7 @@ function CalendarView() {
                   </Button>
                 </div>
               </Modal>
-            </PermissionsGate>
+            )}
           </div>
         </Row>
       </Container>

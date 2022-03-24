@@ -11,6 +11,13 @@ const ClassTeacher = () => {
   const [classList, setClassList] = useState([]);
   const [teacherList, setTeacherList] = useState([]);
   const { user, token } = isAuthenticated();
+  // let permissions;
+  //   useEffect(() => {
+  //     if (user.role["Library Management"]) {
+  //       permissions = user.role["Library Management"];
+  //       console.log(permissions);
+  //     }
+  //   }, []);
 
   useEffect(async () => {
     try {
@@ -43,14 +50,13 @@ const ClassTeacher = () => {
     console.log(classId);
     console.log(e.target.value);
     let formData = new FormData();
-    formData.set("classTeacher",e.target.value)
+    formData.set("classTeacher", e.target.value);
     try {
-      const data = await assignClassTeacher(classId,user._id,token,formData);
-      console.log(data);    
+      const data = await assignClassTeacher(classId, user._id, token, formData);
+      console.log(data);
     } catch (err) {
       console.log(err);
     }
-  
   };
 
   return (

@@ -39,7 +39,7 @@ function RolePermissions() {
   const [applicationName, setApplicationName] = React.useState();
   const [mappingPermissions, setMappingPermissions] = useState({});
   const [mappingRoleName, setMappingRoleName] = useState("");
-  const [mappingRoleId, setMappingRoleId] = useState("")
+  const [mappingRoleId, setMappingRoleId] = useState("");
   const [roleName, setRoleName] = React.useState([
     "Super Admin",
     "Admin",
@@ -50,9 +50,11 @@ function RolePermissions() {
   console.log(roleName);
   const { user } = isAuthenticated();
   const [Permissions, setPermissions] = React.useState([
+    "Add",
     "View",
-    "Export",
+    "Edit",
     "Delete",
+    "Export",
     "Import",
   ]);
   const [application, setApplication] = React.useState([
@@ -70,17 +72,26 @@ function RolePermissions() {
 
   const roleOption = [
     {
+      value:"add",
+      label:"Add",
+    },
+    {
       value: "view",
       label: "View",
     },
     {
-      value: "export",
-      label: "Export",
+      value: "edit",
+      label: "Edit",
     },
     {
       value: "delete",
       label: "Delete",
     },
+    {
+      value: "export",
+      label: "Export",
+    },
+
     {
       value: "import",
       label: "Import",
@@ -173,7 +184,7 @@ function RolePermissions() {
   const managePermissonSubmit = async () => {
     console.log(mappingRoleId);
     console.log(mappingPermissions);
-    let selectedRole = allRoles.find(role=>role._id===mappingRoleId);
+    let selectedRole = allRoles.find((role) => role._id === mappingRoleId);
     console.log(selectedRole.name);
     try {
       const formData = new FormData();
@@ -215,11 +226,10 @@ function RolePermissions() {
       a.push(items.value);
     });
 
-    obj[name] = a;  
+    obj[name] = a;
     console.log("a", obj[name]);
 
-
-    setMappingPermissions({...mappingPermissions,...obj});
+    setMappingPermissions({ ...mappingPermissions, ...obj });
   };
 
   return (
@@ -493,10 +503,7 @@ function RolePermissions() {
               onChange={(e) => setMappingRoleId(e.target.value)}
             >
               {allRoles?.map((role, index) => (
-                <option
-                  key={index}
-                  value={role._id}
-                >
+                <option key={index} value={role._id}>
                   {role.name}
                 </option>
               ))}

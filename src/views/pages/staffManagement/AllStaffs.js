@@ -36,6 +36,7 @@ import { SCOPES } from "routeGuard/permission-maps";
 
 const AllStaffs = () => {
   const dispatch = useDispatch();
+  const { user, token } = isAuthenticated();
   // 0 -> List, 1-> Grid
   const [editing, setEditing] = useState(false);
   const [view, setView] = useState(0);
@@ -54,6 +55,15 @@ const AllStaffs = () => {
   };
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
+
+  let permissions;
+  useEffect(() => {
+    if (user.role["Staff Management"]) {
+      permissions = user.role["Staff Management"];
+      console.log(permissions);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchStaffs = async () => {
       const endOffset = itemOffset + itemsPerPage;
@@ -80,7 +90,7 @@ const AllStaffs = () => {
           joining_date: res[i].joining_date.split("T")[0].toString(),
           action: (
             <h5 key={i + 1} className="mb-0">
-              <PermissionsGate scopes={[SCOPES.canEdit]}>
+              {permissions && permissions.includes("edit") && (
                 <Button
                   className="btn-sm pull-right"
                   color="primary"
@@ -90,8 +100,8 @@ const AllStaffs = () => {
                 >
                   <i className="fas fa-user-edit" />
                 </Button>
-              </PermissionsGate>
-              <PermissionsGate scopes={[SCOPES.canDelete]}>
+              )}
+              {permissions && permissions.includes("edit") && (
                 <Button
                   className="btn-sm pull-right"
                   color="danger"
@@ -105,7 +115,7 @@ const AllStaffs = () => {
                     <i className="fas fa-trash" />
                   </Popconfirm>
                 </Button>
-              </PermissionsGate>
+              )}
               <Button
                 className="btn-sm pull-right"
                 color="success"
@@ -127,7 +137,6 @@ const AllStaffs = () => {
   }, [itemOffset, itemsPerPage, checked]);
 
   const deleteStaffHandler = async (staffId) => {
-    const { user, token } = isAuthenticated();
     try {
       const data = await deleteStaff(staffId, user._id);
       console.log(data);

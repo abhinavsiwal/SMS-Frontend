@@ -67,7 +67,7 @@ function ViewRoute() {
     id: "",
     bus_no: "",
   });
-const [staff, setStaff] = useState([])
+  const [staff, setStaff] = useState([]);
   // console.log("route", route);
 
   const openModal = (support) => {
@@ -75,6 +75,14 @@ const [staff, setStaff] = useState([])
 
     setModalState(true);
   };
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Transportation"]) {
+      permissions = user.role["Transportation"];
+      console.log(permissions);
+    }
+  }, []);
 
   const handleSubjectChange = (e) => {
     var value = [];
@@ -284,30 +292,34 @@ const [staff, setStaff] = useState([])
           <>
             <h5 key={i + 1} className="mb-0">
               <span>{res[i].startTime}</span>
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-                onClick={() => {
-                  setEditData(res[i]);
-                }}
-              >
-                <i className="fas fa-user-edit" />
-              </Button>
-              <Button
-                className="btn-sm pull-right"
-                color="danger"
-                type="button"
-                key={"delete" + i + 1}
-              >
-                <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => handleDelete(res[i]._id)}
+              {permissions && permissions.includes("edit") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => {
+                    setEditData(res[i]);
+                  }}
                 >
-                  <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
+                  <i className="fas fa-user-edit" />
+                </Button>
+              )}
+              {permissions && permissions.includes("delete") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
+                  >
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
+              )}
               <Button
                 className="btn-sm pull-right"
                 color="primary"
@@ -336,7 +348,7 @@ const [staff, setStaff] = useState([])
       ...editingRouteData,
       route_name: editingData.name,
       bus_no: editingData.bus_number,
-      id:editingData._id,
+      id: editingData._id,
     });
   };
 
@@ -349,27 +361,25 @@ const [staff, setStaff] = useState([])
       console.log(err);
     }
   };
-  const editRouteHandler = async() => {
+  const editRouteHandler = async () => {
     console.log(editingRouteData);
     console.log(staff);
     const formData = new FormData();
-    formData.set("bus_number",editingRouteData.bus_no);
-    formData.set("name",editingRouteData.route_name);
-    formData.set("end",endDuration);
-    formData.set("start",startDuration)
-    formData.set("staff",JSON.stringify(staff))
-    formData.set("school",user.school)
+    formData.set("bus_number", editingRouteData.bus_no);
+    formData.set("name", editingRouteData.route_name);
+    formData.set("end", endDuration);
+    formData.set("start", startDuration);
+    formData.set("staff", JSON.stringify(staff));
+    formData.set("school", user.school);
     // formData.set("",)
 
-try {
-  const data = await editRoute(user._id,editingRouteData.id,formData)
-  console.log(data);
-  setChecked(!checked)
-} catch (err) {
-  console.log(err)
-  ;
-}
-
+    try {
+      const data = await editRoute(user._id, editingRouteData.id, formData);
+      console.log(data);
+      setChecked(!checked);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

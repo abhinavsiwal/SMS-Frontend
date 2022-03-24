@@ -1,4 +1,3 @@
-
 import React from "react";
 // react library for routing
 import { useLocation, Route, Switch } from "react-router-dom";
@@ -6,24 +5,61 @@ import { useLocation, Route, Switch } from "react-router-dom";
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-
-import routes,{adminRoutes,viewerRoutes} from "routes.js";
+import { isAuthenticated } from "api/auth";
+import routes, { adminRoutes, viewerRoutes } from "routes.js";
 
 function Admin() {
   const [sidenavOpen, setSidenavOpen] = React.useState(true);
   const location = useLocation();
+  const { user } = isAuthenticated();
   const mainContentRef = React.useRef(null);
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
     mainContentRef.current.scrollTop = 0;
   }, [location]);
+
+  console.log(user.role);
+
+  let routes1 = [];
+  // for (const key in user.role) {
+  //   console.log(key);
+  //   routes1.push(key);
+  // }
+
+  // let routes1 = [];
+  console.log(adminRoutes);
+  let permittedRoute = [];
+  for (const key in user.role) {
+    console.log(key);
+    console.log(user.role[key]);
+    // routes1.push(key);
+    
+    let permitted = adminRoutes.find(
+      (route) => key.toString() === route.name.toString()
+    );
+    console.log(permitted);
+    if (permitted && permitted.views) {
+      let permittedViews = permitted.views.filter(view=>user.role[key].toString()===view.permission.toString());
+      permitted.views=permittedViews;
+    }
+    if(permitted){
+      permittedRoute.push(permitted)
+    }
+      console.log(permitted);
+  }
+
+  console.log(permittedRoute);
+
+
+
   const getRoutes = (routes) => {
+    // console.log(routes);
     return routes.map((prop, key) => {
       if (prop.collapse) {
         return getRoutes(prop.views);
       }
-      if (prop.layout === '/admin') {
+      if (prop.layout === "/admin") {
         return (
           <Route
             path={prop.layout + prop.path}
@@ -60,10 +96,11 @@ function Admin() {
       ? "dark"
       : "light";
   };
+
   return (
     <>
       <Sidebar
-        routes={adminRoutes}
+        routes={routes}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{
@@ -79,9 +116,7 @@ function Admin() {
           sidenavOpen={sidenavOpen}
           brandText={getBrandText(location.pathname)}
         />
-        <Switch>
-          {getRoutes(routes)}
-        </Switch>
+        <Switch>{getRoutes(routes)}</Switch>
         <AdminFooter />
       </div>
       {sidenavOpen ? (

@@ -44,6 +44,15 @@ function AddCanteen() {
   const [canteenName, setCanteenName] = useState("");
   const [allCanteen, setAllCanteen] = useState([]);
 
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Canteen Management"]) {
+      permissions = user.role["Canteen Management"];
+      console.log(permissions);
+    }
+  }, []);
+
+
   const getAllStaffs = async () => {
     const res = await allStaffs(user.school, user._id);
     console.log(res);

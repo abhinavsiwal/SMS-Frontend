@@ -30,10 +30,9 @@ import { Popconfirm } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import Loader from "components/Loader/Loader";
-import PermissionsGate from "routeGuard/PermissionGate";
-import { SCOPES } from "routeGuard/permission-maps";
 
 const DepartmentList = () => {
+  const { user, token } = isAuthenticated();
   const [editing, setEditing] = useState(false);
   // const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState([]);
@@ -47,6 +46,14 @@ const DepartmentList = () => {
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
   console.log("id", deparmentId);
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Department"]) {
+      permissions = user.role["Department"];
+      console.log(permissions);
+    }
+  }, []);
 
   useEffect(async () => {
     //Datasource of antTable
@@ -132,7 +139,6 @@ const DepartmentList = () => {
 
   //Getting Department Data
   function getDepartmentsData() {
-    const { user, token } = isAuthenticated();
     getDepartment(user.school, user._id, token)
       .then((res) => {
         console.log("allClass", res);
@@ -144,7 +150,7 @@ const DepartmentList = () => {
             module: res[i].module,
             action: (
               <h5 key={i + 1} className="mb-0">
-                <PermissionsGate scopes={[SCOPES.canEdit]}>
+                {permissions && permissions.includes("edit") && (
                   <Button
                     className="btn-sm pull-right"
                     color="primary"
@@ -156,8 +162,8 @@ const DepartmentList = () => {
                   >
                     <i className="fas fa-user-edit" />
                   </Button>
-                </PermissionsGate>
-                <PermissionsGate scopes={[SCOPES.canDelete]}>
+                )}
+                {permissions && permissions.includes("delete") && (
                   <Button
                     className="btn-sm pull-right"
                     color="danger"
@@ -171,7 +177,7 @@ const DepartmentList = () => {
                       <i className="fas fa-trash" />
                     </Popconfirm>
                   </Button>
-                </PermissionsGate>
+                )}
               </h5>
             ),
           });
@@ -292,7 +298,7 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <PermissionsGate scopes={[SCOPES.canCreate]}>
+          {permissions && permissions.includes("add") && (
             <Col lg="3">
               <div className="card-wrapper">
                 <Card>
@@ -345,7 +351,8 @@ const DepartmentList = () => {
                 </Card>
               </div>
             </Col>
-          </PermissionsGate>
+          )}
+
           <Col>
             <div className="card-wrapper">
               <Card>

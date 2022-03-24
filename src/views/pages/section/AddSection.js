@@ -13,15 +13,21 @@ import SimpleHeader from "components/Headers/SimpleHeader";
 
 import { isAuthenticated } from "api/auth";
 import { allClass } from "api/class";
-import { allSections, addSection, addClassToSection } from "api/sections";
+import {
+  allSections,
+  addSection,
+  addClassToSection,
+  deleteSection,
+} from "api/sections";
 import { allSubjects } from "api/subjects";
 import { ToastContainer, toast } from "react-toastify";
 import Select from "react-select";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
-import PermissionsGate from "routeGuard/PermissionGate";
-import { SCOPES } from "routeGuard/permission-maps";
+
+
+import { Popconfirm } from "antd";
 
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
@@ -30,6 +36,15 @@ const AddSection = () => {
   const [roleOptions, setRoleOptions] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { user, token } = isAuthenticated();
+
+  let permissions;
+  useEffect(() => {
+    if (user.role["Library Management"]) {
+      permissions = user.role["Library Management"];
+      console.log(permissions);
+    }
+  }, []);
 
   const columns = [
     {
@@ -162,7 +177,6 @@ const AddSection = () => {
 
   useEffect(() => {
     const getAllClasses = () => {
-      const { user, token } = isAuthenticated();
       allClass(user._id, user.school, token)
         .then((res) => {
           const classes = [];
@@ -192,7 +206,7 @@ const AddSection = () => {
               subject: res[i].subject.toString(),
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                  {permissions && permissions.includes("edit") && (
                     <Button
                       className="btn-sm pull-right"
                       color="primary"
@@ -201,17 +215,22 @@ const AddSection = () => {
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
-                  </PermissionsGate>
-                  <PermissionsGate scopes={[SCOPES.canDelete]}>
+                  )}
+                  {permissions && permissions.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
                       color="danger"
                       type="button"
                       key={"delete" + i + 1}
                     >
-                      <i className="fas fa-trash" />
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => deleteSectionHandler(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
                     </Button>
-                  </PermissionsGate>
+                  )}
                 </h5>
               ),
             });
@@ -241,6 +260,16 @@ const AddSection = () => {
     getAllClasses();
   }, [reload]);
 
+  const deleteSectionHandler = async (sectionId) => {
+    try {
+      const data = await deleteSection(user._id, sectionId);
+      console.log(data);
+      setReload(!reload);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const [formData] = useState(new FormData());
   const [sectionData] = useState(new FormData());
 
@@ -261,7 +290,7 @@ const AddSection = () => {
       setReload(true);
       toast.success("Section added successfully");
     } catch (err) {
-      toast.error("Something Went Wrong"); 
+      toast.error("Something Went Wrong");
     }
   };
 
@@ -291,7 +320,7 @@ const AddSection = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <PermissionsGate scopes={[SCOPES.canCreate]}>
+          {permissions && permissions.includes("add") && (
             <Col lg="4">
               <div className="card-wrapper">
                 <Card>
@@ -384,7 +413,7 @@ const AddSection = () => {
                 </Card>
               </div>
             </Col>
-          </PermissionsGate>
+          )}
 
           <Col>
             <div className="card-wrapper">

@@ -50,14 +50,22 @@ const AllStudents = () => {
   const [editing, setEditing] = useState(false);
   const [editingData, setEditingData] = useState({});
   const itemsPerPage = 9;
+  const { user, token } = isAuthenticated();
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % studentList.length;
     setItemOffset(newOffset);
   };
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Student Management"]) {
+      permissions = user.role["Student Management"];
+      console.log(permissions);
+    }
+  }, []);
   useEffect(() => {
     const fetchStudents = async () => {
       const endOffset = itemOffset + itemsPerPage;
-      const { user, token } = isAuthenticated();
       const payload = { school: user.school };
       const res = await allStudents(
         user.school,
@@ -84,7 +92,7 @@ const AllStudents = () => {
           action: (
             <h5 key={i + 1} className="mb-0">
               {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
-              <PermissionsGate scopes={[SCOPES.canEdit]}>
+              {permissions && permissions.includes("edit") && (
                 <Button
                   className="btn-sm pull-right"
                   color="primary"
@@ -96,9 +104,9 @@ const AllStudents = () => {
                 >
                   <i className="fas fa-user-edit" />
                 </Button>
-              </PermissionsGate>
+              )}
               {/* </Link> */}
-              <PermissionsGate scopes={[SCOPES.canDelete]}>
+              {permissions && permissions.includes("edit") && (
                 <Button
                   className="btn-sm pull-right"
                   color="danger"
@@ -112,7 +120,7 @@ const AllStudents = () => {
                     <i className="fas fa-trash" />
                   </Popconfirm>
                 </Button>
-              </PermissionsGate>
+              )}
               <Button
                 className="btn-sm pull-right"
                 color="success"

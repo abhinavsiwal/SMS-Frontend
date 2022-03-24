@@ -1,6 +1,5 @@
 // reactstrap components
 import React, { useState, useEffect } from "react";
-import PermissionsGate from "routeGuard/PermissionGate";
 import {
   Card,
   CardHeader,
@@ -27,10 +26,9 @@ import {
 // core components
 
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import { schoolProfile,editProfile } from "api/school";
+import { schoolProfile, editProfile } from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
-import { SCOPES } from "routeGuard/permission-maps";
 
 function SchoolProfile() {
   // 1 -> Details 2 -> Contact
@@ -54,6 +52,15 @@ function SchoolProfile() {
     fax_no: "",
     affiliate_board: "",
   });
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["School Profile"]) {
+      permissions = user.role["School Profile"];
+      console.log(permissions);
+    }
+  }, []);
+
   useEffect(() => {
     getSchoolDetails();
   }, [checked]);
@@ -89,30 +96,29 @@ function SchoolProfile() {
     setEditSchoolProfile({ ...editSchoolProfile, [name]: event.target.value });
   };
 
-  const handleEdit = async() => {
+  const handleEdit = async () => {
     console.log(editSchoolProfile);
 
-    formData.set("schoolname",editSchoolProfile.school_name);
-    formData.set("abbreviation",editSchoolProfile.abbreviation);
-    formData.set("address",editSchoolProfile.school_address)
-    formData.set("affiliate_board",editSchoolProfile.affiliate_board);
-    formData.set("city",editSchoolProfile.city);
-    formData.set("country",editSchoolProfile.country);
-    formData.set("email",editSchoolProfile.school_email);
-    formData.set("phone",editSchoolProfile.primary_contact_no);
-    formData.set("pincode",editSchoolProfile.pin_code)
-    formData.set("state",editSchoolProfile.state);
-    formData.set("telephone",editSchoolProfile.telephone);
+    formData.set("schoolname", editSchoolProfile.school_name);
+    formData.set("abbreviation", editSchoolProfile.abbreviation);
+    formData.set("address", editSchoolProfile.school_address);
+    formData.set("affiliate_board", editSchoolProfile.affiliate_board);
+    formData.set("city", editSchoolProfile.city);
+    formData.set("country", editSchoolProfile.country);
+    formData.set("email", editSchoolProfile.school_email);
+    formData.set("phone", editSchoolProfile.primary_contact_no);
+    formData.set("pincode", editSchoolProfile.pin_code);
+    formData.set("state", editSchoolProfile.state);
+    formData.set("telephone", editSchoolProfile.telephone);
 
-try {
-  const data = await editProfile(user.school,user._id,formData);
-  console.log(data);
-  setEditing(false)
-  setChecked(!checked)
-} catch (err) {
-  console.log(err);
-}
-
+    try {
+      const data = await editProfile(user.school, user._id, formData);
+      console.log(data);
+      setEditing(false);
+      setChecked(!checked);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -421,7 +427,7 @@ try {
                         </NavItem>
                       </Nav>
                     </Col>
-                    <PermissionsGate scopes={[SCOPES.canEdit]}>
+                    {permissions && permissions.includes("edit") && (
                       <Col className="text-right">
                         <Button
                           className="btn-icon"
@@ -434,7 +440,7 @@ try {
                           </span>
                         </Button>
                       </Col>
-                    </PermissionsGate>
+                    )}
                   </Row>
                 </CardHeader>
                 <CardBody>

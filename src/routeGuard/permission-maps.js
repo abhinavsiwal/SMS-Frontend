@@ -5,10 +5,10 @@ export const ROLES = {
   };
   
   export const SCOPES = {
-    canCreate: "can-create",
-    canEdit: "can-edit",
-    canDelete: "can-delete",
-    canView: "can-view"
+    canCreate: "add",
+    canEdit: "edit",
+    canDelete: "delete",
+    canView: "view"
   };
   
 

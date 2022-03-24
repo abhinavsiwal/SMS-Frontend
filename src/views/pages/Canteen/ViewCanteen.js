@@ -248,6 +248,15 @@ function ViewCanteen() {
   ];
 
   const { user, token } = isAuthenticated();
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Canteen Management"]) {
+      permissions = user.role["Canteen Management"];
+      console.log(permissions);
+    }
+  }, []);
+
   React.useEffect(() => {
     fetchStaff();
 
@@ -261,13 +270,13 @@ function ViewCanteen() {
     let selectedCanteen = allCanteen.find(
       (canteen) => canteen._id === selectedCanteenId
     );
-    let data=[];
+    let data = [];
 
     for (let i = 0; i < selectedCanteen.menu.length; i++) {
       // if(selectedCanteen.menu.length===0){
       //   return
       // }
-    
+
       data.push({
         key: i,
         s_no: [i + 1],
@@ -280,27 +289,31 @@ function ViewCanteen() {
         time: selectedCanteen.menu[i].time,
         action: (
           <h5 key={i + 1} className="mb-0">
-            <Button
-              className="btn-sm pull-right"
-              color="primary"
-              type="button"
-              key={"edit" + i + 1}
-            >
-              <i className="fas fa-user-edit" />
-            </Button>
-            <Button
-              className="btn-sm pull-right"
-              color="danger"
-              type="button"
-              key={"delete" + i + 1}
-            >
-              <Popconfirm
-                title="Sure to delete?"
-                // onConfirm={() => handleDelete(res[i]._id)}
+            {permissions && permissions.includes("edit") && (
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
               >
-                <i className="fas fa-trash" />
-              </Popconfirm>
-            </Button>
+                <i className="fas fa-user-edit" />
+              </Button>
+            )}
+            {permissions && permissions.includes("delete") && (
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
+                <Popconfirm
+                  title="Sure to delete?"
+                  // onConfirm={() => handleDelete(res[i]._id)}
+                >
+                  <i className="fas fa-trash" />
+                </Popconfirm>
+              </Button>
+            )}
           </h5>
         ),
       });

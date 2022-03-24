@@ -35,14 +35,15 @@ const adminLogin = (username, password) => {
 
 const staffLogin = async (username, password) => {
   try {
-    const res = axios.post(
-      `${process.env.REACT_APP_API_URL}/api/school/student/signin`,
+    const {data} = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/signin`,
       {
         SID: username,
         password: password,
       }
     );
-    return res;
+    console.log(data);
+    return data;
   } catch (err) {
     throw err;
   }
@@ -50,12 +51,14 @@ const staffLogin = async (username, password) => {
 
 const studentLogin = async (username, password) => {
   try {
-    const res = axios.post(`${process.env.REACT_APP_API_URL}/api/school/staff/signin`, {
+    const {data} =await axios.post(`${process.env.REACT_APP_API_URL}/api/school/student/signin`, {
       SID: username,
       password: password,
     });
-    return res;
+    console.log(data);
+    return data;
   } catch (err) {
+    console.log(err);
     throw err;
   }
 };

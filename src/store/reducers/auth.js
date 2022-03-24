@@ -17,6 +17,7 @@ export const login = createAsyncThunk(
     console.log(username, password);
     if (username && password) {
       if (validator.isEmail(username)) {
+        console.log("########");
         try {
           const data = await adminLogin(username, password);
           console.log(data);
@@ -27,8 +28,10 @@ export const login = createAsyncThunk(
         }
       } else {
         const role = username.substring(3, 6);
-        console.log(role);
-        if (role === "STF") {
+        console.log(role); 
+        // console.log("###"); 
+        if (role.toString() === "STF") {
+            console.log("@@@@@@@@@@");
           try {
             const data = await staffLogin(username, password);
             console.log(data);
@@ -37,7 +40,8 @@ export const login = createAsyncThunk(
             console.log(err);
             return rejectWithValue(err.response.data);
           }
-        } else if (role === "STD") {
+        } else if (role.toString() === "STD") {
+          console.log("@@@@@@@@STD");
           try {
             const data = await studentLogin(username, password);
             console.log(data);

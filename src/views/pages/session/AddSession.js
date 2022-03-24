@@ -21,7 +21,6 @@ import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
-import { SCOPES } from "routeGuard/permission-maps";
 
 import { deleteSession } from "api/session";
 
@@ -41,10 +40,19 @@ const AddSession = () => {
     start_date: "",
     end_date: "",
   });
+  const { user, token } = isAuthenticated();
+
+  
+  let permissions = [];
+  useEffect(() => {
+    if (user.role["Session"]) {
+      permissions = user.role["Session"];
+      console.log(permissions);
+    }
+  }, []);
 
   useEffect(() => {
     const getAllSessions = () => {
-      const { user, token } = isAuthenticated();
       // All Sections
       allSessions(user._id, user.school, token)
         .then((res) => {
@@ -58,7 +66,7 @@ const AddSession = () => {
               year: res[i].year,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                  {permissions && permissions.includes("edit") && (
                     <Button
                       className="btn-sm pull-right"
                       color="primary"
@@ -75,8 +83,8 @@ const AddSession = () => {
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
-                  </PermissionsGate>
-                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                  )}
+                  {permissions && permissions.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
                       color="danger"
@@ -90,7 +98,7 @@ const AddSession = () => {
                         <i className="fas fa-trash" />
                       </Popconfirm>
                     </Button>
-                  </PermissionsGate>
+                  )}
                 </h5>
               ),
             });
@@ -332,77 +340,79 @@ const AddSession = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <PermissionsGate scopes={[SCOPES.canCreate]}>
-            <Col lg="4">
-              <div className="card-wrapper">
-                <Card>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Session
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Session"
-                            type="text"
-                            onChange={handleChange("name")}
-                            value={sessionData.name}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Starting Date
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            type="date"
-                            onChange={handleChange("start_date")}
-                            required
-                            value={sessionData.start_date}
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Ending Date
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            value={sessionData.end_date}
-                            type="date"
-                            onChange={handleChange("end_date")}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4 float-right">
-                        <Col>
-                          <Button color="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
-          </PermissionsGate>
+         
+            {permissions && permissions.includes("add") && (
+              <Col lg="4">
+                <div className="card-wrapper">
+                  <Card>
+                    <Form onSubmit={handleFormChange} className="mb-4">
+                      <CardBody>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Session
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Session"
+                              type="text"
+                              onChange={handleChange("name")}
+                              value={sessionData.name}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example-date-input"
+                            >
+                              Starting Date
+                            </label>
+                            <Input
+                              id="example-date-input"
+                              type="date"
+                              onChange={handleChange("start_date")}
+                              required
+                              value={sessionData.start_date}
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example-date-input"
+                            >
+                              Ending Date
+                            </label>
+                            <Input
+                              id="example-date-input"
+                              value={sessionData.end_date}
+                              type="date"
+                              onChange={handleChange("end_date")}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4 float-right">
+                          <Col>
+                            <Button color="primary" type="submit">
+                              Submit
+                            </Button>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                    </Form>
+                  </Card>
+                </div>
+              </Col>
+            )}
+         
 
           <Col>
             <div className="card-wrapper">

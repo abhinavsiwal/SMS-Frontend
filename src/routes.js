@@ -1,19 +1,4 @@
-/*!
 
-=========================================================
-* Argon Dashboard PRO React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 // import Alternative from 'views/pages/dashboards/Alternative.js';
 // import Buttons from 'views/pages/components/Buttons.js';
 // import Calendar from 'views/pages/Calendar.js';
@@ -99,7 +84,7 @@ export const adminRoutes = [
   },
   {
     collapse: true,
-    name: "Class Management",
+    name: "Library Management",
     icon: "fa fa-users",
     state: "classCollapse",
     views: [
@@ -109,6 +94,7 @@ export const adminRoutes = [
         miniName: "AC",
         component: AddClass,
         layout: "/admin",
+        permission:"view",
       },
       {
         path: "/add-section",
@@ -116,6 +102,7 @@ export const adminRoutes = [
         miniName: "AS",
         component: AddSection,
         layout: "/admin",
+        permission:"view"
       },
       {
         path: "/add-subject",
@@ -123,6 +110,7 @@ export const adminRoutes = [
         miniName: "AS",
         component: AddSubject,
         layout: "/admin",
+        permission:"view"
       },
       {
         path: "/class-teacher",
@@ -130,6 +118,7 @@ export const adminRoutes = [
         miniName: "CT",
         component: ClassTeacher,
         layout: "/admin",
+        permission:"add",
       },
     ],
   },
@@ -229,16 +218,17 @@ export const adminRoutes = [
 
   {
     collapse: true,
-    name: "Canteen",
+    name: "Canteen Management",
     icon: "ni ni-basket text-yellow",
     state: "canteenCollapse",
     views: [
       {
         path: "/add-canteen",
-        name: "Add Canteen",
+        name: "add",
         miniName: "A",
         component: AddCanteen,
         layout: "/admin",
+        permission:"add",
       },
       {
         path: "/view-canteen",
@@ -246,6 +236,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewCanteen,
         layout: "/admin",
+        permission:"view"
       },
       {
         path: "/view-all-canteen",
@@ -253,6 +244,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewAllCanteen,
         layout: "/admin",
+        permission:"view"
       },
     ],
   },
@@ -266,7 +258,7 @@ export const adminRoutes = [
 
   {
     collapse: true,
-    name: "Transporte",
+    name: "Transportation",
     icon: "ni ni-bus-front-12 text-red",
     state: "transportationCollapse",
     views: [
@@ -978,3 +970,4 @@ const routes = [
 ];
 
 export default routes;
+ 

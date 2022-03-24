@@ -23,8 +23,6 @@ import { setClass } from "store/reducers/class";
 import { useReducer, useSelector } from "react";
 import { useDispatch } from "react-redux";
 import { Popconfirm } from "antd";
-import PermissionsGate from "routeGuard/PermissionGate";
-import { SCOPES } from "routeGuard/permission-maps";
 
 
 const AddClass = () => {
@@ -37,15 +35,24 @@ const AddClass = () => {
   const [editClassAbv, setEditClassAbv] = useState("");
   const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
+  const { user, token } = isAuthenticated();
 
   const [classData, setClassData] = useState({
     name: "",
     abbreviation: "",
   });
 
+  let permissions;
+
+  useEffect(() => {
+    if (user.role["Library Management"]) {
+      permissions = user.role["Library Management"];
+      console.log(permissions);
+    }
+  }, []);
+
   useEffect(() => {
     const getAllClasses = () => {
-      const { user, token } = isAuthenticated();
       allClass(user._id, user.school, token)
         .then((res) => {
           console.log("allClass", res);
@@ -58,7 +65,8 @@ const AddClass = () => {
               abbreviation: res[i].abbreviation,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                
+                  {permissions && permissions.includes("edit") && (
                     <Button
                       className="btn-sm pull-right"
                       color="primary"
@@ -70,8 +78,9 @@ const AddClass = () => {
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
-                  </PermissionsGate>
-                  <PermissionsGate scopes={[SCOPES.canEdit]}>
+                  )}
+              
+                  {permissions && permissions.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
                       color="danger"
@@ -85,7 +94,7 @@ const AddClass = () => {
                         <i className="fas fa-trash" />
                       </Popconfirm>
                     </Button>
-                  </PermissionsGate>
+                  )}
                 </h5>
               ),
             });
@@ -109,7 +118,7 @@ const AddClass = () => {
       } else {
         setChecked(false);
       }
-    toast.success("Class Deleted Successfully")
+      toast.success("Class Deleted Successfully");
     } catch (err) {
       toast.error("Something Went Wrong!");
     }
@@ -144,8 +153,8 @@ const AddClass = () => {
         formData
       );
       console.log("updateClass", updatedClass);
-      setEditing(false)
-      toast.success("Class Edited Successfully")
+      setEditing(false);
+      toast.success("Class Edited Successfully");
       if (checked === false) {
         setChecked(true);
       } else {
@@ -264,62 +273,61 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          <PermissionsGate scopes={[SCOPES.canCreate]} >
-
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Class
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Class"
-                          type="text"
-                          onChange={handleChange("name")}
-                          value={classData.name}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Class Abbreviation
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Class Abbreviation"
-                          type="text"
-                          onChange={handleChange("abbreviation")}
-                          value={classData.abbreviation}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
-          </PermissionsGate>
+          {permissions && permissions.includes("add") && (
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Class
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Class"
+                            type="text"
+                            onChange={handleChange("name")}
+                            value={classData.name}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Class Abbreviation
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Class Abbreviation"
+                            type="text"
+                            onChange={handleChange("abbreviation")}
+                            value={classData.abbreviation}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 float-right">
+                        <Col>
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          )}
 
           <Col>
             <div className="card-wrapper">
