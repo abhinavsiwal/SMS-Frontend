@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // react library for routing
 import { useLocation, Route, Switch } from "react-router-dom";
 // core components
@@ -20,6 +20,7 @@ function Admin() {
   }, [location]);
 
   console.log(user.role);
+  console.log(adminRoutes);
 
   let routes1 = [];
   // for (const key in user.role) {
@@ -28,30 +29,33 @@ function Admin() {
   // }
 
   // let routes1 = [];
-  console.log(adminRoutes);
   let permittedRoute = [];
+
   for (const key in user.role) {
     console.log(key);
     console.log(user.role[key]);
     // routes1.push(key);
-    
+
     let permitted = adminRoutes.find(
       (route) => key.toString() === route.name.toString()
     );
     console.log(permitted);
     if (permitted && permitted.views) {
-      let permittedViews = permitted.views.filter(view=>user.role[key].toString()===view.permission.toString());
-      permitted.views=permittedViews;
+      let permittedViews = permitted.views.filter(
+        (view) => user.role[key].toString() === view.permission.toString()
+      );
+      // let permittedViews = permitted.views.filter(
+      //   (view) => user.role[key].toString() === view.permission.toString()
+      // );
+      permitted.views = permittedViews;
     }
-    if(permitted){
-      permittedRoute.push(permitted)
+    if (permitted) {
+      permittedRoute.push(permitted);
     }
-      console.log(permitted);
+    console.log(permitted);
   }
 
   console.log(permittedRoute);
-
-
 
   const getRoutes = (routes) => {
     // console.log(routes);
@@ -100,7 +104,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={routes}
+        routes={permittedRoute}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

@@ -62,7 +62,7 @@ export const adminRoutes = [
   },
   {
     collapse: true,
-    name: "Staff Management",
+    name: "Staff Management up",
     icon: "ni ni-single-02 text-orange",
     state: "examplesCollapse",
     views: [
@@ -90,8 +90,8 @@ export const adminRoutes = [
     views: [
       {
         path: "/add-class",
-        name: "Add Class",
-        miniName: "AC",
+        name: "Add Class ",
+        miniName: "ACs",
         component: AddClass,
         layout: "/admin",
         permission:"view",
@@ -120,7 +120,7 @@ export const adminRoutes = [
         layout: "/admin",
         permission:"add",
       },
-    ],
+      ],
   },
   {
     collapse: true,
