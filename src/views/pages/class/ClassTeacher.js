@@ -7,6 +7,17 @@ import { toast } from "react-toastify";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
 
+import {
+ 
+  fetchingClassError,
+  classTeacherAssignError,
+  fetchingStaffFailed
+} from "constants/errors";
+import {
+
+  classTeacherAssignSuccess
+} from "constants/success";
+
 const ClassTeacher = () => {
   const [classList, setClassList] = useState([]);
   const [teacherList, setTeacherList] = useState([]);
@@ -27,8 +38,9 @@ const ClassTeacher = () => {
         return toast.error(classess.err);
       }
       setClassList(classess);
+      // toast.success(fetchingClassSuccess)
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      toast.error(fetchingClassError);
     }
 
     try {
@@ -42,7 +54,7 @@ const ClassTeacher = () => {
       }
       setTeacherList(teachers);
     } catch (err) {
-      toast.error(err);
+      toast.error(fetchingStaffFailed);
     }
   }, []);
 
@@ -54,8 +66,10 @@ const ClassTeacher = () => {
     try {
       const data = await assignClassTeacher(classId, user._id, token, formData);
       console.log(data);
+      toast.success(classTeacherAssignSuccess)
     } catch (err) {
       console.log(err);
+      toast.error(classTeacherAssignError)
     }
   };
 

@@ -41,12 +41,12 @@ function Admin() {
     );
     console.log(permitted);
     if (permitted && permitted.views) {
-      let permittedViews = permitted.views.filter(
-        (view) => user.role[key].toString() === view.permission.toString()
-      );
       // let permittedViews = permitted.views.filter(
       //   (view) => user.role[key].toString() === view.permission.toString()
       // );
+      let permittedViews = permitted.views.filter(
+        (view) => "view" === view.permission.toString() 
+      );
       permitted.views = permittedViews;
     }
     if (permitted) {
@@ -99,12 +99,12 @@ function Admin() {
     return location.pathname.indexOf("admin/alternative-dashboard") === -1
       ? "dark"
       : "light";
-  };
+  }; 
 
   return (
     <>
       <Sidebar
-        routes={permittedRoute}
+        routes={routes}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

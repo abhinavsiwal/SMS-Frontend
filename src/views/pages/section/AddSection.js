@@ -29,6 +29,10 @@ import Loader from "components/Loader/Loader";
 
 import { Popconfirm } from "antd";
 
+import { fetchingClassError,fetchingSectionError,fetchingSubjectError,addSectionError,deleteSectionError } from "constants/errors";
+import { deleteSectionSuccess,addSectionSuccess } from "constants/success";
+
+
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
   console.log("sectionList", sectionList);
@@ -188,9 +192,11 @@ const AddSection = () => {
           }
           setClassList(classes);
           setLoading(true);
+          
         })
         .catch((err) => {
           console.log(err);
+          toast.error(fetchingClassError)
         });
       // All Sections
       allSections(user._id, user.school, token)
@@ -240,6 +246,7 @@ const AddSection = () => {
         })
         .catch((err) => {
           console.log(err);
+          toast.error(fetchingSectionError)
         });
       // All Subjects
       allSubjects(user._id, user.school, token)
@@ -255,6 +262,7 @@ const AddSection = () => {
         })
         .catch((err) => {
           console.log(err);
+          toast.error(fetchingSubjectError)
         });
     };
     getAllClasses();
@@ -264,9 +272,11 @@ const AddSection = () => {
     try {
       const data = await deleteSection(user._id, sectionId);
       console.log(data);
+      toast.success(deleteSectionSuccess)
       setReload(!reload);
     } catch (err) {
       console.log(err);
+      toast.error(deleteSectionError)
     }
   };
 
@@ -288,9 +298,9 @@ const AddSection = () => {
       sectionData.set("section", resp._id);
       await addClassToSection(user._id, classID, token, sectionData);
       setReload(true);
-      toast.success("Section added successfully");
+      toast.success(addSectionSuccess);
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error(addSectionError);
     }
   };
 

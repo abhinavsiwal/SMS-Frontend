@@ -33,6 +33,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { setStaffEditing } from "store/reducers/staff";
 import PermissionsGate from "routeGuard/PermissionGate";
 import { SCOPES } from "routeGuard/permission-maps";
+import { fetchingStaffFailed } from "constants/errors";
+import { deleteStaffError } from "constants/errors";
+import { deleteStaffSuccess } from "constants/success";
 
 const AllStaffs = () => {
   const dispatch = useDispatch();
@@ -69,69 +72,77 @@ const AllStaffs = () => {
       const endOffset = itemOffset + itemsPerPage;
       console.log(userDetails.userDetails);
       const payload = { school: userDetails.userDetails.school };
-      const res = await allStaffs(
-        userDetails.userDetails.school,
-        userDetails.userDetails._id
-      );
-      const data = [];
-      for (let i = 0; i < res.length; i++) {
-        data.push({
-          key: i,
-          sid: res[i].SID,
-          first_name: res[i].firstname,
-          last_name: res[i].lastname,
-          email: res[i].email,
-          phone: res[i].phone,
-          gender: res[i].gender,
-          assign_role: res[i].assign_role,
-          job: res[i].job,
-          salary: res[i].salary,
-          department: res[i].department,
-          joining_date: res[i].joining_date.split("T")[0].toString(),
-          action: (
-            <h5 key={i + 1} className="mb-0">
-              {permissions && permissions.includes("edit") && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => updateStaff(res[i])}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-              )}
-              {permissions && permissions.includes("edit") && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => deleteStaffHandler(res[i]._id)}
+
+      try {
+        const res = await allStaffs(
+          userDetails.userDetails.school,
+          userDetails.userDetails._id
+        );
+        const data = [];
+        for (let i = 0; i < res.length; i++) {
+          data.push({
+            key: i,
+            sid: res[i].SID,
+            first_name: res[i].firstname,
+            last_name: res[i].lastname,
+            email: res[i].email,
+            phone: res[i].phone,
+            gender: res[i].gender,
+            assign_role: res[i].assign_role,
+            job: res[i].job,
+            salary: res[i].salary,
+            department: res[i].department,
+            joining_date: res[i].joining_date.split("T")[0].toString(),
+            action: (
+              <h5 key={i + 1} className="mb-0">
+                {permissions && permissions.includes("edit") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() => updateStaff(res[i])}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                )}
+                {permissions && permissions.includes("edit") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => deleteStaffHandler(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                )}
+                <Button
+                  className="btn-sm pull-right"
+                  color="success"
+                  type="button"
+                  key={"view" + i + 1}
+                >
+                  <i className="fas fa-user" />
                 </Button>
-              )}
-              <Button
-                className="btn-sm pull-right"
-                color="success"
-                type="button"
-                key={"view" + i + 1}
-              >
-                <i className="fas fa-user" />
-              </Button>
-            </h5>
-          ),
-        });
+              </h5>
+            ),
+          });
+        }
+        setStaffList(data);
+        setLoading(true);
+        setCurrentItems(data.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(data.length / itemsPerPage));
+      } catch (err) {
+        console.log(err);
+        toast.error(fetchingStaffFailed)
       }
-      setStaffList(data);
-      setLoading(true);
-      setCurrentItems(data.slice(itemOffset, endOffset));
-      setPageCount(Math.ceil(data.length / itemsPerPage));
+      
+     
     };
     fetchStaffs();
   }, [itemOffset, itemsPerPage, checked]);
@@ -145,9 +156,10 @@ const AllStaffs = () => {
       } else {
         setChecked(false);
       }
+      toast.success(deleteStaffSuccess)
     } catch (err) {
       console.log(err);
-      toast.error("Something went wrong");
+      toast.error(deleteStaffError);
     }
   };
 

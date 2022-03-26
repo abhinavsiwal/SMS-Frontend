@@ -20,7 +20,8 @@ import { Stepper, Step } from "react-form-stepper";
 import { useSelector,useDispatch } from "react-redux";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
-
+import { updateStaffError } from "constants/errors";
+import { updateStaffSuccess } from "constants/success";
 import "./style.css";
 
 import { ToastContainer, toast } from "react-toastify";
@@ -160,10 +161,10 @@ const dispatch = useDispatch();
       if (resp.err) {
         return toast.error(resp.err);
       }
-      toast.success("Staff added successfully");
+      toast.success(updateStaffSuccess);
       dispatch(setStaffEditing(false))
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error(updateStaffError);
     }
   };
 

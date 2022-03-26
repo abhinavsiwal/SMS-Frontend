@@ -34,6 +34,9 @@ import { isAuthenticated } from "api/auth";
 import { getDepartment } from "api/department";
 import { allSubjects } from "api/subjects";
 import { getAllRoles } from "api/rolesAndPermission";
+import { addStudentError } from "constants/errors";
+import { fetchingSubjectError } from "constants/errors";
+import { fetchingDepartmentError } from "constants/errors";
 
 function AddStaff() {
   const [step, setStep] = useState(0);
@@ -100,6 +103,7 @@ function AddStaff() {
       setStaffData({ ...staffData, assign_role: data[0].name });
     } catch (err) {
       console.log(err);
+    
     }
   };
 
@@ -181,7 +185,7 @@ function AddStaff() {
       }
       toast.success("Staff Added successfully");
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      toast.error(addStudentError);
     }
   };
 
@@ -239,7 +243,7 @@ function AddStaff() {
           });
         });
         if (Subjects.err) {
-          return toast.error(Subjects.err);
+          return toast.error(fetchingSubjectError);
         }
         setA(list);
         // console.log("list", list);
@@ -261,7 +265,7 @@ function AddStaff() {
       console.log("dept", dept);
       setDeparments(dept);
     } catch (err) {
-      // toast.error("Something Went Wrong!");
+      toast.error(fetchingDepartmentError);
       console.log(err);
     }
   }

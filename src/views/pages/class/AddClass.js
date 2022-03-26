@@ -23,7 +23,17 @@ import { setClass } from "store/reducers/class";
 import { useReducer, useSelector } from "react";
 import { useDispatch } from "react-redux";
 import { Popconfirm } from "antd";
-
+import {
+  updateClassError,
+  addClassError,
+  deleteClassError,
+  fetchingClassError,
+} from "constants/errors";
+import {
+  updateClassSuccess,
+  addClassSuccess,
+  deleteClassSuccess,
+} from "constants/success";
 
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
@@ -65,7 +75,6 @@ const AddClass = () => {
               abbreviation: res[i].abbreviation,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                
                   {permissions && permissions.includes("edit") && (
                     <Button
                       className="btn-sm pull-right"
@@ -79,7 +88,7 @@ const AddClass = () => {
                       <i className="fas fa-user-edit" />
                     </Button>
                   )}
-              
+
                   {permissions && permissions.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
@@ -104,6 +113,7 @@ const AddClass = () => {
         })
         .catch((err) => {
           console.log(err);
+          toast.error(fetchingClassError);
         });
     };
     getAllClasses();
@@ -118,9 +128,9 @@ const AddClass = () => {
       } else {
         setChecked(false);
       }
-      toast.success("Class Deleted Successfully");
+      toast.success(deleteClassSuccess);
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      toast.error(deleteClassError);
     }
   };
 
@@ -154,14 +164,14 @@ const AddClass = () => {
       );
       console.log("updateClass", updatedClass);
       setEditing(false);
-      toast.success("Class Edited Successfully");
+      toast.success(updateClassSuccess);
       if (checked === false) {
         setChecked(true);
       } else {
         setChecked(false);
       }
     } catch (err) {
-      toast.error(err);
+      toast.error(updateClassError);
     }
   };
 
@@ -250,10 +260,10 @@ const AddClass = () => {
         name: "",
         abbreviation: "",
       });
-      toast.success("Class added successfully");
+      toast.success(addClassSuccess);
       setReload(true);
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error(addClassError);
     }
   };
   return (
