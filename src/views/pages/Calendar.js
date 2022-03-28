@@ -398,6 +398,17 @@ function CalendarView() {
           </button>
         </div>
         <ModalBody>
+          <Label className="form-control-label" htmlFor="example-date-input">
+            Search
+          </Label>
+          <Input
+            className="form-control-alternative new-event--title"
+            placeholder="Event Title"
+            type="text"
+            // onChange={(e) => setEventTitle(e.target.value)}
+            required
+          />
+          <Button className="mt-2">Search</Button>
           <Table columns={columns} dataSource={eventList} />
         </ModalBody>
       </Modal>
