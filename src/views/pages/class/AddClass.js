@@ -35,6 +35,8 @@ import {
   deleteClassSuccess,
 } from "constants/success";
 
+import { allSessions } from "api/session";
+
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
   const [reload, setReload] = useState(false);
@@ -43,12 +45,14 @@ const AddClass = () => {
   const [editClassName, setEditClassName] = useState("");
   const [classId, setClassId] = useState("");
   const [editClassAbv, setEditClassAbv] = useState("");
+  const [sessions, setSessions] = useState([]);
   const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
   const { user, token } = isAuthenticated();
 
   const [classData, setClassData] = useState({
     name: "",
+    session: "",
     abbreviation: "",
   });
 
@@ -59,6 +63,7 @@ const AddClass = () => {
       permissions = user.role["Library Management"];
       console.log(permissions);
     }
+    getSession();
   }, []);
 
   useEffect(() => {
@@ -148,6 +153,21 @@ const AddClass = () => {
     });
     console.log("b", b);
     formData.set("class", JSON.stringify(b));
+  };
+
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
   };
 
   const handleEdit = async () => {
@@ -283,61 +303,90 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
-            <Col lg="4">
-              <div className="card-wrapper">
-                <Card>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Class
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Class"
-                            type="text"
-                            onChange={handleChange("name")}
-                            value={classData.name}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Class Abbreviation
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Class Abbreviation"
-                            type="text"
-                            onChange={handleChange("abbreviation")}
-                            value={classData.abbreviation}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4 float-right">
-                        <Col>
-                          <Button color="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
-          )}
+          {/* {permissions && permissions.includes("add") && (
+            
+          )} */}
+          <Col lg="4">
+            <div className="card-wrapper">
+              <Card>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Class
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Class"
+                          type="text"
+                          onChange={handleChange("name")}
+                          value={classData.name}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Select Session
+                        </label>
+                        <Input
+                          id="example4cols3Input"
+                          type="select"
+                          onChange={handleChange("session")}
+                          value={classData.session}
+                          required
+                        >
+                          <option value="" disabled selected>
+                            Select Session
+                          </option>
+                          {sessions.map((session) => {
+                            return (
+                              <option value={session._id} key={session._id}>
+                                {session.name}
+                              </option>
+                            );
+                          })}
+                        </Input>
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Class Abbreviation
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Class Abbreviation"
+                          type="text"
+                          onChange={handleChange("abbreviation")}
+                          value={classData.abbreviation}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4 float-right">
+                      <Col>
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
 
           <Col>
             <div className="card-wrapper">

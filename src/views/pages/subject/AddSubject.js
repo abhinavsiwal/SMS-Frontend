@@ -26,6 +26,11 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
 import Loader from "components/Loader/Loader";
 
+//React-select
+import Select from "react-select";
+
+import { allSessions } from "api/session";
+
 const AddSubject = () => {
   const [subjectList, setSubjectList] = useState([]);
   const [reload, setReload] = useState(false);
@@ -34,6 +39,7 @@ const AddSubject = () => {
   const [editSubjectName, setEditSubjectName] = useState("");
   const [subjectId, setSubjectId] = useState("");
   const [checked, setChecked] = useState(false);
+  const [sessions, setSessions] = useState([]);
   const { user, token } = isAuthenticated();
 
   let permissions;
@@ -46,7 +52,158 @@ const AddSubject = () => {
 
   useEffect(() => {
     getAllClasses();
+    getSession();
   }, [reload, checked]);
+
+  const roleOptions = [
+    { value: "Math", label: "Math" },
+    { value: "English", label: "English" },
+    { value: "Science", label: "Science" },
+  ];
+
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
+
+  const [subjectData, setSubjectData] = useState({
+    type: "",
+    list: "",
+    session: "",
+  });
+
+  const handleDelete = async (subjectId) => {
+    console.log("delete");
+    const { user, token } = isAuthenticated();
+    try {
+      await deleteSubject(subjectId, user._id, token);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
+
+  const rowHandler = (id, name) => {
+    console.log(id);
+    setEditing(true);
+    setEditSubjectName(name);
+    setSubjectId(id);
+  };
+
+  const handleEdit = async () => {
+    try {
+      const { user, token } = isAuthenticated();
+      formData.set("name", editSubjectName);
+      const updatedSubject = await updateSubject(
+        subjectId,
+        user._id,
+        token,
+        formData
+      );
+      console.log("updateSubject", updatedSubject);
+      setEditing(false);
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+
+  const [formData] = useState(new FormData());
+  const handleChange = (name) => (event) => {
+    formData.set(name, event.target.value);
+    setSubjectData({ ...subjectData, [name]: event.target.value });
+  };
+
+  //Taking Values from react-select
+  const handleSubjectChange = (e) => {
+    var value = [];
+    for (var i = 0, l = e.length; i < l; i++) {
+      value.push(e[i].value);
+    }
+    formData.set("list", JSON.stringify(value));
+  };
+
+  const handleFormChange = async (e) => {
+    e.preventDefault();
+    const { user, token } = isAuthenticated();
+    formData.set("school", user.school);
+    try {
+      const subject = await addSubject(user._id, token, formData);
+      if (subject.err) {
+        return toast.error(subject.err);
+      }
+      setSubjectData({
+        list: "",
+        session: "",
+      });
+      if (checked === false) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      }
+      toast.success("Subject added successfully");
+      setReload(true);
+    } catch (err) {
+      toast.error("Something Went Wrong");
+    }
+  };
+
+  const columns = [
+    {
+      title: "Subjects",
+      dataIndex: "list",
+      width: "90%",
+      sorter: (a, b) => a.list > b.list,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.list.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
 
   const getAllClasses = () => {
     allSubjects(user._id, user.school, token)
@@ -97,122 +254,6 @@ const AddSubject = () => {
       });
   };
 
-  const [subjectData, setSubjectData] = useState({
-    list: "",
-  });
-
-  const handleDelete = async (subjectId) => {
-    console.log("delete");
-    const { user, token } = isAuthenticated();
-    try {
-      await deleteSubject(subjectId, user._id, token);
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
-    } catch (err) {
-      toast.error("Something Went Wrong!");
-    }
-  };
-
-  const rowHandler = (id, name) => {
-    console.log(id);
-    setEditing(true);
-    setEditSubjectName(name);
-    setSubjectId(id);
-  };
-
-  const handleEdit = async () => {
-    try {
-      const { user, token } = isAuthenticated();
-      formData.set("name", editSubjectName);
-      const updatedSubject = await updateSubject(
-        subjectId,
-        user._id,
-        token,
-        formData
-      );
-      console.log("updateSubject", updatedSubject);
-      setEditing(false);
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
-    } catch (err) {
-      toast.error(err);
-    }
-  };
-
-  const columns = [
-    {
-      title: "Subjects",
-      dataIndex: "list",
-      width: "90%",
-      sorter: (a, b) => a.list > b.list,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.list.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Action",
-      key: "action",
-      dataIndex: "action",
-      fixed: "right",
-    },
-  ];
-
-  const [formData] = useState(new FormData());
-  const handleChange = (name) => (event) => {
-    formData.set(name, event.target.value);
-    setSubjectData({ ...subjectData, [name]: event.target.value });
-  };
-
-  const handleFormChange = async (e) => {
-    e.preventDefault();
-    const { user, token } = isAuthenticated();
-    formData.set("school", user.school);
-    try {
-      const subject = await addSubject(user._id, token, formData);
-      if (subject.err) {
-        return toast.error(subject.err);
-      }
-      setSubjectData({
-        list: "",
-      });
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
-      toast.success("Subject added successfully");
-      setReload(true);
-    } catch (err) {
-      toast.error("Something Went Wrong");
-    }
-  };
   return (
     <>
       <SimpleHeader name="Add Subject" parentName="Class Management" />
@@ -230,43 +271,150 @@ const AddSubject = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
-            <Col lg="4">
-              <div className="card-wrapper">
-                <Card>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Subject
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Subject"
-                            type="text"
-                            onChange={handleChange("list")}
-                            value={subjectData.list}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4 float-right">
-                        <Col>
-                          <Button color="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
-          )}
+          {/* {permissions && permissions.includes("add") && (
+           
+          )} */}
+          <Col lg="4">
+            <div className="card-wrapper">
+              <Card>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Select type
+                        </label>
+                        <Input
+                          id="exampleFormControlSelect3"
+                          type="select"
+                          onChange={handleChange("type")}
+                          value={subjectData.type}
+                          required
+                        >
+                          <option value="" disabled selected>
+                            Select type
+                          </option>
+                          <option>Single</option>
+                          <option>Group</option>
+                        </Input>
+                      </Col>
+                    </Row>
+                    {subjectData.type === "Single" && (
+                      <>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Subject
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Subject"
+                              type="text"
+                              onChange={handleChange("list")}
+                              value={subjectData.list}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Select Session
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              type="select"
+                              onChange={handleChange("session")}
+                              value={subjectData.session}
+                              required
+                            >
+                              <option value="" disabled selected>
+                                Select Session
+                              </option>
+                              {sessions.map((session) => {
+                                return (
+                                  <option value={session._id} key={session._id}>
+                                    {session.name}
+                                  </option>
+                                );
+                              })}
+                            </Input>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
+                    {subjectData.type === "Group" && (
+                      <>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Subject
+                            </label>
+                            <Select
+                              isMulti
+                              name="colors"
+                              options={roleOptions}
+                              onChange={handleSubjectChange}
+                              className="basic-multi-select"
+                              classNamePrefix="select"
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Select Session
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              type="select"
+                              onChange={handleChange("session")}
+                              value={subjectData.session}
+                              required
+                            >
+                              <option value="" disabled selected>
+                                Select Session
+                              </option>
+                              {sessions.map((session) => {
+                                return (
+                                  <option value={session._id} key={session._id}>
+                                    {session.name}
+                                  </option>
+                                );
+                              })}
+                            </Input>
+                          </Col>
+                        </Row>
+                      </>
+                    )}
+                    <Row className="mt-4 float-right">
+                      <Col>
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
 
           <Col>
             <div className="card-wrapper">

@@ -26,14 +26,22 @@ import { deleteSession } from "api/session";
 import { fetchingSessionError } from "constants/errors";
 import { addSessionError } from "constants/errors";
 import { deleteSessionError } from "constants/errors";
-import { deleteSessionSuccess,addSessionSuccess } from "constants/success";
+import { deleteSessionSuccess, addSessionSuccess } from "constants/success";
+
+//React Datepicker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+// import moment Library
+import moment from "moment";
 
 const AddSession = () => {
   const [sessionList, setSessionList] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
-
+  const [startTime, setStartTime] = React.useState(new Date());
+  const startTimeDuration = moment(startTime).format("LT");
   const [editing, setEditing] = useState(false);
   const [editSessionName, setEditSessionName] = useState("");
   const [editStartDate, setEditStartDate] = useState("");
@@ -43,10 +51,10 @@ const AddSession = () => {
     name: "",
     start_date: "",
     end_date: "",
+    working_days: "",
   });
   const { user, token } = isAuthenticated();
 
-  
   let permissions = [];
   useEffect(() => {
     if (user.role["Session"]) {
@@ -112,7 +120,7 @@ const AddSession = () => {
         })
         .catch((err) => {
           console.log(err);
-          toast.error(fetchingSessionError)
+          toast.error(fetchingSessionError);
         });
     };
     getAllSessions();
@@ -127,7 +135,7 @@ const AddSession = () => {
       } else {
         setChecked(false);
       }
-      toast.success(deleteSessionSuccess)
+      toast.success(deleteSessionSuccess);
     } catch (err) {
       toast.error(deleteSessionError);
     }
@@ -314,6 +322,8 @@ const AddSession = () => {
       "-" +
       formData.get("end_date").slice(2, 4);
     formData.set("year", year);
+    formData.set("working_days", sessionData.working_days);
+    formData.set("working_time", startTimeDuration);
     try {
       const resp = await addSession(user._id, token, formData);
       console.log(resp);
@@ -321,7 +331,11 @@ const AddSession = () => {
         name: "",
         start_date: "",
         end_date: "",
+        working_days: "",
       });
+      if (resp.err) {
+        return toast.error(resp.err);
+      }
       setReload(true);
       toast.success(addSessionSuccess);
     } catch (err) {
@@ -346,79 +360,117 @@ const AddSession = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-         
-            {permissions && permissions.includes("add") && (
-              <Col lg="4">
-                <div className="card-wrapper">
-                  <Card>
-                    <Form onSubmit={handleFormChange} className="mb-4">
-                      <CardBody>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Session
-                            </label>
-                            <Input
-                              id="example4cols2Input"
-                              placeholder="Session"
-                              type="text"
-                              onChange={handleChange("name")}
-                              value={sessionData.name}
-                              required
-                            />
-                          </Col>
-                        </Row>
-                        <Row className="mt-4">
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example-date-input"
-                            >
-                              Starting Date
-                            </label>
-                            <Input
-                              id="example-date-input"
-                              type="date"
-                              onChange={handleChange("start_date")}
-                              required
-                              value={sessionData.start_date}
-                            />
-                          </Col>
-                        </Row>
-                        <Row className="mt-4">
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example-date-input"
-                            >
-                              Ending Date
-                            </label>
-                            <Input
-                              id="example-date-input"
-                              value={sessionData.end_date}
-                              type="date"
-                              onChange={handleChange("end_date")}
-                              required
-                            />
-                          </Col>
-                        </Row>
-                        <Row className="mt-4 float-right">
-                          <Col>
-                            <Button color="primary" type="submit">
-                              Submit
-                            </Button>
-                          </Col>
-                        </Row>
-                      </CardBody>
-                    </Form>
-                  </Card>
-                </div>
-              </Col>
-            )}
-         
+          {/* {permissions && permissions.includes("add") && (
+              
+            )} */}
+          <Col lg="4">
+            <div className="card-wrapper">
+              <Card>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Session
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Session"
+                          type="text"
+                          onChange={handleChange("name")}
+                          value={sessionData.name}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Starting Date
+                        </label>
+                        <Input
+                          id="example-date-input"
+                          type="date"
+                          onChange={handleChange("start_date")}
+                          required
+                          value={sessionData.start_date}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Ending Date
+                        </label>
+                        <Input
+                          id="example-date-input"
+                          value={sessionData.end_date}
+                          type="date"
+                          onChange={handleChange("end_date")}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Working Days
+                        </label>
+                        <Input
+                          id="example-date-input"
+                          type="text"
+                          onChange={handleChange("working_days")}
+                          value={sessionData.working_days}
+                          placeholder="Working Days"
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Working Time
+                        </label>
+                        <DatePicker
+                          id="exampleFormControlSelect3"
+                          className="Period-Time"
+                          selected={startTime}
+                          onChange={(date) => setStartTime(date)}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4 float-right">
+                      <Col>
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
 
           <Col>
             <div className="card-wrapper">

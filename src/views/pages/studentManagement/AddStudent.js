@@ -34,7 +34,7 @@ import { allSessions } from "api/session";
 
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(1);
 
   const { classes } = useSelector((state) => state.classReducer);
   console.log("clsss", classes);
@@ -585,7 +585,7 @@ function AddStudent() {
                       onChange={handleChange("class")}
                       value={studentData.class}
                     >
-                      {classes &&
+                      {/* {classes &&
                         classes.map((clas, index) => {
                           // setselectedClassIndex(index)
                           return (
@@ -593,7 +593,7 @@ function AddStudent() {
                               {clas.name}
                             </option>
                           );
-                        })}
+                        })} */}
                     </Input>
                   </Col>
                   <Col>
@@ -610,7 +610,7 @@ function AddStudent() {
                       onChange={handleChange("section")}
                       value={studentData.section}
                     >
-                      {classes.map((sections) => {
+                      {/* {classes.map((sections) => {
                         return sections.section.map((sec) => {
                           return (
                             <option value={sec._id} key={sec._id}>
@@ -618,7 +618,7 @@ function AddStudent() {
                             </option>
                           );
                         });
-                      })}
+                      })} */}
                     </Input>
                   </Col>
                   <Col>
@@ -636,13 +636,13 @@ function AddStudent() {
                       value={studentData.session}
                     >
                       <option disabled>Select Session</option>
-                      {session.map((session) => {
+                      {/* {session.map((session) => {
                         return (
                           <option key={session._id} value={session._id}>
                             {session.name}
                           </option>
                         );
-                      })}
+                      })} */}
                     </Input>
                   </Col>
                 </Row>
