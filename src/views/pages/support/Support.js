@@ -37,6 +37,9 @@ import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import { allSupports } from "api/support";
 import Loader from "components/Loader/Loader";
+import { fetchingSupportError } from "constants/errors";
+import { addSupportError } from "constants/errors";
+import { addSupportSuccess } from "constants/success";
 
 function Support() {
   const [checked, setChecked] = useState(false);
@@ -88,6 +91,7 @@ function Support() {
         })
         .catch((err) => {
           console.log(err);
+          toast.error(fetchingSupportError)
         });
     };
     getAllSupports();
@@ -217,9 +221,9 @@ function Support() {
         root_caused: "",
         description: "",
       });
-      toast.success("Student added successfully");
+      toast.success(addSupportSuccess);
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error(addSupportError);
     }
   };
   return (

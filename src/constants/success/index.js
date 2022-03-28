@@ -91,3 +91,5 @@ export const addEcommerceSucess="Add Ecommerce Success";
 export const updateEcommerceSucess = "Update Ecommerce Success";
 export const deleteEcommerceSucess = "Delete Ecommerce Success";
  
+// Login
+export const loginSuccess = "Login Success";

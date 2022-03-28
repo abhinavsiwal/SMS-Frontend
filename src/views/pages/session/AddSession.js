@@ -23,6 +23,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
 
 import { deleteSession } from "api/session";
+import { fetchingSessionError } from "constants/errors";
+import { addSessionError } from "constants/errors";
+import { deleteSessionError } from "constants/errors";
+import { deleteSessionSuccess,addSessionSuccess } from "constants/success";
 
 const AddSession = () => {
   const [sessionList, setSessionList] = useState([]);
@@ -108,6 +112,7 @@ const AddSession = () => {
         })
         .catch((err) => {
           console.log(err);
+          toast.error(fetchingSessionError)
         });
     };
     getAllSessions();
@@ -122,8 +127,9 @@ const AddSession = () => {
       } else {
         setChecked(false);
       }
+      toast.success(deleteSessionSuccess)
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      toast.error(deleteSessionError);
     }
   }
 
@@ -317,9 +323,9 @@ const AddSession = () => {
         end_date: "",
       });
       setReload(true);
-      toast.success("Session added successfully");
+      toast.success(addSessionSuccess);
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error(addSessionError);
     }
   };
 

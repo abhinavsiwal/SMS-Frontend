@@ -2,11 +2,15 @@ import React, { useState, useEffect } from "react";
 import { Container, Table, Card, Input, CardBody } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
-import { getDepartment,departmentHead } from "api/department";
+import { getDepartment, departmentHead } from "api/department";
 import { isAuthenticated } from "api/auth";
 import Loader from "components/Loader/Loader";
 import { allStaffs } from "api/staff";
 import { toast } from "react-toastify";
+import { fetchingDepartmentError } from "constants/errors";
+import { fetchingStaffFailed } from "constants/errors";
+import { departmentHeadAssignError } from "constants/errors";
+import { departmentHeadAssignSuccess } from "constants/success";
 
 const DepartmentHead = () => {
   const [departments, setDepartments] = useState([]);
@@ -14,14 +18,12 @@ const DepartmentHead = () => {
   const [loading, setLoading] = useState(false);
   const { user, token } = isAuthenticated();
 
-  useEffect( () => {
- 
+  useEffect(() => {
     getAllDepartments();
     getAllStaff();
-   
   }, []);
 
-  const getAllDepartments=async()=>{
+  const getAllDepartments = async () => {
     try {
       const dept = await getDepartment(user.school, user._id, token);
       if (dept.err) {
@@ -31,20 +33,15 @@ const DepartmentHead = () => {
       setDepartments(dept);
       setLoading(true);
     } catch (err) {
-      toast.error(err);
+      toast.error(fetchingDepartmentError);
     }
+  };
 
-
-  }
-
-  const getAllStaff=async()=>{
+  const getAllStaff = async () => {
     try {
       const payload = { school: user.school };
 
-      const staffData = await allStaffs(
-        user.school,
-        user._id,
-      );
+      const staffData = await allStaffs(user.school, user._id);
       console.log("staffData", staffData);
       if (staffData.err) {
         return toast.error(staffData.err);
@@ -52,35 +49,34 @@ const DepartmentHead = () => {
       setStaff(staffData);
       setLoading(true);
     } catch (err) {
-      toast.error(err);
+      toast.error(fetchingStaffFailed);
     }
-  }
-
-
+  };
 
   const [selectStaff, setSelectStaff] = useState([]);
 
   const [formData] = useState(new FormData());
 
- 
+  const departmentHeadHandler = (departmentId) => async (e) => {
+    console.log(departmentId);
+    console.log(e.target.value);
+    let formData = new FormData();
+    formData.set("head", e.target.value);
 
-
-const departmentHeadHandler=departmentId=>async(e)=>{
-  console.log(departmentId);
-  console.log(e.target.value);
-let formData = new FormData();
-formData.set("head",e.target.value);
-
-try {
-  const data = await departmentHead(departmentId,user._id,token,formData)
-  console.log(data);
-} catch (err) {
-  console.log(err);
-}
-
-
-  
-}
+    try {
+      const data = await departmentHead(
+        departmentId,
+        user._id,
+        token,
+        formData
+      );
+      console.log(data);
+      toast.success(departmentHeadAssignSuccess);
+    } catch (err) {
+      console.log(err);
+      toast.error(departmentHeadAssignError)
+    }
+  };
 
   return (
     <>

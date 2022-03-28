@@ -14,9 +14,9 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 // nodejs library that concatenates classes
-import { Redirect,useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 import classnames from "classnames";
 import "./styles.css";
 // reactstrap components
@@ -37,8 +37,11 @@ import {
 } from "reactstrap";
 import { adminLogin, staffLogin, studentLogin } from "api/login";
 import validator from "validator";
-import { useDispatch,useSelector } from "react-redux";
-import {login} from '../../../store/reducers/auth'
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../../store/reducers/auth";
+import { ToastContainer, toast } from "react-toastify";
+import { loginSuccess } from "constants/success";
+import { loginError } from "constants/errors";
 // // core components
 // import AuthHeader from "components/Headers/AuthHeader.js";
 
@@ -53,22 +56,20 @@ function Login() {
   const [focusedEmail, setfocusedEmail] = useState(false);
   const [focusedPassword, setfocusedPassword] = useState(false);
 
-  const {loading,error,token} = useSelector(state=>state.authReducer);
-
+  const { loading, error, token } = useSelector((state) => state.authReducer);
 
   useEffect(() => {
-    
-  if(token){
-    setRedirect(true);
-    
-  }
-  if(error){
-    console.log(error);
-    setErrormsg(error.message)
-  }
-
-  }, [token])
-  
+    if (token) {
+      toast.success(loginSuccess)
+      // console.log("logged in");
+      setRedirect(true);
+    }
+    if (error) {
+      console.log(error);
+      setErrormsg(error.message);
+      toast.error(loginError)
+    }
+  }, [token]);
 
   // function handleSubmit(e) {
   //   e.preventDefault();
@@ -116,14 +117,26 @@ function Login() {
   //   }
   // }
 
-const handleSubmit=(e)=>{
-  e.preventDefault();
-  console.log(username,password);
-  dispatch(login({username,password}))
-}
-  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(username, password);
+    dispatch(login({ username, password }));
+  };
+
   return (
     <>
+     <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       {redirect ? <Redirect to="/admin/dashboard" /> : null}
       <div className="login-container">
         <Row className="login-page-container">

@@ -31,6 +31,10 @@ import { allStaffs } from "api/staff";
 import Select from "react-select";
 
 import { canteenAdd, allCanteens,menuAdd } from "../../../api/canteen/index";
+import { toast } from "react-toastify";
+import { fetchingStaffFailed } from "constants/errors";
+import { fetchingCanteenError } from "constants/errors";
+import { addCanteenError } from "constants/errors";
 
 function AddCanteen() {
   const [startDate, setStartDate] = React.useState(new Date());
@@ -54,16 +58,22 @@ function AddCanteen() {
 
 
   const getAllStaffs = async () => {
-    const res = await allStaffs(user.school, user._id);
-    console.log(res);
-    let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
-    setAllStaff(canteenStaff);
-    let options = [];
-    for (let i = 0; i < res.length; i++) {
-      options.push({ value: res[i]._id, label: res[i].firstname });
+    try {
+      const res = await allStaffs(user.school, user._id);
+      console.log(res);
+      let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
+      setAllStaff(canteenStaff);
+      let options = [];
+      for (let i = 0; i < res.length; i++) {
+        options.push({ value: res[i]._id, label: res[i].firstname });
+      }
+      console.log(options);
+      setRoleOptions(options);
+    } catch (err) {
+      console.log(err);
+      toast.error(fetchingStaffFailed);
     }
-    console.log(options);
-    setRoleOptions(options);
+ 
   };
 
   const getAllCanteens = async () => {
@@ -73,6 +83,7 @@ function AddCanteen() {
       setAllCanteen(data);
     } catch (err) {
       console.log(err);
+      toast.error(fetchingCanteenError)
     }
   };
 
@@ -120,6 +131,7 @@ function AddCanteen() {
       console.log(data);
     } catch (err) {
       console.log(err);
+      toast.error(addCanteenError);
     }
   };
 
@@ -152,6 +164,7 @@ function AddCanteen() {
 
     } catch (err) {
       console.log(err);
+      toast.error(addCanteenError)
     }
   }
 

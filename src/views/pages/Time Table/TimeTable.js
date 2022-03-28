@@ -37,6 +37,8 @@ import { isAuthenticated } from "api/auth";
 import { allClass } from "api/class";
 
 import { ToastContainer, toast } from "react-toastify";
+import { fetchingClassError } from "constants/errors";
+import { addTimetableError } from "constants/errors";
 
 function TimeTable() {
   const [timeTableData, setTimeTableData] = React.useState({
@@ -98,7 +100,7 @@ function TimeTable() {
     const { user, token } = isAuthenticated();
     const classes = await allClass(user._id, user.school, token);
     if (classes.err) {
-      return toast.error(classes.err);
+      return toast.error(fetchingClassError);
     }
     setClassess(classes);
   };
@@ -134,7 +136,7 @@ function TimeTable() {
         toast.error(resp.err);
       }
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error(addTimetableError);
     }
   };
 

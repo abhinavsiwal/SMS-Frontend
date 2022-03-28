@@ -33,6 +33,10 @@ import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
 import { sendRequest } from "api/api";
+import { toast } from "react-toastify";
+import { fetchingAttendanceError } from "constants/errors";
+import { addAttendanceError } from "constants/errors";
+import { addAttendanceSuccess } from "constants/success";
 
 function Attendance() {
   //start and end date of month
@@ -151,9 +155,17 @@ function Attendance() {
   }, []);
 
   const getAllAttendance = async () => {
-    const data = await getAttendence(user.school, user._id);
-    console.log(data);
-    setAllAttendance(data);
+
+try {
+  const data = await getAttendence(user.school, user._id);
+  console.log(data);
+  setAllAttendance(data);
+} catch (err) {
+  console.log(err);
+ toast.error(fetchingAttendanceError); 
+}
+
+  
   };
 
   const submitHandler = async () => {
@@ -234,8 +246,10 @@ function Attendance() {
         "POST"
       );
       console.log(data);
+      toast.success(addAttendanceSuccess)
     } catch (err) {
       console.log(err);
+      toast.error(addAttendanceError); 
       throw err;
     }
   };

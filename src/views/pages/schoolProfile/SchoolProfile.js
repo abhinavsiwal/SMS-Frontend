@@ -29,6 +29,10 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { schoolProfile, editProfile } from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
+import { toast } from "react-toastify";
+import { fetchingSchoolProfileError } from "constants/errors";
+import { updateSchoolError } from "constants/errors";
+import { updateSchoolSuccess } from "constants/success";
 
 function SchoolProfile() {
   // 1 -> Details 2 -> Contact
@@ -88,6 +92,7 @@ function SchoolProfile() {
       });
     } catch (err) {
       console.log(err);
+      toast.error(fetchingSchoolProfileError);
     }
   };
 
@@ -116,8 +121,10 @@ function SchoolProfile() {
       console.log(data);
       setEditing(false);
       setChecked(!checked);
+      toast.success(updateSchoolSuccess)
     } catch (err) {
       console.log(err);
+      toast.error(updateSchoolError);
     }
   };
 

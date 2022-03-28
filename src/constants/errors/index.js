@@ -91,3 +91,5 @@ export const addEcommerceError="Add Ecommerce Failed";
 export const updateEcommerceError = "Update Ecommerce Failed";
 export const deleteEcommerceError = "Delete Ecommerce Failed";
  
+// Login
+export const loginError = "Login Failed";

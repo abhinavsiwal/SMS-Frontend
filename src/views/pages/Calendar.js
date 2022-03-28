@@ -54,6 +54,8 @@ import "./Calender.css";
 // import AntTable from "./tables/AntTable";
 import { Table } from "ant-table-extensions";
 import { SearchOutlined } from "@ant-design/icons";
+import { updateCalendarError } from "constants/errors";
+import { deleteCalendarError } from "constants/errors";
 
 let calendar;
 
@@ -209,7 +211,7 @@ function CalendarView() {
       setEvents(updateEvents);
       setChecked(true);
     } catch (err) {
-      toast.error("Something went wrong!");
+      toast.error(updateCalendarError);
     }
     setModalChange(false);
     setRadios("bg-info");
@@ -267,7 +269,7 @@ function CalendarView() {
       setEvents(deleEvents);
       setChecked(true);
     } catch (err) {
-      toast.error("Something went wrong!");
+      toast.error(deleteCalendarError);
     }
     setModalChange(false);
     setRadios("bg-info");

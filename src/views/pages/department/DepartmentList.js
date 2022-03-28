@@ -30,6 +30,10 @@ import { Popconfirm } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import Loader from "components/Loader/Loader";
+import { fetchingDepartmentError } from "constants/errors";
+import { deleteDepartmentError } from "constants/errors";
+import { updateDepartmentError } from "constants/errors";
+import { updateDepartmentSuccess,deleteDepartmentSuccess } from "constants/success";
 
 const DepartmentList = () => {
   const { user, token } = isAuthenticated();
@@ -187,6 +191,7 @@ const DepartmentList = () => {
       })
       .catch((err) => {
         console.log(err);
+        toast.error(fetchingDepartmentError);
       });
   }
 
@@ -209,8 +214,9 @@ const DepartmentList = () => {
       } else {
         setChecked(false);
       }
+      toast.success(deleteDepartmentSuccess)
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      toast.error(deleteDepartmentError);
     }
   }
 
@@ -243,8 +249,9 @@ const DepartmentList = () => {
       } else {
         setChecked(false);
       }
+      toast.success(updateDepartmentSuccess)
     } catch (err) {
-      toast.error(err);
+      toast.error(updateDepartmentError);
     }
   }
 
