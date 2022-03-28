@@ -57,7 +57,9 @@ import UpdateStudent from "views/pages/studentManagement/UpdateStudent";
 import AllStaffs from "views/pages/staffManagement/AllStaffs";
 import Calendar from "views/pages/Calendar.js";
 import Attendance from "views/pages/Attendance/Attendance";
-import TimeTable from "views/pages/Time Table/TimeTable";
+// import TimeTable from "views/pages/Time Table/TimeTable";
+import AddTimeTable from "views/pages/Time Table/AddTimeTable";
+import ViewTimeTable from "views/pages/Time Table/ViewTimeTable";
 import RolePermissions from "views/pages/Roles&Permissions/RolePermissions";
 import AddCanteen from "views/pages/Canteen/AddCanteen";
 import ViewCanteen from "views/pages/Canteen/ViewCanteen";
@@ -219,12 +221,35 @@ export const adminRoutes = [
     component: Attendance,
     layout: "/admin",
   },
+  // {
+  //   path: "/timeTable",
+  //   name: "Time Table",
+  //   icon: "ni ni-calendar-grid-58 text-black",
+  //   component: TimeTable,
+  //   layout: "/admin",
+  // },
+
   {
-    path: "/timeTable",
+    collapse: true,
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-black",
-    component: TimeTable,
-    layout: "/admin",
+    state: "timetableCollapse",
+    views: [
+      {
+        path: "/add_time_table",
+        name: "Add Time Table",
+        miniName: "A",
+        component: AddTimeTable,
+        layout: "/admin",
+      },
+      {
+        path: "/view_time_table",
+        name: "View Time Table",
+        miniName: "V",
+        component: ViewTimeTable,
+        layout: "/admin",
+      },
+    ],
   },
 
   {
@@ -422,7 +447,7 @@ export const editorRoutes = [
       {
         path: "/all-students",
         name: "All Students",
-        miniName: "A", 
+        miniName: "A",
         component: AllStudents,
         layout: "/admin",
       },
@@ -463,12 +488,34 @@ export const editorRoutes = [
     component: Attendance,
     layout: "/admin",
   },
+  // {
+  //   path: "/timeTable",
+  //   name: "Time Table",
+  //   icon: "ni ni-calendar-grid-58 text-black",
+  //   component: TimeTable,
+  //   layout: "/admin",
+  // },
   {
-    path: "/timeTable",
+    collapse: true,
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-black",
-    component: TimeTable,
-    layout: "/admin",
+    state: "timetableCollapse",
+    views: [
+      {
+        path: "/add_time_table",
+        name: "Add Time Table",
+        miniName: "A",
+        component: AddTimeTable,
+        layout: "/admin",
+      },
+      {
+        path: "/view_time_table",
+        name: "View Time Table",
+        miniName: "V",
+        component: ViewTimeTable,
+        layout: "/admin",
+      },
+    ],
   },
 
   {
@@ -664,12 +711,34 @@ export const viewerRoutes = [
     component: Attendance,
     layout: "/admin",
   },
+  // {
+  //   path: "/timeTable",
+  //   name: "Time Table",
+  //   icon: "ni ni-calendar-grid-58 text-black",
+  //   component: TimeTable,
+  //   layout: "/admin",
+  // },
   {
-    path: "/timeTable",
+    collapse: true,
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-black",
-    component: TimeTable,
-    layout: "/admin",
+    state: "timetableCollapse",
+    views: [
+      {
+        path: "/add_time_table",
+        name: "Add Time Table",
+        miniName: "A",
+        component: AddTimeTable,
+        layout: "/admin",
+      },
+      {
+        path: "/view_time_table",
+        name: "View Time Table",
+        miniName: "V",
+        component: ViewTimeTable,
+        layout: "/admin",
+      },
+    ],
   },
 
   {
@@ -886,12 +955,34 @@ const routes = [
     component: Attendance,
     layout: "/admin",
   },
+  // {
+  //   path: "/timeTable",
+  //   name: "Time Table",
+  //   icon: "ni ni-calendar-grid-58 text-black",
+  //   component: TimeTable,
+  //   layout: "/admin",
+  // },
   {
-    path: "/timeTable",
+    collapse: true,
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-black",
-    component: TimeTable,
-    layout: "/admin",
+    state: "timetableCollapse",
+    views: [
+      {
+        path: "/add_time_table",
+        name: "Add Time Table",
+        miniName: "A",
+        component: AddTimeTable,
+        layout: "/admin",
+      },
+      {
+        path: "/view_time_table",
+        name: "View Time Table",
+        miniName: "V",
+        component: ViewTimeTable,
+        layout: "/admin",
+      },
+    ],
   },
 
   {
