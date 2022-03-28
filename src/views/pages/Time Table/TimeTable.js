@@ -414,7 +414,7 @@ function TimeTable() {
                             className="form-control-label"
                             htmlFor="xample-date-input"
                           >
-                            Select Mode
+                            Select Mode 
                           </Label>
                           <Input
                             id="exampleFormControlSelect3"

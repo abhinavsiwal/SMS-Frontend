@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { adminLogin, staffLogin, studentLogin } from "../../api/login/index";
+import { signIn } from "../../api/login/index";
 import CryptoJS from "crypto-js";
 import validator from "validator";
 
@@ -17,44 +17,14 @@ export const login = createAsyncThunk(
   async ({ username, password }, { rejectWithValue }) => {
     console.log(username, password);
     if (username && password) {
-      if (validator.isEmail(username)) {
-        console.log("########");
-        try {
-          const data = await adminLogin(username, password);
-          console.log(data);
-          return data;
-        } catch (err) {
-          console.log(err);
-          return rejectWithValue(err.response.data);
-        }
-      } else {
-        const role = username.substring(3, 6);
-        console.log(role); 
-        // console.log("###"); 
-        if (role.toString() === "STF") {
-            console.log("@@@@@@@@@@");
-          try {
-            const data = await staffLogin(username, password);
-            console.log(data);
-            return data;
-          } catch (err) {
-            console.log(err);
-            return rejectWithValue(err.response.data);
-          }
-        } else if (role.toString() === "STD") {
-          console.log("@@@@@@@@STD");
-          try {
-            const data = await studentLogin(username, password);
-            console.log(data);
-            return data;
-          } catch (err) {
-            console.log(err);
-            return rejectWithValue(err.response.data);
-          }
-        } else {
-          alert("Invalid username");
-        }
-      }
+      try {
+        const data = await signIn(username, password);
+        console.log(data);
+        return data;
+      } catch (err) {
+        console.log(err);
+        return rejectWithValue(err.response.data);
+      }    
     } else {
       alert("Please fill all fields");
     }
@@ -80,6 +50,7 @@ export const authSlice = createSlice({
       state.loading = true;
     },
     [login.fulfilled]: (state, { payload }) => {
+      console.log(payload);
       let encryptedToken = CryptoJS.AES.encrypt(
         payload.token,
         process.env.REACT_APP_CRYPTO_SECRET
