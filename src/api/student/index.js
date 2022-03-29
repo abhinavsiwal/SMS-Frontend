@@ -64,3 +64,23 @@ export const updateStudent = async (studentId, id, formData) => {
     throw err;
   }
 };
+
+export const isAuthenticateStudent = (userId, token, data) => {
+  console.log(data);
+  const url = `${process.env.REACT_APP_API_URL}/api/school/student/parent/check/${userId}`;
+  return fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + token,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ type: data.type, email: data.email }),
+  })
+    .then((data) => {
+      return data.json();
+    })
+    .catch((error) => {
+      throw error;
+    });
+};
