@@ -320,6 +320,9 @@ const AddSection = () => {
       sectionData.set("section", resp._id);
       await addClassToSection(user._id, classID, token, sectionData);
       setReload(true);
+      if (resp.err) {
+        return toast.error(resp.err);
+      }
       toast.success(addSectionSuccess);
     } catch (err) {
       toast.error(addSectionError);
@@ -400,7 +403,7 @@ const AddSection = () => {
                       </Col>
                     </Row>
                     <Row>
-                      <Col>
+                      <Col className="mt-4">
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"

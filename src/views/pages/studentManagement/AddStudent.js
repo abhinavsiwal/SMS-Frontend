@@ -15,7 +15,7 @@ import {
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
-import { addStudent } from "api/student";
+import { addStudent, isAuthenticateStudent } from "api/student";
 
 import { Stepper, Step } from "react-form-stepper";
 import { ToastContainer, toast } from "react-toastify";
@@ -34,13 +34,15 @@ import { allSessions } from "api/session";
 
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(3);
 
   const { classes } = useSelector((state) => state.classReducer);
-  console.log("clsss", classes);
+  console.log("classes", classes);
   const [selectedClassIndex, setselectedClassIndex] = useState(0);
 
-  const [session, setsession] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [multivalues, setMultiValues] = useState("");
+  console.log("multiValues", multivalues);
 
   const [studentData, setStudentData] = useState({
     image: "",
@@ -65,6 +67,8 @@ function AddStudent() {
     present_address: "",
     permanent_address: "",
     pincode: "",
+    parent_address: "",
+    parent_email: "",
     country: "",
     state: "",
     city: "",
@@ -86,8 +90,8 @@ function AddStudent() {
     father_dob: "",
     father_blood_group: "",
     father_phone: "",
-    father_address: "",
-    father_permanent_address: "",
+    // father_address: "",
+    // father_permanent_address: "",
     father_pincode: "",
     father_nationality: "",
     father_mother_tongue: "",
@@ -96,8 +100,8 @@ function AddStudent() {
     mother_dob: "",
     mother_blood_group: "",
     mother_phone: "",
-    mother_address: "",
-    mother_permanent_address: "",
+    // mother_address: "",
+    // mother_permanent_address: "",
     mother_pincode: "",
     mother_nationality: "",
     mother_mother_tongue: "",
@@ -107,14 +111,24 @@ function AddStudent() {
 
   const [formData] = useState(new FormData());
 
-  React.useEffect(async () => {
-    const { user, token } = isAuthenticated();
-    const sessions = await allSessions(user._id, user.school, token);
-    if (sessions.err) {
-      return toast.error(sessions.err);
-    }
-    setsession(sessions);
+  React.useEffect(() => {
+    getSession();
   }, []);
+
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -141,6 +155,7 @@ function AddStudent() {
   };
 
   const removeFields = (e) => {
+    setMultiValues(e.value);
     if (e.value === "guardian") {
       // all parent fields must be deleted
       handleDeleteFields("father_name");
@@ -200,6 +215,26 @@ function AddStudent() {
       return step + 1;
     });
     window.scrollTo(0, 0);
+  };
+
+  const checkEmail = async (e) => {
+    e.preventDefault();
+    const { user, token } = isAuthenticated();
+    const data = {
+      type: multivalues,
+      email: studentData.parent_email,
+    };
+    console.log("data", data);
+    try {
+      const authenticate = await isAuthenticateStudent(user._id, token, data);
+      console.log("auth", authenticate);
+      if (authenticate.err) {
+        toast.error(authenticate.err);
+      }
+      // handleSubmitForm();
+    } catch (err) {
+      toast.error(err);
+    }
   };
 
   const handleSubmitForm = async (e) => {
@@ -576,7 +611,7 @@ function AddStudent() {
                       className="form-control-label"
                       htmlFor="exampleFormControlSelect3"
                     >
-                      Class
+                      Select Class
                     </label>
                     <Input
                       id="exampleFormControlSelect3"
@@ -585,7 +620,10 @@ function AddStudent() {
                       onChange={handleChange("class")}
                       value={studentData.class}
                     >
-                      {/* {classes &&
+                      <option value="" disable>
+                        Select Class
+                      </option>
+                      {classes &&
                         classes.map((clas, index) => {
                           // setselectedClassIndex(index)
                           return (
@@ -593,7 +631,7 @@ function AddStudent() {
                               {clas.name}
                             </option>
                           );
-                        })} */}
+                        })}
                     </Input>
                   </Col>
                   <Col>
@@ -601,7 +639,7 @@ function AddStudent() {
                       className="form-control-label"
                       htmlFor="exampleFormControlSelect3"
                     >
-                      Section
+                      Select Section
                     </label>
                     <Input
                       id="exampleFormControlSelect3"
@@ -610,7 +648,10 @@ function AddStudent() {
                       onChange={handleChange("section")}
                       value={studentData.section}
                     >
-                      {/* {classes.map((sections) => {
+                      <option value="" disable>
+                        Select Section
+                      </option>
+                      {classes.map((sections) => {
                         return sections.section.map((sec) => {
                           return (
                             <option value={sec._id} key={sec._id}>
@@ -618,7 +659,7 @@ function AddStudent() {
                             </option>
                           );
                         });
-                      })} */}
+                      })}
                     </Input>
                   </Col>
                   <Col>
@@ -626,7 +667,7 @@ function AddStudent() {
                       className="form-control-label"
                       htmlFor="exampleFormControlSelect3"
                     >
-                      Session
+                      Select Session
                     </label>
                     <Input
                       id="exampleFormControlSelect3"
@@ -636,13 +677,13 @@ function AddStudent() {
                       value={studentData.session}
                     >
                       <option disabled>Select Session</option>
-                      {/* {session.map((session) => {
+                      {sessions.map((session) => {
                         return (
                           <option key={session._id} value={session._id}>
                             {session.name}
                           </option>
                         );
-                      })} */}
+                      })}
                     </Input>
                   </Col>
                 </Row>
@@ -900,6 +941,54 @@ function AddStudent() {
                 {studentData.contact_person_select.value === "parent" ? (
                   <>
                     <CardBody>
+                      <Form onSubmit={checkEmail}>
+                        <Row>
+                          <Col>
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Parent Address
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="Parent Address"
+                                type="text"
+                                onChange={handleChange("parent_address")}
+                                required
+                                value={studentData.parent_address}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Parent Email
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="Parent Address"
+                                type="text"
+                                onChange={handleChange("parent_email")}
+                                required
+                                value={studentData.parent_email}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <Button type="submit">Check</Button>
+                          </Col>
+                        </Row>
+                      </Form>
+
                       <Row className="mb-4">
                         <Col align="center">
                           <h2>Father Details</h2>
@@ -1000,27 +1089,8 @@ function AddStudent() {
                           />
                         </Col>
                       </Row>
-                      <Row>
-                        <Col>
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols3Input"
-                            >
-                              Present Address
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              placeholder="Present Address"
-                              type="text"
-                              onChange={handleChange("father_address")}
-                              required
-                              value={studentData.father_address}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
+
+                      {/* <Row>
                         <Col>
                           <FormGroup>
                             <label
@@ -1041,7 +1111,7 @@ function AddStudent() {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
+                      </Row> */}
                       <Row className="mb-4">
                         <Col>
                           <label
@@ -1194,7 +1264,7 @@ function AddStudent() {
                           />
                         </Col>
                       </Row>
-                      <Row>
+                      {/* <Row>
                         <Col>
                           <FormGroup>
                             <label
@@ -1235,7 +1305,7 @@ function AddStudent() {
                             />
                           </FormGroup>
                         </Col>
-                      </Row>
+                      </Row> */}
                       <Row className="mb-4">
                         <Col>
                           <label

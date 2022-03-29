@@ -58,7 +58,7 @@ function AddStaff() {
     joining_date: "",
     present_address: "",
     permanent_address: "",
-    state: "", 
+    state: "",
     city: "",
     country: "",
     pincode: "",
@@ -103,7 +103,6 @@ function AddStaff() {
       setStaffData({ ...staffData, assign_role: data[0].name });
     } catch (err) {
       console.log(err);
-    
     }
   };
 
@@ -249,7 +248,7 @@ function AddStaff() {
         // console.log("list", list);
       } catch (err) {
         // toast.error("Something Went Wrong!");
- console.log(err);       
+        console.log(err);
       }
     }
   }, [step]);
