@@ -37,6 +37,7 @@ import { getAllRoles } from "api/rolesAndPermission";
 import { addStudentError } from "constants/errors";
 import { fetchingSubjectError } from "constants/errors";
 import { fetchingDepartmentError } from "constants/errors";
+import { allSessions } from "api/session";
 
 function AddStaff() {
   const [step, setStep] = useState(0);
@@ -58,7 +59,7 @@ function AddStaff() {
     joining_date: "",
     present_address: "",
     permanent_address: "",
-    state: "", 
+    state: "",
     city: "",
     country: "",
     pincode: "",
@@ -79,7 +80,8 @@ function AddStaff() {
   });
   const [allRoles, setAllRoles] = useState([]);
   console.log("staff", staffData);
-
+  const [sessions, setSessions] = useState([]);
+  const [selectSessionId, setSelectSessionId] = useState("");
   const [formData] = useState(new FormData());
   const [departments, setDeparments] = useState([]);
   const [a, setA] = useState([]);
@@ -92,6 +94,7 @@ function AddStaff() {
 
   useEffect(() => {
     getAllRolesHandler();
+    getSession();
   }, []);
 
   const getAllRolesHandler = async () => {
@@ -103,7 +106,6 @@ function AddStaff() {
       setStaffData({ ...staffData, assign_role: data[0].name });
     } catch (err) {
       console.log(err);
-    
     }
   };
 
@@ -178,6 +180,7 @@ function AddStaff() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    formData.set("session", selectSessionId);
     try {
       const resp = await addStaff(user._id, token, formData);
       if (resp.err) {
@@ -249,7 +252,7 @@ function AddStaff() {
         // console.log("list", list);
       } catch (err) {
         // toast.error("Something Went Wrong!");
- console.log(err);       
+        console.log(err);
       }
     }
   }, [step]);
@@ -269,6 +272,21 @@ function AddStaff() {
       console.log(err);
     }
   }
+
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
 
   // async function Subjects() {
   //   const { user, token } = isAuthenticated();
@@ -364,6 +382,34 @@ function AddStaff() {
                       required
                     />
                   </Col>
+
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Select Session
+                    </label>
+                    <Input
+                      id="example4cols3Input"
+                      type="select"
+                      onChange={(e) => setSelectSessionId(e.target.value)}
+                      value={selectSessionId}
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select Session
+                      </option>
+                      {sessions.map((session) => {
+                        return (
+                          <option value={session._id} key={session._id}>
+                            {session.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </Col>
+
                   <Col md="4">
                     <FormGroup>
                       <label

@@ -61,12 +61,14 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Dashboard,
     layout: "/admin",
+    module:"Dashboard"
   },
   {
     collapse: true,
-    name: "Staff Management up",
+    name: "Staff Management",
     icon: "ni ni-single-02 text-orange",
     state: "examplesCollapse",
+    module:"Staff Mangement",
     views: [
       {
         path: "/add-staff",
@@ -86,9 +88,10 @@ export const adminRoutes = [
   },
   {
     collapse: true,
-    name: "Library Management",
+    name: "Class Management",
     icon: "fa fa-users",
     state: "classCollapse",
+    module:"Class, section and subject master",
     views: [
       {
         path: "/add-class",
@@ -129,6 +132,7 @@ export const adminRoutes = [
     name: "Department",
     icon: "fa fa-users",
     state: "departmentsCollapse",
+    module:"Department Management",
     views: [
       {
         path: "/department-list",
@@ -152,12 +156,14 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: SchoolProfile,
     layout: "/admin",
+    module:"School Profile Module", 
   },
   {
     collapse: true,
     name: "Student Management",
     icon: "ni ni-single-02 text-orange",
     state: "studentsCollapse",
+    module:"Student Management",
     views: [
       {
         path: "/add-student",
@@ -181,6 +187,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: StudentProfile,
     layout: "/admin",
+    module:"Student Profile",
   },
   {
     path: "/session",
@@ -188,6 +195,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Session,
     layout: "/admin",
+    module:"Session",
   },
   {
     path: "/support",
@@ -195,6 +203,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Support,
     layout: "/admin",
+    module:"Support Management"
   },
   {
     path: "/calendar",
@@ -202,6 +211,7 @@ export const adminRoutes = [
     icon: "ni ni-calendar-grid-58 text-red",
     component: Calendar,
     layout: "/admin",
+    module:"School Calendar",
   },
   {
     path: "/attendance",
@@ -209,6 +219,7 @@ export const adminRoutes = [
     icon: "ni ni-badge",
     component: Attendance,
     layout: "/admin",
+    module:"Student Attendance Management",
   },
   // {
   //   path: "/timeTable",
@@ -223,6 +234,7 @@ export const adminRoutes = [
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-black",
     state: "timetableCollapse",
+    module:"Time table Management",
     views: [
       {
         path: "/add_time_table",
@@ -246,6 +258,7 @@ export const adminRoutes = [
     name: "Canteen Management",
     icon: "ni ni-basket text-yellow",
     state: "canteenCollapse",
+    module:"Canteen Management",
     views: [
       {
         path: "/add-canteen",
@@ -279,6 +292,7 @@ export const adminRoutes = [
     icon: "ni ni-settings-gear-65 text-blue",
     component: RolePermissions,
     layout: "/admin",
+    module:"Roles and Permission",
   },
 
   {
@@ -286,6 +300,7 @@ export const adminRoutes = [
     name: "Transportation",
     icon: "ni ni-bus-front-12 text-red",
     state: "transportationCollapse",
+    module:"Transportation management",
     views: [
       {
         path: "/add-route",
@@ -306,9 +321,10 @@ export const adminRoutes = [
 
   {
     collapse: true,
-    name: "Ecomme",
+    name: "Ecommerce",
     icon: "ni ni-bag-17 text-pink",
     state: "ecommerceCollapse",
+    module:"Edu Commerce Store",
     views: [
       {
         path: "/add-cart",

@@ -31,24 +31,24 @@ function Admin() {
   // let routes1 = [];
   let permittedRoute = [];
 
-  for (const key in user.role) {
+  for (const key in user.permissions) {
     console.log(key);
-    console.log(user.role[key]);
+    console.log(user.permissions[key]);
     // routes1.push(key);
 
     let permitted = adminRoutes.find(
-      (route) => key.toString() === route.name.toString()
+      (route) => key.toString() === route.module.toString()
     );
-    console.log(permitted);
-    if (permitted && permitted.views) {
-      // let permittedViews = permitted.views.filter(
-      //   (view) => user.role[key].toString() === view.permission.toString()
-      // );
-      let permittedViews = permitted.views.filter(
-        (view) => "view" === view.permission.toString() 
-      );
-      permitted.views = permittedViews;
-    }
+    // console.log(permitted);
+    // if (permitted && permitted.views) {
+    //   // let permittedViews = permitted.views.filter(
+    //   //   (view) => user.role[key].toString() === view.permission.toString()
+    //   // );
+    //   let permittedViews = permitted.views.filter(
+    //     (view) => "view" === view.permission.toString() 
+    //   );
+    //   permitted.views = permittedViews;
+    // }
     if (permitted) {
       permittedRoute.push(permitted);
     }
@@ -104,7 +104,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={routes}
+        routes={permittedRoute}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

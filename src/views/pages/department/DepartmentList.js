@@ -34,6 +34,7 @@ import { fetchingDepartmentError } from "constants/errors";
 import { deleteDepartmentError } from "constants/errors";
 import { updateDepartmentError } from "constants/errors";
 import { updateDepartmentSuccess,deleteDepartmentSuccess } from "constants/success";
+import { allSessions } from "api/session";
 
 const DepartmentList = () => {
   const { user, token } = isAuthenticated();
@@ -49,6 +50,8 @@ const DepartmentList = () => {
   const [name, setName] = useState("");
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sessions, setSessions] = useState([]);
+  const [selectSessionId, setSelectSessionId] = useState("");
   console.log("id", deparmentId);
 
   let permissions = [];
@@ -57,6 +60,8 @@ const DepartmentList = () => {
       permissions = user.role["Department"];
       console.log(permissions);
     }
+
+    getSession()
   }, []);
 
   useEffect(async () => {
@@ -140,6 +145,22 @@ const DepartmentList = () => {
       fixed: "right",
     },
   ];
+
+//Getting Session data
+const getSession = async () => {
+  const { user, token } = isAuthenticated();
+  try {
+    const session = await allSessions(user._id, user.school, token);
+    if (session.err) {
+      return toast.error(session.err);
+    } else {
+      setSessions(session);
+    }
+  } catch (err) {
+    toast.error("Something Went Wrong!");
+  }
+};
+
 
   //Getting Department Data
   function getDepartmentsData() {
@@ -272,6 +293,8 @@ const DepartmentList = () => {
     try {
       formData.set("school", user.school);
       formData.set("name", name);
+      formData.set("session",selectSessionId);
+      formData.set("head","6241aa0ae4a91adc36f41035")
       // formData.set("module", JSON.stringify(data));
       const createDepartment = await addDepartment(user._id, token, formData);
       if (createDepartment.err) {
@@ -305,7 +328,7 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
+          {/* {permissions && permissions.includes("add") && ( */}
             <Col lg="3">
               <div className="card-wrapper">
                 <Card>
@@ -346,6 +369,34 @@ const DepartmentList = () => {
                           />
                         </Col>
                       </Row>
+                      <Row>
+                      <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Select Session
+                    </label>
+                    <Input
+                      id="example4cols3Input"
+                      type="select"
+                      onChange={(e) => setSelectSessionId(e.target.value)}
+                      value={selectSessionId}
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select Session
+                      </option>
+                      {sessions.map((session) => {
+                        return (
+                          <option value={session._id} key={session._id}>
+                            {session.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </Col>
+                      </Row>
                       <Row className="mt-4 float-right">
                         <Col>
                           <Button color="primary" type="submit">
@@ -358,7 +409,7 @@ const DepartmentList = () => {
                 </Card>
               </div>
             </Col>
-          )}
+          {/* )} */}
 
           <Col>
             <div className="card-wrapper">
