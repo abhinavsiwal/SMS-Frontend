@@ -34,6 +34,7 @@ import PermissionsGate from "routeGuard/PermissionGate";
 
 import { setStudentEditing } from "store/reducers/student";
 import { SCOPES } from "routeGuard/permission-maps";
+
 const AllStudents = () => {
   const history = useHistory();
   const dispatch = useDispatch();

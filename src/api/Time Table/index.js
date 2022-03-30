@@ -66,7 +66,7 @@ export const getSingleTimeTable = (schoolId, userId, token, data) => {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ class: data.class, section: data.section }),
   })
     .then((data) => {
       return data.json();
