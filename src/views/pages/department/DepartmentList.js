@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import {
   Container,
   // CardHeader,
@@ -33,8 +33,12 @@ import Loader from "components/Loader/Loader";
 import { fetchingDepartmentError } from "constants/errors";
 import { deleteDepartmentError } from "constants/errors";
 import { updateDepartmentError } from "constants/errors";
-import { updateDepartmentSuccess,deleteDepartmentSuccess } from "constants/success";
+import {
+  updateDepartmentSuccess,
+  deleteDepartmentSuccess,
+} from "constants/success";
 import { allSessions } from "api/session";
+import { useReactToPrint } from 'react-to-print';
 
 const DepartmentList = () => {
   const { user, token } = isAuthenticated();
@@ -52,7 +56,12 @@ const DepartmentList = () => {
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [selectSessionId, setSelectSessionId] = useState("");
-  console.log("id", deparmentId);
+  // console.log("id", deparmentId);
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   let permissions = [];
   useEffect(() => {
@@ -61,7 +70,7 @@ const DepartmentList = () => {
       console.log(permissions);
     }
 
-    getSession()
+    getSession();
   }, []);
 
   useEffect(async () => {
@@ -146,21 +155,20 @@ const DepartmentList = () => {
     },
   ];
 
-//Getting Session data
-const getSession = async () => {
-  const { user, token } = isAuthenticated();
-  try {
-    const session = await allSessions(user._id, user.school, token);
-    if (session.err) {
-      return toast.error(session.err);
-    } else {
-      setSessions(session);
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
     }
-  } catch (err) {
-    toast.error("Something Went Wrong!");
-  }
-};
-
+  };
 
   //Getting Department Data
   function getDepartmentsData() {
@@ -235,7 +243,7 @@ const getSession = async () => {
       } else {
         setChecked(false);
       }
-      toast.success(deleteDepartmentSuccess)
+      toast.success(deleteDepartmentSuccess);
     } catch (err) {
       toast.error(deleteDepartmentError);
     }
@@ -270,7 +278,7 @@ const getSession = async () => {
       } else {
         setChecked(false);
       }
-      toast.success(updateDepartmentSuccess)
+      toast.success(updateDepartmentSuccess);
     } catch (err) {
       toast.error(updateDepartmentError);
     }
@@ -293,8 +301,8 @@ const getSession = async () => {
     try {
       formData.set("school", user.school);
       formData.set("name", name);
-      formData.set("session",selectSessionId);
-      formData.set("head","6241aa0ae4a91adc36f41035")
+      formData.set("session", selectSessionId);
+      formData.set("head", "6241aa0ae4a91adc36f41035");
       // formData.set("module", JSON.stringify(data));
       const createDepartment = await addDepartment(user._id, token, formData);
       if (createDepartment.err) {
@@ -329,99 +337,103 @@ const getSession = async () => {
       <Container className="mt--6" fluid>
         <Row>
           {/* {permissions && permissions.includes("add") && ( */}
-            <Col lg="3">
-              <div className="card-wrapper">
-                <Card>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Department Name
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Department Name"
-                            type="text"
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Module
-                          </label>
-                          <Select
-                            isMulti
-                            name="colors"
-                            options={data}
-                            onChange={handleChange}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                          />
-                        </Col>
-                      </Row>
-                      <Row>
+          <Col lg="3">
+            <div className="card-wrapper">
+              <Card>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
                       <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Select Session
-                    </label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={(e) => setSelectSessionId(e.target.value)}
-                      value={selectSessionId}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option value={session._id} key={session._id}>
-                            {session.name}
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Department Name
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Department Name"
+                          type="text"
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Module
+                        </label>
+                        <Select
+                          isMulti
+                          name="colors"
+                          options={data}
+                          onChange={handleChange}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Select Session
+                        </label>
+                        <Input
+                          id="example4cols3Input"
+                          type="select"
+                          onChange={(e) => setSelectSessionId(e.target.value)}
+                          value={selectSessionId}
+                          required
+                        >
+                          <option value="" disabled selected>
+                            Select Session
                           </option>
-                        );
-                      })}
-                    </Input>
-                  </Col>
-                      </Row>
-                      <Row className="mt-4 float-right">
-                        <Col>
-                          <Button color="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
+                          {sessions.map((session) => {
+                            return (
+                              <option value={session._id} key={session._id}>
+                                {session.name}
+                              </option>
+                            );
+                          })}
+                        </Input>
+                      </Col>
+                    </Row>
+                    <Row className="mt-4 float-right">
+                      <Col>
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
           {/* )} */}
 
           <Col>
             <div className="card-wrapper">
               <Card>
                 <CardBody>
+                <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
                   {loading ? (
+                    <div ref={componentRef} >
+
                     <AntTable
                       columns={columns}
                       data={classList}
                       pagination={true}
                       exportFileName="ClassDetails"
-                    />
+                      />
+                      </div>
                   ) : (
                     <Loader />
                   )}

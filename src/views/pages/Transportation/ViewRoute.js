@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 
 import {
   Container,
@@ -37,7 +37,7 @@ import {
   deleteRoute,
   editRoute,
 } from "api/transportation";
-
+import { useReactToPrint } from 'react-to-print';
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -69,6 +69,12 @@ function ViewRoute() {
   });
   const [staff, setStaff] = useState([]);
   // console.log("route", route);
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
 
   const openModal = (support) => {
     setModalSupport(support);
@@ -527,13 +533,17 @@ function ViewRoute() {
             <h3>View Route</h3>
           </CardHeader>
           <CardBody>
+          <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
             {loading ? (
+              <div ref={componentRef} >
+
               <AntTable
                 columns={columns}
                 data={viewRoute}
                 pagination={true}
                 exportFileName="StudentDetails"
-              />
+                />
+                </div>
             ) : (
               <Loader />
             )}

@@ -15,7 +15,7 @@
 
 */
 // reactstrap components
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Form,
@@ -40,7 +40,7 @@ import Loader from "components/Loader/Loader";
 import { fetchingSupportError } from "constants/errors";
 import { addSupportError } from "constants/errors";
 import { addSupportSuccess } from "constants/success";
-
+import { useReactToPrint } from "react-to-print";
 function Support() {
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,6 +56,11 @@ function Support() {
     setModalSupport(support);
     setModalState(true);
   };
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   useEffect(() => {
     const getAllSupports = async () => {
@@ -91,7 +96,7 @@ function Support() {
         })
         .catch((err) => {
           console.log(err);
-          toast.error(fetchingSupportError)
+          toast.error(fetchingSupportError);
         });
     };
     getAllSupports();
@@ -313,13 +318,22 @@ function Support() {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
                   {loading ? (
-                    <AntTable
-                      columns={columns}
-                      data={supportList}
-                      pagination={true}
-                      exportFileName="SupportDetails"
-                    />
+                    <div ref={componentRef}>
+                      <AntTable
+                        columns={columns}
+                        data={supportList}
+                        pagination={true}
+                        exportFileName="SupportDetails"
+                      />
+                    </div>
                   ) : (
                     <Loader />
                   )}

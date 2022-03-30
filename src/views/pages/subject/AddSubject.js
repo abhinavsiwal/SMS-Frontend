@@ -30,7 +30,7 @@ import Loader from "components/Loader/Loader";
 import Select from "react-select";
 
 import { allSessions } from "api/session";
-
+import { useReactToPrint } from 'react-to-print';
 const AddSubject = () => {
   const [subjectList, setSubjectList] = useState([]);
   const [reload, setReload] = useState(false);
@@ -41,6 +41,11 @@ const AddSubject = () => {
   const [checked, setChecked] = useState(false);
   const [sessions, setSessions] = useState([]);
   const { user, token } = isAuthenticated();
+
+  const componentRef = React.useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   let permissions;
   useEffect(() => {
@@ -420,13 +425,17 @@ const AddSubject = () => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
+                <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
                   {loading ? (
+                    <div ref={componentRef} >
+
                     <AntTable
                       columns={columns}
                       data={subjectList}
                       pagination={true}
                       exportFileName="SubjectDetails"
-                    />
+                      />
+                      </div>
                   ) : (
                     <Loader />
                   )}

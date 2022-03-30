@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 
 import {
   Container,
@@ -10,7 +10,7 @@ import {
   Col,
   Label,
 } from "reactstrap";
-
+import { useReactToPrint } from 'react-to-print';
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import AntTable from "../tables/AntTable";
@@ -249,6 +249,12 @@ function ViewCanteen() {
 
   const { user, token } = isAuthenticated();
 
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+
   let permissions = [];
   useEffect(() => {
     if (user.role["Canteen Management"]) {
@@ -406,13 +412,17 @@ function ViewCanteen() {
             </Input>
           </CardHeader>
           <CardBody>
+          <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
             {loading ? (
+              <div ref={componentRef} >
+
               <AntTable
                 columns={columns}
                 data={viewCanteen}
                 pagination={true}
                 exportFileName="StudentDetails"
-              />
+                />
+                </div>
             ) : (
               <Loader />
             )}

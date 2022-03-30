@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import {
   Container,
   Row,
@@ -36,6 +36,7 @@ import {
 } from "constants/success";
 
 import { allSessions } from "api/session";
+import { useReactToPrint } from 'react-to-print';
 
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
@@ -65,7 +66,10 @@ const AddClass = () => {
     }
     getSession();
   }, []);
-
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   useEffect(() => {
     const getAllClasses = () => {
       allClass(user._id, user.school, token)
@@ -392,13 +396,17 @@ const AddClass = () => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
+                <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
                   {loading ? (
+                    <div ref={componentRef} >
+
                     <AntTable
                       columns={columns}
                       data={classList}
                       pagination={true}
                       exportFileName="ClassDetails"
-                    />
+                      />
+                      </div>
                   ) : (
                     <Loader />
                   )}

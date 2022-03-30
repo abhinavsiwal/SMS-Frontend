@@ -95,7 +95,7 @@ const AllStaffs = () => {
             joining_date: res[i].joining_date.split("T")[0].toString(),
             action: (
               <h5 key={i + 1} className="mb-0">
-                {permissions && permissions.includes("edit") && (
+                {/* {permissions && permissions.includes("edit") && ( */}
                   <Button
                     className="btn-sm pull-right"
                     color="primary"
@@ -105,8 +105,8 @@ const AllStaffs = () => {
                   >
                     <i className="fas fa-user-edit" />
                   </Button>
-                )}
-                {permissions && permissions.includes("edit") && (
+                {/* )} */}
+                {permissions && permissions.includes("delete") && (
                   <Button
                     className="btn-sm pull-right"
                     color="danger"

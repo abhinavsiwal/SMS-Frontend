@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { isAuthenticated } from "api/auth";
 import { allStudents, deleteStudent } from "api/student";
 
@@ -29,7 +29,7 @@ import ReactPaginate from "react-paginate";
 import { useHistory } from "react-router";
 import UpdateStudent from "./UpdateStudent";
 import { useSelector, useDispatch } from "react-redux";
-
+import { useReactToPrint } from "react-to-print";
 import PermissionsGate from "routeGuard/PermissionGate";
 
 import { setStudentEditing } from "store/reducers/student";
@@ -55,6 +55,11 @@ const AllStudents = () => {
     const newOffset = (event.selected * itemsPerPage) % studentList.length;
     setItemOffset(newOffset);
   };
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   let permissions = [];
   useEffect(() => {
@@ -518,17 +523,22 @@ const AllStudents = () => {
                 >
                   Grid View
                 </Button>
+                <Button color="primary" type="button" onClick={handlePrint}>
+                  Export to pdf
+                </Button>
               </CardHeader>
               <CardBody>
                 {view === 0 ? (
                   <>
                     {loading ? (
-                      <AntTable
-                        columns={columns}
-                        data={studentList}
-                        pagination={true}
-                        exportFileName="StudentDetails"
-                      />
+                      <div ref={componentRef}>
+                        <AntTable
+                          columns={columns}
+                          data={studentList}
+                          pagination={true}
+                          exportFileName="StudentDetails"
+                        />
+                      </div>
                     ) : (
                       <Loader />
                     )}

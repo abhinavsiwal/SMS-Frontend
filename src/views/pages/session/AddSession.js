@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   Row,
@@ -12,6 +12,7 @@ import {
   ModalBody,
   ModalFooter,
 } from "reactstrap";
+import { useReactToPrint } from "react-to-print";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { Popconfirm } from "antd";
 import PermissionsGate from "routeGuard/PermissionGate";
@@ -54,6 +55,11 @@ const AddSession = () => {
     working_days: "",
   });
   const { user, token } = isAuthenticated();
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   let permissions = [];
   useEffect(() => {
@@ -476,14 +482,24 @@ const AddSession = () => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
+                <Button
+                      color="primary"
+                      className="mb-2"
+                      onClick={handlePrint}
+                    >
+                      Print
+                    </Button>
                   <Row className="ml-2">
+                   
                     {loading ? (
-                      <AntTable
-                        columns={columns}
-                        data={sessionList}
-                        pagination={true}
-                        exportFileName="SessionDetails"
-                      />
+                      <div ref={componentRef}>
+                        <AntTable
+                          columns={columns}
+                          data={sessionList}
+                          pagination={true}
+                          exportFileName="SessionDetails"
+                        />
+                      </div>
                     ) : (
                       <Loader />
                     )}
