@@ -35,7 +35,7 @@ import { allClass } from "api/class";
 import { allSessions } from "api/session";
 
 function ViewTimeTable() {
-  const [lecturer, setLectures] = React.useState();
+  const [lecturer, setLectures] = React.useState({});
   const [checked, setChecked] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [edit, setEdit] = React.useState();
@@ -61,11 +61,13 @@ function ViewTimeTable() {
     // getTimeTableData();
   }, [checked]);
 
+  //Taking TimeTable Value
   const handleChange = (name) => (event) => {
     // formData.set(name, event.target.value);
     setTimeTableData({ ...timeTableData, [name]: event.target.value });
   };
 
+  //Get Class Data
   const getClass = async () => {
     const { user, token } = isAuthenticated();
     try {
@@ -80,6 +82,7 @@ function ViewTimeTable() {
     }
   };
 
+  //Get Session Data
   const getSession = async () => {
     const { user, token } = isAuthenticated();
     try {
@@ -102,7 +105,6 @@ function ViewTimeTable() {
       class: timeTableData.class,
       section: timeTableData.section,
     };
-
     try {
       const timeTable = await getSingleTimeTable(
         user.school,
@@ -181,7 +183,7 @@ function ViewTimeTable() {
         </>
       ) : (
         <>
-          <SimpleHeader name="Time" parentName="View TimeTable" />
+          <SimpleHeader name="TimeTable" parentName="View TimeTable" />
           <Container className="mt--5 shadow-lg table-responsive" fluid>
             <Card>
               <CardBody>
@@ -255,7 +257,7 @@ function ViewTimeTable() {
                         type="select"
                         onChange={handleChange("session")}
                         value={timeTableData.session}
-                        required
+                        // required
                         placeholder="Add Periods"
                       >
                         <option value="" disabled selected>
@@ -281,358 +283,395 @@ function ViewTimeTable() {
                 </Form>
               </CardBody>
             </Card>
-            {timeTableData.class !== null &&
-              timeTableData.section !== null &&
-              timeTableData.session !== null && (
-                <Card>
-                  <CardHeader>Time Table</CardHeader>
-                  <CardBody>
-                    {/* <Table bordered>
-                      <thead>
+            {timeTableData.class !== null && timeTableData.section !== null && (
+              <Card>
+                <CardHeader>Time Table</CardHeader>
+                <CardBody>
+                  <Table bordered>
+                    <thead>
+                      <tr>
+                        {lecturer === null ? (
+                          <h3>Empty</h3>
+                        ) : (
+                          <>
+                            {lecturer.map((lecturesDay) => {
+                              return (
+                                <>
+                                  {Object.keys(lecturesDay.lecture).map(
+                                    (day, index) => {
+                                      return (
+                                        <>
+                                          <th key={index}>{day}</th>
+                                        </>
+                                      );
+                                    }
+                                  )}
+                                </>
+                              );
+                            })}
+                          </>
+                        )}
+                      </tr>
+                    </thead>
+                    <>
+                      <tbody>
                         <tr>
-                          {lecturer === null ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          <td>
                             <>
-                              {Object.keys(lecturer).map((day, index) => {
-                                return (
-                                  <>
-                                    <th key={index}>{day}</th>
-                                  </>
-                                );
-                              })}
+                              {lecturer &&
+                                lecturer.Monday &&
+                                lecturer.Monday.map((Monday, index) => {
+                                  return (
+                                    <h3>
+                                      <br />
+                                      Name:{Monday.name}
+                                      <br /> Time:{Monday.time}
+                                      <br /> Subject:{Monday.subject}
+                                      <br /> Mode: {Monday.type}
+                                      <br /> Teacher: {Monday.teacher}
+                                      <br /> Lunch: {Monday.lunch}
+                                      {Monday.link &&
+                                        lecturer.Monday.map((link) => {
+                                          return (
+                                            <>
+                                              <br /> Link:{link.link}
+                                            </>
+                                          );
+                                        })}
+                                      <br />
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="primary"
+                                        type="button"
+                                        onClick={() =>
+                                          editHandler("Monday", index)
+                                        }
+                                      >
+                                        <i className="fas fa-edit" />
+                                      </Button>
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="danger"
+                                        type="button"
+                                      >
+                                        <Popconfirm
+                                          title="Sure to delete?"
+                                          onConfirm={() =>
+                                            deleteHandler("Monday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-trash" />
+                                        </Popconfirm>
+                                      </Button>
+                                      <hr />
+                                    </h3>
+                                  );
+                                })}
                             </>
-                          )}
+                          </td>
+                          <td>
+                            <>
+                              {lecturer &&
+                                lecturer.Tuesday &&
+                                lecturer.Tuesday.map((Tuesday, index) => {
+                                  return (
+                                    <h3>
+                                      <br />
+                                      Name:{Tuesday.name}
+                                      <br /> Time:{Tuesday.time}
+                                      <br /> Subject:{Tuesday.subject}
+                                      <br /> Mode: {Tuesday.type}
+                                      <br /> Teacher: {Tuesday.teacher}
+                                      <br /> Lunch: {Tuesday.lunch}
+                                      {Tuesday.link &&
+                                        lecturer.Tuesday.map((link) => {
+                                          return (
+                                            <>
+                                              <br /> Link:{link.link}
+                                            </>
+                                          );
+                                        })}
+                                      <br />
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="primary"
+                                        type="button"
+                                        onClick={() =>
+                                          editHandler("Tuesday", index)
+                                        }
+                                      >
+                                        <i className="fas fa-edit" />
+                                      </Button>
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="danger"
+                                        type="button"
+                                      >
+                                        <Popconfirm
+                                          title="Sure to delete?"
+                                          onConfirm={() =>
+                                            deleteHandler("Tuesday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-trash" />
+                                        </Popconfirm>
+                                      </Button>
+                                      <hr />
+                                    </h3>
+                                  );
+                                })}
+                            </>
+                          </td>
+                          <td>
+                            <>
+                              {lecturer &&
+                                lecturer.Wednesday &&
+                                lecturer.Wednesday.map((Wednesday, index) => {
+                                  return (
+                                    <h3>
+                                      <br />
+                                      Name:{Wednesday.name}
+                                      <br /> Time:{Wednesday.time}
+                                      <br /> Subject:{Wednesday.subject}
+                                      <br /> Mode: {Wednesday.type}
+                                      <br /> Teacher: {Wednesday.teacher}
+                                      <br /> Lunch: {Wednesday.lunch}
+                                      {Wednesday.link &&
+                                        lecturer.Wednesday.map((link) => {
+                                          return (
+                                            <>
+                                              <br /> Link:{link.link}
+                                            </>
+                                          );
+                                        })}
+                                      <br />
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="primary"
+                                        type="button"
+                                        onClick={() =>
+                                          editHandler("Wednesday", index)
+                                        }
+                                      >
+                                        <i className="fas fa-edit" />
+                                      </Button>
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="danger"
+                                        type="button"
+                                      >
+                                        <Popconfirm
+                                          title="Sure to delete?"
+                                          onConfirm={() =>
+                                            deleteHandler("Wednesday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-trash" />
+                                        </Popconfirm>
+                                      </Button>
+                                      <hr />
+                                    </h3>
+                                  );
+                                })}
+                            </>
+                          </td>
+                          <td>
+                            <>
+                              {lecturer &&
+                                lecturer.Thursday &&
+                                lecturer.Thursday.map((Thursday, index) => {
+                                  return (
+                                    <h3>
+                                      <br />
+                                      Name:{Thursday.name}
+                                      <br /> Time:{Thursday.time}
+                                      <br /> Subject:{Thursday.subject}
+                                      <br /> Mode: {Thursday.type}
+                                      <br /> Teacher: {Thursday.teacher}
+                                      <br /> Lunch: {Thursday.lunch}
+                                      {Thursday.link &&
+                                        lecturer.Thursday.map((link) => {
+                                          return (
+                                            <>
+                                              <br /> Link:{link.link}
+                                            </>
+                                          );
+                                        })}
+                                      <br />
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="primary"
+                                        type="button"
+                                        onClick={() =>
+                                          editHandler("Thursday", index)
+                                        }
+                                      >
+                                        <i className="fas fa-edit" />
+                                      </Button>
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="danger"
+                                        type="button"
+                                      >
+                                        <Popconfirm
+                                          title="Sure to delete?"
+                                          onConfirm={() =>
+                                            deleteHandler("Thursday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-trash" />
+                                        </Popconfirm>
+                                      </Button>
+                                      <hr />
+                                    </h3>
+                                  );
+                                })}
+                            </>
+                          </td>
+                          <td>
+                            <>
+                              {lecturer &&
+                                lecturer.Friday &&
+                                lecturer.Friday.map((Friday, index) => {
+                                  return (
+                                    <h3>
+                                      <br />
+                                      Name:{Friday.name}
+                                      <br /> Time:{Friday.time}
+                                      <br /> Subject:{Friday.subject}
+                                      <br /> Mode: {Friday.type}
+                                      <br /> Teacher: {Friday.teacher}
+                                      <hr />
+                                      <br /> Lunch: {Friday.lunch}
+                                      {Friday.link &&
+                                        lecturer.Friday.map((link) => {
+                                          return (
+                                            <>
+                                              <br /> Link:{link.link}
+                                            </>
+                                          );
+                                        })}
+                                      <br />
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="danger"
+                                        type="button"
+                                      >
+                                        <Button
+                                          className="btn-sm pull-right"
+                                          color="primary"
+                                          type="button"
+                                          onClick={() =>
+                                            editHandler("Friday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-edit" />
+                                        </Button>
+                                        <Popconfirm
+                                          title="Sure to delete?"
+                                          onConfirm={() =>
+                                            deleteHandler("Friday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-trash" />
+                                        </Popconfirm>
+                                      </Button>
+                                    </h3>
+                                  );
+                                })}
+                            </>
+                          </td>
+                          <td>
+                            <>
+                              {lecturer &&
+                                lecturer.Saturday &&
+                                lecturer.Saturday.map((Saturday, index) => {
+                                  return (
+                                    <h3>
+                                      <br />
+                                      Name:{Saturday.name}
+                                      <br /> Time:{Saturday.time}
+                                      <br /> Subject:{Saturday.subject}
+                                      <br /> Mode: {Saturday.type}
+                                      <br /> Teacher: {Saturday.teacher}
+                                      <br /> Lunch: {Saturday.lunch}
+                                      {Saturday.link &&
+                                        lecturer.Saturday.map((link) => {
+                                          return (
+                                            <>
+                                              <br /> Link:{link.link}
+                                            </>
+                                          );
+                                        })}
+                                      <br />
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="primary"
+                                        type="button"
+                                        onClick={() =>
+                                          editHandler("Saturday", index)
+                                        }
+                                      >
+                                        <i className="fas fa-edit" />
+                                      </Button>
+                                      <Button
+                                        className="btn-sm pull-right"
+                                        color="danger"
+                                        type="button"
+                                      >
+                                        <Popconfirm
+                                          title="Sure to delete?"
+                                          onConfirm={() =>
+                                            deleteHandler("Saturday", index)
+                                          }
+                                        >
+                                          <i className="fas fa-trash" />
+                                        </Popconfirm>
+                                      </Button>
+                                      <hr />
+                                    </h3>
+                                  );
+                                })}
+                            </>
+                          </td>
                         </tr>
-                      </thead>
-                      <>
-                        <tbody>
-                          <tr>
-                            <td>
-                              <>
-                                {lecturer &&
-                                  lecturer.Monday &&
-                                  lecturer.Monday.map((Monday, index) => {
-                                    return (
-                                      <h3>
-                                        <br />
-                                        Name:{Monday.name}
-                                        <br /> Time:{Monday.time}
-                                        <br /> Subject:{Monday.subject}
-                                        <br /> Mode: {Monday.type}
-                                        <br /> Teacher: {Monday.teacher}
-                                        <br /> Lunch: {Monday.lunch}
-                                        {Monday.link &&
-                                          lecturer.Monday.map((link) => {
-                                            return (
-                                              <>
-                                                <br /> Link:{link.link}
-                                              </>
-                                            );
-                                          })}
-                                        <br />
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="primary"
-                                          type="button"
-                                          onClick={() =>
-                                            editHandler("Monday", index)
-                                          }
-                                        >
-                                          <i className="fas fa-edit" />
-                                        </Button>
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="danger"
-                                          type="button"
-                                        >
-                                          <Popconfirm
-                                            title="Sure to delete?"
-                                            onConfirm={() =>
-                                              deleteHandler("Monday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-trash" />
-                                          </Popconfirm>
-                                        </Button>
-                                        <hr />
-                                      </h3>
-                                    );
-                                  })}
-                              </>
-                            </td>
-                            <td>
-                              <>
-                                {lecturer &&
-                                  lecturer.Tuesday &&
-                                  lecturer.Tuesday.map((Tuesday, index) => {
-                                    return (
-                                      <h3>
-                                        <br />
-                                        Name:{Tuesday.name}
-                                        <br /> Time:{Tuesday.time}
-                                        <br /> Subject:{Tuesday.subject}
-                                        <br /> Mode: {Tuesday.type}
-                                        <br /> Teacher: {Tuesday.teacher}
-                                        <br /> Lunch: {Tuesday.lunch}
-                                        {Tuesday.link &&
-                                          lecturer.Tuesday.map((link) => {
-                                            return (
-                                              <>
-                                                <br /> Link:{link.link}
-                                              </>
-                                            );
-                                          })}
-                                        <br />
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="primary"
-                                          type="button"
-                                          onClick={() =>
-                                            editHandler("Tuesday", index)
-                                          }
-                                        >
-                                          <i className="fas fa-edit" />
-                                        </Button>
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="danger"
-                                          type="button"
-                                        >
-                                          <Popconfirm
-                                            title="Sure to delete?"
-                                            onConfirm={() =>
-                                              deleteHandler("Tuesday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-trash" />
-                                          </Popconfirm>
-                                        </Button>
-                                        <hr />
-                                      </h3>
-                                    );
-                                  })}
-                              </>
-                            </td>
-                            <td>
-                              <>
-                                {lecturer &&
-                                  lecturer.Wednesday &&
-                                  lecturer.Wednesday.map((Wednesday, index) => {
-                                    return (
-                                      <h3>
-                                        <br />
-                                        Name:{Wednesday.name}
-                                        <br /> Time:{Wednesday.time}
-                                        <br /> Subject:{Wednesday.subject}
-                                        <br /> Mode: {Wednesday.type}
-                                        <br /> Teacher: {Wednesday.teacher}
-                                        <br /> Lunch: {Wednesday.lunch}
-                                        {Wednesday.link &&
-                                          lecturer.Wednesday.map((link) => {
-                                            return (
-                                              <>
-                                                <br /> Link:{link.link}
-                                              </>
-                                            );
-                                          })}
-                                        <br />
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="primary"
-                                          type="button"
-                                          onClick={() =>
-                                            editHandler("Wednesday", index)
-                                          }
-                                        >
-                                          <i className="fas fa-edit" />
-                                        </Button>
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="danger"
-                                          type="button"
-                                        >
-                                          <Popconfirm
-                                            title="Sure to delete?"
-                                            onConfirm={() =>
-                                              deleteHandler("Wednesday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-trash" />
-                                          </Popconfirm>
-                                        </Button>
-                                        <hr />
-                                      </h3>
-                                    );
-                                  })}
-                              </>
-                            </td>
-                            <td>
-                              <>
-                                {lecturer &&
-                                  lecturer.Thursday &&
-                                  lecturer.Thursday.map((Thursday, index) => {
-                                    return (
-                                      <h3>
-                                        <br />
-                                        Name:{Thursday.name}
-                                        <br /> Time:{Thursday.time}
-                                        <br /> Subject:{Thursday.subject}
-                                        <br /> Mode: {Thursday.type}
-                                        <br /> Teacher: {Thursday.teacher}
-                                        <br /> Lunch: {Thursday.lunch}
-                                        {Thursday.link &&
-                                          lecturer.Thursday.map((link) => {
-                                            return (
-                                              <>
-                                                <br /> Link:{link.link}
-                                              </>
-                                            );
-                                          })}
-                                        <br />
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="primary"
-                                          type="button"
-                                          onClick={() =>
-                                            editHandler("Thursday", index)
-                                          }
-                                        >
-                                          <i className="fas fa-edit" />
-                                        </Button>
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="danger"
-                                          type="button"
-                                        >
-                                          <Popconfirm
-                                            title="Sure to delete?"
-                                            onConfirm={() =>
-                                              deleteHandler("Thursday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-trash" />
-                                          </Popconfirm>
-                                        </Button>
-                                        <hr />
-                                      </h3>
-                                    );
-                                  })}
-                              </>
-                            </td>
-                            <td>
-                              <>
-                                {lecturer &&
-                                  lecturer.Friday &&
-                                  lecturer.Friday.map((Friday, index) => {
-                                    return (
-                                      <h3>
-                                        <br />
-                                        Name:{Friday.name}
-                                        <br /> Time:{Friday.time}
-                                        <br /> Subject:{Friday.subject}
-                                        <br /> Mode: {Friday.type}
-                                        <br /> Teacher: {Friday.teacher}
-                                        <hr />
-                                        <br /> Lunch: {Friday.lunch}
-                                        {Friday.link &&
-                                          lecturer.Friday.map((link) => {
-                                            return (
-                                              <>
-                                                <br /> Link:{link.link}
-                                              </>
-                                            );
-                                          })}
-                                        <br />
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="danger"
-                                          type="button"
-                                        >
-                                          <Button
-                                            className="btn-sm pull-right"
-                                            color="primary"
-                                            type="button"
-                                            onClick={() =>
-                                              editHandler("Friday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-edit" />
-                                          </Button>
-                                          <Popconfirm
-                                            title="Sure to delete?"
-                                            onConfirm={() =>
-                                              deleteHandler("Friday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-trash" />
-                                          </Popconfirm>
-                                        </Button>
-                                      </h3>
-                                    );
-                                  })}
-                              </>
-                            </td>
-                            <td>
-                              <>
-                                {lecturer &&
-                                  lecturer.Saturday &&
-                                  lecturer.Saturday.map((Saturday, index) => {
-                                    return (
-                                      <h3>
-                                        <br />
-                                        Name:{Saturday.name}
-                                        <br /> Time:{Saturday.time}
-                                        <br /> Subject:{Saturday.subject}
-                                        <br /> Mode: {Saturday.type}
-                                        <br /> Teacher: {Saturday.teacher}
-                                        <br /> Lunch: {Saturday.lunch}
-                                        {Saturday.link &&
-                                          lecturer.Saturday.map((link) => {
-                                            return (
-                                              <>
-                                                <br /> Link:{link.link}
-                                              </>
-                                            );
-                                          })}
-                                        <br />
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="primary"
-                                          type="button"
-                                          onClick={() =>
-                                            editHandler("Saturday", index)
-                                          }
-                                        >
-                                          <i className="fas fa-edit" />
-                                        </Button>
-                                        <Button
-                                          className="btn-sm pull-right"
-                                          color="danger"
-                                          type="button"
-                                        >
-                                          <Popconfirm
-                                            title="Sure to delete?"
-                                            onConfirm={() =>
-                                              deleteHandler("Saturday", index)
-                                            }
-                                          >
-                                            <i className="fas fa-trash" />
-                                          </Popconfirm>
-                                        </Button>
-                                        <hr />
-                                      </h3>
-                                    );
-                                  })}
-                              </>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </>
-                    </Table> */}
-                  </CardBody>
-                </Card>
-              )}
+                      </tbody>
+                    </>
+
+                    {/* {array.map((arr, index) => {
+                return (
+                  <tbody>
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{Object.keys(arr).map((days) => days + ", ")}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].name}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].time}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].subject}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].type}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].teacher}</td>
+                      <td>
+                        {" "}
+                        <Button
+                          className="btn-sm pull-right"
+                          color="danger"
+                          type="button"
+                        >
+                          <Popconfirm
+                            title="Sure to delete?"
+                            onConfirm={() => deleteHandler(index)}
+                          >
+                            <i className="fas fa-trash" />
+                          </Popconfirm>
+                        </Button>
+                      </td>
+                    </tr>
+                  </tbody>
+                );
+              })} */}
+                  </Table>
+                </CardBody>
+              </Card>
+            )}
           </Container>
         </>
       )}

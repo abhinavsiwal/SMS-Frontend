@@ -34,15 +34,11 @@ import { allSessions } from "api/session";
 
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(3);
-
+  const [step, setStep] = useState(0);
   const { classes } = useSelector((state) => state.classReducer);
-  console.log("classes", classes);
-  const [selectedClassIndex, setselectedClassIndex] = useState(0);
-
   const [sessions, setSessions] = useState([]);
   const [multivalues, setMultiValues] = useState("");
-  console.log("multiValues", multivalues);
+  const [connectFalse, setConnectFalse] = useState(false);
 
   const [studentData, setStudentData] = useState({
     image: "",
@@ -69,6 +65,8 @@ function AddStudent() {
     pincode: "",
     parent_address: "",
     parent_email: "",
+    connected: null,
+    connectedID: "",
     country: "",
     state: "",
     city: "",
@@ -78,10 +76,12 @@ function AddStudent() {
     guardian_name: "",
     guardian_last_name: "",
     guardian_dob: "",
+    guardian_email: "",
+    guardian_address: "",
     guardian_blood_group: "",
     guardian_phone: "",
-    guardian_address: "",
-    guardian_permanent_address: "",
+    // guardian_address: "",
+    // guardian_permanent_address: "",
     guardian_pincode: "",
     guardian_nationality: "",
     guardian_mother_tongue: "",
@@ -130,30 +130,24 @@ function AddStudent() {
     }
   };
 
+  //Taking StudentData
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
     setStudentData({ ...studentData, [name]: event.target.value });
-    // if (name === "selectClass") {
-    //   console.log("@@@@@@@@=>", event.target.value);
-    //   for (let i = 0; i < classes.length; i++) {
-    //     if (classes[i].name === event.target.value) {
-    //       // console.log("#######");
-    //       setselectedClassIndex(i);
-    //     }
-    //   }
-    // }
   };
 
+  //Taking Image Value
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
     setStudentData({ ...studentData, [name]: event.target.files[0].name });
   };
 
+  //Delete Fields
   const handleDeleteFields = (name) => {
     setStudentData({ ...studentData, [name]: "" });
     formData.delete(name);
   };
-
+  //Delete Fields Define
   const removeFields = (e) => {
     setMultiValues(e.value);
     if (e.value === "guardian") {
@@ -217,26 +211,36 @@ function AddStudent() {
     window.scrollTo(0, 0);
   };
 
-  const checkEmail = async (e) => {
-    e.preventDefault();
+  //Checking Parent or Gaurdian Email is Exist or Not
+  const checkEmail = async () => {
     const { user, token } = isAuthenticated();
+
     const data = {
       type: multivalues,
-      email: studentData.parent_email,
+      email:
+        multivalues === "parent"
+          ? studentData.parent_email
+          : studentData.guardian_email,
     };
-    console.log("data", data);
     try {
       const authenticate = await isAuthenticateStudent(user._id, token, data);
       console.log("auth", authenticate);
       if (authenticate.err) {
         toast.error(authenticate.err);
       }
-      // handleSubmitForm();
+      if (authenticate.status === false) {
+        toast.error("New Email is Found!");
+      } else {
+        setConnectFalse(true);
+        studentData.connectedID = authenticate.id;
+        toast.success("You Can Connect the Student ");
+      }
     } catch (err) {
       toast.error(err);
     }
   };
 
+  //Final Form Submit
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
@@ -249,11 +253,11 @@ function AddStudent() {
       }
       toast.success("Student added successfully");
     } catch (err) {
-      console.log("err", err);
       toast.error("Something Went Wrong");
     }
   };
 
+  //React-Multiselect
   const contactPersonsSelect = [
     {
       label: "Guardian",
@@ -441,6 +445,9 @@ function AddStudent() {
                       required
                       value={studentData.gender}
                     >
+                      <option value="" disabled>
+                        Select Gender
+                      </option>
                       <option>Male</option>
                       <option>Female</option>
                     </Input>
@@ -559,6 +566,9 @@ function AddStudent() {
                       required
                       value={studentData.religion}
                     >
+                      <option value="" disabled>
+                        Religion
+                      </option>
                       <option>A+</option>
                       <option>A-</option>
                       <option>B+</option>
@@ -583,6 +593,9 @@ function AddStudent() {
                       required
                       value={studentData.bloodgroup}
                     >
+                      <option value="" disabled>
+                        Blood Group
+                      </option>
                       <option>A+</option>
                       <option>A-</option>
                       <option>B+</option>
@@ -676,7 +689,9 @@ function AddStudent() {
                       onChange={handleChange("session")}
                       value={studentData.session}
                     >
-                      <option disabled>Select Session</option>
+                      <option value="" disabled>
+                        Select Session
+                      </option>
                       {sessions.map((session) => {
                         return (
                           <option key={session._id} value={session._id}>
@@ -941,7 +956,47 @@ function AddStudent() {
                 {studentData.contact_person_select.value === "parent" ? (
                   <>
                     <CardBody>
-                      <Form onSubmit={checkEmail}>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Parent Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Parent Address"
+                              type="text"
+                              onChange={handleChange("parent_address")}
+                              required
+                              value={studentData.parent_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Parent Email
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Parent Address"
+                              type="email"
+                              onChange={handleChange("parent_email")}
+                              required
+                              value={studentData.parent_email}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      {connectFalse && (
                         <Row>
                           <Col>
                             <FormGroup>
@@ -949,19 +1004,26 @@ function AddStudent() {
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
                               >
-                                Parent Address
+                                Connected
                               </label>
                               <Input
-                                id="example4cols3Input"
-                                placeholder="Parent Address"
-                                type="text"
-                                onChange={handleChange("parent_address")}
+                                id="exampleFormControlSelect3"
+                                type="select"
+                                onChange={handleChange("connected")}
                                 required
-                                value={studentData.parent_address}
-                              />
+                                value={studentData.connected}
+                              >
+                                <option disabled value="">
+                                  Connect
+                                </option>
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                              </Input>
                             </FormGroup>
                           </Col>
                         </Row>
+                      )}
+                      {studentData.connected === "true" && (
                         <Row>
                           <Col>
                             <FormGroup>
@@ -969,25 +1031,28 @@ function AddStudent() {
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
                               >
-                                Parent Email
+                                Connection
                               </label>
                               <Input
                                 id="example4cols3Input"
-                                placeholder="Parent Address"
+                                placeholder="connection"
                                 type="text"
-                                onChange={handleChange("parent_email")}
+                                onChange={handleChange("connectedID")}
                                 required
-                                value={studentData.parent_email}
+                                disabled
+                                value={studentData.connectedID}
                               />
                             </FormGroup>
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <Button type="submit">Check</Button>
-                          </Col>
-                        </Row>
-                      </Form>
+                      )}
+                      <Row>
+                        <Col>
+                          <Button color="danger" onClick={checkEmail}>
+                            Check
+                          </Button>
+                        </Col>
+                      </Row>
 
                       <Row className="mb-4">
                         <Col align="center">
@@ -1062,6 +1127,9 @@ function AddStudent() {
                             required
                             value={studentData.father_blood_group}
                           >
+                            <option value="" disabled>
+                              Blood Group
+                            </option>
                             <option>A+</option>
                             <option>A-</option>
                             <option>B+</option>
@@ -1089,29 +1157,6 @@ function AddStudent() {
                           />
                         </Col>
                       </Row>
-
-                      {/* <Row>
-                        <Col>
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols3Input"
-                            >
-                              Permanent Address
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              placeholder="Permanent Address"
-                              type="text"
-                              onChange={handleChange(
-                                "father_permanent_address"
-                              )}
-                              required
-                              value={studentData.father_permanent_address}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row> */}
                       <Row className="mb-4">
                         <Col>
                           <label
@@ -1237,6 +1282,9 @@ function AddStudent() {
                             required
                             value={studentData.mother_blood_group}
                           >
+                            <option value="" disabled>
+                              Blood Group
+                            </option>
                             <option>A+</option>
                             <option>A-</option>
                             <option>B+</option>
@@ -1264,48 +1312,6 @@ function AddStudent() {
                           />
                         </Col>
                       </Row>
-                      {/* <Row>
-                        <Col>
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols3Input"
-                            >
-                              Present Address
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              placeholder="Present Address"
-                              type="text"
-                              onChange={handleChange("mother_address")}
-                              required
-                              value={studentData.mother_address}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols3Input"
-                            >
-                              Permanent Address
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              placeholder="Permanent Address"
-                              type="text"
-                              onChange={handleChange(
-                                "mother_permanent_address"
-                              )}
-                              required
-                              value={studentData.mother_permanent_address}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row> */}
                       <Row className="mb-4">
                         <Col>
                           <label
@@ -1380,6 +1386,104 @@ function AddStudent() {
                 {studentData.contact_person_select.value === "guardian" ? (
                   <>
                     <CardBody>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Guardian Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Guardian Address"
+                              type="text"
+                              onChange={handleChange("guardian_address")}
+                              required
+                              value={studentData.guardian_address}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Guardian Email
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Guardian Address"
+                              type="text"
+                              onChange={handleChange("guardian_email")}
+                              required
+                              value={studentData.guardian_email}
+                            />
+                          </FormGroup>
+                        </Col>
+                      </Row>
+                      {connectFalse && (
+                        <Row>
+                          <Col>
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Connected
+                              </label>
+                              <Input
+                                id="exampleFormControlSelect3"
+                                type="select"
+                                onChange={handleChange("connected")}
+                                required
+                                value={studentData.connected}
+                              >
+                                <option disabled value="">
+                                  Connect
+                                </option>
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                              </Input>
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
+                      {studentData.connected === "true" && (
+                        <Row>
+                          <Col>
+                            <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Connection
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="connection"
+                                type="text"
+                                onChange={handleChange("connectedID")}
+                                required
+                                disabled
+                                value={studentData.connectedID}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
+                      <Row>
+                        <Col>
+                          <Button color="danger" onClick={checkEmail}>
+                            Check
+                          </Button>
+                        </Col>
+                      </Row>
+
                       <Row className="mb-4">
                         <Col align="center">
                           <h2>Guardian Details</h2>
@@ -1453,6 +1557,9 @@ function AddStudent() {
                             required
                             value={studentData.guardian_blood_group}
                           >
+                            <option value="" disabled>
+                              Blood Group
+                            </option>
                             <option>A+</option>
                             <option>A-</option>
                             <option>B+</option>
@@ -1478,48 +1585,6 @@ function AddStudent() {
                             required
                             value={studentData.guardian_phone}
                           />
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols3Input"
-                            >
-                              Present Address
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              placeholder="Present Address"
-                              type="text"
-                              onChange={handleChange("guardian_address")}
-                              required
-                              value={studentData.guardian_address}
-                            />
-                          </FormGroup>
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <FormGroup>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols3Input"
-                            >
-                              Permanent Address
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              placeholder="Permanent Address"
-                              type="text"
-                              onChange={handleChange(
-                                "guardian_permanent_address"
-                              )}
-                              required
-                              value={studentData.guardian_permanent_address}
-                            />
-                          </FormGroup>
                         </Col>
                       </Row>
                       <Row className="mb-4">

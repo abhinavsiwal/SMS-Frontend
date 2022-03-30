@@ -30,8 +30,8 @@ import { allStaffs } from "api/staff";
 //React-Select
 import Select from "react-select";
 
-import { canteenAdd, allCanteens,menuAdd } from "../../../api/canteen/index";
-import { toast } from "react-toastify";
+import { canteenAdd, allCanteens, menuAdd } from "../../../api/canteen/index";
+import { toast, ToastContainer } from "react-toastify";
 import { fetchingStaffFailed } from "constants/errors";
 import { fetchingCanteenError } from "constants/errors";
 import { addCanteenError } from "constants/errors";
@@ -56,7 +56,6 @@ function AddCanteen() {
     }
   }, []);
 
-
   const getAllStaffs = async () => {
     try {
       const res = await allStaffs(user.school, user._id);
@@ -73,7 +72,6 @@ function AddCanteen() {
       console.log(err);
       toast.error(fetchingStaffFailed);
     }
- 
   };
 
   const getAllCanteens = async () => {
@@ -83,7 +81,7 @@ function AddCanteen() {
       setAllCanteen(data);
     } catch (err) {
       console.log(err);
-      toast.error(fetchingCanteenError)
+      toast.error(fetchingCanteenError);
     }
   };
 
@@ -101,6 +99,7 @@ function AddCanteen() {
   });
   console.log("addCanteen", addCanteen);
   const [selectedCanteenId, setSelectedCanteenId] = useState("");
+  console.log(selectedCanteenId);
   const [addMenu, setAddMenu] = React.useState({
     image: "",
     items: "",
@@ -112,8 +111,7 @@ function AddCanteen() {
 
   const addCanteenFormData = new FormData();
 
-  //Values of addCanteen
-
+  //Values of Staff
   const handleStaffChange = (e) => {
     var value = [];
     for (var i = 0, l = e.length; i < l; i++) {
@@ -123,53 +121,81 @@ function AddCanteen() {
     addCanteenFormData.set("staff", JSON.stringify(value));
   };
 
+  //Add Canteen
   const addCanteenHandler = async () => {
     addCanteenFormData.set("name", canteenName);
     addCanteenFormData.set("school", user.school);
     try {
       const data = await canteenAdd(user._id, addCanteenFormData);
       console.log(data);
+      if (data.err) {
+        return toast.error(data.err);
+      } else {
+        toast.success("Canteen Added Successfully");
+      }
+      setAddMenu({
+        image: "",
+        items: "",
+        description: "",
+        price: "",
+        publish: "",
+      });
     } catch (err) {
-      console.log(err);
       toast.error(addCanteenError);
     }
   };
 
   //values of addMenu
   const handleChangeMenu = (name) => (event) => {
-    // formData.set(name, event.target.value);
     setAddMenu({ ...addMenu, [name]: event.target.value });
   };
 
   //Value for image
   const handleFileChange = (name) => (event) => {
-    // formData.set(name, event.target.files[0]);
     setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
   };
 
-  const addMenuHandler=async()=>{
-    console.log(addMenu);
-    let formData= new FormData();
-   
-    formData.set("school",user.school);
-    let menuData = {...addMenu,startTime:startDuration,endTime:endDuration};
-    console.log(menuData);
-    console.log(selectedCanteenId);
-    formData.set("menu",JSON.stringify(menuData))
-    formData.set("id",selectedCanteenId)
-    
-    try {
-      let data = await menuAdd(user._id,formData);
-      console.log(data);
+  //AddMenu
+  const addMenuHandler = async () => {
+    let formData = new FormData();
+    formData.set("school", user.school);
+    formData.set("item", addMenu.items);
+    formData.set("image", addMenu.image);
+    formData.set("description", addMenu.description);
+    formData.set("start_time", startDuration);
+    formData.set("end_time", endDuration);
+    formData.set("price", addMenu.price);
+    formData.set("publish", addMenu.publish);
+    formData.set("canteen", selectedCanteenId);
 
+    try {
+      let data = await menuAdd(user._id, formData);
+      console.log(data);
+      if (data.err) {
+        return toast.error(data.err);
+      } else {
+        toast.success("Menu Added Successfully");
+      }
     } catch (err) {
       console.log(err);
-      toast.error(addCanteenError)
+      toast.error(addCanteenError);
     }
-  }
+  };
 
   return (
     <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <SimpleHeader name="Canteen" parentName="Add Canteen" />
       <Container className="mt--6" fluid>
         <Row>
@@ -292,10 +318,13 @@ function AddCanteen() {
                         <Input
                           id="exampleFormControlSelect3"
                           type="select"
-                          onChange={(e)=>setSelectedCanteenId(e.target.value)}
+                          onChange={(e) => setSelectedCanteenId(e.target.value)}
                           value={addMenu.addCanteen}
                           required
                         >
+                          <option disabled value="">
+                            Select Canteen
+                          </option>
                           {allCanteen.map((canteen) => {
                             return (
                               <option

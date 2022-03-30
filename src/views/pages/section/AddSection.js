@@ -377,6 +377,9 @@ const AddSection = () => {
                           onChange={handleChange("class")}
                           required
                         >
+                          <option value="" disabled selected>
+                            Select Class
+                          </option>
                           {classList?.map((clas, index) => (
                             <option key={index} value={clas.value}>
                               {clas.label}
