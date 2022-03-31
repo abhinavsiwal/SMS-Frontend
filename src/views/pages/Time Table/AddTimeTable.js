@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 
 //import react-strap
 import {
@@ -43,6 +43,8 @@ import { isAuthenticated } from "api/auth";
 //Import ToastContainer
 import { ToastContainer, toast } from "react-toastify";
 import { allSessions } from "api/session";
+import { allStaffs } from "api/staff";
+import { allSubjects } from "api/subjects";
 
 import { Popconfirm } from "antd";
 
@@ -67,6 +69,8 @@ function AddTimeTable() {
   const endTime = moment(endTimeRecises).format("LT");
   const [classess, setClassess] = React.useState([]);
   const [sessions, setSessions] = React.useState([]);
+  const [subject, setSubject] = React.useState([]);
+  const [teacherList, setTeacherList] = React.useState([]);
   const [selectMultipleDays, setSelectMultipleDays] = React.useState();
   const [checked, setChecked] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
@@ -89,25 +93,26 @@ function AddTimeTable() {
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleOnSubmit = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (file) {
-          fileReader.onload = function (event) {
-              const csvOutput = event.target.result;
-          };
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-          fileReader.readAsText(file);
-      }
+      fileReader.readAsText(file);
+    }
   };
 
   React.useEffect(async () => {
     getClass();
     getSession();
     getSubject();
+    getStaff();
     const getLectures = localStorage.getItem("lecture");
     const parsedLectures = JSON.parse(getLectures);
     setLectures(parsedLectures);
@@ -170,12 +175,29 @@ function AddTimeTable() {
   const getSubject = async () => {
     const { user, token } = isAuthenticated();
     try {
-      const subject = await allSessions(user._id, user.school, token);
+      const subject = await allSubjects(user._id, user.school, token);
+      console.log("subject", subject);
       if (subject.err) {
         return toast.error(subject.err);
       } else {
-        setSessions(subject);
+        setSubject(subject);
       }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
+
+  const getStaff = async () => {
+    try {
+      const { user, token } = isAuthenticated();
+      // const payload = { school: user.school };
+
+      const teachers = await allStaffs(user.school, user._id);
+      console.log("teachers", teachers);
+      if (teachers.err) {
+        return toast.error(teachers.err);
+      }
+      setTeacherList(teachers);
     } catch (err) {
       toast.error("Something Went Wrong!");
     }
@@ -531,10 +553,17 @@ function AddTimeTable() {
                     <option value="" disabled selected>
                       Teacher
                     </option>
-                    <option>David</option>
+                    {teacherList.map((teachers) => {
+                      return (
+                        <option value={teachers._id}>
+                          {teachers.firstname}
+                        </option>
+                      );
+                    })}
+                    {/* <option>David</option>
                     <option>Sam</option>
                     <option>Mike</option>
-                    <option>Jordan</option>
+                    <option>Jordan</option> */}
                   </Input>
                 </Col>
 
@@ -605,27 +634,27 @@ function AddTimeTable() {
       <SimpleHeader name="Student" parentName="Time Table" />
       <PermissionsGate scopes={[SCOPES.canCreate]}>
         <Container className="mt--6 shadow-lg" fluid>
-        <Row>
-                  <Col className="d-flex justify-content-center mt-2">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+          <Row>
+            <Col className="d-flex justify-content-center mt-2">
+              <form>
+                <input
+                  type={"file"}
+                  id={"csvFileInput"}
+                  accept={".csv"}
+                  onChange={handleOnChange}
+                />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
+                <Button
+                  onClick={(e) => {
+                    handleOnSubmit(e);
+                  }}
+                  color="primary"
+                >
+                  IMPORT CSV
+                </Button>
+              </form>
+            </Col>
+          </Row>
           <Form onSubmit={handleData}>
             <Card>
               <CardBody>
@@ -898,10 +927,13 @@ function AddTimeTable() {
                             <option value="" disabled selected>
                               Teacher
                             </option>
-                            <option>David</option>
-                            <option>Sam</option>
-                            <option>Mike</option>
-                            <option>Jordan</option>
+                            {teacherList.map((teachers) => {
+                              return (
+                                <option value={teachers._id}>
+                                  {teachers.firstname}
+                                </option>
+                              );
+                            })}
                           </Input>
                         </Col>
 
@@ -947,7 +979,7 @@ function AddTimeTable() {
                       </Row>
                       <Row className="d-flex justify-content-between">
                         <div>
-                          <Button color="primary" onClick={handleData}>
+                          <Button color="primary" type="submit">
                             Add
                           </Button>
                         </div>

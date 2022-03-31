@@ -53,21 +53,20 @@ function AddCanteen() {
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleOnSubmit = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (file) {
-          fileReader.onload = function (event) {
-              const csvOutput = event.target.result;
-          };
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-          fileReader.readAsText(file);
-      }
+      fileReader.readAsText(file);
+    }
   };
-
 
   let permissions = [];
   useEffect(() => {
@@ -143,7 +142,8 @@ function AddCanteen() {
   };
 
   //Add Canteen
-  const addCanteenHandler = async () => {
+  const addCanteenHandler = async (e) => {
+    e.preventDefault();
     addCanteenFormData.set("name", canteenName);
     addCanteenFormData.set("school", user.school);
     try {
@@ -151,16 +151,8 @@ function AddCanteen() {
       console.log(data);
       if (data.err) {
         return toast.error(data.err);
-      } else {
-        toast.success("Canteen Added Successfully");
       }
-      setAddMenu({
-        image: "",
-        items: "",
-        description: "",
-        price: "",
-        publish: "",
-      });
+      toast.success("Canteen Added Successfully");
     } catch (err) {
       toast.error(addCanteenError);
     }
@@ -177,7 +169,8 @@ function AddCanteen() {
   };
 
   //AddMenu
-  const addMenuHandler = async () => {
+  const addMenuHandler = async (e) => {
+    e.preventDefault();
     let formData = new FormData();
     formData.set("school", user.school);
     formData.set("item", addMenu.items);
@@ -191,14 +184,18 @@ function AddCanteen() {
 
     try {
       let data = await menuAdd(user._id, formData);
-      console.log(data);
       if (data.err) {
         return toast.error(data.err);
-      } else {
-        toast.success("Menu Added Successfully");
       }
+      toast.success("Menu Added Successfully");
+      setAddMenu({
+        image: "",
+        items: "",
+        description: "",
+        price: "",
+        publish: "",
+      });
     } catch (err) {
-      console.log(err);
       toast.error(addCanteenError);
     }
   };
@@ -227,28 +224,27 @@ function AddCanteen() {
                   <h3>Add Canteen</h3>
                 </CardHeader>
                 <Row>
-              <Col className="d-flex justify-content-center mt-3 ">
-                <form>
-                  <input
-                    type={"file"}
-                    id={"csvFileInput"}
-                    accept={".csv"}
-                    onChange={handleOnChange}
-                  />
+                  <Col className="d-flex justify-content-center mt-3 ">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
 
-                  <Button
-                    onClick={(e) => {
-                      handleOnSubmit(e);
-                    }}
-                    color="primary"
-                  >
-                    IMPORT CSV
-                  </Button>
-                </form>
-              </Col>
-            </Row>
-
-                <Form className="mb-4">
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
+                <Form className="mb-4" onSubmit={addCanteenHandler}>
                   <CardBody>
                     <Row>
                       <Col>
@@ -289,7 +285,7 @@ function AddCanteen() {
                     </Row>
                     <Row className="mt-4 float-right">
                       <Col>
-                        <Button color="primary" onClick={addCanteenHandler}>
+                        <Button color="primary" type="submit">
                           Add
                         </Button>
                       </Col>
@@ -306,7 +302,7 @@ function AddCanteen() {
                 <CardHeader>
                   <h3>Add Menu</h3>
                 </CardHeader>
-                <Form className="mb-4">
+                <Form className="mb-4" onSubmit={addMenuHandler}>
                   <CardBody>
                     <Row md="4" className="d-flex justify-content-center mb-4">
                       <Col md="8">
@@ -480,7 +476,7 @@ function AddCanteen() {
                     </Row>
                     <Row className="mt-4 float-right">
                       <Col>
-                        <Button color="primary" onClick={addMenuHandler}>
+                        <Button color="primary" type="submit">
                           Add Menu
                         </Button>
                       </Col>

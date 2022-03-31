@@ -71,7 +71,7 @@ function AddStaff() {
     contact_person_city: "",
     contact_person_country: "",
     contact_person_pincode: "",
-    assign_role: "",
+    assign_role: null,
     job: "",
     salary: "",
     qualification: "",
@@ -85,16 +85,10 @@ function AddStaff() {
   const [formData] = useState(new FormData());
   const [departments, setDeparments] = useState([]);
   const [a, setA] = useState([]);
-  console.log("a", a);
 
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
-
-  // const roleOptions = [
-  //   // { value: "chemistry", label: "Chemistry" }
-  // ];
-  // console.log("role", roleOptions);
 
   useEffect(() => {
     getAllRolesHandler();
@@ -236,27 +230,24 @@ function AddStaff() {
   useEffect(async () => {
     if (step === 3) {
       await Departments();
-      // await Subjects();
       const { user, token } = isAuthenticated();
       try {
         const Subjects = await allSubjects(user._id, user.school, token);
         console.log("sub", Subjects);
         var list = [];
         console.log("subject", Subjects);
-        Subjects[0].list.map(async (sub) => {
+        Subjects.map(async (sub) => {
           list.push({
-            value: sub,
-            label: sub,
+            value: sub.name,
+            label: sub.name,
           });
         });
         if (Subjects.err) {
           return toast.error(fetchingSubjectError);
         }
         setA(list);
-        // console.log("list", list);
       } catch (err) {
-        // toast.error("Something Went Wrong!");
-        console.log(err);
+        toast.error("Something Went Wrong!");
       }
     }
   }, [step]);
@@ -292,18 +283,6 @@ function AddStaff() {
     }
   };
 
-  // async function Subjects() {
-  //   const { user, token } = isAuthenticated();
-  //   try {
-  //     const Subjects = await allSubjects(user._id, user.school, token);
-  //     console.log("subject", Subjects);
-  //     // setSubject(Subjects[0].list);
-  //   } catch (err) {
-  //     // toast.error("Something Went Wrong!");
-  //     console.log(err);
-  //   }
-  // }
-
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -315,7 +294,7 @@ function AddStaff() {
       fileReader.onload = function (event) {
         const csvOutput = event.target.result;
       };
-      
+
       fileReader.readAsText(file);
     }
   };
@@ -553,8 +532,9 @@ function AddStaff() {
                     <Input
                       id="example4cols2Input"
                       placeholder="Contact Number"
-                      type="number"
+                      type="text"
                       onChange={handleChange("phone")}
+                      pattern="[1-9]{1}[0-9]{9}"
                       value={staffData.phone}
                       required
                     />
@@ -571,7 +551,8 @@ function AddStaff() {
                       placeholder="Alternate Contact Number"
                       onChange={handleChange("alternate_phone")}
                       value={staffData.alternate_phone}
-                      type="number"
+                      type="text"
+                      pattern="[1-9]{1}[0-9]{9}"
                       required
                     />
                   </Col>
@@ -863,7 +844,8 @@ function AddStaff() {
                         placeholder="Contact Number"
                         onChange={handleChange("contact_person_phone")}
                         value={staffData.contact_person_phone}
-                        type="number"
+                        type="text"
+                        pattern="[1-9]{1}[0-9]{9}"
                         required
                       />
                     </FormGroup>
@@ -1008,6 +990,9 @@ function AddStaff() {
                         value={staffData.assign_role}
                         required
                       >
+                        <option value="" disabled selected>
+                          Select Role
+                        </option>
                         {allRoles &&
                           allRoles.map((role) => {
                             return (
@@ -1054,7 +1039,7 @@ function AddStaff() {
                     />
                   </Col>
                 </Row>
-                {staffData.assign_role === "Teacher" ? (
+                {staffData.assign_role !== "Canteen" ? (
                   <Row>
                     <Col md="4">
                       <label

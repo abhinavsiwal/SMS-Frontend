@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
 // import { useReactToPrint } from "react-to-print";
@@ -61,12 +61,10 @@ const AllStaffs = () => {
     setItemOffset(newOffset);
   };
 
-
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-
 
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
@@ -80,6 +78,7 @@ const AllStaffs = () => {
   }, []);
 
   const handleStaffDetails = (id) => {
+    console.log("id", id);
     setStaffId(id);
     setComponent(true);
   };
@@ -143,16 +142,7 @@ const AllStaffs = () => {
                   color="success"
                   type="button"
                   key={"view" + i + 1}
-                  onClick={() =>
-                    handleStaffDetails(
-                      res[i],
-                      res[i].SID,
-                      res[i].firstname,
-                      res[i].email,
-                      res[i].phone,
-                      res[i].gender
-                    )
-                  }
+                  // onClick={() => handleStaffDetails(res[i])}
                 >
                   <i className="fas fa-user" />
                 </Button>
@@ -533,7 +523,7 @@ const AllStaffs = () => {
         <>
           {!staffEditing ? (
             <>
-              <SimpleHeader name="All Staffs" />
+              <SimpleHeader name="All Staffs" parentName="Staff Management" />
               <Container className="mt--6" fluid>
                 <Card className="mb-4">
                   <CardHeader>
@@ -557,28 +547,27 @@ const AllStaffs = () => {
                     </Button>
                   </CardHeader>
                   <CardBody>
-                  <Button
-                    color="primary"
-                    className="mb-2"
-                    onClick={handlePrint}
-                  >
-                    Print
-                  </Button>
+                    <Button
+                      color="primary"
+                      className="mb-2"
+                      onClick={handlePrint}
+                    >
+                      Print
+                    </Button>
                     {!loading ? (
                       <Loader />
                     ) : (
                       <>
                         {view === 0 ? (
                           <>
-                          <div ref={componentRef} >
-
-                            <AntTable
-                              columns={columns}
-                              data={staffList}
-                              pagination={true}
-                              exportFileName="StaffDetails"
+                            <div ref={componentRef}>
+                              <AntTable
+                                columns={columns}
+                                data={staffList}
+                                pagination={true}
+                                exportFileName="StaffDetails"
                               />
-                              </div>
+                            </div>
                           </>
                         ) : (
                           <>
@@ -673,13 +662,20 @@ const AllStaffs = () => {
                                         </Row>
                                         <Row>
                                           <Col align="center">
-                                            <Button className="mt-3">
-                                              <Link
+                                            <Button
+                                              className="mt-3"
+                                              onClick={() =>
+                                                handleStaffDetails(staff)
+                                              }
+                                            >
+                                              Read More
+                                              {/* <Link
                                                 to="/admin/staff-profile"
                                                 className="mb-1"
+                                                
                                               >
                                                 Read More
-                                              </Link>
+                                              </Link> */}
                                             </Button>
                                           </Col>
                                         </Row>

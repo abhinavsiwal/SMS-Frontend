@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Container,
@@ -28,9 +28,13 @@ import Select from "react-select";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import TextArea from "antd/lib/input/TextArea";
 
-import {routeAdd,routesAll} from 'api/transportation'
+import { routeAdd, routesAll } from "api/transportation";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
+import { allSessions } from "api/session";
+
+//Import ToastContainer
+import { ToastContainer, toast } from "react-toastify";
 
 function AddRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
@@ -57,25 +61,25 @@ function AddRoute() {
   const [allStaff, setAllStaff] = useState([]);
 
   const [busNo, setBusNo] = React.useState("");
+  const [sessions, setSessions] = React.useState([]);
+  const [session, setSession] = React.useState("");
   const { user } = isAuthenticated();
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleOnSubmit = (e) => {
-      e.preventDefault();
-
-      if (file) {
-          fileReader.onload = function (event) {
-              const csvOutput = event.target.result;
-          };
-
-          fileReader.readAsText(file);
-      }
+    e.preventDefault();
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
+      fileReader.readAsText(file);
+    }
   };
 
   const getAllStaffs = async () => {
@@ -91,6 +95,21 @@ function AddRoute() {
     setRoleOptions(options);
   };
 
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
+
   const getAllRoutes = async () => {
     try {
       let data = await routesAll(user._id, user.school);
@@ -104,8 +123,8 @@ function AddRoute() {
   useEffect(() => {
     getAllStaffs();
     getAllRoutes();
+    getSession();
   }, []);
-
 
   const handleSubjectChange = (e) => {
     var value = [];
@@ -131,7 +150,7 @@ function AddRoute() {
     }
   };
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const obj2 = {
       routName: addRoute,
@@ -143,32 +162,44 @@ function AddRoute() {
     };
 
     let formData = new FormData();
-    formData.set("name",addRoute);
-    formData.set("bus_number",busNo);
-    formData.set("start",startDuration);
-    formData.set("end",endDuration);
-    formData.set("school",user.school);
-    formData.set("staff",JSON.stringify(multiSelect));
-    formData.set("stops",JSON.stringify(addStops));
+    formData.set("name", addRoute);
+    formData.set("bus_number", busNo);
+    formData.set("session", session);
+    formData.set("start", startDuration);
+    formData.set("end", endDuration);
+    formData.set("school", user.school);
+    formData.set("staff", JSON.stringify(multiSelect));
+    formData.set("stops", JSON.stringify(addStops));
 
     console.log("obj2", obj2);
 
     try {
       const data = await routeAdd(user._id, formData);
-      console.log(data);
+      if (data.err) {
+        return toast.error(data.err);
+      }
       setAddRoute("");
       setPlaceName("");
+      toast.success("Route Added Successfully");
     } catch (err) {
-      console.log(err);
-
+      toast.error(err);
     }
-
-
-
   };
 
   return (
     <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <SimpleHeader name="Transport" parentName="Add Route" />
       <Container className="mt--6" fluid>
         <Row>
@@ -179,26 +210,26 @@ function AddRoute() {
                   <h3>Add Route</h3>
                 </CardHeader>
                 <Row>
-              <Col className="d-flex justify-content-center mt-3 ">
-                <form>
-                  <input
-                    type={"file"}
-                    id={"csvFileInput"}
-                    accept={".csv"}
-                    onChange={handleOnChange}
-                  />
+                  <Col className="d-flex justify-content-center mt-3 ">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
 
-                  <Button
-                    onClick={(e) => {
-                      handleOnSubmit(e);
-                    }}
-                    color="primary"
-                  >
-                    IMPORT CSV
-                  </Button>
-                </form>
-              </Col>
-            </Row>
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
                 <Form className="mb-4" onSubmit={handleSubmit}>
                   <CardBody>
                     <Row className="d-flex justify-content-center">
@@ -252,6 +283,35 @@ function AddRoute() {
                         />
                       </Col>
                     </Row>
+
+                    <Row>
+                      <Col md="12">
+                        <Label
+                          className="form-control-label"
+                          htmlFor="xample-date-input"
+                        >
+                          Select Session
+                        </Label>
+                        <Input
+                          id="example4cols3Input"
+                          type="select"
+                          onChange={(e) => setSession(e.target.value)}
+                          required
+                        >
+                          <option value="" disabled selected>
+                            Select Session
+                          </option>
+                          {sessions.map((session) => {
+                            return (
+                              <option value={session._id} key={session._id}>
+                                {session.name}
+                              </option>
+                            );
+                          })}
+                        </Input>
+                      </Col>
+                    </Row>
+
                     <Row className="d-flex justify-content-center">
                       <Col md="6">
                         <Label
@@ -397,11 +457,11 @@ function AddRoute() {
                       {addStops.map((stops, index) => {
                         return (
                           <tbody>
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{stops.stopName}</td>
-                              <td>{stops.pickupTime}</td>
-                              <td>{stops.dropTime}</td>
+                            <tr>
+                              <td key={index}>{index + 1}</td>
+                              <td key={index}>{stops.stopName}</td>
+                              <td key={index}>{stops.pickupTime}</td>
+                              <td key={index}>{stops.dropTime}</td>
                             </tr>
                           </tbody>
                         );

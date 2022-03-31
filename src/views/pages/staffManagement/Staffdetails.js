@@ -45,7 +45,7 @@ function Staffdetails({ data }) {
 
   return (
     <>
-      <SimpleHeader name="Student Profile" />
+      <SimpleHeader name="Staff Profile" parentName="Staff Management" />
       <Container className="mt--6" fluid>
         <Row>
           <Col lg="4">
@@ -61,7 +61,9 @@ function Staffdetails({ data }) {
                   <Row>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Name</h4>
-                      <span className="text-md">{data.firstname}</span>
+                      <span className="text-md">
+                        {data.first_name} {data.last_name}
+                      </span>
                     </Col>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Class</h4>
@@ -75,7 +77,7 @@ function Staffdetails({ data }) {
                     </Col>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Phone</h4>
-                      <span className="text-md">{data.phone}</span>
+                      <span className="text-md">+91 {data.phone}</span>
                     </Col>
                   </Row>
                   <Row>
@@ -119,6 +121,14 @@ function Staffdetails({ data }) {
                             Attendance
                           </NavLink>
                         </NavItem>
+                        <NavItem>
+                          <NavLink
+                            className={activeTab === "4" ? "active" : ""}
+                            onClick={() => setActiveTab("4")}
+                          >
+                            Contact Person
+                          </NavLink>
+                        </NavItem>
                       </Nav>
                     </Col>
                     <Col className="text-right">
@@ -134,15 +144,7 @@ function Staffdetails({ data }) {
                     </Col>
                   </Row>
                 </CardHeader>
-                {/* <CardBody>
-                  <Row className="ml-2">
-                    <TabContent activeTab={activeTab}>
-                      <TabPane tabId="1">Details</TabPane>
-                      <TabPane tabId="2">Documents</TabPane>
-                      <TabPane tabId="3">Attendance</TabPane>
-                    </TabContent>
-                  </Row>
-                </CardBody> */}
+
                 <CardBody>
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
@@ -153,9 +155,9 @@ function Staffdetails({ data }) {
                               <div className="checklist-item checklist-item-info">
                                 <div className="checklist-info">
                                   <h5 className="checklist-title mb-0">
-                                    School Address
+                                    Joining Date
                                   </h5>
-                                  <small>{}</small>
+                                  <small>{data.joining_date}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
@@ -165,15 +167,25 @@ function Staffdetails({ data }) {
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
                                   <h5 className="checklist-title mb-0">
-                                    Pin Code
+                                    Gender
                                   </h5>
-                                  <small>{data.pincode}</small>
+                                  <small>{data.gender}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                          <Col md="4">
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-success">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">SID</h5>
+                                  <small>{data.sid}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
                           </Col>
                         </Row>
-                        <Row className="mt-4">
+                        {/* <Row className="mt-4">
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
@@ -208,7 +220,7 @@ function Staffdetails({ data }) {
                               </div>
                             </ListGroupItem>
                           </Col>
-                        </Row>
+                        </Row> */}
                         <Row className="mt-4">
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
@@ -227,9 +239,9 @@ function Staffdetails({ data }) {
                               <div className="checklist-item checklist-item-info">
                                 <div className="checklist-info">
                                   <h5 className="checklist-title mb-0">
-                                    Birth Place
+                                    Salary
                                   </h5>
-                                  <small>{data.birth_place}</small>
+                                  <small>{data.salary}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
@@ -238,10 +250,8 @@ function Staffdetails({ data }) {
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Blood Group
-                                  </h5>
-                                  <small>{data.bloodgroup}</small>
+                                  <h5 className="checklist-title mb-0">Job</h5>
+                                  <small>{data.job}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
@@ -249,21 +259,9 @@ function Staffdetails({ data }) {
                         </Row>
                       </ListGroup>
                     </TabPane>
-                    <TabPane tabId="2">
+                    {/* <TabPane tabId="2">
                       <ListGroup flush>
                         <Row>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    School Email
-                                  </h5>
-                                  <small>{}</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-info">
@@ -304,7 +302,113 @@ function Staffdetails({ data }) {
                           </Col>
                         </Row>
                       </ListGroup>
-                    </TabPane>
+                    </TabPane> */}
+                    {/* <TabPane tabId="4">
+                      <ListGroup flush>
+                        <Row>
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-success">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person Country
+                                  </h5>
+                                  <small>{data.contact_person_country}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-info">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person State
+                                  </h5>
+                                  <small>{data.contact_person_state}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-info">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person City
+                                  </h5>
+                                  <small>+91 {data.contact_person_city}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-info">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person Name
+                                  </h5>
+                                  <small>{data.contact_person_name}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-info">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person Phone
+                                  </h5>
+                                  <small>{data.contact_person_phone}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-info">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person Pincode
+                                  </h5>
+                                  <small>{data.contact_person_pincode}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-info">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person Relation
+                                  </h5>
+                                  <small>{data.contact_person_relation}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                          <Col>
+                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                              <div className="checklist-item checklist-item-success">
+                                <div className="checklist-info">
+                                  <h5 className="checklist-title mb-0">
+                                    Contact Person Address
+                                  </h5>
+                                  <small>{data.contact_person_address}</small>
+                                </div>
+                              </div>
+                            </ListGroupItem>
+                          </Col>
+                        </Row>
+                      </ListGroup>
+                    </TabPane> */}
                   </TabContent>
                 </CardBody>
               </Card>
