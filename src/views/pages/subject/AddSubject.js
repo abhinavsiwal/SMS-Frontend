@@ -30,7 +30,7 @@ import Loader from "components/Loader/Loader";
 import Select from "react-select";
 
 import { allSessions } from "api/session";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
 const AddSubject = () => {
   const [subjectList, setSubjectList] = useState([]);
   const [reload, setReload] = useState(false);
@@ -40,6 +40,7 @@ const AddSubject = () => {
   const [subjectId, setSubjectId] = useState("");
   const [checked, setChecked] = useState(false);
   const [sessions, setSessions] = useState([]);
+  const [type, setType] = useState("");
   const { user, token } = isAuthenticated();
 
   const [file, setFile] = useState();
@@ -48,19 +49,19 @@ const AddSubject = () => {
 
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
-};
+  };
 
-const handleOnSubmit = (e) => {
+  const handleOnSubmit = (e) => {
     e.preventDefault();
 
     if (file) {
-        fileReader.onload = function (event) {
-            const csvOutput = event.target.result;
-        };
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-        fileReader.readAsText(file);
+      fileReader.readAsText(file);
     }
-};
+  };
 
   const componentRef = React.useRef();
   const handlePrint = useReactToPrint({
@@ -103,7 +104,7 @@ const handleOnSubmit = (e) => {
 
   const [subjectData, setSubjectData] = useState({
     type: "",
-    list: "",
+    name: "",
     session: "",
   });
 
@@ -163,7 +164,7 @@ const handleOnSubmit = (e) => {
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    formData.set("list", JSON.stringify(value));
+    formData.set("name", JSON.stringify(value));
   };
 
   const handleFormChange = async (e) => {
@@ -176,7 +177,8 @@ const handleOnSubmit = (e) => {
         return toast.error(subject.err);
       }
       setSubjectData({
-        list: "",
+        type: "",
+        name: "",
         session: "",
       });
       if (checked === false) {
@@ -194,9 +196,9 @@ const handleOnSubmit = (e) => {
   const columns = [
     {
       title: "Subjects",
-      dataIndex: "list",
+      dataIndex: "name",
       width: "90%",
-      sorter: (a, b) => a.list > b.list,
+      sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -219,7 +221,7 @@ const handleOnSubmit = (e) => {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.list.toLowerCase().includes(value.toLowerCase());
+        return record.name.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
@@ -235,10 +237,10 @@ const handleOnSubmit = (e) => {
       .then((res) => {
         console.log("res", res);
         const data = [];
-        for (let i = 0; i < res[0].list.length; i++) {
+        for (let i = 0; i < res.length; i++) {
           data.push({
             key: i,
-            list: res[0].list[i],
+            name: res[i].name,
             action: (
               <h5 key={i + 1} className="mb-0">
                 {permissions && permissions.includes("edit") && (
@@ -302,7 +304,7 @@ const handleOnSubmit = (e) => {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-              <Row>
+                <Row>
                   <Col className="d-flex justify-content-center mt-2">
                     <form>
                       <input
@@ -336,6 +338,7 @@ const handleOnSubmit = (e) => {
                         <Input
                           id="exampleFormControlSelect3"
                           type="select"
+                          // onChange={(e) => setType(e.target.value)}
                           onChange={handleChange("type")}
                           value={subjectData.type}
                           required
@@ -362,8 +365,8 @@ const handleOnSubmit = (e) => {
                               id="example4cols2Input"
                               placeholder="Subject"
                               type="text"
-                              onChange={handleChange("list")}
-                              value={subjectData.list}
+                              onChange={handleChange("name")}
+                              value={subjectData.name}
                               required
                             />
                           </Col>
@@ -466,17 +469,22 @@ const handleOnSubmit = (e) => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
-                <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
                   {loading ? (
-                    <div ref={componentRef} >
-
-                    <AntTable
-                      columns={columns}
-                      data={subjectList}
-                      pagination={true}
-                      exportFileName="SubjectDetails"
+                    <div ref={componentRef}>
+                      <AntTable
+                        columns={columns}
+                        data={subjectList}
+                        pagination={true}
+                        exportFileName="SubjectDetails"
                       />
-                      </div>
+                    </div>
                   ) : (
                     <Loader />
                   )}

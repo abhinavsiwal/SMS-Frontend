@@ -99,6 +99,8 @@ const AddSession = () => {
               session: res[i].name,
               start_date: res[i].start_date.split("T")[0],
               end_date: res[i].start_date.split("T")[0],
+              working_days: res[i].working_days,
+              working_time: res[i].working_time,
               year: res[i].year,
               action: (
                 <h5 key={i + 1} className="mb-0">
@@ -294,6 +296,66 @@ const AddSession = () => {
       },
     },
     {
+      title: "Working Days",
+      dataIndex: "working_days",
+      width: 150,
+      sorter: (a, b) => a.working_days > b.working_days,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.working_days.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Working Time",
+      dataIndex: "working_time",
+      width: 150,
+      sorter: (a, b) => a.working_time > b.working_time,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.working_time.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
       title: "Year",
       dataIndex: "year",
       width: 150,
@@ -390,7 +452,7 @@ const AddSession = () => {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-              <Row>
+                <Row>
                   <Col className="d-flex justify-content-center mt-2">
                     <form>
                       <input

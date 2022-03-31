@@ -116,19 +116,19 @@ function AddStudent() {
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleOnSubmit = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (file) {
-          fileReader.onload = function (event) {
-              const csvOutput = event.target.result;
-          };
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-          fileReader.readAsText(file);
-      }
+      fileReader.readAsText(file);
+    }
   };
 
   React.useEffect(() => {
@@ -334,27 +334,27 @@ function AddStudent() {
       <Container className="mt--6 shadow-lg" fluid>
         <Card className="mb-4 bg-transparent">
           <CardHeader className="Step_Header">
-          <Row>
-                  <Col className="d-flex justify-content-center mt-2">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+            <Row>
+              <Col className="d-flex justify-content-center mt-2">
+                <form>
+                  <input
+                    type={"file"}
+                    id={"csvFileInput"}
+                    accept={".csv"}
+                    onChange={handleOnChange}
+                  />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
+                  <Button
+                    onClick={(e) => {
+                      handleOnSubmit(e);
+                    }}
+                    color="primary"
+                  >
+                    IMPORT CSV
+                  </Button>
+                </form>
+              </Col>
+            </Row>
             <Row className="d-flex justify-content-center">
               <Col md="10">
                 <Stepper
@@ -503,7 +503,8 @@ function AddStudent() {
                     <Input
                       id="example4cols2Input"
                       placeholder="Aadhar Card Number"
-                      type="number"
+                      type="text"
+                      pattern="[1-9]{1}[0-9]{9}"
                       onChange={handleChange("aadhar_number")}
                       required
                       value={studentData.aadhar_number}
@@ -537,7 +538,8 @@ function AddStudent() {
                     <Input
                       id="example4cols2Input"
                       placeholder="Phone Number"
-                      type="number"
+                      type="text"
+                      pattern="[1-9]{1}[0-9]{9}"
                       onChange={handleChange("phone")}
                       required
                       value={studentData.phone}
@@ -553,7 +555,8 @@ function AddStudent() {
                     <Input
                       id="example4cols2Input"
                       placeholder="Alternate Phone Number"
-                      type="number"
+                      type="text"
+                      pattern="[1-9]{1}[0-9]{9}"
                       onChange={handleChange("alternate_phone")}
                       required
                       value={studentData.alt_phone}
@@ -755,9 +758,10 @@ function AddStudent() {
                       id="example4cols2Input"
                       placeholder="Roll Number"
                       type="number"
-                      onChange={() => {
-                        setStudentData({ ...studentData, roll_number: 12 });
-                      }}
+                      // onChange={() => {
+                      //   setStudentData({ ...studentData, roll_number: "" });
+                      // }}
+                      onChange={handleChange("roll_number")}
                       required
                       value={studentData.roll_number}
                     />
@@ -1191,7 +1195,8 @@ function AddStudent() {
                           <Input
                             id="example4cols3Input"
                             placeholder="Phone Number"
-                            type="number"
+                            type="text"
+                            pattern="[1-9]{1}[0-9]{9}"
                             onChange={handleChange("father_phone")}
                             required
                             value={studentData.father_phone}
@@ -1346,7 +1351,8 @@ function AddStudent() {
                           <Input
                             id="example4cols3Input"
                             placeholder="Phone Number"
-                            type="number"
+                            type="text"
+                            pattern="[1-9]{1}[0-9]{9}"
                             onChange={handleChange("mother_phone")}
                             required
                             value={studentData.mother_phone}
@@ -1621,7 +1627,8 @@ function AddStudent() {
                           <Input
                             id="example4cols3Input"
                             placeholder="Phone Number"
-                            type="number"
+                            type="text"
+                            pattern="[1-9]{1}[0-9]{9}"
                             onChange={handleChange("guardian_phone")}
                             required
                             value={studentData.guardian_phone}

@@ -74,7 +74,7 @@ function ViewAllCanteen() {
   const [check, setCheck] = React.useState(false);
   return (
     <>
-      <SimpleHeader name="Canteen" parentName />
+      <SimpleHeader name="Canteen" parentName="View All Canteen" />
       {check === false && (
         <div className="mt--6 items">
           {canteenName.map((canteenName) => {

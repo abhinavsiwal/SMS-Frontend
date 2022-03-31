@@ -45,7 +45,7 @@ function ViewTimeTable() {
   const [timeTableData, setTimeTableData] = React.useState({
     class: null,
     section: null,
-    session: null,
+    session: "",
     // prd: "",
     // subjects: "",
     // teachers: "",
@@ -289,7 +289,7 @@ function ViewTimeTable() {
                 <CardBody>
                   <Table bordered>
                     <thead>
-                      <tr>
+                      {/* <tr>
                         {lecturer === null ? (
                           <h3>Empty</h3>
                         ) : (
@@ -311,12 +311,12 @@ function ViewTimeTable() {
                             })}
                           </>
                         )}
-                      </tr>
+                      </tr> */}
                     </thead>
                     <>
                       <tbody>
                         <tr>
-                          <td>
+                          {/* <td>
                             <>
                               {lecturer &&
                                 lecturer.Monday &&
@@ -633,41 +633,10 @@ function ViewTimeTable() {
                                   );
                                 })}
                             </>
-                          </td>
+                          </td> */}
                         </tr>
                       </tbody>
                     </>
-
-                    {/* {array.map((arr, index) => {
-                return (
-                  <tbody>
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{Object.keys(arr).map((days) => days + ", ")}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].name}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].time}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].subject}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].type}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].teacher}</td>
-                      <td>
-                        {" "}
-                        <Button
-                          className="btn-sm pull-right"
-                          color="danger"
-                          type="button"
-                        >
-                          <Popconfirm
-                            title="Sure to delete?"
-                            onConfirm={() => deleteHandler(index)}
-                          >
-                            <i className="fas fa-trash" />
-                          </Popconfirm>
-                        </Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                );
-              })} */}
                   </Table>
                 </CardBody>
               </Card>
