@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
-
+import { useReactToPrint } from "react-to-print";
 import {
   Card,
   CardHeader,
@@ -66,6 +66,14 @@ const AllStaffs = () => {
       console.log(permissions);
     }
   }, []);
+
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+
 
   useEffect(() => {
     const fetchStaffs = async () => {
@@ -528,18 +536,28 @@ const AllStaffs = () => {
                 </Button>
               </CardHeader>
               <CardBody>
+              <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
                 {!loading ? (
                   <Loader />
                 ) : (
                   <>
                     {view === 0 ? (
                       <>
+                      <div ref={componentRef} >
+
                         <AntTable
                           columns={columns}
                           data={staffList}
                           pagination={true}
                           exportFileName="StaffDetails"
-                        />
+                          />
+                          </div>
                       </>
                     ) : (
                       <>
