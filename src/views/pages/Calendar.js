@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // nodejs library that concatenates classes
 import classnames from "classnames";
 // JavaScript library that creates a callendar with events
@@ -6,7 +6,7 @@ import { Calendar } from "@fullcalendar/core";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interaction from "@fullcalendar/interaction";
 // react component used to create sweet alerts
-
+import { allSessions } from "api/session";
 import ReactBSAlert from "react-bootstrap-sweetalert";
 // reactstrap components
 import {
@@ -55,8 +55,9 @@ import "./Calender.css";
 import { Table } from "ant-table-extensions";
 import { SearchOutlined } from "@ant-design/icons";
 import { updateCalendarError } from "constants/errors";
-import { deleteCalendarError } from "constants/errors";
+import { deleteCalendarError, fetchingStaffFailed } from "constants/errors";
 
+import { allStaffs } from "api/staff";
 let calendar;
 
 function CalendarView() {
@@ -78,17 +79,46 @@ function CalendarView() {
   const [currentDate, setCurrentDate] = React.useState(null);
   const calendarRef = React.useRef(null);
   const [checked, setChecked] = React.useState(false);
-
+  const [sessions, setSessions] = useState([]);
   const [editing, setEditing] = React.useState(false);
   const [eventList, setEventList] = React.useState([]);
-
+  const [selectSessionId, setSelectSessionId] = useState("");
+  const [staff, setStaff] = useState([]);
+  const [staffId, setStaffId] = useState("");
   let permissions = [];
   useEffect(() => {
     if (user.role["Calendar"]) {
       permissions = user.role["Calendar"];
       console.log(permissions);
     }
+    getAllStaff();
+    getSession();
   }, []);
+
+  const getAllStaff = async () => {
+    try {
+      const data = await allStaffs(user.school, user._id);
+      console.log(data, "@@@@@@@@");
+      setStaff(data);
+    } catch (err) {
+      toast.error(fetchingStaffFailed);
+    }
+  };
+
+  //Getting Session data
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
 
   const createCalendar = () => {
     calendar = new Calendar(calendarRef.current, {
@@ -138,6 +168,9 @@ function CalendarView() {
     // formData.set("assignTeachers", assignTeachers)
     formData.set("event_type", radios);
     formData.set("school", user.school);
+    formData.set("assignTeachers",JSON.stringify([staffId]));
+    formData.set("session",selectSessionId);
+
 
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
@@ -537,304 +570,328 @@ function CalendarView() {
                 />
               </CardBody>
             </Card>
-            {permissions && permissions.includes("add") && (
-              <Modal
-                isOpen={modalAdd}
-                toggle={() => setModalAdd(false)}
-                className="modal-dialog-centered modal-secondary"
-              >
-                <div className="modal-body">
-                  <form className="new-event--form">
-                    <FormGroup>
-                      <label className="form-control-label">Event title</label>
-                      <Input
-                        className="form-control-alternative new-event--title"
-                        placeholder="Event Title"
-                        type="text"
-                        onChange={(e) => setEventTitle(e.target.value)}
-                        required
-                      />
-                      <Label
-                        className="form-control-label"
-                        htmlFor="example-date-input"
-                      >
-                        From
-                      </Label>
-                      <DatePicker
-                        className="p-2 endDate"
-                        showTimeSelect
-                        dateFormat="yyyy MMMM, dd h:mm aa"
-                        selected={startDate}
-                        selectsStart
-                        startDate={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        strictParsing
-                        value={startDate}
-                        required
-                      />
-                      <Label
-                        className="form-control-label"
-                        htmlFor="example-date-input"
-                      >
-                        To
-                      </Label>
-                      <DatePicker
-                        className="p-2 endDate"
-                        showTimeSelect
-                        dateFormat="yyyy MMMM, dd h:mm aa"
-                        selected={endDate}
-                        selectsStart
-                        startDate={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        strictParsing
-                        value={endDate}
-                        required
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Input
-                        className="form-control-alternative new-event--title descrip"
-                        id="exampleFormControlSelect3"
-                        type="select"
-                        onChange={(e) => setAssignTeachers(e.target.value)}
-                        required
-                      >
-                        <option value="" disabled selected>
-                          Assignteacher
+            {/* {permissions && permissions.includes("add") && ( */}
+            <Modal
+              isOpen={modalAdd}
+              toggle={() => setModalAdd(false)}
+              className="modal-dialog-centered modal-secondary"
+            >
+              <div className="modal-body">
+                <form className="new-event--form">
+                  <FormGroup>
+                    <label className="form-control-label">Event title</label>
+                    <Input
+                      className="form-control-alternative new-event--title"
+                      placeholder="Event Title"
+                      type="text"
+                      onChange={(e) => setEventTitle(e.target.value)}
+                      required
+                    />
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      From
+                    </Label>
+                    <DatePicker
+                      className="p-2 endDate"
+                      showTimeSelect
+                      dateFormat="yyyy MMMM, dd h:mm aa"
+                      selected={startDate}
+                      selectsStart
+                      startDate={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      strictParsing
+                      value={startDate}
+                      required
+                    />
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      To
+                    </Label>
+                    <DatePicker
+                      className="p-2 endDate"
+                      showTimeSelect
+                      dateFormat="yyyy MMMM, dd h:mm aa"
+                      selected={endDate}
+                      selectsStart
+                      startDate={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      strictParsing
+                      value={endDate}
+                      required
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                  <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      
+                      Teacher
+                    </Label>
+                    <Input
+                      type="select"
+                      onChange={(e) => setStaffId(e.target.value)}
+                    >
+                      {staff.map((staff, i) => (
+                        <option key={i} value={staff._id}>
+                          {staff.firstname} {staff.lastname}
                         </option>
-                        <option>LKG</option>
-                        <option>UKG</option>
-                      </Input>
-                    </FormGroup>
-                    <FormGroup>
-                      <textarea
-                        className="form-control-alternative new-event--title w-100 descrip"
-                        placeholder="Description"
-                        type="text"
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
+                      ))}
+                    </Input>
+                  </FormGroup>
+                  <FormGroup>
+                    <textarea
+                      className="form-control-alternative new-event--title w-100 descrip"
+                      placeholder="Description"
+                      type="text"
+                      onChange={(e) => setDescription(e.target.value)}
+                      required
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Input
+                      id="example4cols3Input"
+                      type="select"
+                      onChange={(e) => setSelectSessionId(e.target.value)}
+                      value={selectSessionId}
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select Session
+                      </option>
+                      {sessions.map((session) => {
+                        return (
+                          <option value={session._id} key={session._id}>
+                            {session.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
+                  </FormGroup>
+                  <FormGroup className="mb-0">
+                    <label className="form-control-label d-block mb-3">
+                      Status color
+                    </label>
+                    <ButtonGroup
+                      className="btn-group-toggle btn-group-colors event-tag"
+                      data-toggle="buttons"
+                    >
+                      <Button
+                        className={classnames("bg-info", {
+                          active: radios === "bg-info",
+                        })}
+                        color=""
+                        id="bg-info"
+                        type="button"
+                        onClick={() => setRadios("bg-info")}
+                        value="bg-info"
                       />
-                    </FormGroup>
-                    <FormGroup className="mb-0">
-                      <label className="form-control-label d-block mb-3">
-                        Status color
-                      </label>
-                      <ButtonGroup
-                        className="btn-group-toggle btn-group-colors event-tag"
-                        data-toggle="buttons"
-                      >
-                        <Button
-                          className={classnames("bg-info", {
-                            active: radios === "bg-info",
-                          })}
-                          color=""
-                          id="bg-info"
-                          type="button"
-                          onClick={() => setRadios("bg-info")}
-                          value="bg-info"
-                        />
-                        <Button
-                          className={classnames("bg-warning", {
-                            active: radios === "bg-warning",
-                          })}
-                          color=""
-                          id="bg-warning"
-                          type="button"
-                          onClick={() => setRadios("bg-warning")}
-                          value="bg-warning"
-                        />
-                        <Button
-                          className={classnames("bg-danger", {
-                            active: radios === "bg-danger",
-                          })}
-                          color=""
-                          id="bg-danger"
-                          type="button"
-                          onClick={() => setRadios("bg-danger")}
-                          value="bg-danger"
-                        />
-                      </ButtonGroup>
-                    </FormGroup>
-                  </form>
-                </div>
-                <div className="modal-footer">
-                  <Button
-                    className="new-event--add"
-                    color="primary"
-                    type="button"
-                    onClick={handleSubmitEvent}
-                  >
-                    Add event
-                  </Button>
-                  <Button
-                    className="ml-auto"
-                    color="link"
-                    type="button"
-                    onClick={() => setModalAdd(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </Modal>
-            )}
+                      <Button
+                        className={classnames("bg-warning", {
+                          active: radios === "bg-warning",
+                        })}
+                        color=""
+                        id="bg-warning"
+                        type="button"
+                        onClick={() => setRadios("bg-warning")}
+                        value="bg-warning"
+                      />
+                      <Button
+                        className={classnames("bg-danger", {
+                          active: radios === "bg-danger",
+                        })}
+                        color=""
+                        id="bg-danger"
+                        type="button"
+                        onClick={() => setRadios("bg-danger")}
+                        value="bg-danger"
+                      />
+                    </ButtonGroup>
+                  </FormGroup>
+                </form>
+              </div>
+              <div className="modal-footer">
+                <Button
+                  className="new-event--add"
+                  color="primary"
+                  type="button"
+                  onClick={handleSubmitEvent}
+                >
+                  Add event
+                </Button>
+                <Button
+                  className="ml-auto"
+                  color="link"
+                  type="button"
+                  onClick={() => setModalAdd(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </Modal>
+            {/* )} */}
 
-            {permissions && permissions.includes("edit") && (
-              <Modal
-                isOpen={modalChange}
-                toggle={() => setModalChange(false)}
-                className="modal-dialog-centered modal-secondary"
-              >
-                <div className="modal-body">
-                  <Form className="edit-event--form">
-                    <FormGroup>
-                      <label className="form-control-label">Event title</label>
-                      <Input
-                        className="form-control-alternative edit-event--title"
-                        placeholder="Event Title"
-                        type="text"
-                        defaultValue={eventTitle}
-                        onChange={(e) => setEventTitle(e.target.value)}
-                        required
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label
-                        className="form-control-label"
-                        htmlFor="example-date-input"
-                      >
-                        From
-                      </Label>
-                      <DatePicker
-                        className="p-2 endDate"
-                        showTimeSelect
-                        dateFormat="yyyy MMMM, dd h:mm aa"
-                        selected={startDate}
-                        selectsStart
-                        startDate={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        strictParsing
-                        value={startDate}
-                        required
-                      />
-                      <Label
-                        className="form-control-label"
-                        htmlFor="example-date-input"
-                      >
-                        To
-                      </Label>
-                      <DatePicker
-                        className="p-2 endDate"
-                        showTimeSelect
-                        dateFormat="yyyy MMMM, dd h:mm aa"
-                        // dateFormat="'YYYY-MM-dd', h:mm"
-                        selected={endDate}
-                        selectsStart
-                        startDate={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        strictParsing
-                        value={endDate}
-                        required
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label
-                        className="form-control-label"
-                        htmlFor="example-date-input"
-                      >
+            {/* {permissions && permissions.includes("edit") && ( */}
+            <Modal
+              isOpen={modalChange}
+              toggle={() => setModalChange(false)}
+              className="modal-dialog-centered modal-secondary"
+            >
+              <div className="modal-body">
+                <Form className="edit-event--form">
+                  <FormGroup>
+                    <label className="form-control-label">Event title</label>
+                    <Input
+                      className="form-control-alternative edit-event--title"
+                      placeholder="Event Title"
+                      type="text"
+                      defaultValue={eventTitle}
+                      onChange={(e) => setEventTitle(e.target.value)}
+                      required
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      From
+                    </Label>
+                    <DatePicker
+                      className="p-2 endDate"
+                      showTimeSelect
+                      dateFormat="yyyy MMMM, dd h:mm aa"
+                      selected={startDate}
+                      selectsStart
+                      startDate={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      strictParsing
+                      value={startDate}
+                      required
+                    />
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      To
+                    </Label>
+                    <DatePicker
+                      className="p-2 endDate"
+                      showTimeSelect
+                      dateFormat="yyyy MMMM, dd h:mm aa"
+                      // dateFormat="'YYYY-MM-dd', h:mm"
+                      selected={endDate}
+                      selectsStart
+                      startDate={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      strictParsing
+                      value={endDate}
+                      required
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      Assignteacher
+                    </Label>
+                    <Input
+                      className="form-control-alternative new-event--title descrip"
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={(e) => setAssignTeachers(e.target.value)}
+                      required
+                    >
+                      <option value="" disabled selected>
                         Assignteacher
-                      </Label>
-                      <Input
-                        className="form-control-alternative new-event--title descrip"
-                        id="exampleFormControlSelect3"
-                        type="select"
-                        onChange={(e) => setAssignTeachers(e.target.value)}
-                        required
-                      >
-                        <option value="" disabled selected>
-                          Assignteacher
-                        </option>
-                        <option>LKG</option>
-                        <option>UKG</option>
-                      </Input>
-                    </FormGroup>
-                    <FormGroup>
-                      <label className="form-control-label">Description</label>
-                      <Input
-                        className="form-control-alternative edit-event--description textarea-autosize"
-                        placeholder="Event Desctiption"
-                        type="textarea"
-                        defaultValue={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
+                      </option>
+                      <option>LKG</option>
+                      <option>UKG</option>
+                    </Input>
+                  </FormGroup>
+                  <FormGroup>
+                    <label className="form-control-label">Description</label>
+                    <Input
+                      className="form-control-alternative edit-event--description textarea-autosize"
+                      placeholder="Event Desctiption"
+                      type="textarea"
+                      defaultValue={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      required
+                    />
+                    <i className="form-group--bar" />
+                  </FormGroup>
+                  <input className="edit-event--id" type="hidden" />
+                  <FormGroup>
+                    <label className="form-control-label d-block mb-3">
+                      Status color
+                    </label>
+                    <ButtonGroup
+                      className="btn-group-toggle btn-group-colors event-tag mb-0"
+                      data-toggle="buttons"
+                    >
+                      <Button
+                        className={classnames("bg-info", {
+                          active: radios === "bg-info",
+                        })}
+                        color=""
+                        id="bg-info"
+                        type="button"
+                        onClick={() => setRadios("bg-info")}
+                        value="bg-info"
                       />
-                      <i className="form-group--bar" />
-                    </FormGroup>
-                    <input className="edit-event--id" type="hidden" />
-                    <FormGroup>
-                      <label className="form-control-label d-block mb-3">
-                        Status color
-                      </label>
-                      <ButtonGroup
-                        className="btn-group-toggle btn-group-colors event-tag mb-0"
-                        data-toggle="buttons"
-                      >
-                        <Button
-                          className={classnames("bg-info", {
-                            active: radios === "bg-info",
-                          })}
-                          color=""
-                          id="bg-info"
-                          type="button"
-                          onClick={() => setRadios("bg-info")}
-                          value="bg-info"
-                        />
-                        <Button
-                          className={classnames("bg-warning", {
-                            active: radios === "bg-warning",
-                          })}
-                          color=""
-                          id="bg-warning"
-                          type="button"
-                          onClick={() => setRadios("bg-warning")}
-                          value="bg-warning"
-                        />
-                        <Button
-                          className={classnames("bg-danger", {
-                            active: radios === "bg-danger",
-                          })}
-                          color=""
-                          id="bg-danger"
-                          type="button"
-                          onClick={() => setRadios("bg-danger")}
-                          value="vaccation"
-                        />
-                      </ButtonGroup>
-                    </FormGroup>
-                  </Form>
-                </div>
-                <div className="modal-footer">
-                  <Button color="primary" onClick={changeEvent}>
-                    Update
-                  </Button>
-                  <Button
-                    color="danger"
-                    onClick={() => {
-                      setModalChange(false);
-                      deleteEventSweetAlert();
-                    }}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    className="ml-auto"
-                    color="link"
-                    onClick={() => setModalChange(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </Modal>
-            )}
+                      <Button
+                        className={classnames("bg-warning", {
+                          active: radios === "bg-warning",
+                        })}
+                        color=""
+                        id="bg-warning"
+                        type="button"
+                        onClick={() => setRadios("bg-warning")}
+                        value="bg-warning"
+                      />
+                      <Button
+                        className={classnames("bg-danger", {
+                          active: radios === "bg-danger",
+                        })}
+                        color=""
+                        id="bg-danger"
+                        type="button"
+                        onClick={() => setRadios("bg-danger")}
+                        value="vaccation"
+                      />
+                    </ButtonGroup>
+                  </FormGroup>
+                </Form>
+              </div>
+              <div className="modal-footer">
+                <Button color="primary" onClick={changeEvent}>
+                  Update
+                </Button>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    setModalChange(false);
+                    deleteEventSweetAlert();
+                  }}
+                >
+                  Delete
+                </Button>
+                <Button
+                  className="ml-auto"
+                  color="link"
+                  onClick={() => setModalChange(false)}
+                >
+                  Close
+                </Button>
+              </div>
+            </Modal>
+            {/* )} */}
           </div>
         </Row>
       </Container>

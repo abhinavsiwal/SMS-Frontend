@@ -9,7 +9,7 @@ import {
   Form,
   Label,
   Input,
-  Button, 
+  Button,
   Modal,
   ModalHeader,
   ModalBody,
@@ -32,7 +32,7 @@ import moment from "moment";
 import { getAttendence } from "api/attendance";
 import { allStudents } from "api/student";
 import { isAuthenticated } from "api/auth";
-import { sendRequestWithJson,sendRequest } from "api/api";
+import { sendRequestWithJson, sendRequest } from "api/api";
 import { toast, ToastContainer } from "react-toastify";
 import { fetchingAttendanceError } from "constants/errors";
 import { addAttendanceError } from "constants/errors";
@@ -61,7 +61,7 @@ function Attendance() {
   const [selectSessionId, setSelectSessionId] = useState("");
   // console.log("attendance", attendance);
   // console.log(classes);
-const [addAttendance, setAddAttendance] = useState([]);
+  const [addAttendance, setAddAttendance] = useState([]);
   // const [loading, setLoading] = React.useState(true);
 
   const [atd, setAtd] = React.useState({});
@@ -70,19 +70,19 @@ const [addAttendance, setAddAttendance] = useState([]);
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleOnSubmit = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (file) {
-          fileReader.onload = function (event) {
-              const csvOutput = event.target.result;
-          };
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-          fileReader.readAsText(file);
-      }
+      fileReader.readAsText(file);
+    }
   };
 
   // console.log("atd", atd);
@@ -198,6 +198,22 @@ const [addAttendance, setAddAttendance] = useState([]);
       const data = await getAttendence(user.school, user._id);
       console.log(data);
       setAllAttendance(data);
+
+      const tableData = [];
+      for (let i = 0; i < data.length; i++) {
+        let date = data[i].date.slice(8,10);
+        for (let j = 0; j < endOfDayOfMonths; j++) {
+          if (date.toString()===j.toString()) {
+            tableData.push({
+              key:j,
+              status:data.attendance_status,
+            })
+          }
+          
+        }
+      }
+      setAttendanceData(tableData);
+
     } catch (err) {
       console.log(err);
       toast.error(fetchingAttendanceError);
@@ -209,12 +225,12 @@ const [addAttendance, setAddAttendance] = useState([]);
     console.log(event.target.value);
     console.log(attendance);
     let today = new Date();
-    let day = today.getDate()+1;
-    let month = today.getMonth() + 1
+    let day = today.getDate() + 1;
+    let month = today.getMonth() + 1;
     let year = today.getFullYear();
 
     let date = year + "-" + month + "-" + day;
-   
+
     let attendance1 = {
       attendance_status: event.target.value,
       date,
@@ -225,22 +241,21 @@ const [addAttendance, setAddAttendance] = useState([]);
       student: studentId,
     };
 
-    setAddAttendance([...addAttendance,attendance1]);
-
+    setAddAttendance([...addAttendance, attendance1]);
   };
 
   const submitHandler = async () => {
-   console.log(addAttendance);
-   let formData = new FormData();
-   formData.set("attendance", JSON.stringify(addAttendance));
-   try {
-     const data = await postAttendance(user._id,formData);
-     console.log(data);
-     toast.success(addAttendanceSuccess)
-   } catch (err) {
-     console.log(err);
-     toast.error(addAttendanceError)
-   }
+    console.log(addAttendance);
+    let formData = new FormData();
+    formData.set("attendance", JSON.stringify(addAttendance));
+    try {
+      const data = await postAttendance(user._id, formData);
+      console.log(data);
+      toast.success(addAttendanceSuccess);
+    } catch (err) {
+      console.log(err);
+      toast.error(addAttendanceError);
+    }
   };
 
   // const attendanceValueChangeHandler = (value) => {};
@@ -262,27 +277,27 @@ const [addAttendance, setAddAttendance] = useState([]);
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
-      <Row>
-                  <Col className="d-flex justify-content-center mt-2">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+        <Row>
+          <Col className="d-flex justify-content-center mt-2">
+            <form>
+              <input
+                type={"file"}
+                id={"csvFileInput"}
+                accept={".csv"}
+                onChange={handleOnChange}
+              />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
+              <Button
+                onClick={(e) => {
+                  handleOnSubmit(e);
+                }}
+                color="primary"
+              >
+                IMPORT CSV
+              </Button>
+            </form>
+          </Col>
+        </Row>
         <Form>
           <Card>
             <CardBody>
