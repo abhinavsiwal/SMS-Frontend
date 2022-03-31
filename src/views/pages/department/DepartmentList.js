@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   // CardHeader,
@@ -31,14 +31,15 @@ import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
 import Loader from "components/Loader/Loader";
 import { fetchingDepartmentError } from "constants/errors";
-import { deleteDepartmentError } from "constants/errors";
+import { deleteDepartmentError, fetchingStaffFailed } from "constants/errors";
 import { updateDepartmentError } from "constants/errors";
 import {
   updateDepartmentSuccess,
   deleteDepartmentSuccess,
 } from "constants/success";
 import { allSessions } from "api/session";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
+import { allStaffs } from "api/staff";
 
 const DepartmentList = () => {
   const { user, token } = isAuthenticated();
@@ -56,7 +57,11 @@ const DepartmentList = () => {
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [selectSessionId, setSelectSessionId] = useState("");
+  const [primaryHeadId, setPrimaryHeadId] = useState("");
+  const [secondaryHeadId, setSecondaryHeadId] = useState("");
   // console.log("id", deparmentId);
+
+  const [staff, setStaff] = useState([]);
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -69,11 +74,25 @@ const DepartmentList = () => {
       permissions = user.role["Department"];
       console.log(permissions);
     }
-
+  }, []);
+  
+  useEffect(() => {
+    getAllStaff();
     getSession();
+    getDepartmentsData();
   }, []);
 
-  useEffect(async () => {
+  const getAllStaff = async () => {
+    try {
+      const data = await allStaffs(user.school, user._id);
+      console.log(data,"@@@@@@@@");
+      setStaff(data);
+    } catch (err) {
+      toast.error(fetchingStaffFailed);
+    }
+  };
+
+  useEffect( () => {
     //Datasource of antTable
     const myData = [
       { value: "ocean", label: "Ocean" },
@@ -81,7 +100,6 @@ const DepartmentList = () => {
       { value: "purple", label: "Purple" },
     ];
     setData(myData);
-    getDepartmentsData();
   }, [checked]);
 
   //Columns of antTable
@@ -291,18 +309,21 @@ const DepartmentList = () => {
       a.push([items.value, items.label]);
     });
     console.log("a", a);
-    formData.set("module", JSON.stringify(a));
+    // formData.set("module", JSON.stringify(a));
   };
 
   //Create department
   const handleFormChange = async (e) => {
     e.preventDefault();
+
+    
+    const role = [primaryHeadId,secondaryHeadId];
     const { user, token } = isAuthenticated();
     try {
       formData.set("school", user.school);
       formData.set("name", name);
       formData.set("session", selectSessionId);
-      formData.set("head", "6241aa0ae4a91adc36f41035");
+      formData.set("role", JSON.stringify(role));
       // formData.set("module", JSON.stringify(data));
       const createDepartment = await addDepartment(user._id, token, formData);
       if (createDepartment.err) {
@@ -365,18 +386,42 @@ const DepartmentList = () => {
                           className="form-control-label"
                           htmlFor="example4cols2Input"
                         >
-                          Module
+                          Primary Head
                         </label>
-                        <Select
-                          isMulti
-                          name="colors"
-                          options={data}
-                          onChange={handleChange}
-                          className="basic-multi-select"
-                          classNamePrefix="select"
-                        />
+                        <Input
+                          type="select"
+                          onChange={(e) => setPrimaryHeadId(e.target.value)}
+                        >
+                          {staff.map((staff, i) => (
+                            <option key={i} value={staff._id}>
+                              {staff.firstname} {staff.lastname}
+                            </option>
+                          ))}
+                        </Input>
                       </Col>
                     </Row>
+
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Secondary Head
+                        </label>
+                        <Input
+                          type="select"
+                          onChange={(e) => setSecondaryHeadId(e.target.value)}
+                        >
+                          {staff.map((staff, i) => (
+                            <option key={i} value={staff._id}>
+                              {staff.firstname} {staff.lastname}
+                            </option>
+                          ))}
+                        </Input>
+                      </Col>
+                    </Row>
+
                     <Row>
                       <Col>
                         <label
@@ -423,17 +468,22 @@ const DepartmentList = () => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
-                <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
                   {loading ? (
-                    <div ref={componentRef} >
-
-                    <AntTable
-                      columns={columns}
-                      data={classList}
-                      pagination={true}
-                      exportFileName="ClassDetails"
+                    <div ref={componentRef}>
+                      <AntTable
+                        columns={columns}
+                        data={classList}
+                        pagination={true}
+                        exportFileName="ClassDetails"
                       />
-                      </div>
+                    </div>
                   ) : (
                     <Loader />
                   )}

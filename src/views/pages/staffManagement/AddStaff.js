@@ -87,6 +87,10 @@ function AddStaff() {
   const [a, setA] = useState([]);
   console.log("a", a);
 
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
   // const roleOptions = [
   //   // { value: "chemistry", label: "Chemistry" }
   // ];
@@ -300,6 +304,22 @@ function AddStaff() {
   //   }
   // }
 
+  const handleOnChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
+      
+      fileReader.readAsText(file);
+    }
+  };
+
   return (
     <>
       <SimpleHeader name="Add Staff" parentName="Staff Management" />
@@ -318,6 +338,27 @@ function AddStaff() {
       <Container className="mt--6 shadow-lg" fluid>
         <Card className="mb-4 bg-transparent">
           <CardHeader className="Step_Header">
+            <Row>
+              <Col className="d-flex justify-content-center">
+                <form>
+                  <input
+                    type={"file"}
+                    id={"csvFileInput"}
+                    accept={".csv"}
+                    onChange={handleOnChange}
+                  />
+
+                  <Button
+                    onClick={(e) => {
+                      handleOnSubmit(e);
+                    }}
+                    color="primary"
+                  >
+                    IMPORT CSV
+                  </Button>
+                </form>
+              </Col>
+            </Row>
             <Row className="d-flex justify-content-center">
               <Col md="10">
                 <Stepper

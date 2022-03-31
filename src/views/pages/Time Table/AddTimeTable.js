@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 
 //import react-strap
 import {
@@ -83,6 +83,26 @@ function AddTimeTable() {
     Friday: [],
     Saturday: [],
   });
+
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+      setFile(e.target.files[0]);
+  };
+
+  const handleOnSubmit = (e) => {
+      e.preventDefault();
+
+      if (file) {
+          fileReader.onload = function (event) {
+              const csvOutput = event.target.result;
+          };
+
+          fileReader.readAsText(file);
+      }
+  };
 
   React.useEffect(async () => {
     getClass();
@@ -585,6 +605,27 @@ function AddTimeTable() {
       <SimpleHeader name="Student" parentName="Time Table" />
       <PermissionsGate scopes={[SCOPES.canCreate]}>
         <Container className="mt--6 shadow-lg" fluid>
+        <Row>
+                  <Col className="d-flex justify-content-center mt-2">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
           <Form onSubmit={handleData}>
             <Card>
               <CardBody>

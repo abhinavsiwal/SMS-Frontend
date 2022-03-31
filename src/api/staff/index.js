@@ -21,7 +21,7 @@ export const allStaffs = async (schoolId, adminId) => {
     const data = await sendRequestWithJson(
       `${process.env.REACT_APP_API_URL}/api/school/staff/all/${schoolId}/${adminId}`
     );
-    console.log(data);
+    console.log(data,"$$$$$$$$");
     return data;
   } catch (err) {
     console.log(err);

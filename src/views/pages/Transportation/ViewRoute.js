@@ -27,7 +27,7 @@ import AntTable from "../tables/AntTable";
 import { DeleteRowOutlined, SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
 
-//Loader
+//Loader 
 import Loader from "components/Loader/Loader";
 
 import { isAuthenticated } from "api/auth";

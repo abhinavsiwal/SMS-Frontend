@@ -56,6 +56,10 @@ const AddClass = () => {
     session: "",
     abbreviation: "",
   });
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
 
   let permissions;
 
@@ -290,6 +294,23 @@ const AddClass = () => {
       toast.error(addClassError);
     }
   };
+
+
+  const handleOnChange = (e) => {
+    setFile(e.target.files[0]);
+};
+
+const handleOnSubmit = (e) => {
+    e.preventDefault();
+
+    if (file) {
+        fileReader.onload = function (event) {
+            const csvOutput = event.target.result;
+        };
+
+        fileReader.readAsText(file);
+    }
+};
   return (
     <>
       <SimpleHeader name="Add Class" parentName="Class Management" />
@@ -306,6 +327,7 @@ const AddClass = () => {
         theme="colored"
       />
       <Container className="mt--6" fluid>
+        
         <Row>
           {/* {permissions && permissions.includes("add") && (
             
@@ -313,6 +335,27 @@ const AddClass = () => {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
+              <Row>
+              <Col className="d-flex justify-content-center mt-3 ">
+                <form>
+                  <input
+                    type={"file"}
+                    id={"csvFileInput"}
+                    accept={".csv"}
+                    onChange={handleOnChange}
+                  />
+
+                  <Button
+                    onClick={(e) => {
+                      handleOnSubmit(e);
+                    }}
+                    color="primary"
+                  >
+                    IMPORT CSV
+                  </Button>
+                </form>
+              </Col>
+            </Row>
                 <Form onSubmit={handleFormChange} className="mb-4">
                   <CardBody>
                     <Row>

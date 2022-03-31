@@ -58,6 +58,26 @@ function AddRoute() {
 
   const [busNo, setBusNo] = React.useState("");
   const { user } = isAuthenticated();
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+      setFile(e.target.files[0]);
+  };
+
+  const handleOnSubmit = (e) => {
+      e.preventDefault();
+
+      if (file) {
+          fileReader.onload = function (event) {
+              const csvOutput = event.target.result;
+          };
+
+          fileReader.readAsText(file);
+      }
+  };
+
   const getAllStaffs = async () => {
     const res = await allStaffs(user.school, user._id);
     console.log(res);
@@ -158,6 +178,27 @@ function AddRoute() {
                 <CardHeader>
                   <h3>Add Route</h3>
                 </CardHeader>
+                <Row>
+              <Col className="d-flex justify-content-center mt-3 ">
+                <form>
+                  <input
+                    type={"file"}
+                    id={"csvFileInput"}
+                    accept={".csv"}
+                    onChange={handleOnChange}
+                  />
+
+                  <Button
+                    onClick={(e) => {
+                      handleOnSubmit(e);
+                    }}
+                    color="primary"
+                  >
+                    IMPORT CSV
+                  </Button>
+                </form>
+              </Col>
+            </Row>
                 <Form className="mb-4" onSubmit={handleSubmit}>
                   <CardBody>
                     <Row className="d-flex justify-content-center">

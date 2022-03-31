@@ -111,6 +111,26 @@ function AddStudent() {
 
   const [formData] = useState(new FormData());
 
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+      setFile(e.target.files[0]);
+  };
+
+  const handleOnSubmit = (e) => {
+      e.preventDefault();
+
+      if (file) {
+          fileReader.onload = function (event) {
+              const csvOutput = event.target.result;
+          };
+
+          fileReader.readAsText(file);
+      }
+  };
+
   React.useEffect(() => {
     getSession();
   }, []);
@@ -314,6 +334,27 @@ function AddStudent() {
       <Container className="mt--6 shadow-lg" fluid>
         <Card className="mb-4 bg-transparent">
           <CardHeader className="Step_Header">
+          <Row>
+                  <Col className="d-flex justify-content-center mt-2">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
             <Row className="d-flex justify-content-center">
               <Col md="10">
                 <Stepper

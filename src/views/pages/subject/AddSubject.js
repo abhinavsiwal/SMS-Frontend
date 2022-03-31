@@ -42,6 +42,26 @@ const AddSubject = () => {
   const [sessions, setSessions] = useState([]);
   const { user, token } = isAuthenticated();
 
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+    setFile(e.target.files[0]);
+};
+
+const handleOnSubmit = (e) => {
+    e.preventDefault();
+
+    if (file) {
+        fileReader.onload = function (event) {
+            const csvOutput = event.target.result;
+        };
+
+        fileReader.readAsText(file);
+    }
+};
+
   const componentRef = React.useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -282,6 +302,27 @@ const AddSubject = () => {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
+              <Row>
+                  <Col className="d-flex justify-content-center mt-2">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
                 <Form onSubmit={handleFormChange} className="mb-4">
                   <CardBody>
                     <Row>

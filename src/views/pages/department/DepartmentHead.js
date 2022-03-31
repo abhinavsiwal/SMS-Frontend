@@ -17,6 +17,8 @@ const DepartmentHead = () => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = isAuthenticated();
+  const [primaryHeadId, setPrimaryHeadId] = useState("");
+  const [secondaryHeadId, setSecondaryHeadId] = useState("");
 
   useEffect(() => {
     getAllDepartments();
@@ -57,7 +59,27 @@ const DepartmentHead = () => {
 
   const [formData] = useState(new FormData());
 
-  const departmentHeadHandler = (departmentId) => async (e) => {
+  const primaryHeadHandler = (departmentId) => async (e) => {
+    console.log(departmentId);
+    console.log(e.target.value);
+    let formData = new FormData();
+    formData.set("secondaryHead", e.target.value);
+
+    try {
+      const data = await departmentHead(
+        departmentId,
+        user._id,
+        token,
+        formData
+      );
+      console.log(data);
+      toast.success(departmentHeadAssignSuccess);
+    } catch (err) {
+      console.log(err);
+      toast.error(departmentHeadAssignError)
+    }
+  };
+  const secondaryHeadHandler = (departmentId) => async (e) => {
     console.log(departmentId);
     console.log(e.target.value);
     let formData = new FormData();
@@ -95,13 +117,33 @@ const DepartmentHead = () => {
                           <Input
                             id={clas._id}
                             type="select"
-                            onChange={departmentHeadHandler(clas._id)}
+                            onChange={primaryHeadHandler(clas._id)}
                             // value={subject[clas._id] || ""}
                             value={[selectStaff.head]}
                             placeholder="Select Staff"
                           >
                             <option value="" disabled selected>
-                              Select Staff
+                              Primary Head
+                            </option>
+
+                            {staff.map((tech) => (
+                              <option key={tech._id} value={tech._id}>
+                                {tech.firstname} {tech.lastname}
+                              </option>
+                            ))}
+                          </Input>
+                        </td>
+                        <td>
+                          <Input
+                            id={clas._id}
+                            type="select"
+                            onChange={secondaryHeadHandler(clas._id)}
+                            // value={subject[clas._id] || ""}
+                            value={[selectStaff.head]}
+                            placeholder="Select Staff"
+                          >
+                            <option value="" disabled selected>
+                              Secondary Head
                             </option>
 
                             {staff.map((tech) => (

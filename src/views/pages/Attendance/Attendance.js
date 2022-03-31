@@ -65,6 +65,26 @@ const [addAttendance, setAddAttendance] = useState([]);
   // const [loading, setLoading] = React.useState(true);
 
   const [atd, setAtd] = React.useState({});
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+      setFile(e.target.files[0]);
+  };
+
+  const handleOnSubmit = (e) => {
+      e.preventDefault();
+
+      if (file) {
+          fileReader.onload = function (event) {
+              const csvOutput = event.target.result;
+          };
+
+          fileReader.readAsText(file);
+      }
+  };
+
   // console.log("atd", atd);
   let permissions = [];
   useEffect(() => {
@@ -242,6 +262,27 @@ const [addAttendance, setAddAttendance] = useState([]);
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
+      <Row>
+                  <Col className="d-flex justify-content-center mt-2">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
         <Form>
           <Card>
             <CardBody>

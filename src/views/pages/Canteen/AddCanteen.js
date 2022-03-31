@@ -48,6 +48,27 @@ function AddCanteen() {
   const [canteenName, setCanteenName] = useState("");
   const [allCanteen, setAllCanteen] = useState([]);
 
+  const [file, setFile] = useState();
+
+  const fileReader = new FileReader();
+
+  const handleOnChange = (e) => {
+      setFile(e.target.files[0]);
+  };
+
+  const handleOnSubmit = (e) => {
+      e.preventDefault();
+
+      if (file) {
+          fileReader.onload = function (event) {
+              const csvOutput = event.target.result;
+          };
+
+          fileReader.readAsText(file);
+      }
+  };
+
+
   let permissions = [];
   useEffect(() => {
     if (user.role["Canteen Management"]) {
@@ -205,6 +226,28 @@ function AddCanteen() {
                 <CardHeader>
                   <h3>Add Canteen</h3>
                 </CardHeader>
+                <Row>
+              <Col className="d-flex justify-content-center mt-3 ">
+                <form>
+                  <input
+                    type={"file"}
+                    id={"csvFileInput"}
+                    accept={".csv"}
+                    onChange={handleOnChange}
+                  />
+
+                  <Button
+                    onClick={(e) => {
+                      handleOnSubmit(e);
+                    }}
+                    color="primary"
+                  >
+                    IMPORT CSV
+                  </Button>
+                </form>
+              </Col>
+            </Row>
+
                 <Form className="mb-4">
                   <CardBody>
                     <Row>
