@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useRef } from "react";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
-import { useReactToPrint } from "react-to-print";
+// import { useReactToPrint } from "react-to-print";
 import {
   Card,
   CardHeader,
@@ -36,6 +36,8 @@ import { SCOPES } from "routeGuard/permission-maps";
 import { fetchingStaffFailed } from "constants/errors";
 import { deleteStaffError } from "constants/errors";
 import { deleteStaffSuccess } from "constants/success";
+import Staffdetails from "./Staffdetails";
+import { useReactToPrint } from "react-to-print";
 
 const AllStaffs = () => {
   const dispatch = useDispatch();
@@ -51,11 +53,21 @@ const AllStaffs = () => {
   const itemsPerPage = 9;
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [component, setComponent] = useState(false);
+  const [stafId, setStaffId] = useState("");
 
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % staffList.length;
     setItemOffset(newOffset);
   };
+
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
+
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
 
@@ -67,13 +79,10 @@ const AllStaffs = () => {
     }
   }, []);
 
-
-  const componentRef = useRef();
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
-
-
+  const handleStaffDetails = (id) => {
+    setStaffId(id);
+    setComponent(true);
+  };
 
   useEffect(() => {
     const fetchStaffs = async () => {
@@ -104,15 +113,15 @@ const AllStaffs = () => {
             action: (
               <h5 key={i + 1} className="mb-0">
                 {/* {permissions && permissions.includes("edit") && ( */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() => updateStaff(res[i])}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => updateStaff(res[i])}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
                 {/* )} */}
                 {permissions && permissions.includes("delete") && (
                   <Button
@@ -134,6 +143,16 @@ const AllStaffs = () => {
                   color="success"
                   type="button"
                   key={"view" + i + 1}
+                  onClick={() =>
+                    handleStaffDetails(
+                      res[i],
+                      res[i].SID,
+                      res[i].firstname,
+                      res[i].email,
+                      res[i].phone,
+                      res[i].gender
+                    )
+                  }
                 >
                   <i className="fas fa-user" />
                 </Button>
@@ -147,10 +166,8 @@ const AllStaffs = () => {
         setPageCount(Math.ceil(data.length / itemsPerPage));
       } catch (err) {
         console.log(err);
-        toast.error(fetchingStaffFailed)
+        toast.error(fetchingStaffFailed);
       }
-      
-     
     };
     fetchStaffs();
   }, [itemOffset, itemsPerPage, checked]);
@@ -164,7 +181,7 @@ const AllStaffs = () => {
       } else {
         setChecked(false);
       }
-      toast.success(deleteStaffSuccess)
+      toast.success(deleteStaffSuccess);
     } catch (err) {
       console.log(err);
       toast.error(deleteStaffError);
@@ -510,192 +527,204 @@ const AllStaffs = () => {
 
   return (
     <React.Fragment>
-      {!staffEditing ? (
+      {component ? (
+        <Staffdetails data={stafId} />
+      ) : (
         <>
-          <SimpleHeader name="All Staffs" />
-          <Container className="mt--6" fluid>
-            <Card className="mb-4">
-              <CardHeader>
-                <Button
-                  color={`${view === 0 ? "warning" : "primary"}`}
-                  type="button"
-                  onClick={() => {
-                    setView(0);
-                  }}
-                >
-                  List View
-                </Button>{" "}
-                <Button
-                  color={`${view === 1 ? "warning" : "primary"}`}
-                  type="button"
-                  onClick={() => {
-                    setView(1);
-                  }}
-                >
-                  Grid View
-                </Button>
-              </CardHeader>
-              <CardBody>
-              <Button
+          {!staffEditing ? (
+            <>
+              <SimpleHeader name="All Staffs" />
+              <Container className="mt--6" fluid>
+                <Card className="mb-4">
+                  <CardHeader>
+                    <Button
+                      color={`${view === 0 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(0);
+                      }}
+                    >
+                      List View
+                    </Button>{" "}
+                    <Button
+                      color={`${view === 1 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(1);
+                      }}
+                    >
+                      Grid View
+                    </Button>
+                  </CardHeader>
+                  <CardBody>
+                  <Button
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
                   >
                     Print
                   </Button>
-                {!loading ? (
-                  <Loader />
-                ) : (
-                  <>
-                    {view === 0 ? (
-                      <>
-                      <div ref={componentRef} >
-
-                        <AntTable
-                          columns={columns}
-                          data={staffList}
-                          pagination={true}
-                          exportFileName="StaffDetails"
-                          />
-                          </div>
-                      </>
+                    {!loading ? (
+                      <Loader />
                     ) : (
                       <>
-                        <Container className="" fluid>
-                          <Row className="card-wrapper">
-                            {currentItems.map((staff, index) => (
-                              <Col md="4" key={index}>
-                                <Card>
-                                  <CardHeader align="right">
-                                    <UncontrolledDropdown>
-                                      <DropdownToggle
-                                        className="btn-icon-only text-light"
-                                        color=""
-                                        role="button"
-                                        size="sm"
-                                      >
-                                        <i className="fas fa-ellipsis-v" />
-                                      </DropdownToggle>
-                                      <DropdownMenu
-                                        className="dropdown-menu-arrow"
-                                        right
-                                      >
-                                        <DropdownItem
-                                          href="#pablo"
-                                          onClick={(e) => e.preventDefault()}
-                                        >
-                                          Edit
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          href="#pablo"
-                                          onClick={(e) => e.preventDefault()}
-                                        >
-                                          Delete
-                                        </DropdownItem>
-                                      </DropdownMenu>
-                                    </UncontrolledDropdown>
-                                  </CardHeader>
-                                  <CardImg
-                                    alt="..."
-                                    src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                                    top
-                                    className="p-4"
-                                  />
-                                  <CardBody className="mt-0">
-                                    <Row>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">SID</h4>
-                                        <span className="text-md">
-                                          {staff.sid}
-                                        </span>
-                                      </Col>
-                                    </Row>
-                                    <Row>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">
-                                          First Name
-                                        </h4>
-                                        <span className="text-md">
-                                          {staff.first_name}
-                                        </span>
-                                      </Col>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">Last Name</h4>
-                                        <span className="text-md">
-                                          {staff.last_name}
-                                        </span>
-                                      </Col>
-                                    </Row>
-                                    <Row>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">
-                                          Assign Role
-                                        </h4>
-                                        <span className="text-md">
-                                          {staff.assign_role}
-                                        </span>
-                                      </Col>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">
-                                          Department
-                                        </h4>
-                                        <span className="text-md">
-                                          {staff.department}
-                                        </span>
-                                      </Col>
-                                    </Row>
-                                    <Row>
-                                      <Col align="center">
-                                        <Button className="mt-3">
-                                          <Link
-                                            to="/admin/staff-profile"
-                                            className="mb-1"
+                        {view === 0 ? (
+                          <>
+                          <div ref={componentRef} >
+
+                            <AntTable
+                              columns={columns}
+                              data={staffList}
+                              pagination={true}
+                              exportFileName="StaffDetails"
+                              />
+                              </div>
+                          </>
+                        ) : (
+                          <>
+                            <Container className="" fluid>
+                              <Row className="card-wrapper">
+                                {currentItems.map((staff, index) => (
+                                  <Col md="4" key={index}>
+                                    <Card>
+                                      <CardHeader align="right">
+                                        <UncontrolledDropdown>
+                                          <DropdownToggle
+                                            className="btn-icon-only text-light"
+                                            color=""
+                                            role="button"
+                                            size="sm"
                                           >
-                                            Read More
-                                          </Link>
-                                        </Button>
-                                      </Col>
-                                    </Row>
-                                  </CardBody>
-                                </Card>
+                                            <i className="fas fa-ellipsis-v" />
+                                          </DropdownToggle>
+                                          <DropdownMenu
+                                            className="dropdown-menu-arrow"
+                                            right
+                                          >
+                                            <DropdownItem
+                                              href="#pablo"
+                                              onClick={(e) =>
+                                                e.preventDefault()
+                                              }
+                                            >
+                                              Edit
+                                            </DropdownItem>
+                                            <DropdownItem
+                                              href="#pablo"
+                                              onClick={(e) =>
+                                                e.preventDefault()
+                                              }
+                                            >
+                                              Delete
+                                            </DropdownItem>
+                                          </DropdownMenu>
+                                        </UncontrolledDropdown>
+                                      </CardHeader>
+                                      <CardImg
+                                        alt="..."
+                                        src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                                        top
+                                        className="p-4"
+                                      />
+                                      <CardBody className="mt-0">
+                                        <Row>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">SID</h4>
+                                            <span className="text-md">
+                                              {staff.sid}
+                                            </span>
+                                          </Col>
+                                        </Row>
+                                        <Row>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              First Name
+                                            </h4>
+                                            <span className="text-md">
+                                              {staff.first_name}
+                                            </span>
+                                          </Col>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              Last Name
+                                            </h4>
+                                            <span className="text-md">
+                                              {staff.last_name}
+                                            </span>
+                                          </Col>
+                                        </Row>
+                                        <Row>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              Assign Role
+                                            </h4>
+                                            <span className="text-md">
+                                              {staff.assign_role}
+                                            </span>
+                                          </Col>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              Department
+                                            </h4>
+                                            <span className="text-md">
+                                              {staff.department}
+                                            </span>
+                                          </Col>
+                                        </Row>
+                                        <Row>
+                                          <Col align="center">
+                                            <Button className="mt-3">
+                                              <Link
+                                                to="/admin/staff-profile"
+                                                className="mb-1"
+                                              >
+                                                Read More
+                                              </Link>
+                                            </Button>
+                                          </Col>
+                                        </Row>
+                                      </CardBody>
+                                    </Card>
+                                  </Col>
+                                ))}
+                              </Row>
+                            </Container>
+                            <Row>
+                              <Col className="d-flex justify-content-around mt-4">
+                                <ReactPaginate
+                                  nextLabel=">"
+                                  onPageChange={handlePageClick}
+                                  pageRangeDisplayed={3}
+                                  marginPagesDisplayed={2}
+                                  pageCount={pageCount}
+                                  previousLabel="<"
+                                  pageClassName="page-item"
+                                  pageLinkClassName="page-link"
+                                  previousClassName="page-item"
+                                  previousLinkClassName="page-link"
+                                  nextClassName="page-item"
+                                  nextLinkClassName="page-link"
+                                  breakLabel="..."
+                                  breakClassName="page-item"
+                                  breakLinkClassName="page-link"
+                                  containerClassName="pagination"
+                                  activeClassName="active"
+                                  renderOnZeroPageCount={null}
+                                />
                               </Col>
-                            ))}
-                          </Row>
-                        </Container>
-                        <Row>
-                          <Col className="d-flex justify-content-around mt-4">
-                            <ReactPaginate
-                              nextLabel=">"
-                              onPageChange={handlePageClick}
-                              pageRangeDisplayed={3}
-                              marginPagesDisplayed={2}
-                              pageCount={pageCount}
-                              previousLabel="<"
-                              pageClassName="page-item"
-                              pageLinkClassName="page-link"
-                              previousClassName="page-item"
-                              previousLinkClassName="page-link"
-                              nextClassName="page-item"
-                              nextLinkClassName="page-link"
-                              breakLabel="..."
-                              breakClassName="page-item"
-                              breakLinkClassName="page-link"
-                              containerClassName="pagination"
-                              activeClassName="active"
-                              renderOnZeroPageCount={null}
-                            />
-                          </Col>
-                        </Row>
+                            </Row>
+                          </>
+                        )}
                       </>
                     )}
-                  </>
-                )}
-              </CardBody>
-            </Card>
-          </Container>
+                  </CardBody>
+                </Card>
+              </Container>
+            </>
+          ) : (
+            <UpdateStaff staffDetails={editingData} />
+          )}
         </>
-      ) : (
-        <UpdateStaff staffDetails={editingData} />
       )}
     </React.Fragment>
   );

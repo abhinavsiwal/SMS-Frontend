@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import {
   Container,
@@ -7,10 +7,8 @@ import {
   Input,
   Button,
   CardHeader,
-  Col,
-  Label,
 } from "reactstrap";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import AntTable from "../tables/AntTable";
@@ -254,7 +252,6 @@ function ViewCanteen() {
     content: () => componentRef.current,
   });
 
-
   let permissions = [];
   useEffect(() => {
     if (user.role["Canteen Management"]) {
@@ -273,9 +270,10 @@ function ViewCanteen() {
     console.log(res);
     setAllCanteen(res);
     setSelectedCanteenId(res[0]._id);
-    let selectedCanteen = allCanteen.find(
+    let selectedCanteen = await allCanteen.find(
       (canteen) => canteen._id === selectedCanteenId
     );
+    console.log("selectedCanteen", selectedCanteen);
     let data = [];
 
     for (let i = 0; i < selectedCanteen.menu.length; i++) {
@@ -287,12 +285,15 @@ function ViewCanteen() {
         key: i,
         s_no: [i + 1],
         canteen_name: selectedCanteen.menu[i].name,
-        items: selectedCanteen.menu[i].items,
+        items: selectedCanteen.menu[i].item,
         description: selectedCanteen.menu[i].description,
         image: selectedCanteen.menu[i].image,
         price: selectedCanteen.menu[i].price,
         publish: selectedCanteen.menu[i].publish,
-        time: selectedCanteen.menu[i].time,
+        time:
+          selectedCanteen.menu[i].start_time +
+          " - " +
+          selectedCanteen.menu[i].end_time,
         action: (
           <h5 key={i + 1} className="mb-0">
             {permissions && permissions.includes("edit") && (
@@ -412,17 +413,18 @@ function ViewCanteen() {
             </Input>
           </CardHeader>
           <CardBody>
-          <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
+            <Button color="primary" className="mb-2" onClick={handlePrint}>
+              Print
+            </Button>
             {loading ? (
-              <div ref={componentRef} >
-
-              <AntTable
-                columns={columns}
-                data={viewCanteen}
-                pagination={true}
-                exportFileName="StudentDetails"
+              <div ref={componentRef}>
+                <AntTable
+                  columns={columns}
+                  data={viewCanteen}
+                  pagination={true}
+                  exportFileName="StudentDetails"
                 />
-                </div>
+              </div>
             ) : (
               <Loader />
             )}
