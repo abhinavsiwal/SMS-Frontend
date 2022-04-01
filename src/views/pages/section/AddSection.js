@@ -277,11 +277,14 @@ const AddSection = () => {
       // All Subjects
       allSubjects(user._id, user.school, token)
         .then((res) => {
+          console.log("sub", res);
           const options = [];
-          for (let i = 0; i < res[0].list.length; i++) {
+          for (let i = 0; i < res.length; i++) {
             options.push({
-              value: res[0].list[i],
-              label: res[0].list[i],
+              // value: res[0].list[i],
+              // label: res[0].list[i],
+              value: res[i].name,
+              label: res[i].name,
             });
           }
           setRoleOptions(options);
@@ -457,7 +460,6 @@ const AddSection = () => {
                           id="example4cols3Input"
                           type="select"
                           onChange={handleChange("session")}
-                          // value={subjectData.session}
                           required
                         >
                           <option value="" disabled selected>
