@@ -8,19 +8,18 @@ import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
 
 import {
- 
   fetchingClassError,
   classTeacherAssignError,
-  fetchingStaffFailed
+  fetchingStaffFailed,
 } from "constants/errors";
-import {
+import { classTeacherAssignSuccess } from "constants/success";
 
-  classTeacherAssignSuccess
-} from "constants/success";
+import Loader from "components/Loader/Loader";
 
 const ClassTeacher = () => {
   const [classList, setClassList] = useState([]);
   const [teacherList, setTeacherList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { user, token } = isAuthenticated();
   // let permissions;
   //   useEffect(() => {
@@ -38,6 +37,7 @@ const ClassTeacher = () => {
         return toast.error(classess.err);
       }
       setClassList(classess);
+      setLoading(true);
       // toast.success(fetchingClassSuccess)
     } catch (err) {
       toast.error(fetchingClassError);
@@ -66,10 +66,10 @@ const ClassTeacher = () => {
     try {
       const data = await assignClassTeacher(classId, user._id, token, formData);
       console.log(data);
-      toast.success(classTeacherAssignSuccess)
+      toast.success(classTeacherAssignSuccess);
     } catch (err) {
       console.log(err);
-      toast.error(classTeacherAssignError)
+      toast.error(classTeacherAssignError);
     }
   };
 
@@ -78,28 +78,32 @@ const ClassTeacher = () => {
       <SimpleHeader name="Class Teacher" parentName="Class Management" />
       <Container fluid className="mt--6">
         <Card className="mb-4">
-          <Table className="my-table mt-2">
-            <tbody>
-              {classList.map((clas) => (
-                <tr key={clas._id} className="teacher-table-row">
-                  <td className="teacher-table-class">{clas.name}</td>
-                  <td>
-                    <Input
-                      id={clas._id}
-                      type="select"
-                      onChange={assignClassTeacherHandler(clas._id)}
-                    >
-                      {teacherList.map((tech, i) => (
-                        <option key={i} value={tech._id}>
-                          {tech.firstname} {tech.lastname}
-                        </option>
-                      ))}
-                    </Input>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          {loading ? (
+            <Table className="my-table mt-2">
+              <tbody>
+                {classList.map((clas) => (
+                  <tr key={clas._id} className="teacher-table-row">
+                    <td className="teacher-table-class">{clas.name}</td>
+                    <td>
+                      <Input
+                        id={clas._id}
+                        type="select"
+                        onChange={assignClassTeacherHandler(clas._id)}
+                      >
+                        {teacherList.map((tech, i) => (
+                          <option key={i} value={tech._id}>
+                            {tech.firstname} {tech.lastname}
+                          </option>
+                        ))}
+                      </Input>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          ) : (
+            <Loader />
+          )}
         </Card>
       </Container>
     </>

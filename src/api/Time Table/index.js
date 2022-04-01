@@ -42,7 +42,7 @@ export const deleteTimeTable = (timeTableId, userId, token) => {
 };
 
 export const updateTimeTable = (timeTableId, userId, token, data) => {
-  const url = `${process.env.REACT_APP_API_URL}/api/school/timetable/edit/${timeTableId.data}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/timetable/edit/${timeTableId}/${userId}`;
   return fetch(url, {
     method: "PUT",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },

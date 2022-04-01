@@ -41,7 +41,7 @@ function AddStudent() {
   const [connectFalse, setConnectFalse] = useState(false);
 
   const [studentData, setStudentData] = useState({
-    image: "",
+    photo: "",
     joining_date: "",
     firstname: "",
     lastname: "",
@@ -159,7 +159,8 @@ function AddStudent() {
   //Taking Image Value
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
-    setStudentData({ ...studentData, [name]: event.target.files[0].name });
+    console.log("aa", event.target.files[0]);
+    setStudentData({ ...studentData, [name]: event.target.files[0] });
   };
 
   //Delete Fields
@@ -390,8 +391,8 @@ function AddStudent() {
                         id="customFileLang"
                         lang="en"
                         type="file"
-                        accept="image/*"
-                        onChange={handleFileChange("image")}
+                        accept="photo/*"
+                        onChange={handleFileChange("photo")}
                         required
                       />
                       <label
@@ -504,7 +505,7 @@ function AddStudent() {
                       id="example4cols2Input"
                       placeholder="Aadhar Card Number"
                       type="text"
-                      pattern="[1-9]{1}[0-9]{9}"
+                      // pattern="[1-9]{1}[0-9]{9}"
                       onChange={handleChange("aadhar_number")}
                       required
                       value={studentData.aadhar_number}

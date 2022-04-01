@@ -46,6 +46,7 @@ const AllStudents = () => {
   const [checked, setChecked] = useState(false);
   // Pagination
   const [currentItems, setCurrentItems] = useState(null);
+  console.log("currentItems", currentItems);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const [editing, setEditing] = useState(false);
@@ -80,69 +81,73 @@ const AllStudents = () => {
         JSON.stringify(payload)
       );
       console.log("res", res);
-      const data = [];
-      for (let i = 0; i < res.length; i++) {
-        data.push({
-          key: i,
-          sid: res[i].SID,
-          first_name: res[i].firstname,
-          last_name: res[i].lastname,
-          email: res[i].email,
-          phone: res[i].phone,
-          gender: res[i].gender,
-          dob: res[i].date_of_birth.split("T")[0].toString(),
-          class: "Class",
-          section: "Section",
-          roll: "Roll",
-          joining_date: res[i].joining_date.split("T")[0].toString(),
-          action: (
-            <h5 key={i + 1} className="mb-0">
-              {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
-              {permissions && permissions.includes("edit") && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => {
-                    updateStudentHandler(res[i]);
-                  }}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-              )}
-              {/* </Link> */}
-              {permissions && permissions.includes("edit") && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => deleteStudentHandler(res[i]._id)}
+      if (res.err) {
+        return toast.error(res.err);
+      } else {
+        const data = [];
+        for (let i = 0; i < res.length; i++) {
+          data.push({
+            key: i,
+            sid: res[i].SID,
+            first_name: res[i].firstname,
+            last_name: res[i].lastname,
+            email: res[i].email,
+            phone: res[i].phone,
+            gender: res[i].gender,
+            dob: res[i].date_of_birth.split("T")[0].toString(),
+            class: "Class",
+            section: "Section",
+            roll: "Roll",
+            joining_date: res[i].joining_date.split("T")[0].toString(),
+            action: (
+              <h5 key={i + 1} className="mb-0">
+                {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
+                {permissions && permissions.includes("edit") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() => {
+                      updateStudentHandler(res[i]);
+                    }}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                )}
+                {/* </Link> */}
+                {permissions && permissions.includes("edit") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => deleteStudentHandler(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                )}
+                <Button
+                  className="btn-sm pull-right"
+                  color="success"
+                  type="button"
+                  key={"view" + i + 1}
+                >
+                  <i className="fas fa-user" />
                 </Button>
-              )}
-              <Button
-                className="btn-sm pull-right"
-                color="success"
-                type="button"
-                key={"view" + i + 1}
-              >
-                <i className="fas fa-user" />
-              </Button>
-            </h5>
-          ),
-        });
+              </h5>
+            ),
+          });
+        }
+        setStudentList(data);
+        setCurrentItems(data.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(data.length / itemsPerPage));
+        setLoading(true);
       }
-      setStudentList(data);
-      setCurrentItems(data.slice(itemOffset, endOffset));
-      setPageCount(Math.ceil(data.length / itemsPerPage));
-      setLoading(true);
     };
     fetchStudents();
   }, [itemOffset, itemsPerPage, checked]);
@@ -548,103 +553,109 @@ const AllStudents = () => {
                   <>
                     <Container className="" fluid>
                       <Row className="card-wrapper">
-                        {currentItems.map((student, index) => (
-                          <Col md="4" key={index}>
-                            <Card>
-                              <CardHeader align="right">
-                                <UncontrolledDropdown>
-                                  <DropdownToggle
-                                    className="btn-icon-only text-light"
-                                    color=""
-                                    role="button"
-                                    size="sm"
-                                  >
-                                    <i className="fas fa-ellipsis-v" />
-                                  </DropdownToggle>
-                                  <DropdownMenu
-                                    className="dropdown-menu-arrow"
-                                    right
-                                  >
-                                    <DropdownItem
-                                      href="#pablo"
-                                      onClick={(e) => e.preventDefault()}
-                                    >
-                                      Edit
-                                    </DropdownItem>
-                                    <DropdownItem
-                                      href="#pablo"
-                                      onClick={(e) => e.preventDefault()}
-                                    >
-                                      Delete
-                                    </DropdownItem>
-                                  </DropdownMenu>
-                                </UncontrolledDropdown>
-                              </CardHeader>
-                              <CardImg
-                                alt="..."
-                                src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                                top
-                                className="p-4"
-                              />
-                              <CardBody className="mt-0">
-                                <Row>
-                                  <Col align="center">
-                                    <h4 className="mt-3 mb-1">SID</h4>
-                                    <span className="text-md">
-                                      {student.sid}
-                                    </span>
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col align="center">
-                                    <h4 className="mt-3 mb-1">First Name</h4>
-                                    <span className="text-md">
-                                      {student.first_name}
-                                    </span>
-                                  </Col>
-                                  <Col align="center">
-                                    <h4 className="mt-3 mb-1">Last Name</h4>
-                                    <span className="text-md">
-                                      {student.last_name}
-                                    </span>
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col align="center">
-                                    <h4 className="mt-3 mb-1">Class</h4>
-                                    <span className="text-md">
-                                      {student.class}
-                                    </span>
-                                  </Col>
-                                  <Col align="center">
-                                    <h4 className="mt-3 mb-1">Section</h4>
-                                    <span className="text-md">
-                                      {student.section}
-                                    </span>
-                                  </Col>
-                                  <Col align="center">
-                                    <h4 className="mt-3 mb-1">Roll</h4>
-                                    <span className="text-md">
-                                      {student.roll}
-                                    </span>
-                                  </Col>
-                                </Row>
-                                <Row>
-                                  <Col align="center">
-                                    <Button className="mt-3">
-                                      <Link
-                                        to="/admin/student-profile"
-                                        className="mb-1"
+                        {currentItems !== null && (
+                          <>
+                            {currentItems.map((student, index) => (
+                              <Col md="4" key={index}>
+                                <Card>
+                                  <CardHeader align="right">
+                                    <UncontrolledDropdown>
+                                      <DropdownToggle
+                                        className="btn-icon-only text-light"
+                                        color=""
+                                        role="button"
+                                        size="sm"
                                       >
-                                        Read More
-                                      </Link>
-                                    </Button>
-                                  </Col>
-                                </Row>
-                              </CardBody>
-                            </Card>
-                          </Col>
-                        ))}
+                                        <i className="fas fa-ellipsis-v" />
+                                      </DropdownToggle>
+                                      <DropdownMenu
+                                        className="dropdown-menu-arrow"
+                                        right
+                                      >
+                                        <DropdownItem
+                                          href="#pablo"
+                                          onClick={(e) => e.preventDefault()}
+                                        >
+                                          Edit
+                                        </DropdownItem>
+                                        <DropdownItem
+                                          href="#pablo"
+                                          onClick={(e) => e.preventDefault()}
+                                        >
+                                          Delete
+                                        </DropdownItem>
+                                      </DropdownMenu>
+                                    </UncontrolledDropdown>
+                                  </CardHeader>
+                                  <CardImg
+                                    alt="..."
+                                    src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                                    top
+                                    className="p-4"
+                                  />
+                                  <CardBody className="mt-0">
+                                    <Row>
+                                      <Col align="center">
+                                        <h4 className="mt-3 mb-1">SID</h4>
+                                        <span className="text-md">
+                                          {student.sid}
+                                        </span>
+                                      </Col>
+                                    </Row>
+                                    <Row>
+                                      <Col align="center">
+                                        <h4 className="mt-3 mb-1">
+                                          First Name
+                                        </h4>
+                                        <span className="text-md">
+                                          {student.first_name}
+                                        </span>
+                                      </Col>
+                                      <Col align="center">
+                                        <h4 className="mt-3 mb-1">Last Name</h4>
+                                        <span className="text-md">
+                                          {student.last_name}
+                                        </span>
+                                      </Col>
+                                    </Row>
+                                    <Row>
+                                      <Col align="center">
+                                        <h4 className="mt-3 mb-1">Class</h4>
+                                        <span className="text-md">
+                                          {student.class}
+                                        </span>
+                                      </Col>
+                                      <Col align="center">
+                                        <h4 className="mt-3 mb-1">Section</h4>
+                                        <span className="text-md">
+                                          {student.section}
+                                        </span>
+                                      </Col>
+                                      <Col align="center">
+                                        <h4 className="mt-3 mb-1">Roll</h4>
+                                        <span className="text-md">
+                                          {student.roll}
+                                        </span>
+                                      </Col>
+                                    </Row>
+                                    <Row>
+                                      <Col align="center">
+                                        <Button className="mt-3">
+                                          <Link
+                                            to="/admin/student-profile"
+                                            className="mb-1"
+                                          >
+                                            Read More
+                                          </Link>
+                                        </Button>
+                                      </Col>
+                                    </Row>
+                                  </CardBody>
+                                </Card>
+                              </Col>
+                            ))}
+                          </>
+                        )}
                       </Row>
                     </Container>
                     <Row>

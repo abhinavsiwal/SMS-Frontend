@@ -192,7 +192,7 @@ function ViewTimeTable() {
     try {
       const updateTable = await updateTimeTable(
         timeTableID,
-        user.school,
+        user._id,
         token,
         formData
       );
@@ -200,17 +200,16 @@ function ViewTimeTable() {
       if (updateTable.err) {
         return toast.error(updateTable.err);
       } else {
-        toast.success("TimeTable updated Successfully");
+        toast.success("TimeTable Deleted Successfully");
+        // setEditing(false);
+        if (checked === true) {
+          setChecked(false);
+        } else {
+          setChecked(true);
+        }
       }
     } catch (err) {
       toast.error("Something Went Wrong!");
-    }
-
-    setEditing(false);
-    if (checked === true) {
-      setChecked(false);
-    } else {
-      setChecked(true);
     }
   };
 
@@ -226,6 +225,7 @@ function ViewTimeTable() {
     let data = {};
     data = lecturer;
     console.log("data", data);
+
     //Create Data Object
     let lectDays = {
       name: timeTableData.prd,
@@ -238,10 +238,7 @@ function ViewTimeTable() {
     if (lectDays.type === "Online") {
       lectDays.link = timeTableData.link;
     }
-    formData.set("class", timeTableData.class);
-    formData.set("section", timeTableData.section);
-    formData.set("session", timeTableData.session);
-    formData.set("school", user.school);
+
     //Checking Values
     console.log(index);
     if (day === "Monday") {
@@ -267,7 +264,7 @@ function ViewTimeTable() {
     try {
       const updateTable = await updateTimeTable(
         timeTableID,
-        user.school,
+        user._id,
         token,
         formData
       );
@@ -276,16 +273,15 @@ function ViewTimeTable() {
         return toast.error(updateTable.err);
       } else {
         toast.success("TimeTable updated Successfully");
+        setEditing(false);
+        if (checked === true) {
+          setChecked(false);
+        } else {
+          setChecked(true);
+        }
       }
     } catch (err) {
       toast.error("Something Went Wrong!");
-    }
-
-    setEditing(false);
-    if (checked === true) {
-      setChecked(false);
-    } else {
-      setChecked(true);
     }
   };
 
@@ -640,7 +636,7 @@ function ViewTimeTable() {
                   </Input>
                 </Col>
               </Row>
-              <Row>
+              <Row className="ml-4">
                 <Col>
                   <Button type="submit" color="primary">
                     View
@@ -677,8 +673,9 @@ function ViewTimeTable() {
                     <tr>
                       <td>
                         <>
-                          {lecturer &&
-                            lecturer.Monday &&
+                          {lecturer && lecturer.Monday.length === 0 ? (
+                            <h3>Empty</h3>
+                          ) : (
                             lecturer.Monday.map((Monday, index) => {
                               return (
                                 <h3>
@@ -723,13 +720,15 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })}
+                            })
+                          )}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer &&
-                            lecturer.Tuesday &&
+                          {lecturer && lecturer.Tuesday.length === 0 ? (
+                            <h3>Empty</h3>
+                          ) : (
                             lecturer.Tuesday.map((Tuesday, index) => {
                               return (
                                 <h3>
@@ -776,13 +775,15 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })}
+                            })
+                          )}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer &&
-                            lecturer.Wednesday &&
+                          {lecturer && lecturer.Wednesday.length === 0 ? (
+                            <h3>Empty</h3>
+                          ) : (
                             lecturer.Wednesday.map((Wednesday, index) => {
                               return (
                                 <h3>
@@ -829,13 +830,15 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })}
+                            })
+                          )}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer &&
-                            lecturer.Thursday &&
+                          {lecturer && lecturer.Thursday.length === 0 ? (
+                            <h3>Empty</h3>
+                          ) : (
                             lecturer.Thursday.map((Thursday, index) => {
                               return (
                                 <h3>
@@ -882,13 +885,15 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })}
+                            })
+                          )}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer &&
-                            lecturer.Friday &&
+                          {lecturer && lecturer.Friday.length === 0 ? (
+                            <h3>Empty</h3>
+                          ) : (
                             lecturer.Friday.map((Friday, index) => {
                               return (
                                 <h3>
@@ -935,13 +940,15 @@ function ViewTimeTable() {
                                   </Button>
                                 </h3>
                               );
-                            })}
+                            })
+                          )}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer &&
-                            lecturer.Saturday &&
+                          {lecturer && lecturer.Saturday.length === 0 ? (
+                            <h3>Empty</h3>
+                          ) : (
                             lecturer.Saturday.map((Saturday, index) => {
                               return (
                                 <h3>
@@ -988,7 +995,8 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })}
+                            })
+                          )}
                         </>
                       </td>
                     </tr>
