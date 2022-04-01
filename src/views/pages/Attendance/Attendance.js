@@ -63,7 +63,7 @@ function Attendance() {
   // console.log(classes);
   const [addAttendance, setAddAttendance] = useState([]);
   // const [loading, setLoading] = React.useState(true);
-
+const [attendanceStatus, setAttendanceStatus] = useState([]);
   const [atd, setAtd] = React.useState({});
   const [file, setFile] = useState();
 
@@ -197,7 +197,10 @@ function Attendance() {
     try {
       const data = await getAttendence(user.school, user._id);
       console.log(data);
-      setAllAttendance(data);
+      // setAllAttendance(data);
+
+
+
 
       const tableData = [];
       for (let i = 0; i < data.length; i++) {
@@ -205,14 +208,14 @@ function Attendance() {
         for (let j = 0; j < endOfDayOfMonths; j++) {
           if (date.toString()===j.toString()) {
             tableData.push({
-              key:j,
+              key:j, 
               status:data.attendance_status,
             })
           }
           
         }
       }
-      setAttendanceData(tableData);
+      
 
     } catch (err) {
       console.log(err);

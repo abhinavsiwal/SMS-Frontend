@@ -16,11 +16,12 @@ import AntTable from "../tables/AntTable";
 //Ant Table
 import { SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
-import { canteenAdd, allCanteens } from "../../../api/canteen/index";
+import { canteenAdd, allCanteens, canteenDelete } from "../../../api/canteen/index";
 //Loader
 import Loader from "components/Loader/Loader";
 
 import { isAuthenticated } from "api/auth";
+import { toast } from "react-toastify";
 
 function ViewCanteen() {
   const [viewCanteen, setViewCanteen] = React.useState([]);
@@ -28,15 +29,17 @@ function ViewCanteen() {
   const [loading, setLoading] = React.useState(false);
   const [selectedCanteenId, setSelectedCanteenId] = useState();
 
+const [checked, setChecked] = useState(false)
+
   const columns = [
     {
       title: "S No.",
       dataIndex: "s_no",
     },
     {
-      title: "Canteen Name",
-      dataIndex: "canteen_name",
-      sorter: (a, b) => a.canteen_name > b.canteen_name,
+      title: "Item Name",
+      dataIndex: "item_name",
+      sorter: (a, b) => a.item_name > b.item_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -62,10 +65,11 @@ function ViewCanteen() {
         return record.canteen_name.toLowerCase().includes(value.toLowerCase());
       },
     },
+
     {
-      title: "Items",
-      dataIndex: "items",
-      sorter: (a, b) => a.items > b.items,
+      title: "Start Time",
+      dataIndex: "start_time",
+      sorter: (a, b) => a.description > b.description,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -88,13 +92,13 @@ function ViewCanteen() {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.items.toLowerCase().includes(value.toLowerCase());
+        return record.description.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      sorter: (a, b) => a.description > b.description,
+      title: "End Time",
+      dataIndex: "end_time",
+      sorter: (a, b) => a.end_time > b.end_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -259,133 +263,91 @@ function ViewCanteen() {
       console.log(permissions);
     }
   }, []);
-
+  
   React.useEffect(() => {
     fetchStaff();
-
-    // tableData();
-  }, []);
+    
+  }, [checked]);
   const fetchStaff = async () => {
     const res = await allCanteens(user._id, user.school); // Call your function here
     console.log(res);
-    setAllCanteen(res);
-    setSelectedCanteenId(res[0]._id);
-    let selectedCanteen = await allCanteen.find(
-      (canteen) => canteen._id === selectedCanteenId
-    );
-    console.log("selectedCanteen", selectedCanteen);
-    let data = [];
+    await setAllCanteen(res);
+   await setSelectedCanteenId(res[0]._id);
+  
 
-    for (let i = 0; i < selectedCanteen.menu.length; i++) {
-      // if(selectedCanteen.menu.length===0){
-      //   return
-      // }
-
-      data.push({
-        key: i,
-        s_no: [i + 1],
-        canteen_name: selectedCanteen.menu[i].name,
-        items: selectedCanteen.menu[i].item,
-        description: selectedCanteen.menu[i].description,
-        image: selectedCanteen.menu[i].image,
-        price: selectedCanteen.menu[i].price,
-        publish: selectedCanteen.menu[i].publish,
-        time:
-          selectedCanteen.menu[i].start_time +
-          " - " +
-          selectedCanteen.menu[i].end_time,
-        action: (
-          <h5 key={i + 1} className="mb-0">
-            {permissions && permissions.includes("edit") && (
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-              >
-                <i className="fas fa-user-edit" />
-              </Button>
-            )}
-            {permissions && permissions.includes("delete") && (
-              <Button
-                className="btn-sm pull-right"
-                color="danger"
-                type="button"
-                key={"delete" + i + 1}
-              >
-                <Popconfirm
-                  title="Sure to delete?"
-                  // onConfirm={() => handleDelete(res[i]._id)}
-                >
-                  <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
-            )}
-          </h5>
-        ),
-      });
-      setViewCanteen(data);
-      setLoading(true);
-    }
+    setLoading(true);
   };
-  // useEffect(() => {
+  useEffect(() => {
+    if(selectedCanteenId){
+      tableData();
+    }
+  }, [selectedCanteenId]);
 
-  // }, [selectedCanteenId])
-
-  const tableData = () => {
+  const tableData = async() => {
     console.log(selectedCanteenId);
     console.log(allCanteen);
-    let selectedCanteen = allCanteen.find(
+    let selectedCanteen = await allCanteen.find(
       (canteen) => canteen._id === selectedCanteenId
     );
     console.log(selectedCanteen);
     const data = [];
-    if (selectedCanteen.menu) {
-      for (let i = 0; i < selectedCanteen.menu.length; i++) {
-        // if(selectedCanteen.menu.length===0){
-        //   return
-        // }
-        data.push({
-          key: i,
-          s_no: [i + 1],
-          canteen_name: selectedCanteen.menu[i].name,
-          items: selectedCanteen.menu[i].items,
-          description: selectedCanteen.menu[i].description,
-          image: selectedCanteen.menu[i].image,
-          price: selectedCanteen.menu[i].price,
-          publish: selectedCanteen.menu[i].publish,
-          time: selectedCanteen.menu[i].time,
-          action: (
-            <h5 key={i + 1} className="mb-0">
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-              >
-                <i className="fas fa-user-edit" />
-              </Button>
-              <Button
-                className="btn-sm pull-right"
-                color="danger"
-                type="button"
-                key={"delete" + i + 1}
-              >
-                <Popconfirm
-                  title="Sure to delete?"
-                  // onConfirm={() => handleDelete(res[i]._id)}
-                >
-                  <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
-            </h5>
-          ),
-        });
-      }
-      setViewCanteen(data);
-      setLoading(true);
+    if (selectedCanteen.menu.length === 0) {
+      return;
     }
+    for (let i = 0; i < selectedCanteen.menu.length; i++) {
+      data.push({
+        key: i,
+        s_no: [i + 1],
+        item_name: selectedCanteen.menu[i].item,
+        start_time:selectedCanteen.menu[i].start_time,
+        end_time:selectedCanteen.menu[i].end_time,
+        image: selectedCanteen.menu[i].image,
+        price: selectedCanteen.menu[i].price,
+        publish: selectedCanteen.menu[i].publish,
+        time: selectedCanteen.menu[i].time,
+        action: (
+          <h5 key={i + 1} className="mb-0">
+            <Button
+              className="btn-sm pull-right"
+              color="primary"
+              type="button"
+              key={"edit" + i + 1}
+            >
+              <i className="fas fa-user-edit" />
+            </Button>
+            <Button
+              className="btn-sm pull-right"
+              color="danger"
+              type="button"
+              key={"delete" + i + 1}
+            >
+              <Popconfirm
+                title="Sure to delete?"
+                // onConfirm={() => handleDelete(res[i]._id)}
+              >
+                <i className="fas fa-trash" />
+              </Popconfirm>
+            </Button>
+          </h5>
+        ),
+      });
+    }
+    setViewCanteen(data);
+    setLoading(true);
   };
+
+const deleteCanteenHandler=async()=>{
+  try {
+    const data = await canteenDelete(selectedCanteenId,user._id);
+    console.log(data);
+    setChecked(!checked)
+    toast.success("Canteen Deleted Successfully")
+  } catch (err) {
+    console.log(err);
+    toast.error("Canteen Not Deleted")
+  }
+}
+
 
   return (
     <>
@@ -411,6 +373,7 @@ function ViewCanteen() {
                 );
               })}
             </Input>
+            <Button color="danger" className="mt-3" onClick={deleteCanteenHandler} >Delete Canteen</Button>
           </CardHeader>
           <CardBody>
             <Button color="primary" className="mb-2" onClick={handlePrint}>

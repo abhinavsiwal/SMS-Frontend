@@ -19,8 +19,8 @@ function Admin() {
     mainContentRef.current.scrollTop = 0;
   }, [location]);
 
-  console.log(user.role);
-  console.log(adminRoutes);
+  // console.log(user.role);
+  // console.log(adminRoutes);
 
   let routes1 = [];
   // for (const key in user.role) {
@@ -32,8 +32,8 @@ function Admin() {
   let permittedRoute = [];
 
   for (const key in user.permissions) {
-    console.log(key);
-    console.log(user.permissions[key]);
+    // console.log(key);
+    // console.log(user.permissions[key]);
     // routes1.push(key);
 
     let permitted = adminRoutes.find(
@@ -52,10 +52,10 @@ function Admin() {
     if (permitted) {
       permittedRoute.push(permitted);
     }
-    console.log(permitted);
+    // console.log(permitted);
   }
 
-  console.log(permittedRoute);
+  // console.log(permittedRoute);
 
   const getRoutes = (routes) => {
     // console.log(routes);

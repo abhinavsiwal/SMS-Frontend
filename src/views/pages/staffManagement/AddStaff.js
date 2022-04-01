@@ -40,7 +40,7 @@ import { fetchingDepartmentError } from "constants/errors";
 import { allSessions } from "api/session";
 
 function AddStaff() {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(3);
   const { user } = isAuthenticated();
   const [staffData, setStaffData] = useState({
     image: "",
