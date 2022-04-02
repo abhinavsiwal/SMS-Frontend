@@ -36,6 +36,9 @@ import { fetchingStaffFailed } from "constants/errors";
 import { fetchingCanteenError } from "constants/errors";
 import { addCanteenError } from "constants/errors";
 
+import FixRequiredSelect from "../../../components/FixRequiredSelect";
+import BaseSelect from "react-select";
+
 function AddCanteen() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
@@ -47,7 +50,7 @@ function AddCanteen() {
   const [roleOptions, setRoleOptions] = useState([]);
   const [canteenName, setCanteenName] = useState("");
   const [allCanteen, setAllCanteen] = useState([]);
-
+  const [checked, setChecked] = useState(false);
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
@@ -107,12 +110,15 @@ function AddCanteen() {
 
   useEffect(() => {
     getAllStaffs();
-    getAllCanteens();
-    console.log(allStaff);
+    // console.log(allStaff);
   }, []);
 
-  console.log(roleOptions);
-  console.log("end", endDuration);
+  // console.log(roleOptions);
+  // console.log("end", endDuration);
+
+  useEffect(() => {
+    getAllCanteens();
+  }, [checked]);
 
   const [addCanteen, setAddCanteen] = React.useState({
     canteenName: "",
@@ -153,6 +159,7 @@ function AddCanteen() {
         return toast.error(data.err);
       }
       toast.success("Canteen Added Successfully");
+      setChecked(!checked);
     } catch (err) {
       toast.error(addCanteenError);
     }
@@ -199,6 +206,16 @@ function AddCanteen() {
       toast.error(addCanteenError);
     }
   };
+
+
+  const Select = props => (
+    <FixRequiredSelect
+      {...props}
+      SelectComponent={BaseSelect}
+      options={props.options}
+    />
+  );
+  
 
   return (
     <>
@@ -340,7 +357,7 @@ function AddCanteen() {
                         </Label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Class"
+                          placeholder="Name"
                           type="text"
                           onChange={handleChangeMenu("items")}
                           value={addMenu.items}

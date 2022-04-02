@@ -39,6 +39,10 @@ import {
 } from "constants/errors";
 import { deleteSectionSuccess, addSectionSuccess } from "constants/success";
 
+import FixRequiredSelect from "../../../components/FixRequiredSelect";
+import BaseSelect from "react-select";
+
+
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
   console.log("sectionList", sectionList);
@@ -356,6 +360,16 @@ const AddSection = () => {
       fileReader.readAsText(file);
     }
   };
+
+  
+  const Select = props => (
+    <FixRequiredSelect
+      {...props}
+      SelectComponent={BaseSelect}
+      options={props.options}
+    />
+  );
+  
 
   return (
     <>

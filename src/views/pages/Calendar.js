@@ -85,6 +85,8 @@ function CalendarView() {
   const [selectSessionId, setSelectSessionId] = useState("");
   const [staff, setStaff] = useState([]);
   const [staffId, setStaffId] = useState("");
+const [filterSessionId, setFilterSessionId] = useState("")
+
   let permissions = [];
   useEffect(() => {
     if (user.role["Calendar"]) {
@@ -168,9 +170,8 @@ function CalendarView() {
     // formData.set("assignTeachers", assignTeachers)
     formData.set("event_type", radios);
     formData.set("school", user.school);
-    formData.set("assignTeachers",JSON.stringify([staffId]));
-    formData.set("session",selectSessionId);
-
+    formData.set("assignTeachers", JSON.stringify([staffId]));
+    formData.set("session", selectSessionId);
 
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
@@ -312,6 +313,14 @@ function CalendarView() {
     setEvent(undefined);
   };
 
+useEffect(() => {
+  
+
+ 
+}, [filterSessionId])
+
+
+
   //Ant Table Column
   const columns = [
     {
@@ -431,7 +440,7 @@ function CalendarView() {
           </button>
         </div>
         <ModalBody>
-          <Label className="form-control-label" htmlFor="example-date-input">
+          {/* <Label className="form-control-label" htmlFor="example-date-input">
             Search
           </Label>
           <Input
@@ -441,7 +450,29 @@ function CalendarView() {
             // onChange={(e) => setEventTitle(e.target.value)}
             required
           />
-          <Button className="mt-2">Search</Button>
+          <Button className="mt-2">Search</Button> */}
+          <Label className="form-control-label" htmlFor="example-date-input">
+            Session
+          </Label>
+          <Input
+            id="example4cols3Input"
+            type="select"
+            onChange={(e) => setFilterSessionId(e.target.value)}
+            value={filterSessionId}
+            required
+          >
+            <option value="" disabled selected>
+              All
+            </option>
+            {sessions.map((session) => {
+              return (
+                <option value={session._id} key={session._id}>
+                  {session.name}
+                </option>
+              );
+            })}
+          </Input>
+
           <Table columns={columns} dataSource={eventList} />
         </ModalBody>
       </Modal>
@@ -625,11 +656,10 @@ function CalendarView() {
                     />
                   </FormGroup>
                   <FormGroup>
-                  <Label
+                    <Label
                       className="form-control-label"
                       htmlFor="example-date-input"
                     >
-                      
                       Teacher
                     </Label>
                     <Input

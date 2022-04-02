@@ -16,7 +16,7 @@ import AntTable from "../tables/AntTable";
 //Ant Table
 import { SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
-import { canteenAdd, allCanteens, canteenDelete } from "../../../api/canteen/index";
+import { canteenAdd, allCanteens, canteenDelete,menuItemDelete } from "../../../api/canteen/index";
 //Loader
 import Loader from "components/Loader/Loader";
 
@@ -323,7 +323,7 @@ const [checked, setChecked] = useState(false)
             >
               <Popconfirm
                 title="Sure to delete?"
-                // onConfirm={() => handleDelete(res[i]._id)}
+                onConfirm={() => deleteMenuItemHandler(selectedCanteen.menu[i]._id)}
               >
                 <i className="fas fa-trash" />
               </Popconfirm>
@@ -339,6 +339,18 @@ const [checked, setChecked] = useState(false)
 const deleteCanteenHandler=async()=>{
   try {
     const data = await canteenDelete(selectedCanteenId,user._id);
+    console.log(data);
+    setChecked(!checked)
+    toast.success("Canteen Deleted Successfully")
+  } catch (err) {
+    console.log(err);
+    toast.error("Canteen Not Deleted")
+  }
+}
+
+const deleteMenuItemHandler=async(itemId)=>{
+  try {
+    const data = await menuItemDelete(itemId,user._id);
     console.log(data);
     setChecked(!checked)
     toast.success("Canteen Deleted Successfully")

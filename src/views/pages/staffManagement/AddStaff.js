@@ -39,6 +39,11 @@ import { fetchingSubjectError } from "constants/errors";
 import { fetchingDepartmentError } from "constants/errors";
 import { allSessions } from "api/session";
 
+import FixRequiredSelect from "../../../components/FixRequiredSelect";
+import BaseSelect from "react-select";
+
+
+
 function AddStaff() {
   const [step, setStep] = useState(3);
   const { user } = isAuthenticated();
@@ -298,6 +303,16 @@ function AddStaff() {
       fileReader.readAsText(file);
     }
   };
+
+
+  const Select = props => (
+    <FixRequiredSelect
+      {...props}
+      SelectComponent={BaseSelect}
+      options={props.options}
+    />
+  );
+  
 
   return (
     <>

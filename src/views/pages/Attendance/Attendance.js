@@ -228,8 +228,8 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
     console.log(event.target.value);
     console.log(attendance);
     let today = new Date();
-    let day = today.getDate() + 1;
-    let month = today.getMonth() + 1;
+    let day = today.getDate()+2;
+    let month = today.getMonth()+1;
     let year = today.getFullYear();
 
     let date = year + "-" + month + "-" + day;
