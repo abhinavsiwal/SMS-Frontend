@@ -315,7 +315,18 @@ const [filterSessionId, setFilterSessionId] = useState("")
 
 useEffect(() => {
   
-
+let filteredEvents = event.filter(event => event.session===filterSessionId);
+const data = [];
+filteredEvents.map((events) => {
+  data.push({
+    key: events._id,
+    event_name: events.name,
+    start_date: events.event_from.split("T")[0],
+    end_date: events.event_to.split("T")[0],
+  });
+});
+setEventList(data);
+setChecked(false);
  
 }, [filterSessionId])
 
