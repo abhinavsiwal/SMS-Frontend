@@ -42,7 +42,6 @@ import { deleteSectionSuccess, addSectionSuccess } from "constants/success";
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
-
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
   console.log("sectionList", sectionList);
@@ -242,31 +241,33 @@ const AddSection = () => {
               subject: res[i].subject.toString(),
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="primary"
-                      type="button"
-                      key={"edit" + i + 1}
+                  {/* {permissions && permissions.includes("edit") && (
+                  
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                  >
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("delete") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => deleteSectionHandler(res[i]._id)}
                     >
-                      <i className="fas fa-user-edit" />
-                    </Button>
-                  )}
-                  {permissions && permissions.includes("delete") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="danger"
-                      type="button"
-                      key={"delete" + i + 1}
-                    >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => deleteSectionHandler(res[i]._id)}
-                      >
-                        <i className="fas fa-trash" />
-                      </Popconfirm>
-                    </Button>
-                  )}
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
                 </h5>
               ),
             });
@@ -364,15 +365,13 @@ const AddSection = () => {
     }
   };
 
-  
-  const Select = props => (
+  const Select = (props) => (
     <FixRequiredSelect
       {...props}
       SelectComponent={BaseSelect}
       options={props.options}
     />
   );
-  
 
   return (
     <>

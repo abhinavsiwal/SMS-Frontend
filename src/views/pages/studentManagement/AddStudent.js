@@ -41,7 +41,7 @@ function AddStudent() {
   const [connectFalse, setConnectFalse] = useState(false);
 
   const [studentData, setStudentData] = useState({
-    photo: "",
+    photos: "",
     joining_date: "",
     firstname: "",
     lastname: "",
@@ -392,7 +392,7 @@ function AddStudent() {
                         lang="en"
                         type="file"
                         accept="photo/*"
-                        onChange={handleFileChange("photo")}
+                        onChange={handleFileChange("photos")}
                         required
                       />
                       <label

@@ -42,10 +42,8 @@ import { allSessions } from "api/session";
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
-
-
 function AddStaff() {
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(0);
   const { user } = isAuthenticated();
   const [staffData, setStaffData] = useState({
     image: "",
@@ -119,7 +117,7 @@ function AddStaff() {
 
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
-    setStaffData({ ...staffData, [name]: event.target.files[0].name });
+    setStaffData({ ...staffData, [name]: event.target.files[0] });
   };
 
   //react-select
@@ -304,15 +302,13 @@ function AddStaff() {
     }
   };
 
-
-  const Select = props => (
+  const Select = (props) => (
     <FixRequiredSelect
       {...props}
       SelectComponent={BaseSelect}
       options={props.options}
     />
   );
-  
 
   return (
     <>

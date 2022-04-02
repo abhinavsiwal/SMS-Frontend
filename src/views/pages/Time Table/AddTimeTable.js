@@ -113,9 +113,13 @@ function AddTimeTable() {
     getSession();
     getSubject();
     getStaff();
-    const getLectures = localStorage.getItem("lecture");
-    const parsedLectures = JSON.parse(getLectures);
-    setLectures(parsedLectures);
+    if (localStorage.getItem("lecture")) {
+      const getLectures = localStorage.getItem("lecture");
+      const parsedLectures = JSON.parse(getLectures);
+      setLectures(parsedLectures);
+    } else {
+      setLectures(null);
+    }
   }, [checked]);
 
   const roleOptions = [
@@ -1023,7 +1027,8 @@ function AddTimeTable() {
                   <tr>
                     <td>
                       <>
-                        {lecturer.Monday &&
+                        {lecturer &&
+                          lecturer.Monday &&
                           lecturer.Monday.map((Monday, index) => {
                             return (
                               <h3>
@@ -1073,7 +1078,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Tuesday &&
+                        {lecturer &&
+                          lecturer.Tuesday &&
                           lecturer.Tuesday.map((Tuesday, index) => {
                             return (
                               <h3>
@@ -1123,7 +1129,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Wednesday &&
+                        {lecturer &&
+                          lecturer.Wednesday &&
                           lecturer.Wednesday.map((Wednesday, index) => {
                             return (
                               <h3>
@@ -1175,7 +1182,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Thursday &&
+                        {lecturer &&
+                          lecturer.Thursday &&
                           lecturer.Thursday.map((Thursday, index) => {
                             return (
                               <h3>
@@ -1225,7 +1233,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Friday &&
+                        {lecturer &&
+                          lecturer.Friday &&
                           lecturer.Friday.map((Friday, index) => {
                             return (
                               <h3>
@@ -1275,7 +1284,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Saturday &&
+                        {lecturer &&
+                          lecturer.Saturday &&
                           lecturer.Saturday.map((Saturday, index) => {
                             return (
                               <h3>

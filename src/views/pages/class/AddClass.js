@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   Row,
@@ -36,7 +36,7 @@ import {
 } from "constants/success";
 
 import { allSessions } from "api/session";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
 
 const AddClass = () => {
   const [classList, setClassList] = useState([]);
@@ -59,7 +59,6 @@ const AddClass = () => {
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
-
 
   let permissions;
 
@@ -88,35 +87,37 @@ const AddClass = () => {
               abbreviation: res[i].abbreviation,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="primary"
-                      type="button"
-                      key={"edit" + i + 1}
-                      onClick={() =>
-                        rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
-                      }
-                    >
-                      <i className="fas fa-user-edit" />
-                    </Button>
-                  )}
+                  {/* {permissions && permissions.includes("edit") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() =>
+                      rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
+                    }
+                  >
+                    <i className="fas fa-user-edit" />
+                  </Button>
 
-                  {permissions && permissions.includes("delete") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="danger"
-                      type="button"
-                      key={"delete" + i + 1}
+                  {/* {permissions && permissions.includes("delete") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
                     >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => handleDelete(res[i]._id)}
-                      >
-                        <i className="fas fa-trash" />
-                      </Popconfirm>
-                    </Button>
-                  )}
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
                 </h5>
               ),
             });
@@ -295,22 +296,21 @@ const AddClass = () => {
     }
   };
 
-
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
-};
+  };
 
-const handleOnSubmit = (e) => {
+  const handleOnSubmit = (e) => {
     e.preventDefault();
 
     if (file) {
-        fileReader.onload = function (event) {
-            const csvOutput = event.target.result;
-        };
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-        fileReader.readAsText(file);
+      fileReader.readAsText(file);
     }
-};
+  };
   return (
     <>
       <SimpleHeader name="Add Class" parentName="Class Management" />
@@ -327,7 +327,6 @@ const handleOnSubmit = (e) => {
         theme="colored"
       />
       <Container className="mt--6" fluid>
-        
         <Row>
           {/* {permissions && permissions.includes("add") && (
             
@@ -335,27 +334,27 @@ const handleOnSubmit = (e) => {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-              <Row>
-              <Col className="d-flex justify-content-center mt-3 ">
-                <form>
-                  <input
-                    type={"file"}
-                    id={"csvFileInput"}
-                    accept={".csv"}
-                    onChange={handleOnChange}
-                  />
+                <Row>
+                  <Col className="d-flex justify-content-center mt-3 ">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
 
-                  <Button
-                    onClick={(e) => {
-                      handleOnSubmit(e);
-                    }}
-                    color="primary"
-                  >
-                    IMPORT CSV
-                  </Button>
-                </form>
-              </Col>
-            </Row>
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
                 <Form onSubmit={handleFormChange} className="mb-4">
                   <CardBody>
                     <Row>
@@ -439,17 +438,22 @@ const handleOnSubmit = (e) => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
-                <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
                   {loading ? (
-                    <div ref={componentRef} >
-
-                    <AntTable
-                      columns={columns}
-                      data={classList}
-                      pagination={true}
-                      exportFileName="ClassDetails"
+                    <div ref={componentRef}>
+                      <AntTable
+                        columns={columns}
+                        data={classList}
+                        pagination={true}
+                        exportFileName="ClassDetails"
                       />
-                      </div>
+                    </div>
                   ) : (
                     <Loader />
                   )}
