@@ -329,7 +329,7 @@ function ViewTimeTable() {
                 </Col>
               </Row>
               <Row className="m-4">
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -338,7 +338,7 @@ function ViewTimeTable() {
                     Lecture Time
                   </p>
                 </Col>
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -357,7 +357,7 @@ function ViewTimeTable() {
                     dateFormat="h:mm aa"
                   />
                 </Col>
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="example-date-input"
@@ -376,8 +376,9 @@ function ViewTimeTable() {
                     dateFormat="h:mm aa"
                   />
                 </Col>
-
-                <Col md="2">
+              </Row>
+              <Row className="m-4">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -386,7 +387,7 @@ function ViewTimeTable() {
                     Recises Time
                   </p>
                 </Col>
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -405,7 +406,7 @@ function ViewTimeTable() {
                     dateFormat="h:mm aa"
                   />
                 </Col>
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="example-date-input"
@@ -990,37 +991,6 @@ function ViewTimeTable() {
                     </tr>
                   </tbody>
                 </>
-
-                {/* {array.map((arr, index) => {
-                return (
-                  <tbody>
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{Object.keys(arr).map((days) => days + ", ")}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].name}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].time}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].subject}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].type}</td>
-                      <td>{arr[Object.keys(arr)[0]][0].teacher}</td>
-                      <td>
-                        {" "}
-                        <Button
-                          className="btn-sm pull-right"
-                          color="danger"
-                          type="button"
-                        >
-                          <Popconfirm
-                            title="Sure to delete?"
-                            onConfirm={() => deleteHandler(index)}
-                          >
-                            <i className="fas fa-trash" />
-                          </Popconfirm>
-                        </Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                );
-              })} */}
               </Table>
             </CardBody>
           </Card>

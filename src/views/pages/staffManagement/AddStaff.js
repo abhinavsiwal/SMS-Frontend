@@ -416,34 +416,6 @@ function AddStaff() {
                       required
                     />
                   </Col>
-
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Select Session
-                    </label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={(e) => setSelectSessionId(e.target.value)}
-                      value={selectSessionId}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option value={session._id} key={session._id}>
-                            {session.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
-                  </Col>
-
                   <Col md="4">
                     <FormGroup>
                       <label
@@ -479,6 +451,34 @@ function AddStaff() {
                         required
                       />
                     </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Select Session
+                    </label>
+                    <Input
+                      id="example4cols3Input"
+                      type="select"
+                      onChange={(e) => setSelectSessionId(e.target.value)}
+                      value={selectSessionId}
+                      required
+                    >
+                      <option value="" disabled selected>
+                        Select Session
+                      </option>
+                      {sessions.map((session) => {
+                        return (
+                          <option value={session._id} key={session._id}>
+                            {session.name}
+                          </option>
+                        );
+                      })}
+                    </Input>
                   </Col>
                 </Row>
                 <Row>

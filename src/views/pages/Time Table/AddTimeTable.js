@@ -191,6 +191,7 @@ function AddTimeTable() {
     }
   };
 
+  //Get Staff Data
   const getStaff = async () => {
     try {
       const { user, token } = isAuthenticated();
@@ -470,8 +471,9 @@ function AddTimeTable() {
                     dateFormat="h:mm aa"
                   />
                 </Col>
-
-                <Col md="2">
+              </Row>
+              <Row className="m-4">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -480,7 +482,7 @@ function AddTimeTable() {
                     Recises Time
                   </p>
                 </Col>
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -499,7 +501,7 @@ function AddTimeTable() {
                     dateFormat="h:mm aa"
                   />
                 </Col>
-                <Col md="2">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="example-date-input"
@@ -538,10 +540,15 @@ function AddTimeTable() {
                     <option value="" disabled selected>
                       Subjects
                     </option>
-                    <option>Physics</option>
+                    {subject.map((subject) => {
+                      return (
+                        <option value={subject._id}>{subject.name}</option>
+                      );
+                    })}
+                    {/* <option>Physics</option>
                     <option>Chemistry</option>
                     <option>Maths</option>
-                    <option>Hindi</option>
+                    <option>Hindi</option> */}
                   </Input>
                 </Col>
                 <Col md="3">
@@ -912,10 +919,17 @@ function AddTimeTable() {
                             <option value="" disabled selected>
                               Subjects
                             </option>
-                            <option>Physics</option>
+                            {subject.map((subject) => {
+                              return (
+                                <option value={subject._id}>
+                                  {subject.name}
+                                </option>
+                              );
+                            })}
+                            {/* <option>Physics</option>
                             <option>Chemistry</option>
                             <option>Maths</option>
-                            <option>Hindi</option>
+                            <option>Hindi</option> */}
                           </Input>
                         </Col>
                         <Col md="3">

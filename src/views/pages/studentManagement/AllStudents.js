@@ -536,7 +536,7 @@ const AllStudents = () => {
               <CardBody>
                 {view === 0 ? (
                   <>
-                    {loading ? (
+                    {loading && studentList ? (
                       <div ref={componentRef}>
                         <AntTable
                           columns={columns}

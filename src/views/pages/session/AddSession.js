@@ -204,14 +204,7 @@ const AddSession = () => {
   };
 
   //Getting values from fetch
-  function rowHandler(
-    id,
-    name,
-    startDate,
-    endDate,
-    working_days,
-    working_time
-  ) {
+  function rowHandler(id, name, startDate, endDate, working_days) {
     // e.stopPropagation();
     setEditing(true);
     setEditSessionName(name);
@@ -225,7 +218,8 @@ const AddSession = () => {
     {
       title: "Session",
       dataIndex: "session",
-      width: 150,
+      // width: 150,
+      width: "20%",
       sorter: (a, b) => a.session > b.session,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -255,7 +249,8 @@ const AddSession = () => {
     {
       title: "Start Date",
       dataIndex: "start_date",
-      width: 150,
+      // width: 150,
+      width: "20%",
       sorter: (a, b) => a.start_date > b.start_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -285,7 +280,8 @@ const AddSession = () => {
     {
       title: "End Date",
       dataIndex: "end_date",
-      width: 150,
+      width: "20%",
+      // width: 150,
       sorter: (a, b) => a.end_date > b.end_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -315,7 +311,7 @@ const AddSession = () => {
     {
       title: "Working Days",
       dataIndex: "working_days",
-      width: 150,
+      // width: 150,
       sorter: (a, b) => a.working_days > b.working_days,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -345,7 +341,8 @@ const AddSession = () => {
     {
       title: "Working Time",
       dataIndex: "working_time",
-      width: 150,
+      // width: 150,
+      width: "10%",
       sorter: (a, b) => a.working_time > b.working_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -375,7 +372,8 @@ const AddSession = () => {
     {
       title: "Year",
       dataIndex: "year",
-      width: 150,
+      width: "20%",
+      // width: 150,
       sorter: (a, b) => a.year > b.year,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -603,7 +601,7 @@ const AddSession = () => {
             </div>
           </Col>
 
-          <Col>
+          {/* <Col>
             <div className="card-wrapper">
               <Card>
                 <CardBody>
@@ -615,7 +613,7 @@ const AddSession = () => {
                     Print
                   </Button>
                   <Row className="ml-2">
-                    {loading ? (
+                    {loading && sessionList ? (
                       <div ref={componentRef}>
                         <AntTable
                           columns={columns}
@@ -628,6 +626,33 @@ const AddSession = () => {
                       <Loader />
                     )}
                   </Row>
+                </CardBody>
+              </Card>
+            </div>
+          </Col> */}
+          <Col>
+            <div className="card-wrapper">
+              <Card>
+                <CardBody>
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
+                  {loading && sessionList ? (
+                    <div ref={componentRef}>
+                      <AntTable
+                        columns={columns}
+                        data={sessionList}
+                        pagination={true}
+                        exportFileName="SessionDetails"
+                      />
+                    </div>
+                  ) : (
+                    <Loader />
+                  )}
                 </CardBody>
               </Card>
             </div>

@@ -108,6 +108,7 @@ const AddSubject = () => {
     session: "",
   });
 
+  //Delete Subject
   const handleDelete = async (subjectId) => {
     console.log("delete");
     const { user, token } = isAuthenticated();
@@ -130,6 +131,7 @@ const AddSubject = () => {
     setSubjectId(id);
   };
 
+  //Edit Subject
   const handleEdit = async () => {
     try {
       const { user, token } = isAuthenticated();
@@ -141,11 +143,15 @@ const AddSubject = () => {
         formData
       );
       console.log("updateSubject", updatedSubject);
-      setEditing(false);
-      if (checked === false) {
-        setChecked(true);
+      if (updatedSubject.err) {
+        return toast.error(updatedSubject.err);
       } else {
-        setChecked(false);
+        setEditing(false);
+        if (checked === false) {
+          setChecked(true);
+        } else {
+          setChecked(false);
+        }
       }
     } catch (err) {
       toast.error(err);
@@ -243,32 +249,34 @@ const AddSubject = () => {
             name: res[i].name,
             action: (
               <h5 key={i + 1} className="mb-0">
-                {permissions && permissions.includes("edit") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() => rowHandler(res[i]._id, res[i].name)}
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => rowHandler(res[i]._id, res[i].name)}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
+                {/* {permissions && permissions.includes("edit") && (
+                  
+                )} */}
+                {/* {permissions && permissions.includes("delete") && (
+                  
+                )} */}
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
                   >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                )}
-                {permissions && permissions.includes("delete") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
-                )}
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
               </h5>
             ),
           });
@@ -476,7 +484,7 @@ const AddSubject = () => {
                   >
                     Print
                   </Button>
-                  {loading ? (
+                  {loading && subjectList ? (
                     <div ref={componentRef}>
                       <AntTable
                         columns={columns}

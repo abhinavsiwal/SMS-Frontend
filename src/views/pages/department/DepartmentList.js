@@ -191,7 +191,9 @@ const DepartmentList = () => {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.secondary_head.toLowerCase().includes(value.toLowerCase());
+        return record.secondary_head
+          .toLowerCase()
+          .includes(value.toLowerCase());
       },
     },
     {
@@ -516,7 +518,7 @@ const DepartmentList = () => {
                   >
                     Print
                   </Button>
-                  {loading ? (
+                  {loading && classList ? (
                     <div ref={componentRef}>
                       <AntTable
                         columns={columns}

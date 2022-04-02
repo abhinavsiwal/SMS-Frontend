@@ -537,7 +537,7 @@ function ViewRoute() {
             <Button color="primary" className="mb-2" onClick={handlePrint}>
               Print
             </Button>
-            {loading ? (
+            {loading && viewRoute ? (
               <div ref={componentRef}>
                 <AntTable
                   columns={columns}

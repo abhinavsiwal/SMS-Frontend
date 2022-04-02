@@ -61,19 +61,19 @@ function Support() {
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
-      setFile(e.target.files[0]);
+    setFile(e.target.files[0]);
   };
 
   const handleOnSubmit = (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if (file) {
-          fileReader.onload = function (event) {
-              const csvOutput = event.target.result;
-          };
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
 
-          fileReader.readAsText(file);
-      }
+      fileReader.readAsText(file);
+    }
   };
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -269,7 +269,7 @@ function Support() {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-              <Row>
+                <Row>
                   <Col className="d-flex justify-content-center mt-2">
                     <form>
                       <input
@@ -364,7 +364,7 @@ function Support() {
                   >
                     Print
                   </Button>
-                  {loading ? (
+                  {loading && supportList ? (
                     <div ref={componentRef}>
                       <AntTable
                         columns={columns}
