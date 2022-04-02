@@ -27,6 +27,7 @@ import {
   allCanteens,
   canteenDelete,
   menuItemDelete,
+  menuItemEdit,
 } from "../../../api/canteen/index";
 //Loader
 import Loader from "components/Loader/Loader";
@@ -55,10 +56,10 @@ function ViewCanteen() {
   const [selectedCanteenId, setSelectedCanteenId] = useState();
   const [addMenu, setAddMenu] = React.useState({
     image: "",
-    items: "",
-    description: "",
+    item: "",
     price: "",
     publish: "",
+    id:"",
   });
 
   const [checked, setChecked] = useState(false);
@@ -297,9 +298,9 @@ function ViewCanteen() {
   }, []);
 
   React.useEffect(() => {
-    fetchStaff();
+    fetchCanteen();
   }, [checked]);
-  const fetchStaff = async () => {
+  const fetchCanteen = async () => {
     const res = await allCanteens(user._id, user.school); // Call your function here
     console.log(res);
     await setAllCanteen(res);
@@ -342,14 +343,7 @@ function ViewCanteen() {
               color="primary"
               type="button"
               key={"edit" + i + 1}
-              onClick={
-                () => rowHandler()
-                // res[i]._id,
-                // res[i].name,
-                // res[i].start_date.split("T")[0],
-                // res[i].start_date.split("T")[0],
-                // res[i].working_days
-              }
+              onClick={() => rowHandler(selectedCanteen.menu[i])}
             >
               <i className="fas fa-user-edit" />
             </Button>
@@ -386,11 +380,56 @@ function ViewCanteen() {
     setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
   };
 
-  function rowHandler(id) {
+  function rowHandler(sectionData) {
     setEditing(true);
+    console.log(sectionData);
+    setAddMenu({
+      ...addMenu,
+      item: sectionData.item,
+      // start_time: sectionData.start_time,
+      // end_time: sectionData.end_time,
+      price: sectionData.price,
+      publish: sectionData.publish,
+      // start_time: sectionData.start_time,
+      image: sectionData.image,
+      id:sectionData._id,
+    });
+    
+      
   }
   //Edit Canteen
-  const handleEditSubmit = () => {};
+  const handleEditSubmit =async (e) => {
+    e.preventDefault();
+    console.log(addMenu);
+    console.log(startDuration);
+    console.log(endDuration);
+
+    let formData = new FormData();
+    formData.set("school", user.school);
+    formData.set("item", addMenu.item);
+    formData.set("image", addMenu.image);
+    // formData.set("description", addMenu.description);
+    formData.set("start_time", startDuration);
+    formData.set("end_time", endDuration);
+    formData.set("price", addMenu.price);
+    formData.set("publish", addMenu.publish);
+
+    try {
+      const data = await  menuItemEdit(addMenu.id,user._id,formData);
+
+      console.log(data);
+      setChecked(!checked);
+      toast.success("Item edited successfully")
+      setEditing(false);
+    } catch (err) {
+      console.log(err);
+      toast.error("Error editing item")
+    }
+
+
+
+
+  };
 
   const deleteCanteenHandler = async () => {
     try {
@@ -521,46 +560,16 @@ function ViewCanteen() {
                       className="form-control-label"
                       htmlFor="example4cols2Input"
                     >
-                      Items Name
+                      Item Name
                     </Label>
                     <Input
                       id="example4cols2Input"
                       placeholder="Name"
                       type="text"
-                      onChange={handleChangeMenu("items")}
-                      value={addMenu.items}
+                      onChange={handleChangeMenu("item")}
+                      value={addMenu.item}
                       required
                     />
-                  </Col>
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Add Canteen
-                    </Label>
-                    <Input
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={(e) => setSelectedCanteenId(e.target.value)}
-                      value={addMenu.addCanteen}
-                      required
-                    >
-                      <option disabled value="" selected>
-                        Select Canteen
-                      </option>
-                      {allCanteen.map((canteen) => {
-                        return (
-                          <option
-                            key={canteen._id}
-                            value={canteen._id}
-                            selected
-                          >
-                            {canteen.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
                   </Col>
                 </Row>
                 <Row className="mt-4">
@@ -643,21 +652,7 @@ function ViewCanteen() {
                       required
                     />
                   </Col>
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Description
-                    </Label>
-                    <TextArea
-                      id="example4cols2Input"
-                      placeholder="Description"
-                      type="Number"
-                      onChange={handleChangeMenu("description")}
-                      value={addMenu.description}
-                    />
-                  </Col>
+                 
                 </Row>
                 <Row className="mt-4 float-right">
                   <Col>
