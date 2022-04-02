@@ -113,9 +113,13 @@ function AddTimeTable() {
     getSession();
     getSubject();
     getStaff();
-    const getLectures = localStorage.getItem("lecture");
-    const parsedLectures = JSON.parse(getLectures);
-    setLectures(parsedLectures);
+    if (localStorage.getItem("lecture")) {
+      const getLectures = localStorage.getItem("lecture");
+      const parsedLectures = JSON.parse(getLectures);
+      setLectures(parsedLectures);
+    } else {
+      setLectures(null);
+    }
   }, [checked]);
 
   const roleOptions = [
@@ -191,7 +195,6 @@ function AddTimeTable() {
     try {
       const { user, token } = isAuthenticated();
       // const payload = { school: user.school };
-
       const teachers = await allStaffs(user.school, user._id);
       console.log("teachers", teachers);
       if (teachers.err) {
@@ -206,8 +209,6 @@ function AddTimeTable() {
   //Onclick Add Data into The Table
   const handleData = async (e) => {
     e.preventDefault();
-    // const data = [];
-    // data.push(lect);
     let data = {};
     data = lect;
 
@@ -280,10 +281,17 @@ function AddTimeTable() {
       console.log("resp", resp);
       if (resp.err) {
         return toast.error(resp.err);
+      } else {
+        toast.success("TimeTable Addedd Successfully");
+        localStorage.removeItem("lecture");
+        if (checked === true) {
+          setChecked(false);
+        } else {
+          setChecked(true);
+        }
       }
-      toast.success("TimeTable Addedd Successfully");
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong!");
     }
   };
 
@@ -1023,7 +1031,8 @@ function AddTimeTable() {
                   <tr>
                     <td>
                       <>
-                        {lecturer.Monday &&
+                        {lecturer &&
+                          lecturer.Monday &&
                           lecturer.Monday.map((Monday, index) => {
                             return (
                               <h3>
@@ -1073,7 +1082,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Tuesday &&
+                        {lecturer &&
+                          lecturer.Tuesday &&
                           lecturer.Tuesday.map((Tuesday, index) => {
                             return (
                               <h3>
@@ -1123,7 +1133,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Wednesday &&
+                        {lecturer &&
+                          lecturer.Wednesday &&
                           lecturer.Wednesday.map((Wednesday, index) => {
                             return (
                               <h3>
@@ -1175,7 +1186,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Thursday &&
+                        {lecturer &&
+                          lecturer.Thursday &&
                           lecturer.Thursday.map((Thursday, index) => {
                             return (
                               <h3>
@@ -1225,7 +1237,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Friday &&
+                        {lecturer &&
+                          lecturer.Friday &&
                           lecturer.Friday.map((Friday, index) => {
                             return (
                               <h3>
@@ -1275,7 +1288,8 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer.Saturday &&
+                        {lecturer &&
+                          lecturer.Saturday &&
                           lecturer.Saturday.map((Saturday, index) => {
                             return (
                               <h3>

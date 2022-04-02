@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import {
   Container,
@@ -27,7 +27,7 @@ import AntTable from "../tables/AntTable";
 import { DeleteRowOutlined, SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
 
-//Loader 
+//Loader
 import Loader from "components/Loader/Loader";
 
 import { isAuthenticated } from "api/auth";
@@ -37,7 +37,7 @@ import {
   deleteRoute,
   editRoute,
 } from "api/transportation";
-import { useReactToPrint } from 'react-to-print';
+import { useReactToPrint } from "react-to-print";
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -74,7 +74,6 @@ function ViewRoute() {
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-
 
   const openModal = (support) => {
     setModalSupport(support);
@@ -298,34 +297,36 @@ function ViewRoute() {
           <>
             <h5 key={i + 1} className="mb-0">
               <span>{res[i].startTime}</span>
-              {permissions && permissions.includes("edit") && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => {
-                    setEditData(res[i]);
-                  }}
+              {/* {permissions && permissions.includes("edit") && (
+                
+              )} */}
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+                onClick={() => {
+                  setEditData(res[i]);
+                }}
+              >
+                <i className="fas fa-user-edit" />
+              </Button>
+              {/* {permissions && permissions.includes("delete") && (
+              
+              )} */}
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => handleDelete(res[i]._id)}
                 >
-                  <i className="fas fa-user-edit" />
-                </Button>
-              )}
-              {permissions && permissions.includes("delete") && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete(res[i]._id)}
-                  >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
-              )}
+                  <i className="fas fa-trash" />
+                </Popconfirm>
+              </Button>
               <Button
                 className="btn-sm pull-right"
                 color="primary"
@@ -533,17 +534,18 @@ function ViewRoute() {
             <h3>View Route</h3>
           </CardHeader>
           <CardBody>
-          <Button color="primary" className="mb-2" onClick={handlePrint} >Print</Button>
+            <Button color="primary" className="mb-2" onClick={handlePrint}>
+              Print
+            </Button>
             {loading ? (
-              <div ref={componentRef} >
-
-              <AntTable
-                columns={columns}
-                data={viewRoute}
-                pagination={true}
-                exportFileName="StudentDetails"
+              <div ref={componentRef}>
+                <AntTable
+                  columns={columns}
+                  data={viewRoute}
+                  pagination={true}
+                  exportFileName="StudentDetails"
                 />
-                </div>
+              </div>
             ) : (
               <Loader />
             )}

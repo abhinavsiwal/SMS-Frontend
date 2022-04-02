@@ -673,9 +673,8 @@ function ViewTimeTable() {
                     <tr>
                       <td>
                         <>
-                          {lecturer && lecturer.Monday.length === 0 ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          {lecturer &&
+                            lecturer.Monday &&
                             lecturer.Monday.map((Monday, index) => {
                               return (
                                 <h3>
@@ -720,15 +719,13 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })
-                          )}
+                            })}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer && lecturer.Tuesday.length === 0 ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          {lecturer &&
+                            lecturer.Tuesday &&
                             lecturer.Tuesday.map((Tuesday, index) => {
                               return (
                                 <h3>
@@ -775,15 +772,13 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })
-                          )}
+                            })}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer && lecturer.Wednesday.length === 0 ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          {lecturer &&
+                            lecturer.Wednesday &&
                             lecturer.Wednesday.map((Wednesday, index) => {
                               return (
                                 <h3>
@@ -830,15 +825,13 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })
-                          )}
+                            })}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer && lecturer.Thursday.length === 0 ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          {lecturer &&
+                            lecturer.Thursday &&
                             lecturer.Thursday.map((Thursday, index) => {
                               return (
                                 <h3>
@@ -885,15 +878,13 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })
-                          )}
+                            })}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer && lecturer.Friday.length === 0 ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          {lecturer &&
+                            lecturer.Friday &&
                             lecturer.Friday.map((Friday, index) => {
                               return (
                                 <h3>
@@ -940,15 +931,13 @@ function ViewTimeTable() {
                                   </Button>
                                 </h3>
                               );
-                            })
-                          )}
+                            })}
                         </>
                       </td>
                       <td>
                         <>
-                          {lecturer && lecturer.Saturday.length === 0 ? (
-                            <h3>Empty</h3>
-                          ) : (
+                          {lecturer &&
+                            lecturer.Saturday &&
                             lecturer.Saturday.map((Saturday, index) => {
                               return (
                                 <h3>
@@ -995,13 +984,43 @@ function ViewTimeTable() {
                                   <hr />
                                 </h3>
                               );
-                            })
-                          )}
+                            })}
                         </>
                       </td>
                     </tr>
                   </tbody>
                 </>
+
+                {/* {array.map((arr, index) => {
+                return (
+                  <tbody>
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{Object.keys(arr).map((days) => days + ", ")}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].name}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].time}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].subject}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].type}</td>
+                      <td>{arr[Object.keys(arr)[0]][0].teacher}</td>
+                      <td>
+                        {" "}
+                        <Button
+                          className="btn-sm pull-right"
+                          color="danger"
+                          type="button"
+                        >
+                          <Popconfirm
+                            title="Sure to delete?"
+                            onConfirm={() => deleteHandler(index)}
+                          >
+                            <i className="fas fa-trash" />
+                          </Popconfirm>
+                        </Button>
+                      </td>
+                    </tr>
+                  </tbody>
+                );
+              })} */}
               </Table>
             </CardBody>
           </Card>

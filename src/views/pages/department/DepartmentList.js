@@ -231,34 +231,36 @@ const DepartmentList = () => {
             module: res[i].module,
             action: (
               <h5 key={i + 1} className="mb-0">
-                {permissions && permissions.includes("edit") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    onClick={() =>
-                      rowHandler(res[i]._id, res[i].name, res[i].module)
-                    }
-                    key={"edit" + i + 1}
+                {/* {permissions && permissions.includes("edit") && (
+                 
+                )} */}
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  onClick={() =>
+                    rowHandler(res[i]._id, res[i].name, res[i].module)
+                  }
+                  key={"edit" + i + 1}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
+                {/* {permissions && permissions.includes("delete") && (
+                 
+                )} */}
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
                   >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                )}
-                {permissions && permissions.includes("delete") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
-                )}
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
               </h5>
             ),
           });

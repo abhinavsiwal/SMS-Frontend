@@ -42,10 +42,10 @@ import { allSessions } from "api/session";
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
-
+import { useHistory } from "react-router-dom";
 
 function AddStaff() {
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(0);
   const { user } = isAuthenticated();
   const [staffData, setStaffData] = useState({
     image: "",
@@ -83,6 +83,7 @@ function AddStaff() {
     department: "",
     subject: "",
   });
+  const history = useHistory();
   const [allRoles, setAllRoles] = useState([]);
   console.log("staff", staffData);
   const [sessions, setSessions] = useState([]);
@@ -90,9 +91,7 @@ function AddStaff() {
   const [formData] = useState(new FormData());
   const [departments, setDeparments] = useState([]);
   const [a, setA] = useState([]);
-
   const [file, setFile] = useState();
-
   const fileReader = new FileReader();
 
   useEffect(() => {
@@ -119,7 +118,7 @@ function AddStaff() {
 
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
-    setStaffData({ ...staffData, [name]: event.target.files[0].name });
+    setStaffData({ ...staffData, [name]: event.target.files[0] });
   };
 
   //react-select
@@ -188,8 +187,10 @@ function AddStaff() {
       const resp = await addStaff(user._id, token, formData);
       if (resp.err) {
         return toast.error(resp.err);
+      } else {
+        toast.success("Staff Added successfully");
+        history.push("/admin/all-staffs");
       }
-      toast.success("Staff Added successfully");
     } catch (err) {
       toast.error(addStudentError);
     }
@@ -304,15 +305,13 @@ function AddStaff() {
     }
   };
 
-
-  const Select = props => (
+  const Select = (props) => (
     <FixRequiredSelect
       {...props}
       SelectComponent={BaseSelect}
       options={props.options}
     />
   );
-  
 
   return (
     <>

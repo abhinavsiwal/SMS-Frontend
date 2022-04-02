@@ -42,7 +42,6 @@ import { deleteSectionSuccess, addSectionSuccess } from "constants/success";
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
-
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
   console.log("sectionList", sectionList);
@@ -50,6 +49,7 @@ const AddSection = () => {
   const [roleOptions, setRoleOptions] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [sessions, setSessions] = useState([]);
   const { user, token } = isAuthenticated();
 
@@ -214,6 +214,7 @@ const AddSection = () => {
     const getAllClasses = () => {
       allClass(user._id, user.school, token)
         .then((res) => {
+          console.log("class", res);
           const classes = [];
           for (var i = 0; i < res.length; i++) {
             classes.push({
@@ -231,42 +232,44 @@ const AddSection = () => {
       // All Sections
       allSections(user._id, user.school, token)
         .then((res) => {
-          console.log("res", res);
+          console.log("section", res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
               key: i,
               class: res[i].class.name,
               name: res[i].name,
-              abbreviation: res[i].abbreviation,
+              abbreviation: res[i].class.abbreviation,
               subject: res[i].subject.toString(),
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="primary"
-                      type="button"
-                      key={"edit" + i + 1}
+                  {/* {permissions && permissions.includes("edit") && (
+                  
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                  >
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("delete") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => deleteSectionHandler(res[i]._id)}
                     >
-                      <i className="fas fa-user-edit" />
-                    </Button>
-                  )}
-                  {permissions && permissions.includes("delete") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="danger"
-                      type="button"
-                      key={"delete" + i + 1}
-                    >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => deleteSectionHandler(res[i]._id)}
-                      >
-                        <i className="fas fa-trash" />
-                      </Popconfirm>
-                    </Button>
-                  )}
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
                 </h5>
               ),
             });
@@ -299,7 +302,7 @@ const AddSection = () => {
         });
     };
     getAllClasses();
-  }, [reload]);
+  }, [reload, checked]);
 
   const deleteSectionHandler = async (sectionId) => {
     try {
@@ -320,6 +323,7 @@ const AddSection = () => {
     formData.set(name, event.target.value);
   };
 
+  //Final Submit
   const handleFormChange = async (e) => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
@@ -330,11 +334,17 @@ const AddSection = () => {
       sectionData.set("school", user.school);
       sectionData.set("section", resp._id);
       await addClassToSection(user._id, classID, token, sectionData);
-      setReload(true);
+      // setReload(true);
       if (resp.err) {
         return toast.error(resp.err);
+      } else {
+        toast.success(addSectionSuccess);
+        if (checked === false) {
+          setChecked(true);
+        } else {
+          setChecked(false);
+        }
       }
-      toast.success(addSectionSuccess);
     } catch (err) {
       toast.error(addSectionError);
     }
@@ -364,15 +374,13 @@ const AddSection = () => {
     }
   };
 
-  
-  const Select = props => (
+  const Select = (props) => (
     <FixRequiredSelect
       {...props}
       SelectComponent={BaseSelect}
       options={props.options}
     />
   );
-  
 
   return (
     <>

@@ -157,9 +157,11 @@ function AddCanteen() {
       console.log(data);
       if (data.err) {
         return toast.error(data.err);
+      } else {
+        setCanteenName("");
+        toast.success("Canteen Added Successfully");
+        setChecked(!checked);
       }
-      toast.success("Canteen Added Successfully");
-      setChecked(!checked);
     } catch (err) {
       toast.error(addCanteenError);
     }
@@ -207,15 +209,13 @@ function AddCanteen() {
     }
   };
 
-
-  const Select = props => (
+  const Select = (props) => (
     <FixRequiredSelect
       {...props}
       SelectComponent={BaseSelect}
       options={props.options}
     />
   );
-  
 
   return (
     <>
@@ -378,7 +378,7 @@ function AddCanteen() {
                           value={addMenu.addCanteen}
                           required
                         >
-                          <option disabled value="">
+                          <option disabled value="" selected>
                             Select Canteen
                           </option>
                           {allCanteen.map((canteen) => {

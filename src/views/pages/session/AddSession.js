@@ -41,12 +41,15 @@ const AddSession = () => {
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
-  const [startTime, setStartTime] = React.useState(new Date());
+  const [startTime, setStartTime] = useState(new Date());
   const startTimeDuration = moment(startTime).format("LT");
   const [editing, setEditing] = useState(false);
   const [editSessionName, setEditSessionName] = useState("");
   const [editStartDate, setEditStartDate] = useState("");
   const [editEndDate, setEditEndDate] = useState("");
+  const [editWorkingDay, setEditWorkingDay] = useState("");
+  const [editWorkingTime, setEditWorkingTime] = useState(new Date());
+  const editTimeDuration = moment(editWorkingTime).format("LT");
   const [editSessionId, setEditSessionId] = useState("");
   const [sessionData, setSessionData] = useState({
     name: "",
@@ -104,39 +107,42 @@ const AddSession = () => {
               year: res[i].year,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="primary"
-                      type="button"
-                      key={"edit" + i + 1}
-                      onClick={() =>
-                        rowHandler(
-                          res[i]._id,
-                          res[i].name,
-                          res[i].start_date.split("T")[0],
-                          res[i].start_date.split("T")[0]
-                        )
-                      }
+                  {/* {permissions && permissions.includes("edit") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() =>
+                      rowHandler(
+                        res[i]._id,
+                        res[i].name,
+                        res[i].start_date.split("T")[0],
+                        res[i].start_date.split("T")[0],
+                        res[i].working_days
+                      )
+                    }
+                  >
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("delete") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
                     >
-                      <i className="fas fa-user-edit" />
-                    </Button>
-                  )}
-                  {permissions && permissions.includes("delete") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="danger"
-                      type="button"
-                      key={"delete" + i + 1}
-                    >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => handleDelete(res[i]._id)}
-                      >
-                        <i className="fas fa-trash" />
-                      </Popconfirm>
-                    </Button>
-                  )}
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
                 </h5>
               ),
             });
@@ -167,6 +173,7 @@ const AddSession = () => {
     }
   }
 
+  //Edit Session
   const handleEditSubmit = async () => {
     console.log("clicked");
     const { user, token } = isAuthenticated();
@@ -174,6 +181,8 @@ const AddSession = () => {
     formData.set("name", editSessionName);
     formData.set("start_date", editStartDate);
     formData.set("end_date", editEndDate);
+    formData.set("working_days", editWorkingDay);
+    formData.set("working_time", editTimeDuration);
 
     try {
       const updateSession = await editSession(
@@ -195,13 +204,21 @@ const AddSession = () => {
   };
 
   //Getting values from fetch
-  function rowHandler(id, name, startDate, endDate) {
+  function rowHandler(
+    id,
+    name,
+    startDate,
+    endDate,
+    working_days,
+    working_time
+  ) {
     // e.stopPropagation();
     setEditing(true);
     setEditSessionName(name);
     setEditStartDate(startDate);
     setEditEndDate(endDate);
     setEditSessionId(id);
+    setEditWorkingDay(working_days);
   }
 
   const columns = [
@@ -399,6 +416,7 @@ const AddSession = () => {
     setSessionData({ ...sessionData, [name]: event.target.value });
   };
 
+  //Final Submit
   const handleFormChange = async (e) => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
@@ -421,9 +439,15 @@ const AddSession = () => {
       });
       if (resp.err) {
         return toast.error(resp.err);
+      } else {
+        toast.success(addSessionSuccess);
+        if (checked === false) {
+          setChecked(true);
+        } else {
+          setChecked(false);
+        }
       }
-      setReload(true);
-      toast.success(addSessionSuccess);
+      // setReload(true);
     } catch (err) {
       toast.error(addSessionError);
     }
@@ -537,7 +561,7 @@ const AddSession = () => {
                         </label>
                         <Input
                           id="example-date-input"
-                          type="text"
+                          type="number"
                           onChange={handleChange("working_days")}
                           value={sessionData.working_days}
                           placeholder="Working Days"
@@ -673,6 +697,45 @@ const AddSession = () => {
                   type="date"
                   onChange={(e) => setEditEndDate(e.target.value)}
                   required
+                />
+              </Col>
+            </Row>
+            <Row className="mt-4">
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example-date-input"
+                >
+                  Working Days
+                </label>
+                <Input
+                  id="example-date-input"
+                  value={editWorkingDay}
+                  type="number"
+                  onChange={(e) => setEditWorkingDay(e.target.value)}
+                  required
+                  placeholder="Working Days"
+                />
+              </Col>
+            </Row>
+            <Row className="mt-4">
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example-date-input"
+                >
+                  Working Time
+                </label>
+                <DatePicker
+                  id="exampleFormControlSelect3"
+                  className="Period-Time"
+                  selected={editWorkingTime}
+                  onChange={(date) => setEditWorkingTime(date)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  timeCaption="Time"
+                  dateFormat="h:mm aa"
                 />
               </Col>
             </Row>
