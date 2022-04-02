@@ -195,7 +195,6 @@ function AddTimeTable() {
     try {
       const { user, token } = isAuthenticated();
       // const payload = { school: user.school };
-
       const teachers = await allStaffs(user.school, user._id);
       console.log("teachers", teachers);
       if (teachers.err) {
@@ -210,8 +209,6 @@ function AddTimeTable() {
   //Onclick Add Data into The Table
   const handleData = async (e) => {
     e.preventDefault();
-    // const data = [];
-    // data.push(lect);
     let data = {};
     data = lect;
 
@@ -284,10 +281,17 @@ function AddTimeTable() {
       console.log("resp", resp);
       if (resp.err) {
         return toast.error(resp.err);
+      } else {
+        toast.success("TimeTable Addedd Successfully");
+        localStorage.removeItem("lecture");
+        if (checked === true) {
+          setChecked(false);
+        } else {
+          setChecked(true);
+        }
       }
-      toast.success("TimeTable Addedd Successfully");
     } catch (err) {
-      toast.error("Something Went Wrong");
+      toast.error("Something Went Wrong!");
     }
   };
 

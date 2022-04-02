@@ -164,7 +164,7 @@ const AddSubject = () => {
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    formData.set("name", JSON.stringify(value));
+    formData.set("list", JSON.stringify(value));
   };
 
   const handleFormChange = async (e) => {

@@ -46,6 +46,7 @@ const AddClass = () => {
   const [editClassName, setEditClassName] = useState("");
   const [classId, setClassId] = useState("");
   const [editClassAbv, setEditClassAbv] = useState("");
+  console.log("editClassAdv", editClassAbv);
   const [sessions, setSessions] = useState([]);
   const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
@@ -184,7 +185,7 @@ const AddClass = () => {
     try {
       const { user, token } = isAuthenticated();
       formData.set("name", editClassName);
-      formData.set("abbrevation", editClassAbv);
+      formData.set("abbreviation", editClassAbv);
       const updatedClass = await updateClass(
         classId,
         user._id,
@@ -192,12 +193,16 @@ const AddClass = () => {
         formData
       );
       console.log("updateClass", updatedClass);
-      setEditing(false);
-      toast.success(updateClassSuccess);
-      if (checked === false) {
-        setChecked(true);
+      if (updatedClass.err) {
+        return toast.error(updatedClass.err);
       } else {
-        setChecked(false);
+        setEditing(false);
+        toast.success(updateClassSuccess);
+        if (checked === false) {
+          setChecked(true);
+        } else {
+          setChecked(false);
+        }
       }
     } catch (err) {
       toast.error(updateClassError);
@@ -287,6 +292,7 @@ const AddClass = () => {
       await addClass(user._id, token, formData);
       setClassData({
         name: "",
+        session: "",
         abbreviation: "",
       });
       toast.success(addClassSuccess);

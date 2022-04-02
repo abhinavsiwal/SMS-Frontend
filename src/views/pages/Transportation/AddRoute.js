@@ -177,10 +177,13 @@ function AddRoute() {
       const data = await routeAdd(user._id, formData);
       if (data.err) {
         return toast.error(data.err);
+      } else {
+        toast.success("Route Added Successfully");
+        setAddRoute("");
+        setPlaceName("");
+        setSession("");
+        setBusNo("");
       }
-      setAddRoute("");
-      setPlaceName("");
-      toast.success("Route Added Successfully");
     } catch (err) {
       toast.error(err);
     }

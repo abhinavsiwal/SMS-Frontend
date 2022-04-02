@@ -32,10 +32,13 @@ import { useSelector } from "react-redux";
 
 import { allSessions } from "api/session";
 
+import { useHistory } from "react-router-dom";
+
 function AddStudent() {
   // Stepper form steps
   const [step, setStep] = useState(0);
   const { classes } = useSelector((state) => state.classReducer);
+  const history = useHistory();
   const [sessions, setSessions] = useState([]);
   const [multivalues, setMultiValues] = useState("");
   const [connectFalse, setConnectFalse] = useState(false);
@@ -271,8 +274,10 @@ function AddStudent() {
       console.log("addStudent", addStudents);
       if (addStudents.err) {
         return toast.error(addStudents.err);
+      } else {
+        toast.success("Student added successfully");
+        history.push("/admin/all-students");
       }
-      toast.success("Student added successfully");
     } catch (err) {
       toast.error("Something Went Wrong");
     }

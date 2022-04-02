@@ -42,6 +42,8 @@ import { allSessions } from "api/session";
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
+import { useHistory } from "react-router-dom";
+
 function AddStaff() {
   const [step, setStep] = useState(0);
   const { user } = isAuthenticated();
@@ -81,6 +83,7 @@ function AddStaff() {
     department: "",
     subject: "",
   });
+  const history = useHistory();
   const [allRoles, setAllRoles] = useState([]);
   console.log("staff", staffData);
   const [sessions, setSessions] = useState([]);
@@ -88,9 +91,7 @@ function AddStaff() {
   const [formData] = useState(new FormData());
   const [departments, setDeparments] = useState([]);
   const [a, setA] = useState([]);
-
   const [file, setFile] = useState();
-
   const fileReader = new FileReader();
 
   useEffect(() => {
@@ -186,8 +187,10 @@ function AddStaff() {
       const resp = await addStaff(user._id, token, formData);
       if (resp.err) {
         return toast.error(resp.err);
+      } else {
+        toast.success("Staff Added successfully");
+        history.push("/admin/all-staffs");
       }
-      toast.success("Staff Added successfully");
     } catch (err) {
       toast.error(addStudentError);
     }
