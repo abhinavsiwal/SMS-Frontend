@@ -23,66 +23,12 @@ function ViewAllCanteen() {
   const [selectedCanteen, setSelectedCanteen] = useState({});
   const { user, token } = isAuthenticated();
 
-  const [images, setImages] = useState([
-    {
-      img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-      name: "french fries",
-      price: 15,
-    },
-    {
-      img: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-      name: "DDD",
-      price: 20,
-    },
-    {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-      name: "ghgvgh",
-      price: 35,
-    },
-    {
-      img: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8NXx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60",
-      name: "ghgvgh",
-      price: 35,
-    },
-  ]);
+  
 
   const [count, setCount] = React.useState(0);
-  console.log("count", count);
+  // console.log("count", count);
 
-  const [canteenName, setCanteenName] = React.useState([
-    {
-      name: "Canteen Name",
-    },
-    {
-      name: "Canteen Name",
-    },
-    {
-      name: "Canteen Name",
-    },
-    {
-      name: "Canteen Name",
-    },
-    {
-      name: "Canteen Name",
-    },
-    {
-      name: "Canteen Name",
-    },
-    {
-      name: "Canteen Name jdkjnvjfjbvjfnjvbfvfjnvnfkjnvnfknvn",
-    },
-  ]);
-
+ 
   // const handleChange = (e, steps) => {
   //   setCount(steps);
   // };

@@ -315,7 +315,7 @@ const [filterSessionId, setFilterSessionId] = useState("")
 
 useEffect(() => {
   
-let filteredEvents = event.filter(event => event.session===filterSessionId);
+let filteredEvents = events.filter(event => event.session.toString()===filterSessionId.toString());
 const data = [];
 filteredEvents.map((events) => {
   data.push({
