@@ -452,7 +452,7 @@ function ViewCanteen() {
             <Button color="primary" className="mb-2" onClick={handlePrint}>
               Print
             </Button>
-            {loading ? (
+            {loading && viewCanteen ? (
               <div ref={componentRef}>
                 <AntTable
                   columns={columns}

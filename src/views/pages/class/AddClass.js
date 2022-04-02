@@ -451,7 +451,7 @@ const AddClass = () => {
                   >
                     Print
                   </Button>
-                  {loading ? (
+                  {loading && classList ? (
                     <div ref={componentRef}>
                       <AntTable
                         columns={columns}
