@@ -75,7 +75,7 @@ const DepartmentList = () => {
       console.log(permissions);
     }
   }, []);
-  
+
   useEffect(() => {
     getAllStaff();
     getSession();
@@ -85,14 +85,14 @@ const DepartmentList = () => {
   const getAllStaff = async () => {
     try {
       const data = await allStaffs(user.school, user._id);
-      console.log(data,"@@@@@@@@");
+      console.log(data, "@@@@@@@@");
       setStaff(data);
     } catch (err) {
       toast.error(fetchingStaffFailed);
     }
   };
 
-  useEffect( () => {
+  useEffect(() => {
     //Datasource of antTable
     const myData = [
       { value: "ocean", label: "Ocean" },
@@ -316,8 +316,7 @@ const DepartmentList = () => {
   const handleFormChange = async (e) => {
     e.preventDefault();
 
-    
-    const role = [primaryHeadId,secondaryHeadId];
+    const role = [primaryHeadId, secondaryHeadId];
     const { user, token } = isAuthenticated();
     try {
       formData.set("school", user.school);
@@ -334,6 +333,10 @@ const DepartmentList = () => {
       } else {
         setChecked(false);
       }
+      setName("");
+      setPrimaryHeadId("");
+      setSecondaryHeadId("");
+      setSelectSessionId("");
       toast.success("Deparment Added Successfully");
     } catch (err) {
       toast.error("Something Went Wrong!");
@@ -392,6 +395,9 @@ const DepartmentList = () => {
                           type="select"
                           onChange={(e) => setPrimaryHeadId(e.target.value)}
                         >
+                          <option value="" disabled selected>
+                            Primary Head
+                          </option>
                           {staff.map((staff, i) => (
                             <option key={i} value={staff._id}>
                               {staff.firstname} {staff.lastname}
@@ -413,6 +419,9 @@ const DepartmentList = () => {
                           type="select"
                           onChange={(e) => setSecondaryHeadId(e.target.value)}
                         >
+                          <option value="" disabled selected>
+                            Secondary Head
+                          </option>
                           {staff.map((staff, i) => (
                             <option key={i} value={staff._id}>
                               {staff.firstname} {staff.lastname}

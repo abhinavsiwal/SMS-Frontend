@@ -1,4 +1,3 @@
-
 // import Alternative from 'views/pages/dashboards/Alternative.js';
 // import Buttons from 'views/pages/components/Buttons.js';
 // import Calendar from 'views/pages/Calendar.js';
@@ -31,6 +30,7 @@ import AddStaff from "views/pages/staffManagement/AddStaff";
 import AddStudent from "views/pages/studentManagement/AddStudent";
 import SchoolProfile from "views/pages/schoolProfile/SchoolProfile";
 import StudentProfile from "views/pages/studentProfile/StudentProfile";
+import StaffProfile from "views/pages/Staff Profile/StaffProfile";
 import Support from "views/pages/support/Support";
 import Session from "views/pages/session/AddSession";
 import AddSection from "./views/pages/section/AddSection";
@@ -61,14 +61,14 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Dashboard,
     layout: "/admin",
-    module:"Dashboard"
+    module: "Dashboard",
   },
   {
     collapse: true,
     name: "Staff Management",
     icon: "ni ni-single-02 text-orange",
     state: "examplesCollapse",
-    module:"Staff Mangement",
+    module: "Staff Mangement",
     views: [
       {
         path: "/add-staff",
@@ -87,11 +87,19 @@ export const adminRoutes = [
     ],
   },
   {
+    path: "/staff-profile",
+    name: "Staff Profile",
+    icon: "ni ni-shop text-primary",
+    component: StaffProfile,
+    layout: "/admin",
+    module: "Staff Profile",
+  },
+  {
     collapse: true,
     name: "Class Management",
     icon: "fa fa-users",
     state: "classCollapse",
-    module:"Class, section and subject master",
+    module: "Class, section and subject master",
     views: [
       {
         path: "/add-class",
@@ -99,7 +107,7 @@ export const adminRoutes = [
         miniName: "ACs",
         component: AddClass,
         layout: "/admin",
-        permission:"view",
+        permission: "view",
       },
       {
         path: "/add-section",
@@ -107,7 +115,7 @@ export const adminRoutes = [
         miniName: "AS",
         component: AddSection,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
       {
         path: "/add-subject",
@@ -115,7 +123,7 @@ export const adminRoutes = [
         miniName: "AS",
         component: AddSubject,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
       {
         path: "/class-teacher",
@@ -123,16 +131,16 @@ export const adminRoutes = [
         miniName: "CT",
         component: ClassTeacher,
         layout: "/admin",
-        permission:"add",
+        permission: "add",
       },
-      ],
+    ],
   },
   {
     collapse: true,
     name: "Department",
     icon: "fa fa-users",
     state: "departmentsCollapse",
-    module:"Department Management",
+    module: "Department Management",
     views: [
       {
         path: "/department-list",
@@ -156,14 +164,14 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: SchoolProfile,
     layout: "/admin",
-    module:"School Profile Module", 
+    module: "School Profile Module",
   },
   {
     collapse: true,
     name: "Student Management",
     icon: "ni ni-single-02 text-orange",
     state: "studentsCollapse",
-    module:"Student Management",
+    module: "Student Management",
     views: [
       {
         path: "/add-student",
@@ -187,7 +195,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: StudentProfile,
     layout: "/admin",
-    module:"Student Profile",
+    module: "Student Profile",
   },
   {
     path: "/session",
@@ -195,7 +203,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Session,
     layout: "/admin",
-    module:"Session",
+    module: "Session",
   },
   {
     path: "/support",
@@ -203,7 +211,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Support,
     layout: "/admin",
-    module:"Support Management"
+    module: "Support Management",
   },
   {
     path: "/calendar",
@@ -211,7 +219,7 @@ export const adminRoutes = [
     icon: "ni ni-calendar-grid-58 text-red",
     component: Calendar,
     layout: "/admin",
-    module:"School Calendar",
+    module: "School Calendar",
   },
   {
     path: "/attendance",
@@ -219,7 +227,7 @@ export const adminRoutes = [
     icon: "ni ni-badge",
     component: Attendance,
     layout: "/admin",
-    module:"Student Attendance Management",
+    module: "Student Attendance Management",
   },
   // {
   //   path: "/timeTable",
@@ -234,7 +242,7 @@ export const adminRoutes = [
     name: "Time Table",
     icon: "ni ni-calendar-grid-58 text-black",
     state: "timetableCollapse",
-    module:"Time table Management",
+    module: "Time table Management",
     views: [
       {
         path: "/add_time_table",
@@ -258,7 +266,7 @@ export const adminRoutes = [
     name: "Canteen Management",
     icon: "ni ni-basket text-yellow",
     state: "canteenCollapse",
-    module:"Canteen Management",
+    module: "Canteen Management",
     views: [
       {
         path: "/add-canteen",
@@ -266,7 +274,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddCanteen,
         layout: "/admin",
-        permission:"add",
+        permission: "add",
       },
       {
         path: "/view-canteen",
@@ -274,7 +282,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewCanteen,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
       {
         path: "/view-all-canteen",
@@ -282,7 +290,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewAllCanteen,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
     ],
   },
@@ -292,7 +300,7 @@ export const adminRoutes = [
     icon: "ni ni-settings-gear-65 text-blue",
     component: RolePermissions,
     layout: "/admin",
-    module:"Roles and Permission",
+    module: "Roles and Permission",
   },
 
   {
@@ -300,7 +308,7 @@ export const adminRoutes = [
     name: "Transportation",
     icon: "ni ni-bus-front-12 text-red",
     state: "transportationCollapse",
-    module:"Transportation management",
+    module: "Transportation management",
     views: [
       {
         path: "/add-route",
@@ -324,7 +332,7 @@ export const adminRoutes = [
     name: "Ecommerce",
     icon: "ni ni-bag-17 text-pink",
     state: "ecommerceCollapse",
-    module:"Edu Commerce Store",
+    module: "Edu Commerce Store",
     views: [
       {
         path: "/add-cart",
@@ -373,6 +381,14 @@ export const editorRoutes = [
         layout: "/admin",
       },
     ],
+  },
+  {
+    path: "/staff-profile",
+    name: "Staff Profile",
+    icon: "ni ni-shop text-primary",
+    component: StaffProfile,
+    layout: "/admin",
+    module: "Staff Profile",
   },
   {
     collapse: true,
@@ -633,6 +649,14 @@ export const viewerRoutes = [
     ],
   },
   {
+    path: "/staff-profile",
+    name: "Staff Profile",
+    icon: "ni ni-shop text-primary",
+    component: StaffProfile,
+    layout: "/admin",
+    module: "Staff Profile",
+  },
+  {
     collapse: true,
     name: "Class Management",
     icon: "fa fa-users",
@@ -840,6 +864,14 @@ const routes = [
         layout: "/admin",
       },
     ],
+  },
+  {
+    path: "/staff-profile",
+    name: "Staff Profile",
+    icon: "ni ni-shop text-primary",
+    component: StaffProfile,
+    layout: "/admin",
+    module: "Staff Profile",
   },
   {
     collapse: true,
@@ -1077,4 +1109,3 @@ const routes = [
 ];
 
 export default routes;
- 

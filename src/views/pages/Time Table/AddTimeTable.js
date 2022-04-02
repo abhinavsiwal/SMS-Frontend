@@ -634,30 +634,30 @@ function AddTimeTable() {
       <SimpleHeader name="Student" parentName="Time Table" />
       <PermissionsGate scopes={[SCOPES.canCreate]}>
         <Container className="mt--6 shadow-lg" fluid>
-          <Row>
-            <Col className="d-flex justify-content-center mt-2">
-              <form>
-                <input
-                  type={"file"}
-                  id={"csvFileInput"}
-                  accept={".csv"}
-                  onChange={handleOnChange}
-                />
-
-                <Button
-                  onClick={(e) => {
-                    handleOnSubmit(e);
-                  }}
-                  color="primary"
-                >
-                  IMPORT CSV
-                </Button>
-              </form>
-            </Col>
-          </Row>
           <Form onSubmit={handleData}>
             <Card>
               <CardBody>
+                <Row className="">
+                  <Col className="d-flex justify-content-center mt-2">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
                 <Row className="m-4">
                   <Col md="4">
                     <Label
@@ -1023,8 +1023,7 @@ function AddTimeTable() {
                   <tr>
                     <td>
                       <>
-                        {lecturer &&
-                          lecturer.Monday &&
+                        {lecturer.Monday &&
                           lecturer.Monday.map((Monday, index) => {
                             return (
                               <h3>
@@ -1074,8 +1073,7 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer &&
-                          lecturer.Tuesday &&
+                        {lecturer.Tuesday &&
                           lecturer.Tuesday.map((Tuesday, index) => {
                             return (
                               <h3>
@@ -1125,8 +1123,7 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer &&
-                          lecturer.Wednesday &&
+                        {lecturer.Wednesday &&
                           lecturer.Wednesday.map((Wednesday, index) => {
                             return (
                               <h3>
@@ -1178,8 +1175,7 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer &&
-                          lecturer.Thursday &&
+                        {lecturer.Thursday &&
                           lecturer.Thursday.map((Thursday, index) => {
                             return (
                               <h3>
@@ -1229,8 +1225,7 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer &&
-                          lecturer.Friday &&
+                        {lecturer.Friday &&
                           lecturer.Friday.map((Friday, index) => {
                             return (
                               <h3>
@@ -1280,8 +1275,7 @@ function AddTimeTable() {
                     </td>
                     <td>
                       <>
-                        {lecturer &&
-                          lecturer.Saturday &&
+                        {lecturer.Saturday &&
                           lecturer.Saturday.map((Saturday, index) => {
                             return (
                               <h3>

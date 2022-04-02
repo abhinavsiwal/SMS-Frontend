@@ -573,116 +573,120 @@ const AllStaffs = () => {
                           <>
                             <Container className="" fluid>
                               <Row className="card-wrapper">
-                                {currentItems.map((staff, index) => (
-                                  <Col md="4" key={index}>
-                                    <Card>
-                                      <CardHeader align="right">
-                                        <UncontrolledDropdown>
-                                          <DropdownToggle
-                                            className="btn-icon-only text-light"
-                                            color=""
-                                            role="button"
-                                            size="sm"
-                                          >
-                                            <i className="fas fa-ellipsis-v" />
-                                          </DropdownToggle>
-                                          <DropdownMenu
-                                            className="dropdown-menu-arrow"
-                                            right
-                                          >
-                                            <DropdownItem
-                                              href="#pablo"
-                                              onClick={(e) =>
-                                                e.preventDefault()
-                                              }
-                                            >
-                                              Edit
-                                            </DropdownItem>
-                                            <DropdownItem
-                                              href="#pablo"
-                                              onClick={(e) =>
-                                                e.preventDefault()
-                                              }
-                                            >
-                                              Delete
-                                            </DropdownItem>
-                                          </DropdownMenu>
-                                        </UncontrolledDropdown>
-                                      </CardHeader>
-                                      <CardImg
-                                        alt="..."
-                                        src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                                        top
-                                        className="p-4"
-                                      />
-                                      <CardBody className="mt-0">
-                                        <Row>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">SID</h4>
-                                            <span className="text-md">
-                                              {staff.sid}
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              First Name
-                                            </h4>
-                                            <span className="text-md">
-                                              {staff.first_name}
-                                            </span>
-                                          </Col>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              Last Name
-                                            </h4>
-                                            <span className="text-md">
-                                              {staff.last_name}
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              Assign Role
-                                            </h4>
-                                            <span className="text-md">
-                                              {staff.assign_role}
-                                            </span>
-                                          </Col>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              Department
-                                            </h4>
-                                            <span className="text-md">
-                                              {staff.department}
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col align="center">
-                                            <Button
-                                              className="mt-3"
-                                              onClick={() =>
-                                                handleStaffDetails(staff)
-                                              }
-                                            >
-                                              Read More
-                                              {/* <Link
-                                                to="/admin/staff-profile"
-                                                className="mb-1"
-                                                
+                                {currentItems !== null && (
+                                  <>
+                                    {currentItems.map((staff, index) => (
+                                      <Col md="4" key={index}>
+                                        <Card>
+                                          <CardHeader align="right">
+                                            <UncontrolledDropdown>
+                                              <DropdownToggle
+                                                className="btn-icon-only text-light"
+                                                color=""
+                                                role="button"
+                                                size="sm"
                                               >
-                                                Read More
-                                              </Link> */}
-                                            </Button>
-                                          </Col>
-                                        </Row>
-                                      </CardBody>
-                                    </Card>
-                                  </Col>
-                                ))}
+                                                <i className="fas fa-ellipsis-v" />
+                                              </DropdownToggle>
+                                              <DropdownMenu
+                                                className="dropdown-menu-arrow"
+                                                right
+                                              >
+                                                <DropdownItem
+                                                  href="#pablo"
+                                                  onClick={(e) =>
+                                                    e.preventDefault()
+                                                  }
+                                                >
+                                                  Edit
+                                                </DropdownItem>
+                                                <DropdownItem
+                                                  href="#pablo"
+                                                  onClick={(e) =>
+                                                    e.preventDefault()
+                                                  }
+                                                >
+                                                  Delete
+                                                </DropdownItem>
+                                              </DropdownMenu>
+                                            </UncontrolledDropdown>
+                                          </CardHeader>
+                                          <CardImg
+                                            alt="..."
+                                            src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                                            top
+                                            className="p-4"
+                                          />
+                                          <CardBody className="mt-0">
+                                            <Row>
+                                              <Col align="center">
+                                                <h4 className="mt-3 mb-1">
+                                                  SID
+                                                </h4>
+                                                <span className="text-md">
+                                                  {staff.sid}
+                                                </span>
+                                              </Col>
+                                            </Row>
+                                            <Row>
+                                              <Col align="center">
+                                                <h4 className="mt-3 mb-1">
+                                                  First Name
+                                                </h4>
+                                                <span className="text-md">
+                                                  {staff.first_name}
+                                                </span>
+                                              </Col>
+                                              <Col align="center">
+                                                <h4 className="mt-3 mb-1">
+                                                  Last Name
+                                                </h4>
+                                                <span className="text-md">
+                                                  {staff.last_name}
+                                                </span>
+                                              </Col>
+                                            </Row>
+                                            <Row>
+                                              <Col align="center">
+                                                <h4 className="mt-3 mb-1">
+                                                  Assign Role
+                                                </h4>
+                                                <span className="text-md">
+                                                  {staff.assign_role}
+                                                </span>
+                                              </Col>
+                                              <Col align="center">
+                                                <h4 className="mt-3 mb-1">
+                                                  Department
+                                                </h4>
+                                                <span className="text-md">
+                                                  {staff.department}
+                                                </span>
+                                              </Col>
+                                            </Row>
+                                            <Row>
+                                              <Col align="center">
+                                                <Button
+                                                  className="mt-3"
+                                                  // onClick={() =>
+                                                  //   handleStaffDetails(staff)
+                                                  // }
+                                                >
+                                                  <Link
+                                                    to="/admin/staff-profile"
+                                                    className="mb-1"
+                                                  >
+                                                    Read More
+                                                  </Link>
+                                                </Button>
+                                              </Col>
+                                            </Row>
+                                          </CardBody>
+                                        </Card>
+                                      </Col>
+                                    ))}
+                                  </>
+                                )}
                               </Row>
                             </Container>
                             <Row>
