@@ -677,6 +677,9 @@ setChecked(false);
                       type="select"
                       onChange={(e) => setStaffId(e.target.value)}
                     >
+                      <option value={""} >
+                        {"Select Staff"}
+                      </option>
                       {staff.map((staff, i) => (
                         <option key={i} value={staff._id}>
                           {staff.firstname} {staff.lastname}

@@ -58,8 +58,8 @@ export const deleteClass=async(classId,userId,token)=>{
 }
 
 
-export const assignClassTeacher=async(classId,userId,token,formData)=>{
-  const url = `${process.env.REACT_APP_API_URL}/api/school/class/edit/${classId}/${userId}`;
+export const assignClassTeacher=async(sectionId,userId,token,formData)=>{
+  const url = `${process.env.REACT_APP_API_URL}/api/school/section/edit/${sectionId}/${userId}`;
  return fetch(url, {
     method: "PUT",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },

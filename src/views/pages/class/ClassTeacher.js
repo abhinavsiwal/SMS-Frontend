@@ -18,6 +18,7 @@ import Loader from "components/Loader/Loader";
 
 const ClassTeacher = () => {
   const [classList, setClassList] = useState([]);
+  const [sectionList, setsectionList] = useState([]);
   const [teacherList, setTeacherList] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = isAuthenticated();
@@ -58,13 +59,13 @@ const ClassTeacher = () => {
     }
   }, []);
 
-  const assignClassTeacherHandler = (classId) => async (e) => {
-    console.log(classId);
+  const assignClassTeacherHandler = (sectionId) => async (e) => {
+    console.log(sectionId);
     console.log(e.target.value);
     let formData = new FormData();
     formData.set("classTeacher", e.target.value);
     try {
-      const data = await assignClassTeacher(classId, user._id, token, formData);
+      const data = await assignClassTeacher(sectionId, user._id, token, formData);
       console.log(data);
       toast.success(classTeacherAssignSuccess);
     } catch (err) {
@@ -84,19 +85,31 @@ const ClassTeacher = () => {
                 {classList.map((clas) => (
                   <tr key={clas._id} className="teacher-table-row">
                     <td className="teacher-table-class">{clas.name}</td>
-                    <td>
-                      <Input
-                        id={clas._id}
-                        type="select"
-                        onChange={assignClassTeacherHandler(clas._id)}
-                      >
-                        {teacherList.map((tech, i) => (
-                          <option key={i} value={tech._id}>
-                            {tech.firstname} {tech.lastname}
-                          </option>
-                        ))}
-                      </Input>
-                    </td>
+                    <tbody>
+                      {clas.section &&
+                        clas.section.map((section) => {
+                          return (
+                            <tr key={section._id} className="teacher-table-row">
+                              <td className="teacher-table-class">
+                                {section.name}
+                              </td>
+                              <td>
+                                <Input
+                                  id={section._id}
+                                  type="select"
+                                  onChange={assignClassTeacherHandler(section._id)}
+                                >
+                                  {teacherList.map((tech, i) => (
+                                    <option key={i} value={tech._id}>
+                                      {tech.firstname} {tech.lastname}
+                                    </option>
+                                  ))}
+                                </Input>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
                   </tr>
                 ))}
               </tbody>
