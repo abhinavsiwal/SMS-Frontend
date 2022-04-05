@@ -350,7 +350,7 @@ const DepartmentList = () => {
   const handleFormChange = async (e) => {
     e.preventDefault();
     console.log("here");
-    const role = [primaryHeadId, secondaryHeadId];
+    // const role = [primaryHeadId, secondaryHeadId];
     const { user, token } = isAuthenticated();
     try {
       formData.set("school", user.school);
@@ -417,53 +417,7 @@ const DepartmentList = () => {
                         />
                       </Col>
                     </Row>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Primary Head
-                        </label>
-                        <Input
-                          type="select"
-                          onChange={(e) => setPrimaryHeadId(e.target.value)}
-                        >
-                          <option value="" disabled selected>
-                            Primary Head
-                          </option>
-                          {staff.map((staff, i) => (
-                            <option key={i} value={staff._id}>
-                              {staff.firstname} {staff.lastname}
-                            </option>
-                          ))}
-                        </Input>
-                      </Col>
-                    </Row>
-
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Secondary Head
-                        </label>
-                        <Input
-                          type="select"
-                          onChange={(e) => setSecondaryHeadId(e.target.value)}
-                        >
-                          <option value="" disabled selected>
-                            Secondary Head
-                          </option>
-                          {staff.map((staff, i) => (
-                            <option key={i} value={staff._id}>
-                              {staff.firstname} {staff.lastname}
-                            </option>
-                          ))}
-                        </Input>
-                      </Col>
-                    </Row>
+                
 
                     <Row>
                       <Col>
@@ -515,6 +469,7 @@ const DepartmentList = () => {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
+                    style={{ float: "right" }}
                   >
                     Print
                   </Button>

@@ -528,30 +528,33 @@ const AllStaffs = () => {
               <Container className="mt--6" fluid>
                 <Card className="mb-4">
                   <CardHeader>
-                    <Button
-                      color={`${view === 0 ? "warning" : "primary"}`}
-                      type="button"
-                      onClick={() => {
-                        setView(0);
-                      }}
-                    >
-                      List View
-                    </Button>{" "}
-                    <Button
-                      color={`${view === 1 ? "warning" : "primary"}`}
-                      type="button"
-                      onClick={() => {
-                        setView(1);
-                      }}
-                    >
-                      Grid View
-                    </Button>
+                    <div>
+                      <Button
+                        color={`${view === 0 ? "warning" : "primary"}`}
+                        type="button"
+                        onClick={() => {
+                          setView(0);
+                        }}
+                      >
+                        List View
+                      </Button>{" "}
+                      <Button
+                        color={`${view === 1 ? "warning" : "primary"}`}
+                        type="button"
+                        onClick={() => {
+                          setView(1);
+                        }}
+                      >
+                        Grid View
+                      </Button>
+                    </div>
                   </CardHeader>
                   <CardBody>
                     <Button
                       color="primary"
                       className="mb-2"
                       onClick={handlePrint}
+                      style={{ float: "right" }}
                     >
                       Print
                     </Button>

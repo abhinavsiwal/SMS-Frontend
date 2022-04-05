@@ -41,8 +41,9 @@ const AddSubject = () => {
   const [checked, setChecked] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [type, setType] = useState("");
+  const [inputFields, setInputFields] = useState([{ subjectName: "" }]);
   const { user, token } = isAuthenticated();
-
+  const [groupName, setGroupName] = useState("")
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
@@ -131,6 +132,13 @@ const AddSubject = () => {
     setSubjectId(id);
   };
 
+  const handleChangeSubject = (index, event) => {
+    console.log(index, event.target.value);
+    const values = [...inputFields];
+    values[index][event.target.name] = event.target.value;
+    setInputFields(values)
+  };
+
   //Edit Subject
   const handleEdit = async () => {
     try {
@@ -164,19 +172,20 @@ const AddSubject = () => {
     setSubjectData({ ...subjectData, [name]: event.target.value });
   };
 
-  //Taking Values from react-select
-  const handleSubjectChange = (e) => {
-    var value = [];
-    for (var i = 0, l = e.length; i < l; i++) {
-      value.push(e[i].value);
-    }
-    formData.set("list", JSON.stringify(value));
-  };
 
   const handleFormChange = async (e) => {
     e.preventDefault();
+    console.log(inputFields);
+    let list=[];
+    for (const key in inputFields) {
+      // console.log(inputFields[key].subjectName);
+      list.push(inputFields[key].subjectName);
+    }
+    console.log(list);
+    formData.set("list", JSON.stringify(list));
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    formData.set("name", groupName);
     try {
       const subject = await addSubject(user._id, token, formData);
       if (subject.err) {
@@ -203,32 +212,33 @@ const AddSubject = () => {
     {
       title: "Subjects",
       dataIndex: "name",
-      width: "90%",
-      sorter: (a, b) => a.name > b.name,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.name.toLowerCase().includes(value.toLowerCase());
-      },
+      key:"subjects"
+      // width: "90%",
+      // sorter: (a, b) => a.name > b.name,
+      // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+      //   return (
+      //     <>
+      //       <Input
+      //         autoFocus
+      //         placeholder="Type text here"
+      //         value={selectedKeys[0]}
+      //         onChange={(e) => {
+      //           setSelectedKeys(e.target.value ? [e.target.value] : []);
+      //           confirm({ closeDropdown: false });
+      //         }}
+      //         onBlur={() => {
+      //           confirm();
+      //         }}
+      //       ></Input>
+      //     </>
+      //   );
+      // },
+      // filterIcon: () => {
+      //   return <SearchOutlined />;
+      // },
+      // onFilter: (value, record) => {
+      //   return record.name.toLowerCase().includes(value.toLowerCase());
+      // },
     },
     {
       title: "Action",
@@ -288,6 +298,11 @@ const AddSubject = () => {
         console.log(err);
       });
   };
+
+
+  const handleAddFields=()=>{
+    setInputFields([...inputFields,{subjectName:''}])
+  }
 
   return (
     <>
@@ -411,6 +426,24 @@ const AddSubject = () => {
                     )}
                     {subjectData.type === "Group" && (
                       <>
+                       <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Group Name
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Group Name"
+                              type="text"
+                              onChange={e=>setGroupName(e.target.value)}
+                              value={groupName}
+                              required
+                            />
+                          </Col>
+                        </Row>
                         <Row>
                           <Col>
                             <label
@@ -419,15 +452,37 @@ const AddSubject = () => {
                             >
                               Subject
                             </label>
-                            <Select
-                              isMulti
-                              name="colors"
-                              options={roleOptions}
-                              onChange={handleSubjectChange}
-                              className="basic-multi-select"
-                              classNamePrefix="select"
-                              required
-                            />
+                            {inputFields.map((inputField, index) => {
+                              return (
+                                <div key={index}>
+                                  <Input
+                                  name="subjectName"
+                                    id="example4cols2Input"
+                                    placeholder="Subject"
+                                    type="text"
+                                    value={inputField.subjectName}
+                                    onChange={(event) =>
+                                      handleChangeSubject(index,event)
+                                    }
+                                  />
+                                  <Button
+                                    color="primary"
+                                    style={{
+                                      height: "1rem",
+                                      width: "4rem",
+                                      fontSize: "0.5rem",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      marginTop: "0.7rem",
+                                      marginBottom:"0.7rem"
+                                    }}
+                                    onClick={handleAddFields}
+                                  >
+                                    Add
+                                  </Button>
+                                </div>
+                              );
+                            })}
                           </Col>
                         </Row>
                         <Row>
@@ -481,17 +536,18 @@ const AddSubject = () => {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
+                    style={{float:"right"}}
                   >
                     Print
                   </Button>
                   {loading && subjectList ? (
                     <div ref={componentRef}>
-                      <AntTable
-                        columns={columns}
-                        data={subjectList}
-                        pagination={true}
-                        exportFileName="SubjectDetails"
-                      />
+                        <AntTable
+                          columns={columns}
+                          data={subjectList}
+                          pagination={true}
+                          exportFileName="SubjectDetails"
+                        />
                     </div>
                   ) : (
                     <Loader />

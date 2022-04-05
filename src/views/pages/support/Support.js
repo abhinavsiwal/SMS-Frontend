@@ -270,7 +270,7 @@ function Support() {
             <div className="card-wrapper">
               <Card>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-2">
+                  <Col className="d-flex justify-content-center mt-2  mr-4">
                     <form>
                       <input
                         type={"file"}
@@ -284,6 +284,7 @@ function Support() {
                           handleOnSubmit(e);
                         }}
                         color="primary"
+                        className="mt-2"
                       >
                         IMPORT CSV
                       </Button>
@@ -361,6 +362,7 @@ function Support() {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
+                    style={{ float: "right" }}
                   >
                     Print
                   </Button>

@@ -56,3 +56,16 @@ try {
   throw err;
 }
 }
+
+
+export const editSection=async(userId,sectionId,formData)=>{
+  const url = `${process.env.REACT_APP_API_URL}/api/school/section/edit/${sectionId}/${userId}`;
+  try {
+    const {data } = await sendRequest(url,formData,"PUT");
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}

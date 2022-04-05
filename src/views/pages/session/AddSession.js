@@ -475,7 +475,7 @@ const AddSession = () => {
             <div className="card-wrapper">
               <Card>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-2">
+                  <Col className="d-flex justify-content-center mt-2 ml-4">
                     <form>
                       <input
                         type={"file"}
@@ -489,6 +489,7 @@ const AddSession = () => {
                           handleOnSubmit(e);
                         }}
                         color="primary"
+                        className="mt-2"
                       >
                         IMPORT CSV
                       </Button>
@@ -638,6 +639,7 @@ const AddSession = () => {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
+                    style={{float:"right"}}
                   >
                     Print
                   </Button>

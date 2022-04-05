@@ -16,12 +16,7 @@ const AntTable = ({ columns, data, exportFileName }) => {
           pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
           showSizeChanger: true,
         }}
-        expandable={{
-          expandedRowRender: (record) => (
-            <p style={{ margin: 0 }}>{record.module}</p>
-          ),
-          rowExpandable: (record) => record.name !== "Not Expandable",
-        }}
+       
       />
     </div>
   );

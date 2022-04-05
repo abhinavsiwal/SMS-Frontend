@@ -59,7 +59,7 @@ function ViewCanteen() {
     item: "",
     price: "",
     publish: "",
-    id:"",
+    id: "",
   });
 
   const [checked, setChecked] = useState(false);
@@ -392,13 +392,11 @@ function ViewCanteen() {
       publish: sectionData.publish,
       // start_time: sectionData.start_time,
       image: sectionData.image,
-      id:sectionData._id,
+      id: sectionData._id,
     });
-    
-      
   }
   //Edit Canteen
-  const handleEditSubmit =async (e) => {
+  const handleEditSubmit = async (e) => {
     e.preventDefault();
     console.log(addMenu);
     console.log(startDuration);
@@ -415,20 +413,16 @@ function ViewCanteen() {
     formData.set("publish", addMenu.publish);
 
     try {
-      const data = await  menuItemEdit(addMenu.id,user._id,formData);
+      const data = await menuItemEdit(addMenu.id, user._id, formData);
 
       console.log(data);
       setChecked(!checked);
-      toast.success("Item edited successfully")
+      toast.success("Item edited successfully");
       setEditing(false);
     } catch (err) {
       console.log(err);
-      toast.error("Error editing item")
+      toast.error("Error editing item");
     }
-
-
-
-
   };
 
   const deleteCanteenHandler = async () => {
@@ -488,11 +482,17 @@ function ViewCanteen() {
             </Button>
           </CardHeader>
           <CardBody>
-            <Button color="primary" className="mb-2" onClick={handlePrint}>
-              Print
-            </Button>
+          <Button
+                  color="primary"
+                  className="mb-2"
+                  onClick={handlePrint}
+                  style={{ float: "right" }}
+                >
+                  Print
+                </Button>
             {loading && viewCanteen ? (
               <div ref={componentRef}>
+             
                 <AntTable
                   columns={columns}
                   data={viewCanteen}
@@ -652,7 +652,6 @@ function ViewCanteen() {
                       required
                     />
                   </Col>
-                 
                 </Row>
                 <Row className="mt-4 float-right">
                   <Col>

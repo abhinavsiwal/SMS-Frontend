@@ -534,7 +534,7 @@ function ViewRoute() {
             <h3>View Route</h3>
           </CardHeader>
           <CardBody>
-            <Button color="primary" className="mb-2" onClick={handlePrint}>
+            <Button color="primary" className="mb-2" onClick={handlePrint} style={{float:"right"}} >
               Print
             </Button>
             {loading && viewRoute ? (

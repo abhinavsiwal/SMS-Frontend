@@ -110,7 +110,7 @@ const DepartmentHead = () => {
               <tbody>
                 {loading ? (
                   <>
-                    {departments.map((clas) => (
+                    { departments && departments.map((clas) => (
                       <tr className="teacher-table-row">
                         <td className="teacher-table-class">{clas.name}</td>
                         <td>
@@ -126,7 +126,7 @@ const DepartmentHead = () => {
                               Primary Head
                             </option>
 
-                            {staff.map((tech) => (
+                            { staff&& staff.map((tech) => (
                               <option key={tech._id} value={tech._id}>
                                 {tech.firstname} {tech.lastname}
                               </option>
@@ -146,7 +146,7 @@ const DepartmentHead = () => {
                               Secondary Head
                             </option>
 
-                            {staff.map((tech) => (
+                            { staff && staff.map((tech) => (
                               <option key={tech._id} value={tech._id}>
                                 {tech.firstname} {tech.lastname}
                               </option>

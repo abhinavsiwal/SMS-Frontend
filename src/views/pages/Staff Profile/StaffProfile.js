@@ -36,10 +36,12 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 
 import { FaEdit } from "react-icons/fa";
 
+import { isAuthenticated } from "api/auth";
 function StaffProfile() {
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
-
+  const { user} = isAuthenticated();
+  console.log(user);
   return (
     <>
       <SimpleHeader name="Staff Profile" />
@@ -58,27 +60,31 @@ function StaffProfile() {
                   <Row>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Name</h4>
-                      <span className="text-md">Not Available</span>
+                      <span className="text-md">{user.firstname+" "+user.lastname}</span>
                     </Col>
-                    <Col align="center">
+                    {/* <Col align="center">
                       <h4 className="mt-3 mb-1">Class</h4>
                       <span className="text-md">Not Available</span>
-                    </Col>
+                    </Col> */}
                   </Row>
                   <Row>
-                    <Col align="center">
+                    {/* <Col align="center">
                       <h4 className="mt-3 mb-1">Section</h4>
                       <span className="text-md">Not Available</span>
-                    </Col>
+                    </Col> */}
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Phone</h4>
-                      <span className="text-md">Not Available</span>
+                      <span className="text-md">{user.phone}</span>
                     </Col>
                   </Row>
                   <Row>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Address</h4>
                       <span className="text-md">Not Available</span>
+                    </Col>
+                    <Col align="center">
+                      <h4 className="mt-3 mb-1">Email</h4>
+                      <span className="text-md">{user.email}</span>
                     </Col>
                   </Row>
                 </CardBody>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Container,
   Row,
@@ -8,6 +8,9 @@ import {
   Form,
   Input,
   Button,
+  Modal,
+  ModalFooter,
+  ModalBody,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 
@@ -18,6 +21,7 @@ import {
   addSection,
   addClassToSection,
   deleteSection,
+  editSection
 } from "api/sections";
 import { allSubjects } from "api/subjects";
 import { ToastContainer, toast } from "react-toastify";
@@ -27,7 +31,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
 
 import { allSessions } from "api/session";
-
+import { useReactToPrint } from "react-to-print";
 import { Popconfirm } from "antd";
 
 import {
@@ -54,10 +58,15 @@ const AddSection = () => {
   const { user, token } = isAuthenticated();
   const [tableClassSelectId, setTableClassSelectId] = useState("");
   const [file, setFile] = useState();
-
+  const [editing, setEditing] = useState(false);
   const fileReader = new FileReader();
 
-  let permissions;
+  const [editingSectionName, setEditingSectionName] = useState("");
+  const [editingAbbv, setEditingAbbv] = useState("");
+  const [editingClassId, setEditingClassId] = useState("");
+  const [editingSectionId, setEditingSectionId] = useState("");
+  const [editingSubjectList, setEditingSubjectList] = useState([])
+;  let permissions;
   useEffect(() => {
     if (user.role["Library Management"]) {
       permissions = user.role["Library Management"];
@@ -65,7 +74,10 @@ const AddSection = () => {
     }
     getSession();
   }, []);
-
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   //Getting Session data
   const getSession = async () => {
     const { user, token } = isAuthenticated();
@@ -212,7 +224,22 @@ const AddSection = () => {
 
   useEffect(() => {
     getAllClasses();
-  }, [reload, checked]);
+    getAllSections();
+  }, [checked]);
+
+const getAllSections=()=>{
+   // All Sections
+   allSections(user._id, user.school, token)
+   .then((res) => {
+     console.log("section", res);
+     
+   })
+   .catch((err) => {
+     console.log(err);
+     toast.error(fetchingSectionError);
+   });
+}
+
 
   const getAllClasses = async () => {
     try {
@@ -226,58 +253,7 @@ const AddSection = () => {
       toast.error(fetchingClassError);
     }
 
-    // All Sections
-    allSections(user._id, user.school, token)
-      .then((res) => {
-        console.log("section", res);
-        const data = [];
-        // for (let i = 0; i < res.length; i++) {
-        //   data.push({
-        //     key: i,
-        //     class: res[i].class.name,
-        //     name: res[i].name,
-        //     abbreviation: res[i].class.abbreviation,
-        //     subject: res[i].subject.toString(),
-        //     action: (
-        //       <h5 key={i + 1} className="mb-0">
-        //         {/* {permissions && permissions.includes("edit") && (
-
-        //         )} */}
-        //         <Button
-        //           className="btn-sm pull-right"
-        //           color="primary"
-        //           type="button"
-        //           key={"edit" + i + 1}
-        //         >
-        //           <i className="fas fa-user-edit" />
-        //         </Button>
-        //         {/* {permissions && permissions.includes("delete") && (
-
-        //         )} */}
-        //         <Button
-        //           className="btn-sm pull-right"
-        //           color="danger"
-        //           type="button"
-        //           key={"delete" + i + 1}
-        //         >
-        //           <Popconfirm
-        //             title="Sure to delete?"
-        //             onConfirm={() => deleteSectionHandler(res[i]._id)}
-        //           >
-        //             <i className="fas fa-trash" />
-        //           </Popconfirm>
-        //         </Button>
-        //       </h5>
-        //     ),
-        //   });
-        //   console.log("data", data);
-        // }
-        // setSectionList(data);
-      })
-      .catch((err) => {
-        console.log(err);
-        // toast.error(fetchingSectionError);
-      });
+ 
     // All Subjects
     allSubjects(user._id, user.school, token)
       .then((res) => {
@@ -303,8 +279,7 @@ const AddSection = () => {
     if (tableClassSelectId) {
       tableData();
     }
-
-  }, [tableClassSelectId]);
+  }, [tableClassSelectId,checked]);
 
   const tableData = async () => {
     // console.log(tableClassSelectId);
@@ -335,6 +310,7 @@ const AddSection = () => {
               color="primary"
               type="button"
               key={"edit" + i + 1}
+              onClick={() => editData(selectedClass.section[i])}
             >
               <i className="fas fa-user-edit" />
             </Button>
@@ -361,6 +337,17 @@ const AddSection = () => {
       });
     }
     setSectionList(data);
+  };
+
+  const editData = (section) => {
+    setEditing(true);
+    console.log(section);
+
+   setEditingSectionName(section.name);
+   setEditingAbbv(section.abbreviation)
+   setEditingSectionId(section._id);
+   setEditingClassId(section.class);
+    
   };
 
   const deleteSectionHandler = async (sectionId) => {
@@ -398,11 +385,7 @@ const AddSection = () => {
         return toast.error(resp.err);
       } else {
         toast.success(addSectionSuccess);
-        if (checked === false) {
-          setChecked(true);
-        } else {
-          setChecked(false);
-        }
+        setChecked(!checked);
       }
     } catch (err) {
       toast.error(addSectionError);
@@ -416,6 +399,14 @@ const AddSection = () => {
     }
     console.log(value);
     formData.set("subject", JSON.stringify(value));
+  };
+  const handleEditingSubjectChange = (e) => {
+    var value = [];
+    for (var i = 0, l = e.length; i < l; i++) {
+      value.push(e[i].value);
+    }
+    console.log(value);
+    setEditingSubjectList(value);
   };
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
@@ -441,6 +432,29 @@ const AddSection = () => {
     />
   );
 
+
+const handleEditSubmit=async()=>{
+  const formData = new FormData();
+  formData.set("school", user.school);
+  formData.set("name", editingSectionName);
+  formData.set("abbreviation", editingAbbv);
+  formData.set("subject",JSON.stringify(editingSubjectList));
+  formData.set("class",editingClassId);
+
+try {
+ const data = await editSection(user._id,editingSectionId,formData);
+ console.log(data);
+ setChecked(!checked);
+ setEditing(false);
+ toast.success("Section edited successfully");
+} catch (err) {
+  console.log(err);
+  toast.error("Edit Section Failed")
+}
+
+
+}
+  
   return (
     <>
       <SimpleHeader name="Add Section" parentName="Class Management" />
@@ -465,7 +479,7 @@ const AddSection = () => {
             <div className="card-wrapper">
               <Card>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-2">
+                  <Col className="d-flex justify-content-center mt-2 ml-4">
                     <form>
                       <input
                         type={"file"}
@@ -479,6 +493,7 @@ const AddSection = () => {
                           handleOnSubmit(e);
                         }}
                         color="primary"
+                        className="mt-3"
                       >
                         IMPORT CSV
                       </Button>
@@ -529,33 +544,7 @@ const AddSection = () => {
                         />
                       </Col>
                     </Row>
-                    <Row>
-                      <Col className="mt-4">
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Select Session
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          type="select"
-                          onChange={handleChange("session")}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select Session
-                          </option>
-                          {sessions.map((session) => {
-                            return (
-                              <option value={session._id} key={session._id}>
-                                {session.name}
-                              </option>
-                            );
-                          })}
-                        </Input>
-                      </Col>
-                    </Row>
+
                     <Row className="mt-4">
                       <Col>
                         <label
@@ -610,7 +599,7 @@ const AddSection = () => {
               <Card>
                 <CardBody>
                   <Row>
-                    <Col className="sm-4">
+                    <Col className="sm-4 mb-3">
                       <label
                         className="form-control-label"
                         htmlFor="example4cols2Input"
@@ -635,6 +624,14 @@ const AddSection = () => {
                       </Input>
                     </Col>
                   </Row>
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                    style={{ float: "right" }}
+                  >
+                    Print
+                  </Button>
                   {loading && sectionList ? (
                     <AntTable
                       columns={columns}
@@ -650,6 +647,104 @@ const AddSection = () => {
             </div>
           </Col>
         </Row>
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={editing}
+          toggle={() => setEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+               Edit Form
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Section Name</label>
+                <Input
+                  id="form-class-name"
+                  value={editingSectionName}
+                  onChange={(e) => setEditingSectionName(e.target.value)}
+                  placeholder="Section Name"
+                  type="text"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <label className="form-control-label">
+                  Section Abbreviation
+                </label>
+                <Input
+                  id="form-class-name"
+                  value={editingAbbv}
+                  onChange={(e) => setEditingAbbv(e.target.value)}
+                  placeholder="Section Abbreviation"
+                  type="text"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Class
+                </label>
+                <Input
+                  id="example4cols2Input"
+                  type="select"
+                  onChange={e=>setEditingClassId(e.target.value)}
+                  required
+                >
+                  <option value="" disabled selected>
+                    Select Class
+                  </option>
+                  {classList?.map((clas, index) => (
+                    <option key={index} value={clas._id}>
+                      {clas.name}
+                    </option>
+                  ))}
+                </Input>
+              </Col>
+            </Row>
+            <Row className="mt-4">
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Subject
+                </label>
+                <Select
+                  isMulti
+                  name="colors"
+                  options={roleOptions}
+                  onChange={handleEditingSubjectChange}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  required
+                />
+              </Col>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="button" onClick={handleEditSubmit} >
+              Save changes
+            </Button>
+          </ModalFooter>
+        </Modal>
       </Container>
     </>
   );

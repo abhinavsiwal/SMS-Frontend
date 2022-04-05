@@ -341,7 +341,7 @@ const AddClass = () => {
             <div className="card-wrapper">
               <Card>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-3 ">
+                  <Col className="d-flex justify-content-center mt-3 ml-4">
                     <form>
                       <input
                         type={"file"}
@@ -355,6 +355,7 @@ const AddClass = () => {
                           handleOnSubmit(e);
                         }}
                         color="primary"
+                        className="mt-3"
                       >
                         IMPORT CSV
                       </Button>
@@ -448,6 +449,7 @@ const AddClass = () => {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
+                    style={{ float: "right" }}
                   >
                     Print
                   </Button>
