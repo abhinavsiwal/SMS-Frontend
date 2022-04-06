@@ -465,7 +465,7 @@ function TimeTable() {
         <Card>
           <CardHeader>Time Table</CardHeader>
           <CardBody>
-            <Table bordered></Table>
+            <Table bordered  ></Table>
           </CardBody>
         </Card>
       </Container>

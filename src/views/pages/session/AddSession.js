@@ -471,7 +471,7 @@ const AddSession = () => {
           {/* {permissions && permissions.includes("add") && (
               
             )} */}
-          <Col lg="4">
+          <Col>
             <div className="card-wrapper">
               <Card>
                 <Row>
@@ -590,7 +590,7 @@ const AddSession = () => {
                       </Col>
                     </Row>
                     <Row className="mt-4 float-right">
-                      <Col>
+                      <Col  style={{display:"flex",justifyContent:"center"}}>
                         <Button color="primary" type="submit">
                           Submit
                         </Button>

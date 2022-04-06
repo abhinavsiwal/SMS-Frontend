@@ -63,7 +63,7 @@ function Attendance() {
   // console.log(classes);
   const [addAttendance, setAddAttendance] = useState([]);
   // const [loading, setLoading] = React.useState(true);
-const [attendanceStatus, setAttendanceStatus] = useState([]);
+  const [attendanceStatus, setAttendanceStatus] = useState([]);
   const [atd, setAtd] = React.useState({});
   const [file, setFile] = useState();
 
@@ -199,24 +199,18 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
       console.log(data);
       // setAllAttendance(data);
 
-
-
-
       const tableData = [];
       for (let i = 0; i < data.length; i++) {
-        let date = data[i].date.slice(8,10);
+        let date = data[i].date.slice(8, 10);
         for (let j = 0; j < endOfDayOfMonths; j++) {
-          if (date.toString()===j.toString()) {
+          if (date.toString() === j.toString()) {
             tableData.push({
-              key:j, 
-              status:data.attendance_status,
-            })
+              key: j,
+              status: data.attendance_status,
+            });
           }
-          
         }
       }
-      
-
     } catch (err) {
       console.log(err);
       toast.error(fetchingAttendanceError);
@@ -228,8 +222,8 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
     console.log(event.target.value);
     console.log(attendance);
     let today = new Date();
-    let day = today.getDate()+2;
-    let month = today.getMonth()+1;
+    let day = today.getDate() + 2;
+    let month = today.getMonth() + 1;
     let year = today.getFullYear();
 
     let date = year + "-" + month + "-" + day;
@@ -280,7 +274,11 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
-        <Row>
+       
+        <Form>
+          <Card>
+            <CardBody>
+            <Row>
           <Col className="d-flex justify-content-center mt-2">
             <form>
               <input
@@ -301,11 +299,8 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
             </form>
           </Col>
         </Row>
-        <Form>
-          <Card>
-            <CardBody>
               <Row md="4" className="d-flex justify-content-center mb-4">
-                <Col md="6">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -321,7 +316,7 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
                     required
                   />
                 </Col>
-                <Col md="6">
+                <Col md="3">
                   <Label
                     className="form-control-label"
                     htmlFor="example-date-input"
@@ -336,8 +331,8 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
                     value={attendance.dateTo}
                   />
                 </Col>
-              </Row>
-              <Row className="d-flex justify-content-center mb-4">
+              {/* </Row> */}
+              {/* <Row className="d-flex justify-content-center mb-4"> */}
                 <Col md="3">
                   <Label
                     className="form-control-label"
@@ -442,6 +437,7 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
                     onChange={(e) => setSelectSessionId(e.target.value)}
                     value={selectSessionId}
                     required
+                    className="form-control-sm"
                   >
                     <option value="" disabled selected>
                       Select Session
@@ -456,7 +452,7 @@ const [attendanceStatus, setAttendanceStatus] = useState([]);
                   </Input>
                 </Col>
                 <Col className="mt-4">
-                  {/* <Button color="primary">Search</Button> */}
+                  <Button color="primary">Search</Button>
                 </Col>
               </Row>
             </CardBody>

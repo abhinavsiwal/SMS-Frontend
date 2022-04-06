@@ -14,6 +14,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import React from "react";
 import { useState, useEffect } from "react";
 // nodejs library that concatenates classes
 import { Redirect, useHistory } from "react-router-dom";
@@ -52,80 +53,42 @@ function Login() {
   const [redirect, setRedirect] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
   const [focusedEmail, setfocusedEmail] = useState(false);
   const [focusedPassword, setfocusedPassword] = useState(false);
 
   const { loading, error, token } = useSelector((state) => state.authReducer);
 
   useEffect(() => {
+
+
+
     if (token) {
-      toast.success(loginSuccess)
+      toast.success(loginSuccess);
       // console.log("logged in");
       setRedirect(true);
     }
     if (error) {
       console.log(error);
       setErrormsg(error.message);
-      toast.error(loginError)
+      // toast.error(loginError)
     }
+   
   }, [token]);
 
-  // function handleSubmit(e) {
-  //   e.preventDefault();
-  //   if (username && password) {
-  //     if (validator.isEmail(username)) {
-  //       adminLogin(username, password)
-  //         .then((res) => {
-  //           console.log("user", res);
-  //           localStorage.setItem("jwt", JSON.stringify(res));
-  //           setRedirect(true);
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //           setErrormsg("Invalid Credentials");
-  //         });
-  //     } else {
-  //       const role = username.substring(3, 6);
-  //       console.log(role);
-  //       if (role === "STF") {
-  //         staffLogin(username, password)
-  //           .then((res) => {
-  //             localStorage.setItem("jwt", res.token);
-  //             setRedirect(true);
-  //           })
-  //           .catch((err) => {
-  //             console.log(err);
-  //             setErrormsg("Invalid Credentials");
-  //           });
-  //       } else if (role === "STD") {
-  //         studentLogin(username, password)
-  //           .then((res) => {
-  //             localStorage.setItem("jwt", res.token);
-  //             setRedirect(true);
-  //           })
-  //           .catch((err) => {
-  //             console.log(err);
-  //             setErrormsg("Invalid Credentials");
-  //           });
-  //       } else {
-  //         alert("Invalid username");
-  //       }
-  //     }
-  //   } else {
-  //     alert("Please fill all fields");
-  //   }
-  // }
+ 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
+    setIsLoading(true);
     console.log(username, password);
-    dispatch(login({ username, password }));
+    await dispatch(login({ username, password }));
+    setIsLoading(false);
   };
 
   return (
     <>
-     <ToastContainer
+      <ToastContainer
         position="bottom-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -168,6 +131,7 @@ function Login() {
                         onBlur={() => setfocusedEmail(true)}
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        style={{ color: "black !important" }}
                       />
                     </InputGroup>
                   </FormGroup>
@@ -208,23 +172,44 @@ function Login() {
                   </div>
                   <div className="text-center">
                     <Button className="my-4" color="info" type="submit">
-                      Sign in
+                    {isLoading ? (
+                      <React.Fragment>
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        {/* <span className="visually-hidden">Loading...</span> */}
+                      </React.Fragment>
+                    ) : (
+                      <React.Fragment>
+                        <i className="ci-user me-2 ms-n1"></i>
+                        Login
+                      </React.Fragment>
+                    )}
+                    
                     </Button>
                   </div>
                 </Form>
               </CardBody>
             </Card>
-            <Row className="mt-3">
-              <Col xs="6">
+            <Row>
+              <Col
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%",
+                }}
+              >
                 <a
                   className="text-light"
                   href="#pablo"
                   onClick={(e) => e.preventDefault()}
                 >
-                  <small>Forgot password?</small>
+                  <small style={{ color: "white" }}>Forgot password?</small>
                 </a>
               </Col>
-              <Col className="text-right" xs="6">
+              {/* <Col className="text-right" xs="6">
                 <a
                   className="text-light"
                   href="#pablo"
@@ -232,7 +217,7 @@ function Login() {
                 >
                   <small>Create new account</small>
                 </a>
-              </Col>
+              </Col> */}
             </Row>
           </Col>
           <Col className="login-pic-container">

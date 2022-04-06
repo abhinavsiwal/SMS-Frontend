@@ -475,7 +475,7 @@ try {
           {/* {permissions && permissions.includes("add") && (
             
           )} */}
-          <Col lg="4">
+          <Col >
             <div className="card-wrapper">
               <Card>
                 <Row>
@@ -582,7 +582,7 @@ try {
                       </Col>
                     </Row>
                     <Row className="mt-4 float-right">
-                      <Col>
+                      <Col  >
                         <Button color="primary" type="submit">
                           Submit
                         </Button>
@@ -594,7 +594,7 @@ try {
             </div>
           </Col>
 
-          <Col>
+          <Col >
             <div className="card-wrapper">
               <Card>
                 <CardBody>

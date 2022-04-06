@@ -555,15 +555,7 @@ setChecked(false);
                 >
                   <i className="fas fa-angle-right" />
                 </Button>
-                <Button
-                  className="btn-neutral"
-                  color="default"
-                  data-calendar-view="basicYear"
-                  onClick={() => changeView("dayGridYear")}
-                  size="sm"
-                >
-                  Year
-                </Button>
+              
                 <Button
                   className="btn-neutral"
                   color="default"

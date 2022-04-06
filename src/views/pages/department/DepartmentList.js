@@ -449,7 +449,7 @@ const DepartmentList = () => {
                     </Row>
                     <Row className="mt-4 float-right">
                       <Col>
-                        <Button color="primary" type="submit">
+                        <Button color="primary" type="submit" style={{display:"flex",justifyContent:"center"}} >
                           Submit
                         </Button>
                       </Col>

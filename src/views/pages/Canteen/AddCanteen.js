@@ -300,8 +300,8 @@ function AddCanteen() {
                         />
                       </Col>
                     </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
+                    <Row className="mt-4">
+                      <Col style={{display:"flex",justifyContent:"center",width:"100%"}} >
                         <Button color="primary" type="submit">
                           Add
                         </Button>
@@ -491,8 +491,8 @@ function AddCanteen() {
                         />
                       </Col>
                     </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
+                    <Row className="mt-4">
+                      <Col style={{display:"flex",justifyContent:"center",width:"100%"}}>
                         <Button color="primary" type="submit">
                           Add Menu
                         </Button>

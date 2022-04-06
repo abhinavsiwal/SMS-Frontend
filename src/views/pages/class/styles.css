@@ -31,3 +31,7 @@
 .teacher-table-row:hover{
 	background-color: #f1f3f5;
 }
+
+.antClass{
+	overflow-x: none;
+}

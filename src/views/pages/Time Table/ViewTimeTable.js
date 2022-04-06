@@ -651,7 +651,7 @@ function ViewTimeTable() {
           <Card>
             <CardHeader>Time Table</CardHeader>
             <CardBody>
-              <Table bordered>
+              <Table bordered style={{overflowX:"auto"}} >
                 <thead>
                   <tr>
                     {lecturer === null ? (

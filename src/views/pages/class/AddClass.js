@@ -428,8 +428,8 @@ const AddClass = () => {
                         />
                       </Col>
                     </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
+                    <Row className="mt-4">
+                      <Col style={{display:"flex",justifyContent:"center",width:"100%"}} >
                         <Button color="primary" type="submit">
                           Submit
                         </Button>
@@ -450,16 +450,19 @@ const AddClass = () => {
                     className="mb-2"
                     onClick={handlePrint}
                     style={{ float: "right" }}
-                  >
+              
+              >
                     Print
                   </Button>
                   {loading && classList ? (
-                    <div ref={componentRef}>
+                    <div ref={componentRef}  >
                       <AntTable
                         columns={columns}
                         data={classList}
                         pagination={true}
                         exportFileName="ClassDetails"
+                      
+                    
                       />
                     </div>
                   ) : (

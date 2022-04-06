@@ -1064,7 +1064,7 @@ const routes = [
 
   {
     collapse: true,
-    name: "Transporte",
+    name: "Transport",
     icon: "ni ni-bus-front-12 text-red",
     state: "transportationCollapse",
     views: [
@@ -1086,7 +1086,7 @@ const routes = [
   },
   {
     collapse: true,
-    name: "Ecomme",
+    name: "Ecommerce",
     icon: "ni ni-bag-17 text-pink",
     state: "ecommerceCollapse",
     views: [

@@ -270,7 +270,7 @@ function Support() {
             <div className="card-wrapper">
               <Card>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-2  mr-4">
+                  <Col className="d-flex justify-content-center mt-2  ml-4">
                     <form>
                       <input
                         type={"file"}
@@ -344,10 +344,12 @@ function Support() {
                         required
                       />
                     </Row>
-                    <Row className="mt-4 float-right">
+                    <Row className="mt-4">
+                      <Col style={{display:"flex",justifyContent:"center"}} >
                       <Button color="primary" type="submit">
                         Submit
                       </Button>
+                      </Col>
                     </Row>
                   </CardBody>
                 </Form>
