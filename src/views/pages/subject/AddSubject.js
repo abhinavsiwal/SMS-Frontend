@@ -11,6 +11,7 @@ import {
   Modal,
   ModalFooter,
   ModalBody,
+  CardHeader,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
@@ -33,6 +34,7 @@ import { allSessions } from "api/session";
 import { useReactToPrint } from "react-to-print";
 const AddSubject = () => {
   const [subjectList, setSubjectList] = useState([]);
+  const [subjectList1, setSubjectList1] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -43,8 +45,9 @@ const AddSubject = () => {
   const [type, setType] = useState("");
   const [inputFields, setInputFields] = useState([{ subjectName: "" }]);
   const { user, token } = isAuthenticated();
-  const [groupName, setGroupName] = useState("")
+  const [groupName, setGroupName] = useState("");
   const [file, setFile] = useState();
+  const [view, setView] = useState(0);
 
   const fileReader = new FileReader();
 
@@ -136,7 +139,7 @@ const AddSubject = () => {
     console.log(index, event.target.value);
     const values = [...inputFields];
     values[index][event.target.name] = event.target.value;
-    setInputFields(values)
+    setInputFields(values);
   };
 
   //Edit Subject
@@ -172,11 +175,10 @@ const AddSubject = () => {
     setSubjectData({ ...subjectData, [name]: event.target.value });
   };
 
-
   const handleFormChange = async (e) => {
     e.preventDefault();
     console.log(inputFields);
-    let list=[];
+    let list = [];
     for (const key in inputFields) {
       // console.log(inputFields[key].subjectName);
       list.push(inputFields[key].subjectName);
@@ -185,9 +187,9 @@ const AddSubject = () => {
     formData.set("list", JSON.stringify(list));
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    if(subjectData.name.length>0){
+    if (subjectData.name.length > 0) {
       formData.set("name", subjectData.name);
-    }else {
+    } else {
       formData.set("name", groupName);
     }
     try {
@@ -214,35 +216,115 @@ const AddSubject = () => {
 
   const columns = [
     {
-      title: "Subjects",
+      title: "Subject",
       dataIndex: "name",
-      key:"subjects"
+      key: "subjects",
       // width: "90%",
-      // sorter: (a, b) => a.name > b.name,
-      // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-      //   return (
-      //     <>
-      //       <Input
-      //         autoFocus
-      //         placeholder="Type text here"
-      //         value={selectedKeys[0]}
-      //         onChange={(e) => {
-      //           setSelectedKeys(e.target.value ? [e.target.value] : []);
-      //           confirm({ closeDropdown: false });
-      //         }}
-      //         onBlur={() => {
-      //           confirm();
-      //         }}
-      //       ></Input>
-      //     </>
-      //   );
-      // },
-      // filterIcon: () => {
-      //   return <SearchOutlined />;
-      // },
-      // onFilter: (value, record) => {
-      //   return record.name.toLowerCase().includes(value.toLowerCase());
-      // },
+      sorter: (a, b) => a.name > b.name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
+
+  const columns1 = [
+    {
+      title: "Group Name",
+      dataIndex: "groupName",
+      key: "groupName",
+      // width: "90%",
+      sorter: (a, b) => a.groupName > b.groupName,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.groupName.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Subjects",
+      dataIndex: "subjects",
+      key: "subjects",
+      // width: "90%",
+      sorter: (a, b) => a.subjects > b.subjects,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+      render: (subjects) => (
+        <>
+          {subjects.map((subject) => {
+            return (
+              <p>{subject}</p>
+            );
+          })}
+        </>
+      ),
     },
     {
       title: "Action",
@@ -256,46 +338,91 @@ const AddSubject = () => {
     allSubjects(user._id, user.school, token)
       .then((res) => {
         console.log("res", res);
-        const data = [];
+        let data = [];
+        let data1=[];
+
         for (let i = 0; i < res.length; i++) {
-          data.push({
-            key: i,
-            name: res[i].name,
-            action: (
-              <h5 key={i + 1} className="mb-0">
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => rowHandler(res[i]._id, res[i].name)}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                {/* {permissions && permissions.includes("edit") && (
-                  
-                )} */}
-                {/* {permissions && permissions.includes("delete") && (
-                  
-                )} */}
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete(res[i]._id)}
+          if (res[i].list.length > 0) {
+            console.log("here");
+            data1.push({
+              key: i,
+              groupName: res[i].name,
+              subjects: res[i].list,
+              action: (
+                <h5 key={i + 1} className="mb-0">
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() => rowHandler(res[i]._id, res[i].name)}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
-              </h5>
-            ),
-          });
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("edit") && (
+                    
+                  )} */}
+                  {/* {permissions && permissions.includes("delete") && (
+                    
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                </h5>
+              ),
+            });
+            
+          } else {
+            data.push({
+              key: i,
+              name: res[i].name,
+              action: (
+                <h5 key={i + 1} className="mb-0">
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() => rowHandler(res[i]._id, res[i].name)}
+                  >
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("edit") && (
+                  
+                )} */}
+                  {/* {permissions && permissions.includes("delete") && (
+                  
+                )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                </h5>
+              ),
+            });
+          }
         }
         setSubjectList(data);
+        setSubjectList1(data1);
         setLoading(true);
       })
       .catch((err) => {
@@ -303,10 +430,9 @@ const AddSubject = () => {
       });
   };
 
-
-  const handleAddFields=()=>{
-    setInputFields([...inputFields,{subjectName:''}])
-  }
+  const handleAddFields = () => {
+    setInputFields([...inputFields, { subjectName: "" }]);
+  };
 
   return (
     <>
@@ -431,7 +557,7 @@ const AddSubject = () => {
                     )}
                     {subjectData.type === "Group" && (
                       <>
-                       <Row>
+                        <Row>
                           <Col>
                             <label
                               className="form-control-label"
@@ -443,7 +569,7 @@ const AddSubject = () => {
                               id="example4cols2Input"
                               placeholder="Group Name"
                               type="text"
-                              onChange={e=>setGroupName(e.target.value)}
+                              onChange={(e) => setGroupName(e.target.value)}
                               value={groupName}
                               required
                             />
@@ -461,13 +587,13 @@ const AddSubject = () => {
                               return (
                                 <div key={index}>
                                   <Input
-                                  name="subjectName"
+                                    name="subjectName"
                                     id="example4cols2Input"
                                     placeholder="Subject"
                                     type="text"
                                     value={inputField.subjectName}
                                     onChange={(event) =>
-                                      handleChangeSubject(index,event)
+                                      handleChangeSubject(index, event)
                                     }
                                   />
                                   <Button
@@ -479,7 +605,7 @@ const AddSubject = () => {
                                       display: "flex",
                                       alignItems: "center",
                                       marginTop: "0.7rem",
-                                      marginBottom:"0.7rem"
+                                      marginBottom: "0.7rem",
                                     }}
                                     onClick={handleAddFields}
                                   >
@@ -521,7 +647,9 @@ const AddSubject = () => {
                       </>
                     )}
                     <Row className="mt-4">
-                      <Col style={{display:"flex",justifyContent:"center"}} >
+                      <Col
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
                         <Button color="primary" type="submit">
                           Submit
                         </Button>
@@ -536,26 +664,65 @@ const AddSubject = () => {
           <Col>
             <div className="card-wrapper">
               <Card>
+                <CardHeader>
+                  <div>
+                    <Button
+                      color={`${view === 0 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(0);
+                      }}
+                    >
+                      List View
+                    </Button>{" "}
+                    <Button
+                      color={`${view === 1 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(1);
+                      }}
+                    >
+                      Grid View
+                    </Button>
+                  </div>
+                </CardHeader>
                 <CardBody>
                   <Button
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
-                    style={{float:"right"}}
+                    style={{ float: "right" }}
                   >
                     Print
                   </Button>
-                  {loading && subjectList ? (
-                    <div ref={componentRef}>
-                        <AntTable
-                          columns={columns}
-                          data={subjectList}
-                          pagination={true}
-                          exportFileName="SubjectDetails"
-                        />
-                    </div>
-                  ) : (
+                  {!loading ? (
                     <Loader />
+                  ) : (
+                    <>
+                      {view === 0 ? (
+                        <>
+                          <div ref={componentRef}>
+                            <AntTable
+                              columns={columns}
+                              data={subjectList}
+                              pagination={true}
+                              exportFileName="SubjectDetails"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div ref={componentRef}>
+                            <AntTable
+                              columns={columns1}
+                              data={subjectList1}
+                              pagination={true}
+                              exportFileName="SubjectDetails"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </>
                   )}
                 </CardBody>
               </Card>
