@@ -4,3 +4,11 @@
   border-radius: 5px;
   padding: 12px;
 }
+
+/* thead, tbody { display: block; } */
+
+tbody {
+    /* width: 400px; */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+}

@@ -648,11 +648,11 @@ function ViewTimeTable() {
           </CardBody>
         </Card>
         {timeTableData.class !== null && timeTableData.section !== null && (
-          <Card>
-            <CardHeader>Time Table</CardHeader>
+          <Card  >
+            <CardHeader  >Time Table</CardHeader>
             <CardBody>
-              <Table bordered style={{overflowX:"auto"}} >
-                <thead>
+              <Table bordered>
+                <thead  >
                   <tr>
                     {lecturer === null ? (
                       <h3>Empty</h3>
@@ -696,7 +696,7 @@ function ViewTimeTable() {
                                     })}
                                   <br />
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3"
                                     color="primary"
                                     type="button"
                                     onClick={() => editHandler("Monday", index)}
@@ -704,7 +704,7 @@ function ViewTimeTable() {
                                     <i className="fas fa-edit" />
                                   </Button>
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3 "
                                     color="danger"
                                     type="button"
                                   >
@@ -745,19 +745,20 @@ function ViewTimeTable() {
                                         </>
                                       );
                                     })}
-                                  <br />
+                                  <br className="mx-2" />
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3"
                                     color="primary"
                                     type="button"
                                     onClick={() =>
                                       editHandler("Tuesday", index)
                                     }
+                                    
                                   >
                                     <i className="fas fa-edit" />
                                   </Button>
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3"
                                     color="danger"
                                     type="button"
                                   >
@@ -800,7 +801,7 @@ function ViewTimeTable() {
                                     })}
                                   <br />
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3"
                                     color="primary"
                                     type="button"
                                     onClick={() =>
@@ -810,7 +811,7 @@ function ViewTimeTable() {
                                     <i className="fas fa-edit" />
                                   </Button>
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3"
                                     color="danger"
                                     type="button"
                                   >
@@ -853,7 +854,7 @@ function ViewTimeTable() {
                                     })}
                                   <br />
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3 "
                                     color="primary"
                                     type="button"
                                     onClick={() =>
@@ -863,7 +864,7 @@ function ViewTimeTable() {
                                     <i className="fas fa-edit" />
                                   </Button>
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3 "  
                                     color="danger"
                                     type="button"
                                   >
@@ -959,7 +960,7 @@ function ViewTimeTable() {
                                     })}
                                   <br />
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3 "
                                     color="primary"
                                     type="button"
                                     onClick={() =>
@@ -969,7 +970,7 @@ function ViewTimeTable() {
                                     <i className="fas fa-edit" />
                                   </Button>
                                   <Button
-                                    className="btn-sm pull-right"
+                                    className="btn-sm pull-right mt-3 "
                                     color="danger"
                                     type="button"
                                   >
