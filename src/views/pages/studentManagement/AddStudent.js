@@ -111,6 +111,7 @@ function AddStudent() {
   });
 
   console.log("studentData", studentData);
+  const [selectedClass, setSelectedClass] = useState({});
 
   const [formData] = useState(new FormData());
 
@@ -157,6 +158,16 @@ function AddStudent() {
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
     setStudentData({ ...studentData, [name]: event.target.value });
+    console.log(name);
+    if (name === "class") {
+      console.log("@@@@@@@@=>", event.target.value);
+      // setSelectedClassId(event.target.value);
+      let selectedClass = classes.find(
+        (item) => item._id.toString() === event.target.value.toString()
+      );
+      console.log(selectedClass);
+      setSelectedClass(selectedClass);
+    }
   };
 
   //Taking Image Value
@@ -683,9 +694,7 @@ function AddStudent() {
                       onChange={handleChange("class")}
                       value={studentData.class}
                     >
-                      <option value="" disable>
-                        Select Class
-                      </option>
+                      <option value="">Select Class</option>
                       {classes &&
                         classes.map((clas, index) => {
                           // setselectedClassIndex(index)
@@ -711,18 +720,20 @@ function AddStudent() {
                       onChange={handleChange("section")}
                       value={studentData.section}
                     >
-                      <option value="" disable>
-                        Select Section
-                      </option>
-                      {classes.map((sections) => {
-                        return sections.section.map((sec) => {
+                      <option value="">Select Section</option>
+                      {selectedClass.section &&
+                        selectedClass.section.map((section) => {
+                          console.log(section.name);
                           return (
-                            <option value={sec._id} key={sec._id}>
-                              {sec.name}
+                            <option
+                              value={section._id}
+                              key={section._id}
+                              selected
+                            >
+                              {section.name}
                             </option>
                           );
-                        });
-                      })}
+                        })}
                     </Input>
                   </Col>
                   <Col>

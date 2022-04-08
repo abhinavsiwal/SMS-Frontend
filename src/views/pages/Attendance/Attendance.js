@@ -58,7 +58,10 @@ function Attendance() {
   const [attendanceData, setAttendanceData] = useState([]);
   const [allAttendance, setAllAttendance] = useState([]);
   const [sessions, setSessions] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState("")
   const [selectSessionId, setSelectSessionId] = useState("");
+  // const [sections, setSections] = useState({})
+  const [selectedClass, setSelectedClass] = useState({});
   // console.log("attendance", attendance);
   // console.log(classes);
   const [addAttendance, setAddAttendance] = useState([]);
@@ -123,13 +126,12 @@ function Attendance() {
     // console.log(name);
     if (name === "selectClass") {
       console.log("@@@@@@@@=>", event.target.value);
-      for (let i = 0; i < classes.length; i++) {
-        if (classes[i].name === event.target.value) {
-          // console.log("#######");
-          setselectedClassIndex(i);
-        }
-      }
+    
+      let selectedClass = classes.find((item) => item._id.toString() === event.target.value.toString());
+      console.log(selectedClass);
+      setSelectedClass(selectedClass);
     }
+
   };
 
   useEffect(() => {
@@ -254,6 +256,11 @@ function Attendance() {
       toast.error(addAttendanceError);
     }
   };
+
+const searchHandler=()=>{
+  console.log(attendance);
+}
+
 
   // const attendanceValueChangeHandler = (value) => {};
 
@@ -381,6 +388,7 @@ function Attendance() {
                     value={attendance.selectClass}
                     required
                   >
+                    <option value="">Select Class</option>
                     {classes &&
                       classes.map((clas, index) => {
                         // setselectedClassIndex(index)
@@ -408,9 +416,10 @@ function Attendance() {
                     value={attendance.selectSection}
                     required
                   >
-                    {classes[selectedClassIndex] &&
-                      classes[selectedClassIndex].section.map((section) => {
-                        // console.log(section.name);
+                    <option value="">Select Section</option>
+                    {selectedClass.section &&
+                      selectedClass.section.map((section) => {
+                        console.log(section.name);
                         return (
                           <option
                             value={section._id}
@@ -451,7 +460,7 @@ function Attendance() {
                   </Input>
                 </Col>
                 <Col className="mt-4">
-                  <Button color="primary">Search</Button>
+                  <Button color="primary" onClick={searchHandler} >Search</Button>
                 </Col>
               </Row>
             </CardBody>

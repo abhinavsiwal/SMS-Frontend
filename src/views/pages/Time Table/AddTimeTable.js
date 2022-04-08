@@ -87,7 +87,7 @@ function AddTimeTable() {
     Friday: [],
     Saturday: [],
   });
-
+  const [selectedClass, setSelectedClass] = useState({});
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
@@ -134,6 +134,16 @@ function AddTimeTable() {
   const handleChange = (name) => (event) => {
     // formData.set(name, event.target.value);
     setTimeTableData({ ...timeTableData, [name]: event.target.value });
+    console.log(name);
+    if (name === "class") {
+      console.log("@@@@@@@@=>", event.target.value);
+      // setSelectedClassId(event.target.value);
+      let selectedClass = classess.find(
+        (item) => item._id.toString() === event.target.value.toString()
+      );
+      console.log(selectedClass);
+      setSelectedClass(selectedClass);
+    }
   };
 
   //Taking Values from react-select
@@ -715,18 +725,22 @@ function AddTimeTable() {
                       required
                       placeholder="Add Periods"
                     >
-                      <option value="" disabled selected>
+                      <option value="">
                         Select Section
                       </option>
-                      {classess.map((sections) => {
-                        return sections.section.map((sec) => {
+                      {selectedClass.section &&
+                        selectedClass.section.map((section) => {
+                          console.log(section.name);
                           return (
-                            <option value={sec._id} key={sec._id}>
-                              {sec.name}
+                            <option
+                              value={section._id}
+                              key={section._id}
+                              selected
+                            >
+                              {section.name}
                             </option>
                           );
-                        });
-                      })}
+                        })}
                     </Input>
                   </Col>
                   <Col md="4">
