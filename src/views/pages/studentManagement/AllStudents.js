@@ -65,8 +65,8 @@ const AllStudents = () => {
 
   let permissions = [];
   useEffect(() => {
-    if (user.role["Student Management"]) {
-      permissions = user.role["Student Management"];
+    if (user.permissions["Student Management"]) {
+      permissions = user.permissions["Student Management"];
       console.log(permissions);
     }
   }, []);

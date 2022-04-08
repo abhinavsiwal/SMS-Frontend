@@ -104,10 +104,10 @@ const AllStaffs = () => {
             email: res[i].email,
             phone: res[i].phone,
             gender: res[i].gender,
-            assign_role: res[i].assign_role,
+            assign_role: res[i].assign_role.name,
             job: res[i].job,
             salary: res[i].salary,
-            department: res[i].department,
+            department: res[i].department.name,
             joining_date: res[i].joining_date.split("T")[0].toString(),
             action: (
               <h5 key={i + 1} className="mb-0">
@@ -364,7 +364,7 @@ const AllStaffs = () => {
       },
     },
     {
-      title: "Assign Role",
+      title: "Role",
       dataIndex: "assign_role",
       sorter: (a, b) => a.assign_role > b.assign_role,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -656,7 +656,7 @@ const AllStaffs = () => {
                                                   Assign Role
                                                 </h4>
                                                 <span className="text-md">
-                                                  {staff.assign_role}
+                                                  {staff.assign_role.name}
                                                 </span>
                                               </Col>
                                               <Col align="center">
@@ -664,7 +664,7 @@ const AllStaffs = () => {
                                                   Department
                                                 </h4>
                                                 <span className="text-md">
-                                                  {staff.department}
+                                                  {staff.department.name}
                                                 </span>
                                               </Col>
                                             </Row>

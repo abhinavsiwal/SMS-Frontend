@@ -251,7 +251,7 @@ function TimeTable() {
                             type="text"
                             onChange={handleChange("prd")}
                             value={timeTableData.prd}
-                            placeholder="Add Periods"
+                            placeholder="Add Lecture"
                             required
                           ></Input>
                         </Col>
@@ -367,7 +367,7 @@ function TimeTable() {
                             className="form-control-label"
                             htmlFor="xample-date-input"
                           >
-                            Subjects
+                            Subject
                           </Label>
                           <Input
                             id="exampleFormControlSelect3"
@@ -377,7 +377,7 @@ function TimeTable() {
                             required
                           >
                             <option value="" disabled selected>
-                              Subjects
+                              Subject
                             </option>
                             <option>Physics</option>
                             <option>Chemistry</option>
@@ -444,7 +444,7 @@ function TimeTable() {
                               onChange={handleChange("link")}
                               value={timeTableData.link}
                               placeholder="Enter Link here"
-                              required
+                        
                             ></Input>
                           </Col>
                         )}

@@ -6,10 +6,10 @@ export const deleteStaffSuccess = "Delete Staff Success";
 
 //Class Management
 export const fetchingClassSuccess = "Getting Class Success";
-export const addClassSuccess="Add Staff Success";
+export const addClassSuccess="Add Class Successfull";
 export const updateClassSuccess = "Update Class Success";
 export const deleteClassSuccess = "Delete Class Success";
-export const classTeacherAssignSuccess = "Success to Assign Class Teacher";
+export const classTeacherAssignSuccess = "Class Teacher Assign Successfully";
 export const fetchingSectionsSuccess = "Getting Sections Success"
 export const addSectionSuccess = "Adding Section Success"
 export const fetchingSubjectSuccess  = "Getting Sections Success";

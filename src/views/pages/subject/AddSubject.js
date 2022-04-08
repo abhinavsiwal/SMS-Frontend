@@ -185,7 +185,11 @@ const AddSubject = () => {
     formData.set("list", JSON.stringify(list));
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    formData.set("name", groupName);
+    if(subjectData.name.length>0){
+      formData.set("name", subjectData.name);
+    }else {
+      formData.set("name", groupName);
+    }
     try {
       const subject = await addSubject(user._id, token, formData);
       if (subject.err) {
@@ -328,7 +332,7 @@ const AddSubject = () => {
             <div className="card-wrapper">
               <Card>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-2">
+                  <Col className="d-flex justify-content-center mt-2 ml-4">
                     <form>
                       <input
                         type={"file"}
@@ -342,6 +346,7 @@ const AddSubject = () => {
                           handleOnSubmit(e);
                         }}
                         color="primary"
+                        className="mt-2"
                       >
                         IMPORT CSV
                       </Button>

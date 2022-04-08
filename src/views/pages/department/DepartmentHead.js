@@ -48,6 +48,8 @@ const DepartmentHead = () => {
       if (staffData.err) {
         return toast.error(staffData.err);
       }
+      // let teachers = staffData.filter(staff=>staff.assign_Role.name==="Teacher");
+      // console.log(teachers);
       setStaff(staffData);
       setLoading(true);
     } catch (err) {
@@ -63,7 +65,7 @@ const DepartmentHead = () => {
     console.log(departmentId);
     console.log(e.target.value);
     let formData = new FormData();
-    formData.set("secondaryHead", e.target.value);
+    formData.set("primaryHead", e.target.value);
 
     try {
       const data = await departmentHead(
@@ -83,7 +85,7 @@ const DepartmentHead = () => {
     console.log(departmentId);
     console.log(e.target.value);
     let formData = new FormData();
-    formData.set("head", e.target.value);
+    formData.set("secondaryHead", e.target.value);
 
     try {
       const data = await departmentHead(

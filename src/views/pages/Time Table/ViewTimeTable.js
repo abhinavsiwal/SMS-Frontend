@@ -670,9 +670,9 @@ function ViewTimeTable() {
                   </tr>
                 </thead>
                 <>
-                  <tbody>
+                  <tbody style={{width:"100%",overflowX:"auto"}} >
                     <tr>
-                      <td>
+                      <td  >
                         <>
                           {lecturer &&
                             lecturer.Monday &&

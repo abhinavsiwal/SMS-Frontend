@@ -3,7 +3,7 @@ import { Container, Card, Table, Input } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
 import { allClass, assignClassTeacher } from "api/class";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 import { isAuthenticated } from "api/auth";
 import { allStaffs } from "api/staff";
 
@@ -22,6 +22,7 @@ const ClassTeacher = () => {
   const [teacherList, setTeacherList] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = isAuthenticated();
+  const [checked, setChecked] = useState(false);
   // let permissions;
   //   useEffect(() => {
   //     if (user.role["Library Management"]) {
@@ -38,7 +39,7 @@ const ClassTeacher = () => {
         return toast.error(classess.err);
       }
       setClassList(classess);
-      setLoading(true);
+      // setLoading(true);
       // toast.success(fetchingClassSuccess)
     } catch (err) {
       toast.error(fetchingClassError);
@@ -57,7 +58,7 @@ const ClassTeacher = () => {
     } catch (err) {
       toast.error(fetchingStaffFailed);
     }
-  }, []);
+  }, [checked]);
 
   const assignClassTeacherHandler = (sectionId) => async (e) => {
     console.log(sectionId);
@@ -65,21 +66,37 @@ const ClassTeacher = () => {
     let formData = new FormData();
     formData.set("classTeacher", e.target.value);
     try {
+      setLoading(true);
       const data = await assignClassTeacher(sectionId, user._id, token, formData);
       console.log(data);
       toast.success(classTeacherAssignSuccess);
+      setChecked(!checked)
+      setLoading(false)
     } catch (err) {
       console.log(err);
       toast.error(classTeacherAssignError);
+      setLoading(false);
     }
   };
 
   return (
     <>
       <SimpleHeader name="Class Teacher" parentName="Class Management" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Container fluid className="mt--6">
         <Card className="mb-4">
-          {loading ? (
+          {!loading ? (
             <Table className="my-table mt-2">
               <tbody>
                 {classList.map((clas) => (
@@ -98,7 +115,9 @@ const ClassTeacher = () => {
                                   id={section._id}
                                   type="select"
                                   onChange={assignClassTeacherHandler(section._id)}
+                                  value={section.classTeacher}
                                 >
+                                  <option value="">Select Teacher</option>
                                   {teacherList.map((tech, i) => (
                                     <option key={i} value={tech._id}>
                                       {tech.firstname} {tech.lastname}

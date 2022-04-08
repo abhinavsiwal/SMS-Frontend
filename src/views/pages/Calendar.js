@@ -85,7 +85,7 @@ function CalendarView() {
   const [selectSessionId, setSelectSessionId] = useState("");
   const [staff, setStaff] = useState([]);
   const [staffId, setStaffId] = useState("");
-const [filterSessionId, setFilterSessionId] = useState("")
+  const [filterSessionId, setFilterSessionId] = useState("");
 
   let permissions = [];
   useEffect(() => {
@@ -176,8 +176,12 @@ const [filterSessionId, setFilterSessionId] = useState("")
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
     try {
-      await addCalender(user._id, token, formData);
+      let data = await addCalender(user._id, token, formData);
       setModalAdd(false);
+      if (data.err) {
+        toast.error(data.err);
+        return;
+      }
       toast.success("Event addedd successfully");
       setChecked(true);
     } catch (err) {
@@ -313,24 +317,41 @@ const [filterSessionId, setFilterSessionId] = useState("")
     setEvent(undefined);
   };
 
-useEffect(() => {
-  
-let filteredEvents = events.filter(event => event.session.toString()===filterSessionId.toString());
-const data = [];
-filteredEvents.map((events) => {
-  data.push({
-    key: events._id,
-    event_name: events.name,
-    start_date: events.event_from.split("T")[0],
-    end_date: events.event_to.split("T")[0],
-  });
-});
-setEventList(data);
-setChecked(false);
- 
-}, [filterSessionId])
+  useEffect(() => {
+    console.log(events);
+    console.log(filterSessionId);
 
+    if (filterSessionId.toString() === "All") {
+      console.log("here");
+      const data = [];
+      events.map((events) => {
+        data.push({
+          key: events._id,
+          event_name: events.name,
+          start_date: events.event_from.split("T")[0],
+          end_date: events.event_to.split("T")[0],
+        });
+      });
+      setEventList(data);
+      return;
+    }
 
+    let filteredEvents = events.filter(
+      (event) => event.session._id.toString() === filterSessionId.toString()
+    );
+    console.log(filteredEvents);
+    const data = [];
+    filteredEvents.map((events) => {
+      data.push({
+        key: events._id,
+        event_name: events.name,
+        start_date: events.event_from.split("T")[0],
+        end_date: events.event_to.split("T")[0],
+      });
+    });
+    setEventList(data);
+    setChecked(false);
+  }, [filterSessionId]);
 
   //Ant Table Column
   const columns = [
@@ -472,7 +493,7 @@ setChecked(false);
             value={filterSessionId}
             required
           >
-            <option value="" disabled selected>
+            <option value="All" selected>
               All
             </option>
             {sessions.map((session) => {
@@ -555,7 +576,7 @@ setChecked(false);
                 >
                   <i className="fas fa-angle-right" />
                 </Button>
-              
+
                 <Button
                   className="btn-neutral"
                   color="default"
@@ -669,9 +690,7 @@ setChecked(false);
                       type="select"
                       onChange={(e) => setStaffId(e.target.value)}
                     >
-                      <option value={""} >
-                        {"Select Staff"}
-                      </option>
+                      <option value={""}>{"Select Staff"}</option>
                       {staff.map((staff, i) => (
                         <option key={i} value={staff._id}>
                           {staff.firstname} {staff.lastname}
@@ -681,7 +700,7 @@ setChecked(false);
                   </FormGroup>
                   <FormGroup>
                     <textarea
-                      className="form-control-alternative new-event--title w-100 descrip"
+                      className="form-control-alternative edit-event--description w-100"
                       placeholder="Description"
                       type="text"
                       onChange={(e) => setDescription(e.target.value)}
@@ -842,12 +861,14 @@ setChecked(false);
                       type="select"
                       onChange={(e) => setAssignTeachers(e.target.value)}
                       required
+                      // value={assignTeachers[0]._id}
                     >
-                      <option value="" disabled selected>
-                        Assignteacher
-                      </option>
-                      <option>LKG</option>
-                      <option>UKG</option>
+                      <option value={""}>{"Select Staff"}</option>
+                      {staff.map((staff, i) => (
+                        <option key={i} value={staff._id}>
+                          {staff.firstname} {staff.lastname}
+                        </option>
+                      ))}
                     </Input>
                   </FormGroup>
                   <FormGroup>

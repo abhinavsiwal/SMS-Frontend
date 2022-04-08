@@ -274,31 +274,30 @@ function Attendance() {
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
-       
         <Form>
           <Card>
             <CardBody>
-            <Row>
-          <Col className="d-flex justify-content-center mt-2">
-            <form>
-              <input
-                type={"file"}
-                id={"csvFileInput"}
-                accept={".csv"}
-                onChange={handleOnChange}
-              />
+              <Row>
+                <Col className="d-flex justify-content-center mt-2">
+                  <form>
+                    <input
+                      type={"file"}
+                      id={"csvFileInput"}
+                      accept={".csv"}
+                      onChange={handleOnChange}
+                    />
 
-              <Button
-                onClick={(e) => {
-                  handleOnSubmit(e);
-                }}
-                color="primary"
-              >
-                IMPORT CSV
-              </Button>
-            </form>
-          </Col>
-        </Row>
+                    <Button
+                      onClick={(e) => {
+                        handleOnSubmit(e);
+                      }}
+                      color="primary"
+                    >
+                      IMPORT CSV
+                    </Button>
+                  </form>
+                </Col>
+              </Row>
               <Row md="4" className="d-flex justify-content-center mb-4">
                 <Col md="3">
                   <Label
@@ -331,8 +330,8 @@ function Attendance() {
                     value={attendance.dateTo}
                   />
                 </Col>
-              {/* </Row> */}
-              {/* <Row className="d-flex justify-content-center mb-4"> */}
+                {/* </Row> */}
+                {/* <Row className="d-flex justify-content-center mb-4"> */}
                 <Col md="3">
                   <Label
                     className="form-control-label"

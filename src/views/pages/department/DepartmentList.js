@@ -134,68 +134,7 @@ const DepartmentList = () => {
         return record.name.toLowerCase().includes(value.toLowerCase());
       },
     },
-    {
-      title: "Primary Head",
-      dataIndex: "primary_head",
-      width: "60%",
-      sorter: (a, b) => a.primary_head > b.primary_head,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.primary_head.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Secondary Head",
-      dataIndex: "secondary_head",
-      width: "60%",
-      sorter: (a, b) => a.secondary_head > b.secondary_head,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.secondary_head
-          .toLowerCase()
-          .includes(value.toLowerCase());
-      },
-    },
+  
     {
       title: "Action",
       key: "action",

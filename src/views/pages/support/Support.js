@@ -221,29 +221,37 @@ function Support() {
 
   const [formData] = useState(new FormData());
   const handleChange = (name) => (event) => {
-    formData.set(name, event.target.value);
+    // formData.set(name, event.target.value);
     setSupportData({ ...supportData, [name]: event.target.value });
   };
+
   const handleFormChange = async (e) => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    console.log(supportData);
+    formData.set("priority", supportData.priority);
+    formData.set("root_caused", supportData.root_caused);
+    formData.set("description", supportData.description);
+    setSupportData({
+      priority: "",
+      root_caused: "",
+      description: "",
+    });
     try {
       const resp = await support(user._id, token, formData);
       console.log(resp);
+     
       if (resp.err) {
         return toast.error(resp.err);
       }
+     
       if (checked === false) {
         setChecked(true);
       } else {
         setChecked(false);
       }
-      setSupportData({
-        priority: "",
-        root_caused: "",
-        description: "",
-      });
+    
       toast.success(addSupportSuccess);
     } catch (err) {
       toast.error(addSupportError);
@@ -291,7 +299,7 @@ function Support() {
                     </form>
                   </Col>
                 </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
+                <Form  className="mb-4">
                   <CardBody className="ml-4 mr-4">
                     <Row>
                       <label
@@ -346,7 +354,7 @@ function Support() {
                     </Row>
                     <Row className="mt-4">
                       <Col style={{display:"flex",justifyContent:"center"}} >
-                      <Button color="primary" type="submit">
+                      <Button color="primary" onClick={handleFormChange}>
                         Submit
                       </Button>
                       </Col>

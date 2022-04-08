@@ -1,52 +1,20 @@
-/*!
 
-=========================================================
-* Argon Dashboard PRO React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 // reactstrap components
-import React, { useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Container,
-  Row,
-  Col,
-  Button,
-  CardImg,
-  Nav,
-  NavItem,
-  NavLink,
-  TabContent,
-  TabPane,
-} from "reactstrap";
+import React, { useState } from 'react';
+import { Card, CardHeader, CardBody, Container, Row, Col, Button, CardImg, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 // core components
-import SimpleHeader from "components/Headers/SimpleHeader.js";
+import SimpleHeader from 'components/Headers/SimpleHeader.js';
 
-import { FaEdit } from "react-icons/fa";
-
+import { FaEdit } from 'react-icons/fa';
 import { isAuthenticated } from "api/auth";
-function StaffProfile() {
+function StudentProfile() {
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
-  const [activeTab, setActiveTab] = useState("1");
+  const [activeTab, setActiveTab] = useState('1');
   const { user} = isAuthenticated();
-  console.log(user);
-  
-
+  // console.log(user);
   return (
     <>
-      <SimpleHeader name="Staff Profile" />
+      <SimpleHeader name="Student Profile" />
       <Container className="mt--6" fluid>
         <Row>
           <Col lg="4">
@@ -157,4 +125,4 @@ function StaffProfile() {
   );
 }
 
-export default StaffProfile;
+export default StudentProfile;

@@ -31,6 +31,7 @@ import AddStudent from "views/pages/studentManagement/AddStudent";
 import SchoolProfile from "views/pages/schoolProfile/SchoolProfile";
 import StudentProfile from "views/pages/studentProfile/StudentProfile";
 import StaffProfile from "views/pages/Staff Profile/StaffProfile";
+import Profile from 'views/pages/Staff Profile/Profile';
 import Support from "views/pages/support/Support";
 import Session from "views/pages/session/AddSession";
 import AddSection from "./views/pages/section/AddSection";
@@ -88,11 +89,11 @@ export const adminRoutes = [
   },
   {
     path: "/staff-profile",
-    name: "Staff Profile",
+    name: "Profile",
     icon: "ni ni-shop text-primary",
     component: StaffProfile,
     layout: "/admin",
-    module: "Staff Profile",
+    module: "Staff Profile Module",
   },
   {
     collapse: true,
@@ -140,7 +141,7 @@ export const adminRoutes = [
     name: "Department",
     icon: "fa fa-users",
     state: "departmentsCollapse",
-    module: "Department Management",
+    module: "Department",
     views: [
       {
         path: "/department-list",
@@ -227,7 +228,7 @@ export const adminRoutes = [
     icon: "ni ni-badge",
     component: Attendance,
     layout: "/admin",
-    module: "Student Attendance Management",
+    module: "Attendance",
   },
   // {
   //   path: "/timeTable",
@@ -867,9 +868,9 @@ const routes = [
   },
   {
     path: "/staff-profile",
-    name: "Staff Profile",
+    name: "Profile",
     icon: "ni ni-shop text-primary",
-    component: StaffProfile,
+    component: Profile,
     layout: "/admin",
     module: "Staff Profile",
   },
@@ -960,13 +961,7 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/student-profile",
-    name: "Student Profile",
-    icon: "ni ni-shop text-primary",
-    component: StudentProfile,
-    layout: "/admin",
-  },
+ 
   {
     path: "/session",
     name: "Session",

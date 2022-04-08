@@ -241,7 +241,7 @@ function AddCanteen() {
                   <h3>Add Canteen</h3>
                 </CardHeader>
                 <Row>
-                  <Col className="d-flex justify-content-center mt-3 ">
+                  <Col className="d-flex justify-content-center mt-3 ml-4 ">
                     <form>
                       <input
                         type={"file"}
@@ -255,6 +255,7 @@ function AddCanteen() {
                           handleOnSubmit(e);
                         }}
                         color="primary"
+                        className="mt-2"
                       >
                         IMPORT CSV
                       </Button>
@@ -378,7 +379,7 @@ function AddCanteen() {
                           value={addMenu.addCanteen}
                           required
                         >
-                          <option disabled value="" selected>
+                          <option value="" selected>
                             Select Canteen
                           </option>
                           {allCanteen.map((canteen) => {
