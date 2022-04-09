@@ -49,6 +49,7 @@ function Support() {
     root_caused: "",
     description: "",
   });
+  const { user, token } = isAuthenticated();
   const [supportList, setSupportList] = useState([]);
   const [modalState, setModalState] = useState(false);
   const [modalSupport, setModalSupport] = useState({});
@@ -63,6 +64,14 @@ function Support() {
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
+
+  let permissions = [];
+  useEffect(() => {
+    if (user.permissions["Session"]) {
+      permissions = user.permissions["Session"];
+      console.log(permissions);
+    }
+  }, []);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -82,7 +91,6 @@ function Support() {
 
   useEffect(() => {
     const getAllSupports = async () => {
-      const { user, token } = isAuthenticated();
       allSupports(user._id, user.school, token)
         .then((res) => {
           const data = [];
@@ -94,6 +102,7 @@ function Support() {
               root_caused: res[i].root_caused,
               action: (
                 <h5 key={i + 1} className="mb-0">
+                  {permissions && permissions.includes("edit") && (
                   <Button
                     className="btn-sm pull-right"
                     color="primary"
@@ -105,6 +114,7 @@ function Support() {
                   >
                     View More
                   </Button>
+                  )}
                 </h5>
               ),
             });
@@ -274,6 +284,7 @@ function Support() {
       />
       <Container className="mt--6" fluid>
         <Row>
+        {permissions && permissions.includes("edit") && (
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
@@ -364,6 +375,7 @@ function Support() {
               </Card>
             </div>
           </Col>
+        )}
           <Col>
             <div className="card-wrapper">
               <Card>

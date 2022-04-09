@@ -74,8 +74,8 @@ const AddSubject = () => {
 
   let permissions;
   useEffect(() => {
-    if (user.role["Library Management"]) {
-      permissions = user.role["Library Management"];
+    if (user.permissions["Class, section and subject master"]) {
+      permissions = user.permissions["Class, section and subject master"];
       console.log(permissions);
     }
   }, []);
@@ -319,9 +319,7 @@ const AddSubject = () => {
       render: (subjects) => (
         <>
           {subjects.map((subject) => {
-            return (
-              <p>{subject}</p>
-            );
+            return <p>{subject}</p>;
           })}
         </>
       ),
@@ -339,7 +337,7 @@ const AddSubject = () => {
       .then((res) => {
         console.log("res", res);
         let data = [];
-        let data1=[];
+        let data1 = [];
 
         for (let i = 0; i < res.length; i++) {
           if (res[i].list.length > 0) {
@@ -350,38 +348,35 @@ const AddSubject = () => {
               subjects: res[i].list,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() => rowHandler(res[i]._id, res[i].name)}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                  {/* {permissions && permissions.includes("edit") && (
-                    
-                  )} */}
-                  {/* {permissions && permissions.includes("delete") && (
-                    
-                  )} */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
+                  {permissions && permissions.includes("edit") && (
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                      onClick={() => rowHandler(res[i]._id, res[i].name)}
                     >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  )}
+                  {permissions && permissions.includes("delete") && (
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => handleDelete(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
+                    </Button>
+                  )}
                 </h5>
               ),
             });
-            
           } else {
             data.push({
               key: i,
@@ -451,216 +446,220 @@ const AddSubject = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && (
-           
-          )} */}
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Row>
-                  <Col className="d-flex justify-content-center mt-2 ml-4">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+          {permissions && permissions.includes("add") && (
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Row>
+                    <Col className="d-flex justify-content-center mt-2 ml-4">
+                      <form>
+                        <input
+                          type={"file"}
+                          id={"csvFileInput"}
+                          accept={".csv"}
+                          onChange={handleOnChange}
+                        />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                        className="mt-2"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
+                        <Button
+                          onClick={(e) => {
+                            handleOnSubmit(e);
+                          }}
+                          color="primary"
+                          className="mt-2"
                         >
-                          Select type
-                        </label>
-                        <Input
-                          id="exampleFormControlSelect3"
-                          type="select"
-                          // onChange={(e) => setType(e.target.value)}
-                          onChange={handleChange("type")}
-                          value={subjectData.type}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select type
-                          </option>
-                          <option>Single</option>
-                          <option>Group</option>
-                        </Input>
-                      </Col>
-                    </Row>
-                    {subjectData.type === "Single" && (
-                      <>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Subject
-                            </label>
-                            <Input
-                              id="example4cols2Input"
-                              placeholder="Subject"
-                              type="text"
-                              onChange={handleChange("name")}
-                              value={subjectData.name}
-                              required
-                            />
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Select Session
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              type="select"
-                              onChange={handleChange("session")}
-                              value={subjectData.session}
-                              required
-                            >
-                              <option value="" disabled selected>
-                                Select Session
-                              </option>
-                              {sessions.map((session) => {
-                                return (
-                                  <option value={session._id} key={session._id}>
-                                    {session.name}
-                                  </option>
-                                );
-                              })}
-                            </Input>
-                          </Col>
-                        </Row>
-                      </>
-                    )}
-                    {subjectData.type === "Group" && (
-                      <>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Group Name
-                            </label>
-                            <Input
-                              id="example4cols2Input"
-                              placeholder="Group Name"
-                              type="text"
-                              onChange={(e) => setGroupName(e.target.value)}
-                              value={groupName}
-                              required
-                            />
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Subject
-                            </label>
-                            {inputFields.map((inputField, index) => {
-                              return (
-                                <div key={index}>
-                                  <Input
-                                    name="subjectName"
-                                    id="example4cols2Input"
-                                    placeholder="Subject"
-                                    type="text"
-                                    value={inputField.subjectName}
-                                    onChange={(event) =>
-                                      handleChangeSubject(index, event)
-                                    }
-                                  />
-                                  <Button
-                                    color="primary"
-                                    style={{
-                                      height: "1rem",
-                                      width: "4rem",
-                                      fontSize: "0.5rem",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginTop: "0.7rem",
-                                      marginBottom: "0.7rem",
-                                    }}
-                                    onClick={handleAddFields}
-                                  >
-                                    Add
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Select Session
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              type="select"
-                              onChange={handleChange("session")}
-                              value={subjectData.session}
-                              required
-                            >
-                              <option value="" disabled selected>
-                                Select Session
-                              </option>
-                              {sessions.map((session) => {
-                                return (
-                                  <option value={session._id} key={session._id}>
-                                    {session.name}
-                                  </option>
-                                );
-                              })}
-                            </Input>
-                          </Col>
-                        </Row>
-                      </>
-                    )}
-                    <Row className="mt-4">
-                      <Col
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <Button color="primary" type="submit">
-                          Submit
+                          IMPORT CSV
                         </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
-
+                      </form>
+                    </Col>
+                  </Row>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Select type
+                          </label>
+                          <Input
+                            id="exampleFormControlSelect3"
+                            type="select"
+                            // onChange={(e) => setType(e.target.value)}
+                            onChange={handleChange("type")}
+                            value={subjectData.type}
+                            required
+                          >
+                            <option value="" disabled selected>
+                              Select type
+                            </option>
+                            <option>Single</option>
+                            <option>Group</option>
+                          </Input>
+                        </Col>
+                      </Row>
+                      {subjectData.type === "Single" && (
+                        <>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Subject
+                              </label>
+                              <Input
+                                id="example4cols2Input"
+                                placeholder="Subject"
+                                type="text"
+                                onChange={handleChange("name")}
+                                value={subjectData.name}
+                                required
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Select Session
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                type="select"
+                                onChange={handleChange("session")}
+                                value={subjectData.session}
+                                required
+                              >
+                                <option value="" disabled selected>
+                                  Select Session
+                                </option>
+                                {sessions.map((session) => {
+                                  return (
+                                    <option
+                                      value={session._id}
+                                      key={session._id}
+                                    >
+                                      {session.name}
+                                    </option>
+                                  );
+                                })}
+                              </Input>
+                            </Col>
+                          </Row>
+                        </>
+                      )}
+                      {subjectData.type === "Group" && (
+                        <>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Group Name
+                              </label>
+                              <Input
+                                id="example4cols2Input"
+                                placeholder="Group Name"
+                                type="text"
+                                onChange={(e) => setGroupName(e.target.value)}
+                                value={groupName}
+                                required
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Subject
+                              </label>
+                              {inputFields.map((inputField, index) => {
+                                return (
+                                  <div key={index}>
+                                    <Input
+                                      name="subjectName"
+                                      id="example4cols2Input"
+                                      placeholder="Subject"
+                                      type="text"
+                                      value={inputField.subjectName}
+                                      onChange={(event) =>
+                                        handleChangeSubject(index, event)
+                                      }
+                                    />
+                                    <Button
+                                      color="primary"
+                                      style={{
+                                        height: "1rem",
+                                        width: "4rem",
+                                        fontSize: "0.5rem",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        marginTop: "0.7rem",
+                                        marginBottom: "0.7rem",
+                                      }}
+                                      onClick={handleAddFields}
+                                    >
+                                      Add
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Select Session
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                type="select"
+                                onChange={handleChange("session")}
+                                value={subjectData.session}
+                                required
+                              >
+                                <option value="" disabled selected>
+                                  Select Session
+                                </option>
+                                {sessions.map((session) => {
+                                  return (
+                                    <option
+                                      value={session._id}
+                                      key={session._id}
+                                    >
+                                      {session.name}
+                                    </option>
+                                  );
+                                })}
+                              </Input>
+                            </Col>
+                          </Row>
+                        </>
+                      )}
+                      <Row className="mt-4">
+                        <Col
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          )}
           <Col>
             <div className="card-wrapper">
               <Card>
@@ -673,7 +672,7 @@ const AddSubject = () => {
                         setView(0);
                       }}
                     >
-                      List View
+                      Single
                     </Button>{" "}
                     <Button
                       color={`${view === 1 ? "warning" : "primary"}`}
@@ -682,7 +681,7 @@ const AddSubject = () => {
                         setView(1);
                       }}
                     >
-                      Grid View
+                      Group
                     </Button>
                   </div>
                 </CardHeader>

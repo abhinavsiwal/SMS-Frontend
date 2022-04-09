@@ -14,16 +14,30 @@ export const getAttendence = async (schoolId, id) => {
   }
 };
 
-
-
-export const postAttendance = async (userId,bodyData) => {
+export const postAttendance = async (userId, bodyData) => {
   try {
-    const  {data}  = await sendRequest(
-      `${process.env.REACT_APP_API_URL}/api/school/attendance/create/${userId}`,bodyData,"POST"
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/attendance/create/${userId}`,
+      bodyData,
+      "POST"
     );
     console.log(data);
   } catch (err) {
-      console.log(err);
-      throw err;
+    console.log(err);
+    throw err;
+  }
+};
+
+export const searchAttendance = async (userId, schoolId, bodyData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/attendance/custom/all/${schoolId}/${userId}`,
+      bodyData,
+      "POST"
+    );
+    console.log(data);
+  } catch (err) {
+    console.log(err);
+    throw err;
   }
 };

@@ -71,8 +71,9 @@ const AllStaffs = () => {
 
   let permissions;
   useEffect(() => {
-    if (user.role["Staff Management"]) {
-      permissions = user.role["Staff Management"];
+    // console.log(user);
+    if (user.permissions["Staff Management"]) {
+      permissions = user.permissions["Staff Management"];
       console.log(permissions);
     }
   }, []);
@@ -86,7 +87,7 @@ const AllStaffs = () => {
   useEffect(() => {
     const fetchStaffs = async () => {
       const endOffset = itemOffset + itemsPerPage;
-      console.log(userDetails.userDetails);
+      // console.log(userDetails.userDetails);
       const payload = { school: userDetails.userDetails.school };
 
       try {
@@ -111,33 +112,32 @@ const AllStaffs = () => {
             joining_date: res[i].joining_date.split("T")[0].toString(),
             action: (
               <h5 key={i + 1} className="mb-0">
-                {/* {permissions && permissions.includes("edit") && ( */}
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => updateStaff(res[i])}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                {/* )} */}
-                {/* {permissions && permissions.includes("delete") && (
-                  
-                )} */}
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => deleteStaffHandler(res[i]._id)}
+                {permissions && permissions.includes("edit") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() => updateStaff(res[i])}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                )}
+                {permissions && permissions.includes("delete") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => deleteStaffHandler(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                )}
                 <Button
                   className="btn-sm pull-right"
                   color="success"

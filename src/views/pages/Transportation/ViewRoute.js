@@ -25,7 +25,7 @@ import AntTable from "../tables/AntTable";
 
 //Ant Table
 import { DeleteRowOutlined, SearchOutlined } from "@ant-design/icons";
-import { Popconfirm } from "antd";
+import { Popconfirm, Tag } from "antd";
 
 //Loader
 import Loader from "components/Loader/Loader";
@@ -194,6 +194,14 @@ function ViewRoute() {
       onFilter: (value, record) => {
         return record.staff_members.toLowerCase().includes(value.toLowerCase());
       },
+      // render: (staffs) => {
+      //   <>
+      //     {staffs.map((staff) => {
+      //       console.log(staff);
+      //       return <p key={staff._id}>{staff.firstname}</p>;
+      //     })}
+      //   </>;
+      // },
     },
 
     {
@@ -290,7 +298,7 @@ function ViewRoute() {
         s_no: i + 1,
         route_name: res[i].name,
         bus_no: res[i].bus_number,
-        staff_members: res[i].staff[0].firstName,
+        staff_members: res[i].staff[0].firstname,
         start_time: res[i].start,
         end_time: res[i].end,
         action: (
@@ -534,7 +542,12 @@ function ViewRoute() {
             <h3>View Route</h3>
           </CardHeader>
           <CardBody>
-            <Button color="primary" className="mb-2" onClick={handlePrint} style={{float:"right"}} >
+            <Button
+              color="primary"
+              className="mb-2"
+              onClick={handlePrint}
+              style={{ float: "right" }}
+            >
               Print
             </Button>
             {loading && viewRoute ? (

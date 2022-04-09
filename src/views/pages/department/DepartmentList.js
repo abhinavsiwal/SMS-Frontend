@@ -70,8 +70,8 @@ const DepartmentList = () => {
 
   let permissions = [];
   useEffect(() => {
-    if (user.role["Department"]) {
-      permissions = user.role["Department"];
+    if (user.permissions["Department"]) {
+      permissions = user.permissions["Department"];
       console.log(permissions);
     }
   }, []);
@@ -134,7 +134,7 @@ const DepartmentList = () => {
         return record.name.toLowerCase().includes(value.toLowerCase());
       },
     },
-  
+
     {
       title: "Action",
       key: "action",
@@ -172,36 +172,34 @@ const DepartmentList = () => {
             module: res[i].module,
             action: (
               <h5 key={i + 1} className="mb-0">
-                {/* {permissions && permissions.includes("edit") && (
-                 
-                )} */}
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  onClick={() =>
-                    rowHandler(res[i]._id, res[i].name, res[i].module)
-                  }
-                  key={"edit" + i + 1}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                {/* {permissions && permissions.includes("delete") && (
-                 
-                )} */}
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete(res[i]._id)}
+                {permissions && permissions.includes("edit") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    onClick={() =>
+                      rowHandler(res[i]._id, res[i].name, res[i].module)
+                    }
+                    key={"edit" + i + 1}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                )}
+                {permissions && permissions.includes("delete") && (
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                )}
               </h5>
             ),
           });
@@ -333,72 +331,78 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && ( */}
-          <Col lg="3">
-            <div className="card-wrapper">
-              <Card>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Department Name
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Department Name"
-                          type="text"
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                
+          {permissions && permissions.includes("add") && (
+            <Col lg="3">
+              <div className="card-wrapper">
+                <Card>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Department Name
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Department Name"
+                            type="text"
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                          />
+                        </Col>
+                      </Row>
 
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Select Session
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          type="select"
-                          onChange={(e) => setSelectSessionId(e.target.value)}
-                          value={selectSessionId}
-                          required
-                        >
-                          <option value="" disabled selected>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
                             Select Session
-                          </option>
-                          {sessions.map((session) => {
-                            return (
-                              <option value={session._id} key={session._id}>
-                                {session.name}
-                              </option>
-                            );
-                          })}
-                        </Input>
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
-                        <Button color="primary" type="submit" style={{display:"flex",justifyContent:"center"}} >
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
-          {/* )} */}
+                          </label>
+                          <Input
+                            id="example4cols3Input"
+                            type="select"
+                            onChange={(e) => setSelectSessionId(e.target.value)}
+                            value={selectSessionId}
+                            required
+                          >
+                            <option value="" disabled selected>
+                              Select Session
+                            </option>
+                            {sessions.map((session) => {
+                              return (
+                                <option value={session._id} key={session._id}>
+                                  {session.name}
+                                </option>
+                              );
+                            })}
+                          </Input>
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 float-right">
+                        <Col>
+                          <Button
+                            color="primary"
+                            type="submit"
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          )}
 
           <Col>
             <div className="card-wrapper">

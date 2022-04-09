@@ -59,8 +59,9 @@ function SchoolProfile() {
 
   let permissions = [];
   useEffect(() => {
-    if (user.role["School Profile"]) {
-      permissions = user.role["School Profile"];
+    console.log(user);
+    if (user.permissions["School Profile Module"]) {
+      permissions = user.permissions["School Profile Module"];
       console.log(permissions);
     }
   }, []);
@@ -447,7 +448,7 @@ function SchoolProfile() {
                           </span>
                         </Button>
                       </Col>
-                    )}
+                     )}
                   </Row>
                 </CardHeader>
                 <CardBody>

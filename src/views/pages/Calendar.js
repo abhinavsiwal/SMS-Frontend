@@ -89,6 +89,7 @@ function CalendarView() {
 
   let permissions = [];
   useEffect(() => {
+    console.log(user);
     if (user.role["Calendar"]) {
       permissions = user.role["Calendar"];
       console.log(permissions);
@@ -625,7 +626,7 @@ function CalendarView() {
                 />
               </CardBody>
             </Card>
-            {/* {permissions && permissions.includes("add") && ( */}
+            {permissions && permissions.includes("add") && (
             <Modal
               isOpen={modalAdd}
               toggle={() => setModalAdd(false)}
@@ -788,9 +789,9 @@ function CalendarView() {
                 </Button>
               </div>
             </Modal>
-            {/* )} */}
+             )}
 
-            {/* {permissions && permissions.includes("edit") && ( */}
+            {permissions && permissions.includes("edit") && (
             <Modal
               isOpen={modalChange}
               toggle={() => setModalChange(false)}
@@ -948,7 +949,7 @@ function CalendarView() {
                 </Button>
               </div>
             </Modal>
-            {/* )} */}
+                 )}
           </div>
         </Row>
       </Container>

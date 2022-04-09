@@ -291,8 +291,8 @@ function ViewCanteen() {
 
   let permissions = [];
   useEffect(() => {
-    if (user.role["Canteen Management"]) {
-      permissions = user.role["Canteen Management"];
+    if (user.permissions["Canteen Management"]) {
+      permissions = user.permissions["Canteen Management"];
       console.log(permissions);
     }
   }, []);
@@ -338,30 +338,34 @@ function ViewCanteen() {
         time: selectedCanteen.menu[i].time,
         action: (
           <h5 key={i + 1} className="mb-0">
-            <Button
-              className="btn-sm pull-right"
-              color="primary"
-              type="button"
-              key={"edit" + i + 1}
-              onClick={() => rowHandler(selectedCanteen.menu[i])}
-            >
-              <i className="fas fa-user-edit" />
-            </Button>
-            <Button
-              className="btn-sm pull-right"
-              color="danger"
-              type="button"
-              key={"delete" + i + 1}
-            >
-              <Popconfirm
-                title="Sure to delete?"
-                onConfirm={() =>
-                  deleteMenuItemHandler(selectedCanteen.menu[i]._id)
-                }
+            {permissions && permissions.includes("edit") && (
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+                onClick={() => rowHandler(selectedCanteen.menu[i])}
               >
-                <i className="fas fa-trash" />
-              </Popconfirm>
-            </Button>
+                <i className="fas fa-user-edit" />
+              </Button>
+            )}
+            {permissions && permissions.includes("delete") && (
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() =>
+                    deleteMenuItemHandler(selectedCanteen.menu[i]._id)
+                  }
+                >
+                  <i className="fas fa-trash" />
+                </Popconfirm>
+              </Button>
+            )}
           </h5>
         ),
       });
@@ -473,26 +477,27 @@ function ViewCanteen() {
                 );
               })}
             </Input>
-            <Button
-              color="danger"
-              className="mt-3"
-              onClick={deleteCanteenHandler}
-            >
-              Delete Canteen
-            </Button>
+            {permissions && permissions.includes("delete") && (
+              <Button
+                color="danger"
+                className="mt-3"
+                onClick={deleteCanteenHandler}
+              >
+                Delete Canteen
+              </Button>
+            )}
           </CardHeader>
           <CardBody>
-          <Button
-                  color="primary"
-                  className="mb-2"
-                  onClick={handlePrint}
-                  style={{ float: "right" }}
-                >
-                  Print
-                </Button>
+            <Button
+              color="primary"
+              className="mb-2"
+              onClick={handlePrint}
+              style={{ float: "right" }}
+            >
+              Print
+            </Button>
             {loading && viewCanteen ? (
               <div ref={componentRef}>
-             
                 <AntTable
                   columns={columns}
                   data={viewCanteen}

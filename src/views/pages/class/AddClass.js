@@ -64,8 +64,9 @@ const AddClass = () => {
   let permissions;
 
   useEffect(() => {
-    if (user.role["Library Management"]) {
-      permissions = user.role["Library Management"];
+    console.log(user);
+    if (user.permissions["Class, section and subject master"]) {
+      permissions = user.permissions["Class, section and subject master"];
       console.log(permissions);
     }
     getSession();
@@ -88,37 +89,35 @@ const AddClass = () => {
               abbreviation: res[i].abbreviation,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {/* {permissions && permissions.includes("edit") && (
-                   
-                  )} */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() =>
-                      rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
-                    }
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-
-                  {/* {permissions && permissions.includes("delete") && (
-                   
-                  )} */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
+                  {permissions && permissions.includes("edit") && (
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                      onClick={() =>
+                        rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
+                      }
                     >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  )}
+
+                  {permissions && permissions.includes("delete") && (
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => handleDelete(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
+                    </Button>
+                  )}
                 </h5>
               ),
             });
@@ -334,112 +333,118 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && (
-            
-          )} */}
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Row>
-                  <Col className="d-flex justify-content-center mt-3 ml-4">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
-
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                        className="mt-3"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Class
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Class"
-                          type="text"
-                          onChange={handleChange("name")}
-                          value={classData.name}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Select Session
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          type="select"
-                          onChange={handleChange("session")}
-                          value={classData.session}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select Session
-                          </option>
-                          {sessions.map((session) => {
-                            return (
-                              <option value={session._id} key={session._id}>
-                                {session.name}
-                              </option>
-                            );
-                          })}
-                        </Input>
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Class Abbreviation
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Class Abbreviation"
-                          type="text"
-                          onChange={handleChange("abbreviation")}
-                          value={classData.abbreviation}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col style={{display:"flex",justifyContent:"center",width:"100%"}} >
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
+          {permissions && permissions.includes("add") && (
+             <Col lg="4">
+             <div className="card-wrapper">
+               <Card>
+                 <Row>
+                   <Col className="d-flex justify-content-center mt-3 ml-4">
+                     <form>
+                       <input
+                         type={"file"}
+                         id={"csvFileInput"}
+                         accept={".csv"}
+                         onChange={handleOnChange}
+                       />
+ 
+                       <Button
+                         onClick={(e) => {
+                           handleOnSubmit(e);
+                         }}
+                         color="primary"
+                         className="mt-3"
+                       >
+                         IMPORT CSV
+                       </Button>
+                     </form>
+                   </Col>
+                 </Row>
+                 <Form onSubmit={handleFormChange} className="mb-4">
+                   <CardBody>
+                     <Row>
+                       <Col>
+                         <label
+                           className="form-control-label"
+                           htmlFor="example4cols2Input"
+                         >
+                           Class
+                         </label>
+                         <Input
+                           id="example4cols2Input"
+                           placeholder="Class"
+                           type="text"
+                           onChange={handleChange("name")}
+                           value={classData.name}
+                           required
+                         />
+                       </Col>
+                     </Row>
+                     <Row>
+                       <Col>
+                         <label
+                           className="form-control-label"
+                           htmlFor="example4cols2Input"
+                         >
+                           Select Session
+                         </label>
+                         <Input
+                           id="example4cols3Input"
+                           type="select"
+                           onChange={handleChange("session")}
+                           value={classData.session}
+                           required
+                         >
+                           <option value="" disabled selected>
+                             Select Session
+                           </option>
+                           {sessions.map((session) => {
+                             return (
+                               <option value={session._id} key={session._id}>
+                                 {session.name}
+                               </option>
+                             );
+                           })}
+                         </Input>
+                       </Col>
+                     </Row>
+                     <Row className="mt-4">
+                       <Col>
+                         <label
+                           className="form-control-label"
+                           htmlFor="example4cols2Input"
+                         >
+                           Class Abbreviation
+                         </label>
+                         <Input
+                           id="example4cols2Input"
+                           placeholder="Class Abbreviation"
+                           type="text"
+                           onChange={handleChange("abbreviation")}
+                           value={classData.abbreviation}
+                           required
+                         />
+                       </Col>
+                     </Row>
+                     <Row className="mt-4">
+                       <Col
+                         style={{
+                           display: "flex",
+                           justifyContent: "center",
+                           width: "100%",
+                         }}
+                       >
+                         <Button color="primary" type="submit">
+                           Submit
+                         </Button>
+                       </Col>
+                     </Row>
+                   </CardBody>
+                 </Form>
+               </Card>
+             </div>
+           </Col>
+          )}
+         
 
           <Col>
             <div className="card-wrapper">
@@ -450,19 +455,16 @@ const AddClass = () => {
                     className="mb-2"
                     onClick={handlePrint}
                     style={{ float: "right" }}
-              
-              >
+                  >
                     Print
                   </Button>
                   {loading && classList ? (
-                    <div ref={componentRef}  >
+                    <div ref={componentRef}>
                       <AntTable
                         columns={columns}
                         data={classList}
                         pagination={true}
                         exportFileName="ClassDetails"
-                      
-                    
                       />
                     </div>
                   ) : (

@@ -18,7 +18,7 @@ import {
 
 // import { Table } from "ant-table-extensions";
 import { Table } from "antd";
-import { postAttendance } from "api/attendance";
+import { postAttendance,searchAttendance } from "api/attendance";
 import "./Attendance.css";
 
 //Loader
@@ -58,7 +58,7 @@ function Attendance() {
   const [attendanceData, setAttendanceData] = useState([]);
   const [allAttendance, setAllAttendance] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [selectedClassId, setSelectedClassId] = useState("")
+  const [selectedClassId, setSelectedClassId] = useState("");
   const [selectSessionId, setSelectSessionId] = useState("");
   // const [sections, setSections] = useState({})
   const [selectedClass, setSelectedClass] = useState({});
@@ -91,6 +91,7 @@ function Attendance() {
   // console.log("atd", atd);
   let permissions = [];
   useEffect(() => {
+    console.log(user);
     if (user.role["Attendance"]) {
       permissions = user.role["Attendance"];
       console.log(permissions);
@@ -126,12 +127,13 @@ function Attendance() {
     // console.log(name);
     if (name === "selectClass") {
       console.log("@@@@@@@@=>", event.target.value);
-    
-      let selectedClass = classes.find((item) => item._id.toString() === event.target.value.toString());
+
+      let selectedClass = classes.find(
+        (item) => item._id.toString() === event.target.value.toString()
+      );
       console.log(selectedClass);
       setSelectedClass(selectedClass);
     }
-
   };
 
   useEffect(() => {
@@ -257,10 +259,18 @@ function Attendance() {
     }
   };
 
-const searchHandler=()=>{
-  console.log(attendance);
-}
-
+  const searchHandler = async () => {
+    console.log(attendance);
+    const formData = new FormData();
+    formData.set("classId",attendance.class);
+    formData.set("sectionId",attendance.section)
+    try {
+      const data = await searchAttendance(user._id, user.school, formData);
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   // const attendanceValueChangeHandler = (value) => {};
 
@@ -460,7 +470,9 @@ const searchHandler=()=>{
                   </Input>
                 </Col>
                 <Col className="mt-4">
-                  <Button color="primary" onClick={searchHandler} >Search</Button>
+                  <Button color="primary" onClick={searchHandler}>
+                    Search
+                  </Button>
                 </Col>
               </Row>
             </CardBody>
@@ -502,16 +514,15 @@ const searchHandler=()=>{
                       <span> - Leave</span>
                     </div>
                     {/* {permissions && permissions.includes("edit") && ( */}
-
-                    <div className="col-sm">
-                      <Button
-                        className="attendance-button"
-                        onClick={toggle}
-                        color="primary"
-                      >
-                        Add Attendance
-                      </Button>
-                    </div>
+                      <div className="col-sm">
+                        <Button
+                          className="attendance-button"
+                          onClick={toggle}
+                          color="primary"
+                        >
+                          Add Attendance
+                        </Button>
+                      </div>
                     {/* )} */}
                   </div>
                 </div>
