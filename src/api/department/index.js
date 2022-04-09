@@ -77,7 +77,7 @@ export const departmentHead=(departmentId,userId,token,formData)=>{
 
 export const getNonHeads=async(schoolId,adminId)=>{
   try {
-    const data = await sendRequest(
+    const {data} = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/staff/head/${schoolId}/${adminId}`
     );
     console.log(data,"$$$$$$$$");
