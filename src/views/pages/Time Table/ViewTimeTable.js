@@ -561,7 +561,7 @@ function ViewTimeTable() {
           <CardBody>
             <Form onSubmit={getOneTimeTable}>
               <Row className="m-4">
-                <Col md="4">
+                <Col md="6">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -587,7 +587,7 @@ function ViewTimeTable() {
                     })}
                   </Input>
                 </Col>
-                <Col md="4">
+                <Col md="6">
                   <Label
                     className="form-control-label"
                     htmlFor="xample-date-input"
@@ -618,34 +618,6 @@ function ViewTimeTable() {
                           </option>
                         );
                       })}
-                  </Input>
-                </Col>
-
-                <Col md="4">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Session
-                  </Label>
-                  <Input
-                    id="example4cols3Input"
-                    type="select"
-                    onChange={handleChange("session")}
-                    value={timeTableData.session}
-                    // required
-                    placeholder="Add Periods"
-                  >
-                    <option value="" disabled selected>
-                      Select Session
-                    </option>
-                    {sessions.map((session) => {
-                      return (
-                        <option value={session._id} key={session._id}>
-                          {session.name}
-                        </option>
-                      );
-                    })}
                   </Input>
                 </Col>
               </Row>

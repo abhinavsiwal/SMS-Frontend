@@ -89,7 +89,6 @@ function CalendarView() {
 
   let permissions = [];
   useEffect(() => {
-    console.log(user);
     if (user.role["Calendar"]) {
       permissions = user.role["Calendar"];
       console.log(permissions);
@@ -181,12 +180,8 @@ function CalendarView() {
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
     try {
-      let data = await addCalender(user._id, token, formData);
+      await addCalender(user._id, token, formData);
       setModalAdd(false);
-      if (data.err) {
-        toast.error(data.err);
-        return;
-      }
       toast.success("Event addedd successfully");
       setChecked(true);
     } catch (err) {
@@ -214,7 +209,7 @@ function CalendarView() {
         className: events.event_type,
         description: events.description,
         id: events._id,
-        // assignTeacher: assignTeachers,
+        assignTeacher: assignTeachers,
       });
     });
 
@@ -243,6 +238,11 @@ function CalendarView() {
     // formData.set("assignTeachers", assignTeachers)
     formData.set("event_type", radios);
     formData.set("school", user.school);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
 
     try {
       const updateEvents = await updateEvent(
@@ -469,7 +469,6 @@ function CalendarView() {
             required
           />
           <Button className="mt-2">Search</Button> */}
-
           <Table columns={columns} dataSource={eventList} />
         </ModalBody>
       </Modal>
@@ -590,7 +589,7 @@ function CalendarView() {
                 />
               </CardBody>
             </Card>
-            {permissions && permissions.includes("add") && (
+            {/* {permissions && permissions.includes("add") && ( */}
             <Modal
               isOpen={modalAdd}
               toggle={() => setModalAdd(false)}
@@ -665,7 +664,7 @@ function CalendarView() {
                   </FormGroup>
                   <FormGroup>
                     <textarea
-                      className="form-control-alternative edit-event--description w-100"
+                      className="form-control-alternative new-event--title w-100 descrip"
                       placeholder="Description"
                       type="text"
                       onChange={(e) => setDescription(e.target.value)}
@@ -733,9 +732,9 @@ function CalendarView() {
                 </Button>
               </div>
             </Modal>
-             )}
+            {/* )} */}
 
-            {permissions && permissions.includes("edit") && (
+            {/* {permissions && permissions.includes("edit") && ( */}
             <Modal
               isOpen={modalChange}
               toggle={() => setModalChange(false)}
@@ -806,9 +805,10 @@ function CalendarView() {
                       type="select"
                       onChange={(e) => setAssignTeachers(e.target.value)}
                       required
-                      // value={assignTeachers[0]._id}
                     >
-                      <option value={""}>{"Select Staff"}</option>
+                      <option value="" selected>
+                        {assignTeachers}
+                      </option>
                       {staff.map((staff, i) => (
                         <option key={i} value={staff._id}>
                           {staff.firstname} {staff.lastname}
@@ -893,7 +893,7 @@ function CalendarView() {
                 </Button>
               </div>
             </Modal>
-                 )}
+            {/* )} */}
           </div>
         </Row>
       </Container>

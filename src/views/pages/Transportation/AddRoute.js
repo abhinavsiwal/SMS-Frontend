@@ -164,7 +164,11 @@ function AddRoute() {
     let formData = new FormData();
     formData.set("name", addRoute);
     formData.set("bus_number", busNo);
-    formData.set("session", session);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     formData.set("start", startDuration);
     formData.set("end", endDuration);
     formData.set("school", user.school);
@@ -287,33 +291,6 @@ function AddRoute() {
                       </Col>
                     </Row>
 
-                    <Row>
-                      <Col md="12">
-                        <Label
-                          className="form-control-label"
-                          htmlFor="xample-date-input"
-                        >
-                          Select Session
-                        </Label>
-                        <Input
-                          id="example4cols3Input"
-                          type="select"
-                          onChange={(e) => setSession(e.target.value)}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select Session
-                          </option>
-                          {sessions.map((session) => {
-                            return (
-                              <option value={session._id} key={session._id}>
-                                {session.name}
-                              </option>
-                            );
-                          })}
-                        </Input>
-                      </Col>
-                    </Row>
 
                     <Row className="d-flex justify-content-center">
                       <Col md="6">

@@ -185,14 +185,21 @@ function RolePermissions() {
 
   const managePermissonSubmit = async () => {
     console.log(mappingRoleId);
-    console.log(mappingPermissions);
+    console.log(mappingRoleMain);
     let selectedRole = allRoles.find((role) => role._id === mappingRoleId);
     console.log(selectedRole.name);
     try {
       const formData = new FormData();
-      formData.set("name", selectedRole.name);
       // formData.set("permissions", JSON.stringify(mappingPermissions.obj));
-      formData.set("permissions", JSON.stringify(mappingPermissions));
+
+      for (const key in mappingRoleMain.permissions) {
+        var temp = mappingRoleMain.permissions[key];
+        var permissionData = [];
+        temp.map((per) => permissionData.push(per.value));
+        mappingRoleMain.permissions[key] = permissionData;
+      }
+      console.log(mappingRoleMain.permissions)
+      formData.set("permissions", JSON.stringify(mappingRoleMain.permissions));
       const data = await updateRole(user._id, mappingRoleId, formData);
       console.log(data);
       setChecked(!checked);
@@ -232,14 +239,23 @@ function RolePermissions() {
   };
 
   const handleChangeRoleObject = async (e) => {
-    var data = JSON.parse(e.target.value);
-    for (const key in data.permissions) {
-      var temp = data.permissions[key];
-      var permissionData = [];
-      temp.map((per) => permissionData.push({ value: per, label: per }));
-      data.permissions[key] = permissionData;
+    if (e.target.value === "") {
+      setMappingRoleMain("");
+    } else {
+      var data = JSON.parse(e.target.value);
+      if (data.permissions) {
+        for (const key in data.permissions) {
+          var temp = data.permissions[key];
+          var permissionData = [];
+          temp.map((per) => permissionData.push({ value: per, label: per }));
+          data.permissions[key] = permissionData;
+        }
+        setMappingRoleMain(data);
+      } else {
+        data["permissions"] = {};
+        setMappingRoleMain(data);
+      }
     }
-    setMappingRoleMain(data);
   };
 
   return (
@@ -498,7 +514,7 @@ function RolePermissions() {
           isOpen={manageModal}
           toggle={() => setManageModal(false)}
           size="lg"
-          className="custom-modal-style"
+          // className="custom-modal-style"
           scrollable
         >
           <div className="modal-header">
@@ -531,24 +547,36 @@ function RolePermissions() {
               <span aria-hidden={true}>×</span>
             </button>
           </div>
-          {mappingRoleMain && mappingRoleMain.permissions !== undefined && (
+          {mappingRoleMain && mappingRoleMain !== "" && (
             <>
               <ModalBody>
                 <Table>
                   <tbody>
                     {user.module.map((module, index) => (
-                      <tr key={index}>
+                      <tr key={index + 12}>
                         <td className="mt-4">{module}</td>
                         <td>
-                          <Select
-                            isMulti
-                            name="permissions"
-                            options={roleOption}
-                            value={mappingRoleMain.permissions[module]}
-                            onChange={handlePermissionChange(module)}
-                            className="basic-multi-select "
-                            classNamePrefix="select"
-                          />
+                          {mappingRoleMain.permissions &&
+                          mappingRoleMain.permissions[module] ? (
+                            <Select
+                              isMulti
+                              name="permissions"
+                              options={roleOption}
+                              value={mappingRoleMain.permissions[module]}
+                              onChange={handlePermissionChange(module)}
+                              className="basic-multi-select "
+                              classNamePrefix="select"
+                            />
+                          ) : (
+                            <Select
+                              isMulti
+                              name="permissions"
+                              options={roleOption}
+                              onChange={handlePermissionChange(module)}
+                              className="basic-multi-select "
+                              classNamePrefix="select"
+                            />
+                          )}
                         </td>
                       </tr>
                     ))}

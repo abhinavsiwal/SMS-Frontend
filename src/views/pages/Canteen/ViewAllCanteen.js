@@ -103,7 +103,7 @@ function ViewAllCanteen() {
                       return (
                         <>
                           <div>
-                            <img className="imgs" src={item.img} />
+                            <img className="imgs" src={item.image} />
                             <div className="Name-Price">
                               <p className="Name">{item.item}</p>
                               <p className="Price">{item.price}₹</p>
