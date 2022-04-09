@@ -62,6 +62,8 @@ const AddSession = () => {
 
   const fileReader = new FileReader();
 
+  const [check, setCheck] = useState(false);
+
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -95,6 +97,7 @@ const AddSession = () => {
       // All Sections
       allSessions(user._id, user.school, token)
         .then((res) => {
+          console.log(res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -105,6 +108,7 @@ const AddSession = () => {
               working_days: res[i].working_days,
               working_time: res[i].working_time,
               year: res[i].year,
+              status: res[i].status,
               action: (
                 <h5 key={i + 1} className="mb-0">
                   {/* {permissions && permissions.includes("edit") && (
@@ -130,22 +134,23 @@ const AddSession = () => {
                   {/* {permissions && permissions.includes("delete") && (
                    
                   )} */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
                 </h5>
               ),
             });
+          }
+          var Current_number = 0
+          var Closed_number = 0
+          data.map((d) => {
+            if (d.status === "current") {
+              setCheck(false);
+              Current_number++
+            }
+            else{
+              Closed_number++
+            }
+          });
+          if(data.length === Closed_number){
+            setCheck(true)
           }
           setSessionList(data);
           setLoading(true);
@@ -401,6 +406,11 @@ const AddSession = () => {
       },
     },
     {
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+    },
+    {
       title: "Action",
       key: "action",
       dataIndex: "action",
@@ -471,136 +481,141 @@ const AddSession = () => {
           {/* {permissions && permissions.includes("add") && (
               
             )} */}
-          <Col>
-            <div className="card-wrapper">
-              <Card>
-                <Row>
-                  <Col className="d-flex justify-content-center mt-2 ml-4">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                        className="mt-2"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Session
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Session"
-                          type="text"
-                          onChange={handleChange("name")}
-                          value={sessionData.name}
-                          required
+          {check && (
+            <Col>
+              <div className="card-wrapper">
+                <Card>
+                  <Row>
+                    <Col className="d-flex justify-content-center mt-2 ml-4">
+                      <form>
+                        <input
+                          type={"file"}
+                          id={"csvFileInput"}
+                          accept={".csv"}
+                          onChange={handleOnChange}
                         />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example-date-input"
+
+                        <Button
+                          onClick={(e) => {
+                            handleOnSubmit(e);
+                          }}
+                          color="primary"
+                          className="mt-2"
                         >
-                          Starting Date
-                        </label>
-                        <Input
-                          id="example-date-input"
-                          type="date"
-                          onChange={handleChange("start_date")}
-                          required
-                          value={sessionData.start_date}
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example-date-input"
-                        >
-                          Ending Date
-                        </label>
-                        <Input
-                          id="example-date-input"
-                          value={sessionData.end_date}
-                          type="date"
-                          onChange={handleChange("end_date")}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example-date-input"
-                        >
-                          Working Days
-                        </label>
-                        <Input
-                          id="example-date-input"
-                          type="number"
-                          onChange={handleChange("working_days")}
-                          value={sessionData.working_days}
-                          placeholder="Working Days"
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example-date-input"
-                        >
-                          Working Time
-                        </label>
-                        <DatePicker
-                          id="exampleFormControlSelect3"
-                          className="Period-Time"
-                          selected={startTime}
-                          onChange={(date) => setStartTime(date)}
-                          showTimeSelect
-                          showTimeSelectOnly
-                          timeIntervals={15}
-                          timeCaption="Time"
-                          dateFormat="h:mm aa"
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col  style={{display:"flex",justifyContent:"center"}}>
-                        <Button color="primary" type="submit">
-                          Submit
+                          IMPORT CSV
                         </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
+                      </form>
+                    </Col>
+                  </Row>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Session
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Session"
+                            type="text"
+                            onChange={handleChange("name")}
+                            value={sessionData.name}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Starting Date
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            type="date"
+                            onChange={handleChange("start_date")}
+                            required
+                            value={sessionData.start_date}
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Ending Date
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            value={sessionData.end_date}
+                            type="date"
+                            onChange={handleChange("end_date")}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Working Days
+                          </label>
+                          <Input
+                            id="example-date-input"
+                            type="number"
+                            onChange={handleChange("working_days")}
+                            value={sessionData.working_days}
+                            placeholder="Working Days"
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example-date-input"
+                          >
+                            Working Time
+                          </label>
+                          <DatePicker
+                            id="exampleFormControlSelect3"
+                            className="Period-Time"
+                            selected={startTime}
+                            onChange={(date) => setStartTime(date)}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Time"
+                            dateFormat="h:mm aa"
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4 float-right">
+                        <Col
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          )}
 
           {/* <Col>
             <div className="card-wrapper">
@@ -639,7 +654,7 @@ const AddSession = () => {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
-                    style={{float:"right"}}
+                    style={{ float: "right" }}
                   >
                     Print
                   </Button>

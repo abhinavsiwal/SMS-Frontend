@@ -288,6 +288,11 @@ const AddClass = () => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     try {
       await addClass(user._id, token, formData);
       setClassData({
@@ -382,34 +387,7 @@ const AddClass = () => {
                         />
                       </Col>
                     </Row>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Select Session
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          type="select"
-                          onChange={handleChange("session")}
-                          value={classData.session}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select Session
-                          </option>
-                          {sessions.map((session) => {
-                            return (
-                              <option value={session._id} key={session._id}>
-                                {session.name}
-                              </option>
-                            );
-                          })}
-                        </Input>
-                      </Col>
-                    </Row>
+                    
                     <Row className="mt-4">
                       <Col>
                         <label

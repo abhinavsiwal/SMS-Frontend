@@ -48,7 +48,7 @@ function AddStaff() {
   const [step, setStep] = useState(0);
   const { user } = isAuthenticated();
   const [staffData, setStaffData] = useState({
-    image: "",
+    photo: "",
     firstname: "",
     lastname: "",
     email: "",
@@ -76,7 +76,8 @@ function AddStaff() {
     contact_person_city: "",
     contact_person_country: "",
     contact_person_pincode: "",
-    assign_role: null,
+    assign_role: "",
+    assign_role_name: "",
     job: "",
     salary: "",
     qualification: "",
@@ -105,7 +106,6 @@ function AddStaff() {
       const data = await getAllRoles(user._id, user.school);
       console.log(data);
       setAllRoles(data);
-      setStaffData({ ...staffData, assign_role: data[0].name });
     } catch (err) {
       console.log(err);
     }
@@ -115,9 +115,19 @@ function AddStaff() {
     formData.set(name, event.target.value);
     setStaffData({ ...staffData, [name]: event.target.value });
   };
+  const handleChange2 = (name) => (event) => {
+    var data = JSON.parse(event.target.value);
+    formData.set(name, data._id);
+    setStaffData({
+      ...staffData,
+      [name]: data._id,
+      assign_role_name: data.name,
+    });
+  };
 
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
+    console.log(event.target.files[0]);
     setStaffData({ ...staffData, [name]: event.target.files[0] });
   };
 
@@ -182,7 +192,11 @@ function AddStaff() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    formData.set("session", selectSessionId);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     try {
       const resp = await addStaff(user._id, token, formData);
       if (resp.err) {
@@ -375,6 +389,9 @@ function AddStaff() {
               <CardBody>
                 <Row md="4" className="d-flex justify-content-center mb-4">
                   <Col md="8">
+                    {staffData.photo.name && (
+                      <h2>File {staffData.photo.name} is Selected</h2>
+                    )}
                     <label
                       className="form-control-label"
                       htmlFor="example3cols2Input"
@@ -387,8 +404,7 @@ function AddStaff() {
                         id="customFileLang"
                         lang="en"
                         type="file"
-                        required
-                        onChange={handleFileChange("image")}
+                        onChange={handleFileChange("photo")}
                         accept="image/*"
                       />
                       <label
@@ -451,34 +467,6 @@ function AddStaff() {
                         required
                       />
                     </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Select Session
-                    </label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={(e) => setSelectSessionId(e.target.value)}
-                      value={selectSessionId}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option value={session._id} key={session._id}>
-                            {session.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
                   </Col>
                 </Row>
                 <Row>
@@ -989,97 +977,99 @@ function AddStaff() {
             <Form onSubmit={handleSubmitForm} className="mb-4">
               <CardBody>
                 <Row>
-                  <Col md="4">
-                    <FormGroup>
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Role
-                      </label>
-                      <Input
-                        id="exampleFormControlSelect3"
-                        type="select"
-                        onChange={handleChange("assign_role")}
-                        value={staffData.assign_role}
-                        required
-                      >
-                        <option value="" disabled selected>
-                          Select Role
-                        </option>
-                        {allRoles &&
-                          allRoles.map((role) => {
-                            return (
-                              <option key={role._id} value={role._id}>
-                                {role.name}
-                              </option>
-                            );
-                          })}
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols3Input"
-                      >
-                        Job Name
-                      </label>
-                      <Input
-                        id="example4cols3Input"
-                        placeholder="Job Name"
-                        type="text"
-                        onChange={handleChange("job")}
-                        value={staffData.job}
-                        required
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
+                  <Col md="12">
                     <label
                       className="form-control-label"
                       htmlFor="example4cols2Input"
                     >
-                      Salary
+                      Department
                     </label>
                     <Input
-                      id="example4cols2Input"
-                      placeholder="Salary"
-                      type="number"
-                      onChange={handleChange("salary")}
-                      value={staffData.salary}
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={handleChange("department")}
+                      value={staffData.department}
                       required
-                    />
+                    >
+                      <option value="" disabled selected>
+                        Department
+                      </option>
+                      {departments.map((departments) => (
+                        <option value={departments._id}>
+                          {departments.name}
+                        </option>
+                      ))}
+                    </Input>
                   </Col>
                 </Row>
-                {staffData.assign_role !== "Canteen" ? (
+                {staffData.department && (
                   <Row>
-                    <Col md="4">
+                    <Col md="6">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Role
+                        </label>
+                        <Input
+                          id="exampleFormControlSelect3"
+                          type="select"
+                          onChange={handleChange2("assign_role")}
+                          value={staffData.assign_role}
+                          required
+                        >
+                          {staffData.assign_role_name !== "" ? (
+                            <>
+                              <option
+                                value={staffData.assign_role_name}
+                                selected
+                              >
+                                {staffData.assign_role_name}
+                              </option>
+                              <hr />
+                            </>
+                          ) : (
+                            <option value="" disabled selected>
+                              Select Role
+                            </option>
+                          )}
+                          {allRoles &&
+                            allRoles.map((role) => {
+                              return (
+                                <option
+                                  key={role._id}
+                                  value={JSON.stringify(role)}
+                                >
+                                  {role.name}
+                                </option>
+                              );
+                            })}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+
+                    <Col md="6">
                       <label
                         className="form-control-label"
                         htmlFor="example4cols2Input"
                       >
-                        Department
+                        Salary
                       </label>
                       <Input
-                        id="exampleFormControlSelect3"
-                        type="select"
-                        onChange={handleChange("department")}
-                        value={staffData.department}
+                        id="example4cols2Input"
+                        placeholder="Salary"
+                        type="number"
+                        onChange={handleChange("salary")}
+                        value={staffData.salary}
                         required
-                      >
-                        <option value="" disabled selected>
-                          Department
-                        </option>
-                        {departments.map((departments) => (
-                          <option value={departments._id}>
-                            {departments.name}
-                          </option>
-                        ))}
-                      </Input>
+                      />
                     </Col>
-                    <Col md="4">
+                  </Row>
+                )}
+                {staffData.assign_role_name === "Teacher" ? (
+                  <Row>
+                    <Col md="6">
                       <label
                         className="form-control-label"
                         htmlFor="example4cols2Input"
@@ -1097,7 +1087,7 @@ function AddStaff() {
                         required
                       />
                     </Col>
-                    <Col>
+                    <Col md="6">
                       <label
                         className="form-control-label"
                         htmlFor="example4cols2Input"
@@ -1115,7 +1105,29 @@ function AddStaff() {
                     </Col>
                   </Row>
                 ) : null}
-
+                {staffData.assign_role_name !== "" &&
+                  staffData.assign_role_name !== "Teacher" && (
+                    <Row>
+                      <Col md="12">
+                        <FormGroup>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols3Input"
+                          >
+                            Job Name
+                          </label>
+                          <Input
+                            id="example4cols3Input"
+                            placeholder="Job Name"
+                            type="text"
+                            onChange={handleChange("job")}
+                            value={staffData.job}
+                            required
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                  )}
                 <Row className="mt-4 d-flex justify-content-between">
                   <Button
                     className="ml-4"
@@ -1130,9 +1142,11 @@ function AddStaff() {
                   >
                     Previous
                   </Button>
-                  <Button className="mr-4" color="success" type="submit">
-                    Submit
-                  </Button>
+                  {staffData.department && staffData.assign_role_name && (
+                    <Button className="mr-4" color="success" type="submit">
+                      Submit
+                    </Button>
+                  )}
                 </Row>
               </CardBody>
             </Form>

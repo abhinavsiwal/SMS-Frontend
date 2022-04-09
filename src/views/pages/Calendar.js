@@ -85,7 +85,7 @@ function CalendarView() {
   const [selectSessionId, setSelectSessionId] = useState("");
   const [staff, setStaff] = useState([]);
   const [staffId, setStaffId] = useState("");
-const [filterSessionId, setFilterSessionId] = useState("")
+  const [filterSessionId, setFilterSessionId] = useState("");
 
   let permissions = [];
   useEffect(() => {
@@ -171,7 +171,11 @@ const [filterSessionId, setFilterSessionId] = useState("")
     formData.set("event_type", radios);
     formData.set("school", user.school);
     formData.set("assignTeachers", JSON.stringify([staffId]));
-    formData.set("session", selectSessionId);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
 
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
@@ -313,24 +317,22 @@ const [filterSessionId, setFilterSessionId] = useState("")
     setEvent(undefined);
   };
 
-useEffect(() => {
-  
-let filteredEvents = events.filter(event => event.session.toString()===filterSessionId.toString());
-const data = [];
-filteredEvents.map((events) => {
-  data.push({
-    key: events._id,
-    event_name: events.name,
-    start_date: events.event_from.split("T")[0],
-    end_date: events.event_to.split("T")[0],
-  });
-});
-setEventList(data);
-setChecked(false);
- 
-}, [filterSessionId])
-
-
+  useEffect(() => {
+    let filteredEvents = events.filter(
+      (event) => event.session.toString() === filterSessionId.toString()
+    );
+    const data = [];
+    filteredEvents.map((events) => {
+      data.push({
+        key: events._id,
+        event_name: events.name,
+        start_date: events.event_from.split("T")[0],
+        end_date: events.event_to.split("T")[0],
+      });
+    });
+    setEventList(data);
+    setChecked(false);
+  }, [filterSessionId]);
 
   //Ant Table Column
   const columns = [
@@ -462,27 +464,6 @@ setChecked(false);
             required
           />
           <Button className="mt-2">Search</Button> */}
-          <Label className="form-control-label" htmlFor="example-date-input">
-            Session
-          </Label>
-          <Input
-            id="example4cols3Input"
-            type="select"
-            onChange={(e) => setFilterSessionId(e.target.value)}
-            value={filterSessionId}
-            required
-          >
-            <option value="" disabled selected>
-              All
-            </option>
-            {sessions.map((session) => {
-              return (
-                <option value={session._id} key={session._id}>
-                  {session.name}
-                </option>
-              );
-            })}
-          </Input>
 
           <Table columns={columns} dataSource={eventList} />
         </ModalBody>
@@ -555,7 +536,7 @@ setChecked(false);
                 >
                   <i className="fas fa-angle-right" />
                 </Button>
-              
+
                 <Button
                   className="btn-neutral"
                   color="default"
@@ -669,9 +650,7 @@ setChecked(false);
                       type="select"
                       onChange={(e) => setStaffId(e.target.value)}
                     >
-                      <option value={""} >
-                        {"Select Staff"}
-                      </option>
+                      <option value={""}>{"Select Staff"}</option>
                       {staff.map((staff, i) => (
                         <option key={i} value={staff._id}>
                           {staff.firstname} {staff.lastname}
@@ -687,26 +666,6 @@ setChecked(false);
                       onChange={(e) => setDescription(e.target.value)}
                       required
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={(e) => setSelectSessionId(e.target.value)}
-                      value={selectSessionId}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option value={session._id} key={session._id}>
-                            {session.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
                   </FormGroup>
                   <FormGroup className="mb-0">
                     <label className="form-control-label d-block mb-3">

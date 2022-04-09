@@ -104,10 +104,10 @@ const AllStaffs = () => {
             email: res[i].email,
             phone: res[i].phone,
             gender: res[i].gender,
-            assign_role: res[i].assign_role,
+            assign_role: res[i].assign_role.name,
             job: res[i].job,
             salary: res[i].salary,
-            department: res[i].department,
+            department: res[i].department.name,
             joining_date: res[i].joining_date.split("T")[0].toString(),
             action: (
               <h5 key={i + 1} className="mb-0">

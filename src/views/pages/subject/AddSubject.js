@@ -43,7 +43,7 @@ const AddSubject = () => {
   const [type, setType] = useState("");
   const [inputFields, setInputFields] = useState([{ subjectName: "" }]);
   const { user, token } = isAuthenticated();
-  const [groupName, setGroupName] = useState("")
+  const [groupName, setGroupName] = useState("");
   const [file, setFile] = useState();
 
   const fileReader = new FileReader();
@@ -136,7 +136,7 @@ const AddSubject = () => {
     console.log(index, event.target.value);
     const values = [...inputFields];
     values[index][event.target.name] = event.target.value;
-    setInputFields(values)
+    setInputFields(values);
   };
 
   //Edit Subject
@@ -172,11 +172,10 @@ const AddSubject = () => {
     setSubjectData({ ...subjectData, [name]: event.target.value });
   };
 
-
   const handleFormChange = async (e) => {
     e.preventDefault();
     console.log(inputFields);
-    let list=[];
+    let list = [];
     for (const key in inputFields) {
       // console.log(inputFields[key].subjectName);
       list.push(inputFields[key].subjectName);
@@ -186,6 +185,11 @@ const AddSubject = () => {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     formData.set("name", groupName);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     try {
       const subject = await addSubject(user._id, token, formData);
       if (subject.err) {
@@ -212,7 +216,7 @@ const AddSubject = () => {
     {
       title: "Subjects",
       dataIndex: "name",
-      key:"subjects"
+      key: "subjects",
       // width: "90%",
       // sorter: (a, b) => a.name > b.name,
       // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -299,10 +303,9 @@ const AddSubject = () => {
       });
   };
 
-
-  const handleAddFields=()=>{
-    setInputFields([...inputFields,{subjectName:''}])
-  }
+  const handleAddFields = () => {
+    setInputFields([...inputFields, { subjectName: "" }]);
+  };
 
   return (
     <>
@@ -394,39 +397,11 @@ const AddSubject = () => {
                             />
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Select Session
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              type="select"
-                              onChange={handleChange("session")}
-                              value={subjectData.session}
-                              required
-                            >
-                              <option value="" disabled selected>
-                                Select Session
-                              </option>
-                              {sessions.map((session) => {
-                                return (
-                                  <option value={session._id} key={session._id}>
-                                    {session.name}
-                                  </option>
-                                );
-                              })}
-                            </Input>
-                          </Col>
-                        </Row>
                       </>
                     )}
                     {subjectData.type === "Group" && (
                       <>
-                       <Row>
+                        <Row>
                           <Col>
                             <label
                               className="form-control-label"
@@ -438,7 +413,7 @@ const AddSubject = () => {
                               id="example4cols2Input"
                               placeholder="Group Name"
                               type="text"
-                              onChange={e=>setGroupName(e.target.value)}
+                              onChange={(e) => setGroupName(e.target.value)}
                               value={groupName}
                               required
                             />
@@ -456,13 +431,13 @@ const AddSubject = () => {
                               return (
                                 <div key={index}>
                                   <Input
-                                  name="subjectName"
+                                    name="subjectName"
                                     id="example4cols2Input"
                                     placeholder="Subject"
                                     type="text"
                                     value={inputField.subjectName}
                                     onChange={(event) =>
-                                      handleChangeSubject(index,event)
+                                      handleChangeSubject(index, event)
                                     }
                                   />
                                   <Button
@@ -474,7 +449,7 @@ const AddSubject = () => {
                                       display: "flex",
                                       alignItems: "center",
                                       marginTop: "0.7rem",
-                                      marginBottom:"0.7rem"
+                                      marginBottom: "0.7rem",
                                     }}
                                     onClick={handleAddFields}
                                   >
@@ -485,38 +460,12 @@ const AddSubject = () => {
                             })}
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Select Session
-                            </label>
-                            <Input
-                              id="example4cols3Input"
-                              type="select"
-                              onChange={handleChange("session")}
-                              value={subjectData.session}
-                              required
-                            >
-                              <option value="" disabled selected>
-                                Select Session
-                              </option>
-                              {sessions.map((session) => {
-                                return (
-                                  <option value={session._id} key={session._id}>
-                                    {session.name}
-                                  </option>
-                                );
-                              })}
-                            </Input>
-                          </Col>
-                        </Row>
                       </>
                     )}
                     <Row className="mt-4">
-                      <Col style={{display:"flex",justifyContent:"center"}} >
+                      <Col
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
                         <Button color="primary" type="submit">
                           Submit
                         </Button>
@@ -536,18 +485,18 @@ const AddSubject = () => {
                     color="primary"
                     className="mb-2"
                     onClick={handlePrint}
-                    style={{float:"right"}}
+                    style={{ float: "right" }}
                   >
                     Print
                   </Button>
                   {loading && subjectList ? (
                     <div ref={componentRef}>
-                        <AntTable
-                          columns={columns}
-                          data={subjectList}
-                          pagination={true}
-                          exportFileName="SubjectDetails"
-                        />
+                      <AntTable
+                        columns={columns}
+                        data={subjectList}
+                        pagination={true}
+                        exportFileName="SubjectDetails"
+                      />
                     </div>
                   ) : (
                     <Loader />
