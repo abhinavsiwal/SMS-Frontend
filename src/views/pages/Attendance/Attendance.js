@@ -226,7 +226,7 @@ function Attendance() {
     console.log(event.target.value);
     console.log(attendance);
     let today = new Date();
-    let day = today.getDate() ;
+    let day = today.getDate()+1 ;
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
 

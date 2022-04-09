@@ -11,6 +11,7 @@ import {
   Modal,
   ModalFooter,
   ModalBody,
+  CardHeader,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
@@ -33,6 +34,7 @@ import { allSessions } from "api/session";
 import { useReactToPrint } from "react-to-print";
 const AddSubject = () => {
   const [subjectList, setSubjectList] = useState([]);
+  const [subjectList1, setSubjectList1] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -45,6 +47,7 @@ const AddSubject = () => {
   const { user, token } = isAuthenticated();
   const [groupName, setGroupName] = useState("");
   const [file, setFile] = useState();
+  const [view, setView] = useState(0);
 
   const fileReader = new FileReader();
 
@@ -71,8 +74,8 @@ const AddSubject = () => {
 
   let permissions;
   useEffect(() => {
-    if (user.role["Library Management"]) {
-      permissions = user.role["Library Management"];
+    if (user.permissions["Class, section and subject master"]) {
+      permissions = user.permissions["Class, section and subject master"];
       console.log(permissions);
     }
   }, []);
@@ -175,21 +178,28 @@ const AddSubject = () => {
   const handleFormChange = async (e) => {
     e.preventDefault();
     console.log(inputFields);
-    let list = [];
-    for (const key in inputFields) {
-      // console.log(inputFields[key].subjectName);
-      list.push(inputFields[key].subjectName);
-    }
-    console.log(list);
-    formData.set("list", JSON.stringify(list));
+   
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    formData.set("name", groupName);
+    if (subjectData.name.length > 0) {
+      formData.set("name", subjectData.name);
+    } else {
+      formData.set("name", groupName);
+      let list = [];
+      for (const key in inputFields) {
+        // console.log(inputFields[key].subjectName);
+        list.push(inputFields[key].subjectName);
+      }
+      console.log(list);
+      formData.set("list", JSON.stringify(list));
+    }
+    
     sessions.map((data) => {
       if (data.status === "current") {
         formData.set("session", data._id);
       }
     });
+    
     try {
       const subject = await addSubject(user._id, token, formData);
       if (subject.err) {
@@ -200,11 +210,7 @@ const AddSubject = () => {
         name: "",
         session: "",
       });
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
+     setChecked(!checked)
       toast.success("Subject added successfully");
       setReload(true);
     } catch (err) {
@@ -214,35 +220,113 @@ const AddSubject = () => {
 
   const columns = [
     {
-      title: "Subjects",
+      title: "Subject",
       dataIndex: "name",
       key: "subjects",
       // width: "90%",
-      // sorter: (a, b) => a.name > b.name,
-      // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-      //   return (
-      //     <>
-      //       <Input
-      //         autoFocus
-      //         placeholder="Type text here"
-      //         value={selectedKeys[0]}
-      //         onChange={(e) => {
-      //           setSelectedKeys(e.target.value ? [e.target.value] : []);
-      //           confirm({ closeDropdown: false });
-      //         }}
-      //         onBlur={() => {
-      //           confirm();
-      //         }}
-      //       ></Input>
-      //     </>
-      //   );
-      // },
-      // filterIcon: () => {
-      //   return <SearchOutlined />;
-      // },
-      // onFilter: (value, record) => {
-      //   return record.name.toLowerCase().includes(value.toLowerCase());
-      // },
+      sorter: (a, b) => a.name > b.name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
+
+  const columns1 = [
+    {
+      title: "Group Name",
+      dataIndex: "groupName",
+      key: "groupName",
+      // width: "90%",
+      sorter: (a, b) => a.groupName > b.groupName,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.groupName.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Subjects",
+      dataIndex: "subjects",
+      key: "subjects",
+      // width: "90%",
+      sorter: (a, b) => a.subjects > b.subjects,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+      render: (subjects) => (
+        <>
+          {subjects.map((subject) => {
+            return <p>{subject}</p>;
+          })}
+        </>
+      ),
     },
     {
       title: "Action",
@@ -256,46 +340,88 @@ const AddSubject = () => {
     allSubjects(user._id, user.school, token)
       .then((res) => {
         console.log("res", res);
-        const data = [];
+        let data = [];
+        let data1 = [];
+
         for (let i = 0; i < res.length; i++) {
-          data.push({
-            key: i,
-            name: res[i].name,
-            action: (
-              <h5 key={i + 1} className="mb-0">
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => rowHandler(res[i]._id, res[i].name)}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-                {/* {permissions && permissions.includes("edit") && (
-                  
-                )} */}
-                {/* {permissions && permissions.includes("delete") && (
-                  
-                )} */}
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete(res[i]._id)}
+          if (res[i].list.length > 0) {
+            console.log("here");
+            data1.push({
+              key: i,
+              groupName: res[i].name,
+              subjects: res[i].list,
+              action: (
+                <h5 key={i + 1} className="mb-0">
+                  {permissions && permissions.includes("edit") && (
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                      onClick={() => rowHandler(res[i]._id, res[i].name)}
+                    >
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  )}
+                  {permissions && permissions.includes("delete") && (
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => handleDelete(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
+                    </Button>
+                  )}
+                </h5>
+              ),
+            });
+          } else {
+            data.push({
+              key: i,
+              name: res[i].name,
+              action: (
+                <h5 key={i + 1} className="mb-0">
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() => rowHandler(res[i]._id, res[i].name)}
                   >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
-              </h5>
-            ),
-          });
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("edit") && (
+                  
+                )} */}
+                  {/* {permissions && permissions.includes("delete") && (
+                  
+                )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="danger"
+                    type="button"
+                    key={"delete" + i + 1}
+                  >
+                    <Popconfirm
+                      title="Sure to delete?"
+                      onConfirm={() => handleDelete(res[i]._id)}
+                    >
+                      <i className="fas fa-trash" />
+                    </Popconfirm>
+                  </Button>
+                </h5>
+              ),
+            });
+          }
         }
         setSubjectList(data);
+        setSubjectList1(data1);
         setLoading(true);
       })
       .catch((err) => {
@@ -324,162 +450,185 @@ const AddSubject = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && (
-           
-          )} */}
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Row>
-                  <Col className="d-flex justify-content-center mt-2">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+          {/* {permissions && permissions.includes("add") && ( */}
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Row>
+                    <Col className="d-flex justify-content-center mt-2 ml-4">
+                      <form>
+                        <input
+                          type={"file"}
+                          id={"csvFileInput"}
+                          accept={".csv"}
+                          onChange={handleOnChange}
+                        />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
+                        <Button
+                          onClick={(e) => {
+                            handleOnSubmit(e);
+                          }}
+                          color="primary"
+                          className="mt-2"
                         >
-                          Select type
-                        </label>
-                        <Input
-                          id="exampleFormControlSelect3"
-                          type="select"
-                          // onChange={(e) => setType(e.target.value)}
-                          onChange={handleChange("type")}
-                          value={subjectData.type}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select type
-                          </option>
-                          <option>Single</option>
-                          <option>Group</option>
-                        </Input>
-                      </Col>
-                    </Row>
-                    {subjectData.type === "Single" && (
-                      <>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Subject
-                            </label>
-                            <Input
-                              id="example4cols2Input"
-                              placeholder="Subject"
-                              type="text"
-                              onChange={handleChange("name")}
-                              value={subjectData.name}
-                              required
-                            />
-                          </Col>
-                        </Row>
-                      </>
-                    )}
-                    {subjectData.type === "Group" && (
-                      <>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Group Name
-                            </label>
-                            <Input
-                              id="example4cols2Input"
-                              placeholder="Group Name"
-                              type="text"
-                              onChange={(e) => setGroupName(e.target.value)}
-                              value={groupName}
-                              required
-                            />
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Subject
-                            </label>
-                            {inputFields.map((inputField, index) => {
-                              return (
-                                <div key={index}>
-                                  <Input
-                                    name="subjectName"
-                                    id="example4cols2Input"
-                                    placeholder="Subject"
-                                    type="text"
-                                    value={inputField.subjectName}
-                                    onChange={(event) =>
-                                      handleChangeSubject(index, event)
-                                    }
-                                  />
-                                  <Button
-                                    color="primary"
-                                    style={{
-                                      height: "1rem",
-                                      width: "4rem",
-                                      fontSize: "0.5rem",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginTop: "0.7rem",
-                                      marginBottom: "0.7rem",
-                                    }}
-                                    onClick={handleAddFields}
-                                  >
-                                    Add
-                                  </Button>
-                                </div>
-                              );
-                            })}
-                          </Col>
-                        </Row>
-                      </>
-                    )}
-                    <Row className="mt-4">
-                      <Col
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <Button color="primary" type="submit">
-                          Submit
+                          IMPORT CSV
                         </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
-
+                      </form>
+                    </Col>
+                  </Row>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Select type
+                          </label>
+                          <Input
+                            id="exampleFormControlSelect3"
+                            type="select"
+                            // onChange={(e) => setType(e.target.value)}
+                            onChange={handleChange("type")}
+                            value={subjectData.type}
+                            required
+                          >
+                            <option value="" disabled selected>
+                              Select type
+                            </option>
+                            <option>Single</option>
+                            <option>Group</option>
+                          </Input>
+                        </Col>
+                      </Row>
+                      {subjectData.type === "Single" && (
+                        <>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Subject
+                              </label>
+                              <Input
+                                id="example4cols2Input"
+                                placeholder="Subject"
+                                type="text"
+                                onChange={handleChange("name")}
+                                value={subjectData.name}
+                                required
+                              />
+                            </Col>
+                          </Row>
+                          
+                        </>
+                      )}
+                      {subjectData.type === "Group" && (
+                        <>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Group Name
+                              </label>
+                              <Input
+                                id="example4cols2Input"
+                                placeholder="Group Name"
+                                type="text"
+                                onChange={(e) => setGroupName(e.target.value)}
+                                value={groupName}
+                                required
+                              />
+                            </Col>
+                          </Row>
+                          <Row>
+                            <Col>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols2Input"
+                              >
+                                Subject
+                              </label>
+                              {inputFields.map((inputField, index) => {
+                                return (
+                                  <div key={index}>
+                                    <Input
+                                      name="subjectName"
+                                      id="example4cols2Input"
+                                      placeholder="Subject"
+                                      type="text"
+                                      value={inputField.subjectName}
+                                      onChange={(event) =>
+                                        handleChangeSubject(index, event)
+                                      }
+                                    />
+                                    <Button
+                                      color="primary"
+                                      style={{
+                                        height: "1rem",
+                                        width: "4rem",
+                                        fontSize: "0.5rem",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        marginTop: "0.7rem",
+                                        marginBottom: "0.7rem",
+                                      }}
+                                      onClick={handleAddFields}
+                                    >
+                                      Add
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+                            </Col>
+                          </Row>
+                         
+                        </>
+                      )}
+                      <Row className="mt-4">
+                        <Col
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          {/* )} */}
           <Col>
             <div className="card-wrapper">
               <Card>
+                <CardHeader>
+                  <div>
+                    <Button
+                      color={`${view === 0 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(0);
+                      }}
+                    >
+                      Single
+                    </Button>{" "}
+                    <Button
+                      color={`${view === 1 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(1);
+                      }}
+                    >
+                      Group
+                    </Button>
+                  </div>
+                </CardHeader>
                 <CardBody>
                   <Button
                     color="primary"
@@ -489,17 +638,34 @@ const AddSubject = () => {
                   >
                     Print
                   </Button>
-                  {loading && subjectList ? (
-                    <div ref={componentRef}>
-                      <AntTable
-                        columns={columns}
-                        data={subjectList}
-                        pagination={true}
-                        exportFileName="SubjectDetails"
-                      />
-                    </div>
-                  ) : (
+                  {!loading ? (
                     <Loader />
+                  ) : (
+                    <>
+                      {view === 0 ? (
+                        <>
+                          <div ref={componentRef}>
+                            <AntTable
+                              columns={columns}
+                              data={subjectList}
+                              pagination={true}
+                              exportFileName="SubjectDetails"
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div ref={componentRef}>
+                            <AntTable
+                              columns={columns1}
+                              data={subjectList1}
+                              pagination={true}
+                              exportFileName="SubjectDetails"
+                            />
+                          </div>
+                        </>
+                      )}
+                    </>
                   )}
                 </CardBody>
               </Card>

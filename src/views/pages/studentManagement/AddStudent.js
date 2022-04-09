@@ -280,6 +280,12 @@ function AddStudent() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     try {
       const addStudents = await addStudent(user._id, token, formData);
       console.log("addStudent", addStudents);
@@ -625,23 +631,14 @@ function AddStudent() {
                     </label>
                     <Input
                       id="exampleFormControlSelect3"
-                      type="select"
+                      type="text"
                       onChange={handleChange("religion")}
                       required
                       value={studentData.religion}
-                    >
-                      <option value="" disabled>
-                        Religion
-                      </option>
-                      <option>A+</option>
-                      <option>A-</option>
-                      <option>B+</option>
-                      <option>B-</option>
-                      <option>O+</option>
-                      <option>O-</option>
-                      <option>AB+</option>
-                      <option>AB-</option>
-                    </Input>
+                      placeholder="Religion"
+                    />
+                
+                  
                   </Col>
                   <Col>
                     <label

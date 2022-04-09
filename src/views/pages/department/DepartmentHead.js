@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table, Card, Input, CardBody, Button } from "reactstrap";
+import { Container, Table, Card, Input, CardBody } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
-import {
-  getDepartment,
-  departmentHead,
-  updateDepartment,
-} from "api/department";
+import { getDepartment, departmentHead } from "api/department";
 import { isAuthenticated } from "api/auth";
 import Loader from "components/Loader/Loader";
 import { allStaffs } from "api/staff";
@@ -21,14 +17,13 @@ const DepartmentHead = () => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user, token } = isAuthenticated();
-  const [primaryHead, setPrimaryHead] = useState("");
-  const [secondaryHead, setSecondaryHead] = useState("");
-const [checked, setChecked] = useState(false);
+  const [primaryHeadId, setPrimaryHeadId] = useState("");
+  const [secondaryHeadId, setSecondaryHeadId] = useState("");
 
   useEffect(() => {
     getAllDepartments();
     getAllStaff();
-  }, [checked]);
+  }, []);
 
   const getAllDepartments = async () => {
     try {
@@ -66,16 +61,14 @@ const [checked, setChecked] = useState(false);
 
   const [formData] = useState(new FormData());
 
-  const updateHeadHandler = async (departmentId) => {
+  const primaryHeadHandler = (departmentId) => async (e) => {
     console.log(departmentId);
-    console.log(primaryHead);
-    console.log(secondaryHead);
-
-    const role = [primaryHead, secondaryHead];
-    formData.set("role", JSON.stringify(role));
+    console.log(e.target.value);
+    let formData = new FormData();
+    formData.set("primary_head", e.target.value);
 
     try {
-      const data = await updateDepartment(
+      const data = await departmentHead(
         departmentId,
         user._id,
         token,
@@ -83,10 +76,29 @@ const [checked, setChecked] = useState(false);
       );
       console.log(data);
       toast.success(departmentHeadAssignSuccess);
-      setChecked(!checked)
     } catch (err) {
       console.log(err);
-      toast.error(departmentHeadAssignError);
+      toast.error(departmentHeadAssignError)
+    }
+  };
+  const secondaryHeadHandler = (departmentId) => async (e) => {
+    console.log(departmentId);
+    console.log(e.target.value);
+    let formData = new FormData();
+    formData.set("secondary_head", e.target.value);
+
+    try {
+      const data = await departmentHead(
+        departmentId,
+        user._id,
+        token,
+        formData
+      );
+      console.log(data);
+      toast.success(departmentHeadAssignSuccess);
+    } catch (err) {
+      console.log(err);
+      toast.error(departmentHeadAssignError)
     }
   };
 
@@ -100,62 +112,51 @@ const [checked, setChecked] = useState(false);
               <tbody>
                 {loading ? (
                   <>
-                    {departments &&
-                      departments.map((clas) => (
-                        <tr className="teacher-table-row">
-                          <td className="teacher-table-class">{clas.name}</td>
-                          <td>
-                            <Input
-                              id={clas._id}
-                              type="select"
-                              onChange={(e) => setPrimaryHead(e.target.value)}
-                              value={clas.role[0]}
-                              // value={primaryHead}
-                              placeholder="Select Staff"
-                            >
-                              <option value="" disabled selected>
-                                Primary Head
-                              </option>
+                    { departments && departments.map((clas) => (
+                      <tr className="teacher-table-row">
+                        <td className="teacher-table-class">{clas.name}</td>
+                        <td>
+                          <Input
+                            id={clas._id}
+                            type="select"
+                            onChange={primaryHeadHandler(clas._id)}
+                            // value={subject[clas._id] || ""}
+                            value={[selectStaff.head]}
+                            placeholder="Select Staff"
+                          >
+                            <option value="" disabled selected>
+                              Primary Head
+                            </option>
 
-                              {staff &&
-                                staff.map((tech) => (
-                                  <option key={tech._id} value={tech._id}>
-                                    {tech.firstname} {tech.lastname}
-                                  </option>
-                                ))}
-                            </Input>
-                          </td>
-                          <td>
-                            <Input
-                              id={clas._id}
-                              type="select"
-                              onChange={(e) => setSecondaryHead(e.target.value)}
-                              value={clas.role[1]}
-                              // value={secondaryHead}
-                              placeholder="Select Staff"
-                            >
-                              <option value="" disabled selected>
-                                Secondary Head
+                            { staff&& staff.map((tech) => (
+                              <option key={tech._id} value={tech._id}>
+                                {tech.firstname} {tech.lastname}
                               </option>
+                            ))}
+                          </Input>
+                        </td>
+                        <td>
+                          <Input
+                            id={clas._id}
+                            type="select"
+                            onChange={secondaryHeadHandler(clas._id)}
+                            // value={subject[clas._id] || ""}
+                            value={[selectStaff.head]}
+                            placeholder="Select Staff"
+                          >
+                            <option value="" disabled selected>
+                              Secondary Head
+                            </option>
 
-                              {staff &&
-                                staff.map((tech) => (
-                                  <option key={tech._id} value={tech._id}>
-                                    {tech.firstname} {tech.lastname}
-                                  </option>
-                                ))}
-                            </Input>
-                          </td>
-                          <td>
-                            <Button
-                              color="primary"
-                              onClick={() => updateHeadHandler(clas._id)}
-                            >
-                              Update Heads
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
+                            { staff && staff.map((tech) => (
+                              <option key={tech._id} value={tech._id}>
+                                {tech.firstname} {tech.lastname}
+                              </option>
+                            ))}
+                          </Input>
+                        </td>
+                      </tr>
+                    ))}
                   </>
                 ) : (
                   <Loader />
