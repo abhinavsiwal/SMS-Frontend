@@ -16,6 +16,8 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Modal,
+  ModalBody,
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -57,7 +59,8 @@ const AllStudents = () => {
     const newOffset = (event.selected * itemsPerPage) % studentList.length;
     setItemOffset(newOffset);
   };
-
+  const [viewModal, setViewModal] = useState(false);
+  const [studentDetails, setSudentDetails] = useState({});
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -136,6 +139,10 @@ const AllStudents = () => {
                   color="success"
                   type="button"
                   key={"view" + i + 1}
+                  onClick={() => {
+                    setViewModal(true);
+                    setSudentDetails(res[i]);
+                  }}
                 >
                   <i className="fas fa-user" />
                 </Button>
@@ -693,6 +700,78 @@ const AllStudents = () => {
                 )}
               </CardBody>
             </Card>
+            <Modal
+                  className="modal-dialog-centered"
+                  isOpen={viewModal}
+                  toggle={() => setViewModal(false)}
+                >
+                  <div className="modal-header">
+                    <h6 className="modal-title" id="modal-title-default">
+                      Support Details
+                    </h6>
+                    <button
+                      aria-label="Close"
+                      className="close"
+                      data-dismiss="modal"
+                      type="button"
+                      onClick={() => setViewModal(false)}
+                    >
+                      <span aria-hidden={true}>×</span>
+                    </button>
+                  </div>
+                  <ModalBody>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">SID</h4>
+                        <span className="text-md">{studentDetails.SID}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">First Name</h4>
+                        <span className="text-md">
+                          {studentDetails.firstname}
+                        </span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Last Name</h4>
+                        <span className="text-md">
+                          {studentDetails.lastname}
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Email</h4>
+                        <span className="text-md">{studentDetails.email}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Phone</h4>
+                        <span className="text-md">{studentDetails.phone}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Gender</h4>
+                        <span className="text-md">{studentDetails.gender}</span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Roll No.</h4>
+                        <span className="text-md">
+                          {studentDetails.roll_number}
+                        </span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Aadhar Number</h4>
+                        <span className="text-md">{studentDetails.aadhar_number}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Caste</h4>
+                        <span className="text-md">{studentDetails.caste}</span>
+                      </Col>
+                    </Row>
+
+                    <Row></Row>
+                  </ModalBody>
+                </Modal>
           </Container>
         </>
       ) : (

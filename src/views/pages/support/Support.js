@@ -102,7 +102,7 @@ function Support() {
               root_caused: res[i].root_caused,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
+                  {/* {permissions && permissions.includes("edit") && ( */}
                   <Button
                     className="btn-sm pull-right"
                     color="primary"
@@ -114,7 +114,7 @@ function Support() {
                   >
                     View More
                   </Button>
-                  )}
+                  {/* )} */}
                 </h5>
               ),
             });
@@ -284,7 +284,7 @@ function Support() {
       />
       <Container className="mt--6" fluid>
         <Row>
-        {permissions && permissions.includes("edit") && (
+        {permissions && permissions.includes("add") && (
           <Col lg="4">
             <div className="card-wrapper">
               <Card>

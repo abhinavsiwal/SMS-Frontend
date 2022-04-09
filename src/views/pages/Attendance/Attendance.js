@@ -226,7 +226,7 @@ function Attendance() {
     console.log(event.target.value);
     console.log(attendance);
     let today = new Date();
-    let day = today.getDate() + 2;
+    let day = today.getDate() ;
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
 
@@ -262,10 +262,16 @@ function Attendance() {
   const searchHandler = async () => {
     console.log(attendance);
     const formData = new FormData();
-    formData.set("classId",attendance.class);
-    formData.set("sectionId",attendance.section)
+    formData.set("classId",attendance.selectClass);
+    formData.set("sectionId",attendance.selectSection);
+    let data1 = {
+      class:attendance.selectClass,
+      section:attendance.selectSection,
+      start_date:attendance.dateFrom,
+      end_date:attendance.dateTo,
+    }
     try {
-      const data = await searchAttendance(user._id, user.school, formData);
+      const data = await searchAttendance(user._id, user.school,data1);
       console.log(data);
     } catch (err) {
       console.log(err);
@@ -457,7 +463,7 @@ function Attendance() {
                     required
                     className="form-control-sm"
                   >
-                    <option value="" disabled selected>
+                    <option value="">
                       Select Session
                     </option>
                     {sessions.map((session) => {

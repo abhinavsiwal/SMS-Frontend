@@ -30,9 +30,9 @@ export const postAttendance = async (userId, bodyData) => {
 
 export const searchAttendance = async (userId, schoolId, bodyData) => {
   try {
-    const { data } = await sendRequest(
+    const { data } = await sendRequestWithJson(
       `${process.env.REACT_APP_API_URL}/api/school/attendance/custom/all/${schoolId}/${userId}`,
-      bodyData,
+      JSON.stringify(bodyData),
       "POST"
     );
     console.log(data);
