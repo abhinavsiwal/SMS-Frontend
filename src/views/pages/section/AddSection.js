@@ -463,7 +463,7 @@ const AddSection = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
+          {/* {permissions && permissions.includes("add") && ( */}
                <Col>
                <div className="card-wrapper">
                  <Card>
@@ -582,7 +582,7 @@ const AddSection = () => {
                  </Card>
                </div>
              </Col>
-          )}
+          {/* )} */}
        
 
           <Col>

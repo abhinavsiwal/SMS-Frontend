@@ -1,3 +1,5 @@
+import { sendRequest } from "api/api";
+
 export const addDepartment = (userId, token, data) => {
   const url = `${process.env.REACT_APP_API_URL}/api/department/create/${userId}`;
   return fetch(url, {
@@ -70,4 +72,18 @@ export const departmentHead=(departmentId,userId,token,formData)=>{
     .catch((error) => {
       throw error;
     });
+}
+
+
+export const getNonHeads=async(schoolId,adminId)=>{
+  try {
+    const data = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/head/${schoolId}/${adminId}`
+    );
+    console.log(data,"$$$$$$$$");
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 }

@@ -86,6 +86,7 @@ const AddSession = () => {
 
   let permissions = [];
   useEffect(() => {
+    console.log(user);
     if (user.permissions["Session"]) {
       permissions = user.permissions["Session"];
       console.log(permissions);
@@ -251,6 +252,11 @@ const AddSession = () => {
       },
     },
     {
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+    },
+    {
       title: "Start Date",
       dataIndex: "start_date",
       // width: 150,
@@ -404,11 +410,7 @@ const AddSession = () => {
         return record.year.toLowerCase().includes(value.toLowerCase());
       },
     },
-    {
-      title: "Status",
-      key: "status",
-      dataIndex: "status",
-    },
+   
     {
       title: "Action",
       key: "action",
@@ -485,28 +487,7 @@ const AddSession = () => {
             <Col>
               <div className="card-wrapper">
                 <Card>
-                  <Row>
-                    <Col className="d-flex justify-content-center mt-2 ml-4">
-                      <form>
-                        <input
-                          type={"file"}
-                          id={"csvFileInput"}
-                          accept={".csv"}
-                          onChange={handleOnChange}
-                        />
-
-                        <Button
-                          onClick={(e) => {
-                            handleOnSubmit(e);
-                          }}
-                          color="primary"
-                          className="mt-2"
-                        >
-                          IMPORT CSV
-                        </Button>
-                      </form>
-                    </Col>
-                  </Row>
+                 
                   <Form onSubmit={handleFormChange} className="mb-4">
                     <CardBody>
                       <Row>

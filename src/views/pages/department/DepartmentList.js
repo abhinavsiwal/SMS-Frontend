@@ -24,6 +24,7 @@ import {
   getDepartment,
   updateDepartment,
   deleteDepartment,
+  getNonHeads
 } from "api/department";
 import Select from "react-select";
 import { Popconfirm } from "antd";
@@ -70,6 +71,7 @@ const DepartmentList = () => {
 
   let permissions = [];
   useEffect(() => {
+    console.log(user);
     if (user.permissions["Department"]) {
       permissions = user.permissions["Department"];
       console.log(permissions);
@@ -81,10 +83,16 @@ const DepartmentList = () => {
     getSession();
     getDepartmentsData();
   }, []);
+  useEffect(() => {
+  
+    getDepartmentsData();
+  }, [checked]);
+
+
 
   const getAllStaff = async () => {
     try {
-      const data = await allStaffs(user.school, user._id);
+      const data = await getNonHeads(user.school, user._id);
       console.log(data, "@@@@@@@@");
       setStaff(data);
     } catch (err) {
@@ -149,13 +157,15 @@ const DepartmentList = () => {
     const { user, token } = isAuthenticated();
     try {
       const session = await allSessions(user._id, user.school, token);
+      console.log(session);
       if (session.err) {
         return toast.error(session.err);
       } else {
         setSessions(session);
       }
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      console.log(err);
+      // toast.error("Something Went Wrong!");
     }
   };
 
@@ -172,7 +182,7 @@ const DepartmentList = () => {
             module: res[i].module,
             action: (
               <h5 key={i + 1} className="mb-0">
-                {permissions && permissions.includes("edit") && (
+                {/* {permissions && permissions.includes("edit") && ( */}
                   <Button
                     className="btn-sm pull-right"
                     color="primary"
@@ -184,8 +194,8 @@ const DepartmentList = () => {
                   >
                     <i className="fas fa-user-edit" />
                   </Button>
-                )}
-                {permissions && permissions.includes("delete") && (
+                {/* )} */}
+                {/* {permissions && permissions.includes("delete") && ( */}
                   <Button
                     className="btn-sm pull-right"
                     color="danger"
@@ -199,7 +209,7 @@ const DepartmentList = () => {
                       <i className="fas fa-trash" />
                     </Popconfirm>
                   </Button>
-                )}
+                {/* )} */}
               </h5>
             ),
           });
@@ -292,6 +302,7 @@ const DepartmentList = () => {
     try {
       formData.set("school", user.school);
       formData.set("name", name);
+      console.log(sessions);
       sessions.map((data) => {
         if (data.status === "current") {
           formData.set("session", data._id);
@@ -303,18 +314,14 @@ const DepartmentList = () => {
       if (createDepartment.err) {
         return toast.error(createDepartment.err);
       }
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
+     setChecked(!checked)
       setName("");
       setPrimaryHeadId("");
       setSecondaryHeadId("");
       setSelectSessionId("");
       toast.success("Deparment Added Successfully");
     } catch (err) {
-      toast.error("Something Went Wrong!");
+      // toast.error("Something Went Wrong!");
     }
   };
 
@@ -335,7 +342,7 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
+          {/* {permissions && permissions.includes("add") && ( */}
           <Col lg="3">
             <div className="card-wrapper">
               <Card>
@@ -374,7 +381,7 @@ const DepartmentList = () => {
               </Card>
             </div>
           </Col>
-           )}
+           {/* )} */}
 
           <Col>
             <div className="card-wrapper">
@@ -441,20 +448,7 @@ const DepartmentList = () => {
                 />
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <label className="form-control-label">Module</label>
-                <Select
-                  id="form-module-name"
-                  isMulti
-                  name="colors"
-                  options={data}
-                  onChange={handleChangeEdit}
-                  className="basic-multi-select"
-                  classNamePrefix="select"
-                />
-              </Col>
-            </Row>
+     
           </ModalBody>
           <ModalFooter>
             <Button color="success" type="button" onClick={handleEdit}>
