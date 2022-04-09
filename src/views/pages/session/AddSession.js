@@ -138,19 +138,18 @@ const AddSession = () => {
               ),
             });
           }
-          var Current_number = 0
-          var Closed_number = 0
+          var Current_number = 0;
+          var Closed_number = 0;
           data.map((d) => {
             if (d.status === "current") {
               setCheck(false);
-              Current_number++
-            }
-            else{
-              Closed_number++
+              Current_number++;
+            } else {
+              Closed_number++;
             }
           });
-          if(data.length === Closed_number){
-            setCheck(true)
+          if (data.length === Closed_number) {
+            setCheck(true);
           }
           setSessionList(data);
           setLoading(true);
