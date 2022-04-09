@@ -44,7 +44,7 @@ function AddStudent() {
   const [connectFalse, setConnectFalse] = useState(false);
 
   const [studentData, setStudentData] = useState({
-    photos: "",
+    photo: "",
     joining_date: "",
     firstname: "",
     lastname: "",
@@ -395,6 +395,9 @@ function AddStudent() {
               <CardBody>
                 <Row md="4" className="d-flex justify-content-center mb-4">
                   <Col md="8">
+                    {studentData.photo.name && (
+                      <h2>File {studentData.photo.name} is Selected</h2>
+                    )}
                     <label
                       className="form-control-label"
                       htmlFor="example3cols2Input"
@@ -408,7 +411,7 @@ function AddStudent() {
                         lang="en"
                         type="file"
                         accept="photo/*"
-                        onChange={handleFileChange("photos")}
+                        onChange={handleFileChange("photo")}
                         required
                       />
                       <label
@@ -734,32 +737,6 @@ function AddStudent() {
                             </option>
                           );
                         })}
-                    </Input>
-                  </Col>
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Select Session
-                    </label>
-                    <Input
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      required
-                      onChange={handleChange("session")}
-                      value={studentData.session}
-                    >
-                      <option value="" disabled>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option key={session._id} value={session._id}>
-                            {session.name}
-                          </option>
-                        );
-                      })}
                     </Input>
                   </Col>
                 </Row>

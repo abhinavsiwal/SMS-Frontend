@@ -292,7 +292,11 @@ const DepartmentList = () => {
     try {
       formData.set("school", user.school);
       formData.set("name", name);
-      formData.set("session", selectSessionId);
+      sessions.map((data) => {
+        if (data.status === "current") {
+          formData.set("session", data._id);
+        }
+      });
       // formData.set("role", JSON.stringify(role));
       // formData.set("module", JSON.stringify(data));
       const createDepartment = await addDepartment(user._id, token, formData);
@@ -332,77 +336,45 @@ const DepartmentList = () => {
       <Container className="mt--6" fluid>
         <Row>
           {permissions && permissions.includes("add") && (
-            <Col lg="3">
-              <div className="card-wrapper">
-                <Card>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Department Name
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Department Name"
-                            type="text"
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                          />
-                        </Col>
-                      </Row>
-
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Select Session
-                          </label>
-                          <Input
-                            id="example4cols3Input"
-                            type="select"
-                            onChange={(e) => setSelectSessionId(e.target.value)}
-                            value={selectSessionId}
-                            required
-                          >
-                            <option value="" disabled selected>
-                              Select Session
-                            </option>
-                            {sessions.map((session) => {
-                              return (
-                                <option value={session._id} key={session._id}>
-                                  {session.name}
-                                </option>
-                              );
-                            })}
-                          </Input>
-                        </Col>
-                      </Row>
-                      <Row className="mt-4 float-right">
-                        <Col>
-                          <Button
-                            color="primary"
-                            type="submit"
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                            }}
-                          >
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
-          )}
+          <Col lg="3">
+            <div className="card-wrapper">
+              <Card>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Department Name
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Department Name"
+                          type="text"
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4 float-right">
+                      <Col>
+                        <Button
+                          color="primary"
+                          type="submit"
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
+           )}
 
           <Col>
             <div className="card-wrapper">

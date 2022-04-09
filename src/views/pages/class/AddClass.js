@@ -287,6 +287,11 @@ const AddClass = () => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     try {
       await addClass(user._id, token, formData);
       setClassData({
@@ -333,118 +338,85 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
-             <Col lg="4">
-             <div className="card-wrapper">
-               <Card>
-                 <Row>
-                   <Col className="d-flex justify-content-center mt-3 ml-4">
-                     <form>
-                       <input
-                         type={"file"}
-                         id={"csvFileInput"}
-                         accept={".csv"}
-                         onChange={handleOnChange}
-                       />
- 
-                       <Button
-                         onClick={(e) => {
-                           handleOnSubmit(e);
-                         }}
-                         color="primary"
-                         className="mt-3"
-                       >
-                         IMPORT CSV
-                       </Button>
-                     </form>
-                   </Col>
-                 </Row>
-                 <Form onSubmit={handleFormChange} className="mb-4">
-                   <CardBody>
-                     <Row>
-                       <Col>
-                         <label
-                           className="form-control-label"
-                           htmlFor="example4cols2Input"
-                         >
-                           Class
-                         </label>
-                         <Input
-                           id="example4cols2Input"
-                           placeholder="Class"
-                           type="text"
-                           onChange={handleChange("name")}
-                           value={classData.name}
-                           required
-                         />
-                       </Col>
-                     </Row>
-                     <Row>
-                       <Col>
-                         <label
-                           className="form-control-label"
-                           htmlFor="example4cols2Input"
-                         >
-                           Select Session
-                         </label>
-                         <Input
-                           id="example4cols3Input"
-                           type="select"
-                           onChange={handleChange("session")}
-                           value={classData.session}
-                           required
-                         >
-                           <option value="" disabled selected>
-                             Select Session
-                           </option>
-                           {sessions.map((session) => {
-                             return (
-                               <option value={session._id} key={session._id}>
-                                 {session.name}
-                               </option>
-                             );
-                           })}
-                         </Input>
-                       </Col>
-                     </Row>
-                     <Row className="mt-4">
-                       <Col>
-                         <label
-                           className="form-control-label"
-                           htmlFor="example4cols2Input"
-                         >
-                           Class Abbreviation
-                         </label>
-                         <Input
-                           id="example4cols2Input"
-                           placeholder="Class Abbreviation"
-                           type="text"
-                           onChange={handleChange("abbreviation")}
-                           value={classData.abbreviation}
-                           required
-                         />
-                       </Col>
-                     </Row>
-                     <Row className="mt-4">
-                       <Col
-                         style={{
-                           display: "flex",
-                           justifyContent: "center",
-                           width: "100%",
-                         }}
-                       >
-                         <Button color="primary" type="submit">
-                           Submit
-                         </Button>
-                       </Col>
-                     </Row>
-                   </CardBody>
-                 </Form>
-               </Card>
-             </div>
-           </Col>
-          )}
-         
+          {/* {permissions && permissions.includes("add") && (
+            
+          )} */}
+          <Col lg="4">
+            <div className="card-wrapper">
+              <Card>
+                <Row>
+                  <Col className="d-flex justify-content-center mt-3 ml-4">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
+
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                        className="mt-3"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Class
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Class"
+                          type="text"
+                          onChange={handleChange("name")}
+                          value={classData.name}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Class Abbreviation
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Class Abbreviation"
+                          type="text"
+                          onChange={handleChange("abbreviation")}
+                          value={classData.abbreviation}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col style={{display:"flex",justifyContent:"center",width:"100%"}} >
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
 
           <Col>
             <div className="card-wrapper">

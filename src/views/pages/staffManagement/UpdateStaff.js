@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -17,7 +16,7 @@ import {
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { setStaffEditing } from "store/reducers/staff";
 import { Stepper, Step } from "react-form-stepper";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Select from "react-select";
 import { Country, State, City } from "country-state-city";
 import { updateStaffError } from "constants/errors";
@@ -31,11 +30,11 @@ import { isAuthenticated } from "api/auth";
 import { getDepartment } from "api/department";
 import { allSubjects } from "api/subjects";
 
-function UpdateStaff({staffDetails}) {
+function UpdateStaff({ staffDetails }) {
   const [step, setStep] = useState(0);
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [staffData, setStaffData] = useState({
-      _id:staffDetails._id,
+    _id: staffDetails._id,
     image: staffDetails.image,
     firstname: staffDetails.firstname,
     lastname: staffDetails.lastname,
@@ -156,13 +155,13 @@ const dispatch = useDispatch();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
-      const resp = await updateStaff(staffData._id,user._id, formData);
+      const resp = await updateStaff(staffData._id, user._id, formData);
       console.log(resp);
       if (resp.err) {
         return toast.error(resp.err);
       }
       toast.success(updateStaffSuccess);
-      dispatch(setStaffEditing(false))
+      dispatch(setStaffEditing(false));
     } catch (err) {
       toast.error(updateStaffError);
     }
@@ -327,7 +326,7 @@ const dispatch = useDispatch();
                       id="example-date-input"
                       type="date"
                       onChange={handleChange("joining_date")}
-                      value={staffData.joining_date.slice(0,10)}
+                      value={staffData.joining_date.slice(0, 10)}
                       required
                     />
                   </Col>
@@ -380,7 +379,7 @@ const dispatch = useDispatch();
                       id="example-date-input"
                       type="date"
                       onChange={handleChange("date_of_birth")}
-                      value={staffData.date_of_birth.slice(0,10)}
+                      value={staffData.date_of_birth.slice(0, 10)}
                       required
                     />
                   </Col>
@@ -873,123 +872,60 @@ const dispatch = useDispatch();
             <Form onSubmit={handleSubmitForm} className="mb-4">
               <CardBody>
                 <Row>
-                  <Col md="4">
-                    <FormGroup>
+                  {staffData.job === undefined ? (
+                    <Col md="12">
                       <label
                         className="form-control-label"
                         htmlFor="example4cols2Input"
                       >
-                        Role
-                      </label>
-                      <Input
-                        id="exampleFormControlSelect3"
-                        type="select"
-                        onChange={handleChange("assign_role")}
-                        value={staffData.assign_role}
-                        required
-                      >
-                        <option value="canteen">Canteen</option>
-                        <option value="teacher">Teacher</option>
-                      </Input>
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols3Input"
-                      >
-                        Job Name
-                      </label>
-                      <Input
-                        id="example4cols3Input"
-                        placeholder="Job Name"
-                        type="text"
-                        onChange={handleChange("job")}
-                        value={staffData.job}
-                        required
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Salary
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Salary"
-                      type="number"
-                      onChange={handleChange("salary")}
-                      value={staffData.salary}
-                      required
-                    />
-                  </Col>
-                </Row>
-                {staffData.assign_role === "teacher" ? (
-                  <Row>
-                    <Col md="4">
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Department
-                      </label>
-                      <Input
-                        id="exampleFormControlSelect3"
-                        type="select"
-                        onChange={handleChange("department")}
-                        value={staffData.department}
-                        required
-                      >
-                        <option value="" disabled selected>
-                          Department
-                        </option>
-                        {departments.map((departments) => (
-                          <option value={departments._id}>
-                            {departments.name}
-                          </option>
-                        ))}
-                      </Input>
-                    </Col>
-                    <Col md="4">
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Subject
-                      </label>
-
-                      <Select
-                        isMulti
-                        name="colors"
-                        options={a}
-                        onChange={handleSubjectChange}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        required
-                      />
-                    </Col>
-                    <Col>
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Highest Qualification
+                        Salary
                       </label>
                       <Input
                         id="example4cols2Input"
-                        placeholder="Highest Qualification"
-                        onChange={handleChange("qualification")}
-                        value={staffData.qualification}
-                        type="text"
+                        placeholder="Salary"
+                        type="number"
+                        onChange={handleChange("salary")}
+                        value={staffData.salary}
                         required
                       />
                     </Col>
-                  </Row>
-                ) : null}
+                  ) : (
+                    <>
+                      <Col md="6">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Job
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Salary"
+                          type="text"
+                          onChange={handleChange("job")}
+                          value={staffData.job}
+                          required
+                        />
+                      </Col>
+                      <Col md="6">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Salary
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Salary"
+                          type="number"
+                          onChange={handleChange("salary")}
+                          value={staffData.salary}
+                          required
+                        />
+                      </Col>
+                    </>
+                  )}
+                </Row>
 
                 <Row className="mt-4 d-flex justify-content-between">
                   <Button

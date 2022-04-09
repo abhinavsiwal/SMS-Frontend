@@ -172,7 +172,11 @@ function CalendarView() {
     formData.set("event_type", radios);
     formData.set("school", user.school);
     formData.set("assignTeachers", JSON.stringify([staffId]));
-    formData.set("session", selectSessionId);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
 
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
@@ -319,28 +323,9 @@ function CalendarView() {
   };
 
   useEffect(() => {
-    console.log(events);
-    console.log(filterSessionId);
-
-    if (filterSessionId.toString() === "All") {
-      console.log("here");
-      const data = [];
-      events.map((events) => {
-        data.push({
-          key: events._id,
-          event_name: events.name,
-          start_date: events.event_from.split("T")[0],
-          end_date: events.event_to.split("T")[0],
-        });
-      });
-      setEventList(data);
-      return;
-    }
-
     let filteredEvents = events.filter(
-      (event) => event.session._id.toString() === filterSessionId.toString()
+      (event) => event.session.toString() === filterSessionId.toString()
     );
-    console.log(filteredEvents);
     const data = [];
     filteredEvents.map((events) => {
       data.push({
@@ -484,27 +469,6 @@ function CalendarView() {
             required
           />
           <Button className="mt-2">Search</Button> */}
-          <Label className="form-control-label" htmlFor="example-date-input">
-            Session
-          </Label>
-          <Input
-            id="example4cols3Input"
-            type="select"
-            onChange={(e) => setFilterSessionId(e.target.value)}
-            value={filterSessionId}
-            required
-          >
-            <option value="All" selected>
-              All
-            </option>
-            {sessions.map((session) => {
-              return (
-                <option value={session._id} key={session._id}>
-                  {session.name}
-                </option>
-              );
-            })}
-          </Input>
 
           <Table columns={columns} dataSource={eventList} />
         </ModalBody>
@@ -707,26 +671,6 @@ function CalendarView() {
                       onChange={(e) => setDescription(e.target.value)}
                       required
                     />
-                  </FormGroup>
-                  <FormGroup>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={(e) => setSelectSessionId(e.target.value)}
-                      value={selectSessionId}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option value={session._id} key={session._id}>
-                            {session.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
                   </FormGroup>
                   <FormGroup className="mb-0">
                     <label className="form-control-label d-block mb-3">

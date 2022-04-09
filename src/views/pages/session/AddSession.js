@@ -62,6 +62,8 @@ const AddSession = () => {
 
   const fileReader = new FileReader();
 
+  const [check, setCheck] = useState(false);
+
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -95,6 +97,7 @@ const AddSession = () => {
       // All Sections
       allSessions(user._id, user.school, token)
         .then((res) => {
+          console.log(res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -105,45 +108,48 @@ const AddSession = () => {
               working_days: res[i].working_days,
               working_time: res[i].working_time,
               year: res[i].year,
+              status: res[i].status,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="primary"
-                      type="button"
-                      key={"edit" + i + 1}
-                      onClick={() =>
-                        rowHandler(
-                          res[i]._id,
-                          res[i].name,
-                          res[i].start_date.split("T")[0],
-                          res[i].start_date.split("T")[0],
-                          res[i].working_days
-                        )
-                      }
-                    >
-                      <i className="fas fa-user-edit" />
-                    </Button>
-                  )}
-                  {permissions && permissions.includes("delete") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="danger"
-                      type="button"
-                      key={"delete" + i + 1}
-                    >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => handleDelete(res[i]._id)}
-                      >
-                        <i className="fas fa-trash" />
-                      </Popconfirm>
-                    </Button>
-                  )}
+                  {/* {permissions && permissions.includes("edit") && (
+                   
+                  )} */}
+                  <Button
+                    className="btn-sm pull-right"
+                    color="primary"
+                    type="button"
+                    key={"edit" + i + 1}
+                    onClick={() =>
+                      rowHandler(
+                        res[i]._id,
+                        res[i].name,
+                        res[i].start_date.split("T")[0],
+                        res[i].start_date.split("T")[0],
+                        res[i].working_days
+                      )
+                    }
+                  >
+                    <i className="fas fa-user-edit" />
+                  </Button>
+                  {/* {permissions && permissions.includes("delete") && (
+                   
+                  )} */}
                 </h5>
               ),
             });
+          }
+          var Current_number = 0;
+          var Closed_number = 0;
+          data.map((d) => {
+            if (d.status === "current") {
+              setCheck(false);
+              Current_number++;
+            } else {
+              Closed_number++;
+            }
+          });
+          if (data.length === Closed_number) {
+            setCheck(true);
           }
           setSessionList(data);
           setLoading(true);
@@ -399,6 +405,11 @@ const AddSession = () => {
       },
     },
     {
+      title: "Status",
+      key: "status",
+      dataIndex: "status",
+    },
+    {
       title: "Action",
       key: "action",
       dataIndex: "action",
@@ -466,7 +477,11 @@ const AddSession = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
+          {/* {permissions && permissions.includes("add") && (
+              
+            )} */}
+
+          {check && (
             <Col>
               <div className="card-wrapper">
                 <Card>
