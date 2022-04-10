@@ -1,3 +1,6 @@
+import { sendRequestWithJson } from "api/api";
+import { sendRequest } from "api/api";
+
 export const addClass = (userId, token, data = {}) => {
 
   const url = `${process.env.REACT_APP_API_URL}/api/school/class/create/${userId}`;
@@ -72,4 +75,17 @@ export const assignClassTeacher=async(sectionId,userId,token,formData)=>{
     .catch((error) => {
       throw error;
     });
+}
+
+export const nonClassTeachers = async(schoolId,adminId)=>{
+  try {
+    const {data} = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/classTeacher/${schoolId}/${adminId}`
+    );
+    console.log(data,"$$$$$$$$");
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
 }

@@ -159,12 +159,14 @@ const DepartmentHead = () => {
                               value={clas.primary_head && clas.primary_head._id}
                               placeholder="Select Staff"
                             >
-                           {clas.primary_head ? (
-                                <option value="">{clas.primary_head.firstname} {clas.primary_head.secondname} </option>
+                              {clas.primary_head ? (
+                                <option value="">
+                                  {clas.primary_head.firstname}{" "}
+                                  {clas.primary_head.secondname}{" "}
+                                </option>
                               ) : (
                                 <option value="">Primary Head</option>
                               )}
-                                
 
                               {staff &&
                                 staff.map((tech) => (
@@ -186,11 +188,14 @@ const DepartmentHead = () => {
                               placeholder="Select Staff"
                             >
                               {clas.secondary_head ? (
-                                <option value="">{clas.secondary_head.firstname} {clas.secondary_head.secondname} </option>
+                                <option value="">
+                                  {clas.secondary_head.firstname}{" "}
+                                  {clas.secondary_head.secondname}{" "}
+                                </option>
                               ) : (
                                 <option value="">Secondary Head</option>
                               )}
-                                  
+
                               {staff &&
                                 staff.map((tech) => (
                                   <option key={tech._id} value={tech._id}>

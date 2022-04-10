@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Input } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
-import { allClass, assignClassTeacher } from "api/class";
+import { allClass, assignClassTeacher,nonClassTeachers } from "api/class";
 import { toast,ToastContainer } from "react-toastify";
 import { isAuthenticated } from "api/auth";
-import { allStaffs } from "api/staff";
+import { allStaffs,updateStaff1 } from "api/staff";
 
 import {
   fetchingClassError,
@@ -49,7 +49,7 @@ const ClassTeacher = () => {
       const { user, token } = isAuthenticated();
       const payload = { school: user.school };
 
-      const teachers = await allStaffs(user.school, user._id);
+      const teachers = await nonClassTeachers(user.school, user._id);
       console.log(teachers);
       if (teachers.err) {
         return toast.error(teachers.err);
@@ -63,12 +63,17 @@ const ClassTeacher = () => {
   const assignClassTeacherHandler = (sectionId) => async (e) => {
     console.log(sectionId);
     console.log(e.target.value);
+    let staffId = e.target.value;
     let formData = new FormData();
     formData.set("classTeacher", e.target.value);
+    let formData1 = new FormData();
+    formData1.set("schoolClassTeacher", sectionId);
     try {
       setLoading(true);
       const data = await assignClassTeacher(sectionId, user._id, token, formData);
       console.log(data);
+      const data1 = await updateStaff1(staffId, user._id, formData1);
+      console.log(data1);
       toast.success(classTeacherAssignSuccess);
       setChecked(!checked)
       setLoading(false)
