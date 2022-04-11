@@ -66,14 +66,18 @@ const AddSection = () => {
   const [editingClassId, setEditingClassId] = useState("");
   const [editingSectionId, setEditingSectionId] = useState("");
   const [editingSubjectList, setEditingSubjectList] = useState([]);
-  let permissions;
+  let permissions=[];
   useEffect(() => {
     if (user.permissions["Class, section and subject master"]) {
       permissions = user.permissions["Class, section and subject master"];
       console.log(permissions);
     }
+  }, [checked,tableClassSelectId]);
+
+  useEffect(() => {
     getSession();
   }, []);
+
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -290,17 +294,17 @@ const AddSection = () => {
       return;
     }
     for (let i = 0; i < selectedClass.section.length; i++) {
-      data.push({
+     data.push({
         key: i,
         s_no: [i + 1],
         name: selectedClass.section[i].name,
         abbreviation: selectedClass.section[i].abbreviation,
         subject: selectedClass.section[i].subject.toString(),
-        class_teacher: selectedClass.section[i].classTeacher,
+        class_teacher: selectedClass.section[i].classTeacher && selectedClass.section[i].classTeacher.firstname,
         action: (
           <h5 key={i + 1} className="mb-0">
-            {permissions && permissions.includes("edit") && (
-              <Button
+            {permissions && permissions.includes("edit".trim()) && (
+              <Button 
                 className="btn-sm pull-right"
                 color="primary"
                 type="button"
@@ -310,14 +314,14 @@ const AddSection = () => {
                 <i className="fas fa-user-edit" />
               </Button>
             )}
-            {permissions && permissions.includes("delete") && (
+            {permissions && permissions.includes("delete".trim()) && (
               <Button
                 className="btn-sm pull-right"
                 color="danger"
                 type="button"
                 key={"delete" + i + 1}
               >
-                <Popconfirm
+                 <Popconfirm
                   title="Sure to delete?"
                   onConfirm={() =>
                     deleteSectionHandler(selectedClass.section[i]._id)
@@ -463,7 +467,7 @@ const AddSection = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && ( */}
+          {permissions && permissions.includes("add".trim()) && (
                <Col>
                <div className="card-wrapper">
                  <Card>
@@ -582,7 +586,7 @@ const AddSection = () => {
                  </Card>
                </div>
              </Col>
-          {/* )} */}
+          )}
        
 
           <Col>

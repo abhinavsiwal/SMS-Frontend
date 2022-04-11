@@ -69,8 +69,11 @@ const AddClass = () => {
       permissions = user.permissions["Class, section and subject master"];
       console.log(permissions);
     }
+  }, [checked, reload]);
+  useEffect(() => {
     getSession();
   }, []);
+
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -386,7 +389,7 @@ const AddClass = () => {
                         />
                       </Col>
                     </Row>
-                    
+
                     <Row className="mt-4">
                       <Col>
                         <label
@@ -406,7 +409,13 @@ const AddClass = () => {
                       </Col>
                     </Row>
                     <Row className="mt-4">
-                      <Col style={{display:"flex",justifyContent:"center",width:"100%"}} >
+                      <Col
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          width: "100%",
+                        }}
+                      >
                         <Button color="primary" type="submit">
                           Submit
                         </Button>
