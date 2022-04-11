@@ -283,7 +283,11 @@ function AddTimeTable() {
     const { user, token } = isAuthenticated();
     formData.set("class", timeTableData.class);
     formData.set("section", timeTableData.section);
-    formData.set("session", timeTableData.session);
+    sessions.map((data) => {
+      if (data.status === "current") {
+        formData.set("session", data._id);
+      }
+    });
     formData.set("school", user.school);
     formData.set("lecture", JSON.stringify(lecturer));
 
@@ -684,7 +688,7 @@ function AddTimeTable() {
                   </Col>
                 </Row>
                 <Row className="m-4">
-                  <Col md="4">
+                  <Col md="6">
                     <Label
                       className="form-control-label"
                       htmlFor="xample-date-input"
@@ -710,7 +714,7 @@ function AddTimeTable() {
                       })}
                     </Input>
                   </Col>
-                  <Col md="4">
+                  <Col md="6">
                     <Label
                       className="form-control-label"
                       htmlFor="xample-date-input"
@@ -725,9 +729,7 @@ function AddTimeTable() {
                       required
                       placeholder="Add Periods"
                     >
-                      <option value="">
-                        Select Section
-                      </option>
+                      <option value="">Select Section</option>
                       {selectedClass.section &&
                         selectedClass.section.map((section) => {
                           console.log(section.name);
@@ -743,38 +745,10 @@ function AddTimeTable() {
                         })}
                     </Input>
                   </Col>
-                  <Col md="4">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Select Session
-                    </Label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={handleChange("session")}
-                      value={timeTableData.session}
-                      required
-                      placeholder="Add Periods"
-                    >
-                      <option value="" disabled selected>
-                        Select Session
-                      </option>
-                      {sessions.map((session) => {
-                        return (
-                          <option value={session._id} key={session._id}>
-                            {session.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
-                  </Col>
                 </Row>
 
                 {timeTableData.class !== null &&
-                  timeTableData.section !== null &&
-                  timeTableData.session !== null && (
+                  timeTableData.section !== null && (
                     <>
                       <Row className="m-4">
                         <Col md="6">
@@ -965,7 +939,9 @@ function AddTimeTable() {
                             </option>
                             {teacherList.map((teachers) => {
                               return (
-                                <option value={teachers._id}>
+                                <option
+                                  value={teachers.firstname + teachers.lastname}
+                                >
                                   {teachers.firstname}
                                 </option>
                               );

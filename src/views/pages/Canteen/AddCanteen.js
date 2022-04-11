@@ -132,6 +132,7 @@ function AddCanteen() {
     description: "",
     price: "",
     publish: "",
+    addCanteen:"",
   });
   console.log("addMenu", addMenu);
 
@@ -174,7 +175,7 @@ function AddCanteen() {
 
   //Value for image
   const handleFileChange = (name) => (event) => {
-    setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
+    setAddMenu({ ...addMenu, [name]: event.target.files[0] });
   };
 
   //AddMenu
@@ -200,6 +201,7 @@ function AddCanteen() {
       setAddMenu({
         image: "",
         items: "",
+        addCanteen: "",
         description: "",
         price: "",
         publish: "",
@@ -216,6 +218,11 @@ function AddCanteen() {
       options={props.options}
     />
   );
+
+  const handleCanteen = (e) =>{
+    addMenu.addCanteen = e.target.value
+    setSelectedCanteenId(e.target.value)
+  }
 
   return (
     <>
@@ -375,7 +382,7 @@ function AddCanteen() {
                         <Input
                           id="exampleFormControlSelect3"
                           type="select"
-                          onChange={(e) => setSelectedCanteenId(e.target.value)}
+                          onChange={handleCanteen}
                           value={addMenu.addCanteen}
                           required
                         >

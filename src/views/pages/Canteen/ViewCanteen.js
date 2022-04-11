@@ -244,35 +244,6 @@ function ViewCanteen() {
         return record.publish.toLowerCase().includes(value.toLowerCase());
       },
     },
-    {
-      title: "Time",
-      dataIndex: "time",
-      sorter: (a, b) => a.time > b.time,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.time.toLowerCase().includes(value.toLowerCase());
-      },
-    },
 
     {
       title: "Action",
@@ -332,10 +303,9 @@ function ViewCanteen() {
         item_name: selectedCanteen.menu[i].item,
         start_time: selectedCanteen.menu[i].start_time,
         end_time: selectedCanteen.menu[i].end_time,
-        image: selectedCanteen.menu[i].image,
+        image: (<img width={100} height={100} src={selectedCanteen.menu[i].image} />),
         price: selectedCanteen.menu[i].price,
         publish: selectedCanteen.menu[i].publish,
-        time: selectedCanteen.menu[i].time,
         action: (
           <h5 key={i + 1} className="mb-0">
             {permissions && permissions.includes("edit") && (
