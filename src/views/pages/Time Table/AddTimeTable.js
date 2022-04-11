@@ -206,12 +206,12 @@ function AddTimeTable() {
     try {
       const { user, token } = isAuthenticated();
       // const payload = { school: user.school };
-      const teachers = await allStaffs(user.school, user._id);
-      console.log("teachers", teachers);
-      if (teachers.err) {
-        return toast.error(teachers.err);
+      const {data} = await allStaffs(user.school, user._id);
+      console.log("teachers", data);
+      if (data.err) {
+        return toast.error(data.err);
       }
-      setTeacherList(teachers);
+      setTeacherList(data);
     } catch (err) {
       toast.error("Something Went Wrong!");
     }
@@ -582,7 +582,7 @@ function AddTimeTable() {
                     <option value="" disabled selected>
                       Teacher
                     </option>
-                    {teacherList.map((teachers) => {
+                    { teacherList && teacherList.map((teachers) => {
                       return (
                         <option value={teachers._id}>
                           {teachers.firstname}

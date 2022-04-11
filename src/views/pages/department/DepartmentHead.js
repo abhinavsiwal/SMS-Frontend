@@ -109,26 +109,39 @@ const DepartmentHead = () => {
     }
   };
 
-  const secondaryHeadHandler = (departmentId) => async (e) => {
-    console.log(departmentId);
+  const secondaryHeadHandler = (department) => async (e) => {
+    console.log(department);
     console.log(e.target.value);
     let deptId = e.target.value;
     let formData = new FormData();
     formData.set("secondary_head", e.target.value);
     let formData1 = new FormData();
-    formData1.set("head", departmentId);
 
     try {
       setLoading(true);
       const data = await departmentHead(
-        departmentId,
+        department._id,
         user._id,
         token,
         formData
       );
       console.log(data);
-      const data1 = await updateStaff1(deptId, user._id, formData1);
-      console.log(data1);
+
+      if(department.seconday_head){
+        formData1.set("isHead",false);
+        const data1 = await updateStaff1(department.secondary_head._id, user._id, formData1);
+        console.log(data1);
+        let formData2 = new FormData();
+        formData2.set("head",department._id);
+        formData2.set("isHead",true)
+        const data2 = await updateStaff1(deptId, user._id, formData2);
+        console.log(data2);
+      }else{
+        formData1.set("head",department._id);
+        formData1.set("isHead",true);
+        const data1 = await updateStaff1(deptId, user._id, formData1);
+        console.log(data1);
+      }
       setChecked(!checked);
       setLoading(false);
       toast.success(departmentHeadAssignSuccess);
@@ -196,7 +209,7 @@ const DepartmentHead = () => {
                             <Input
                               id={clas._id}
                               type="select"
-                              onChange={secondaryHeadHandler(clas._id)}
+                              onChange={secondaryHeadHandler(clas)}
                               // value={subject[clas._id] || ""}
                               value={
                                 clas.secondary_head && clas.secondary_head._id
