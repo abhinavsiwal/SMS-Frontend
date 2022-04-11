@@ -23,8 +23,8 @@ export const login = createAsyncThunk(
         return data;
       } catch (err) {
         console.log(err);
-        return rejectWithValue(err.response.data);
-      }    
+        // return rejectWithValue(err.response.data);
+      }     
     } else {
       alert("Please fill all fields");
     }

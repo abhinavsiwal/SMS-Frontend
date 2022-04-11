@@ -122,7 +122,15 @@ const ClassTeacher = () => {
                                   onChange={assignClassTeacherHandler(section._id)}
                                   value={section.classTeacher}
                                 >
-                                  <option value="">Select Teacher</option>
+                                  {section.classTeacher ? (
+                                <option value="">
+                                  {section.classTeacher.firstname}{" "}
+                                  {section.classTeacher.secondname}{" "}
+                                </option>
+                              ) : (
+                                <option value="">Class Teacher</option>
+                              )}
+
                                   {teacherList.map((tech, i) => (
                                     <option key={i} value={tech._id}>
                                       {tech.firstname} {tech.lastname}

@@ -95,25 +95,26 @@ const AllStaffs = () => {
       const payload = { school: userDetails.userDetails.school };
 
       try {
-        const res = await allStaffs(
+        const{data} = await allStaffs(
           userDetails.userDetails.school,
           userDetails.userDetails._id
         );
-        const data = [];
-        for (let i = 0; i < res.length; i++) {
-          data.push({
+        console.log(data);
+        const data1 = [];
+        for (let i = 0; i < data.length; i++) {
+          data1.push({
             key: i,
-            sid: res[i].SID,
-            first_name: res[i].firstname,
-            last_name: res[i].lastname,
-            email: res[i].email,
-            phone: res[i].phone,
-            gender: res[i].gender,
-            assign_role: res[i].assign_role.name,
-            job: res[i].job,
-            salary: res[i].salary,
-            department: res[i].department.name,
-            joining_date: res[i].joining_date.split("T")[0].toString(),
+            sid: [i].SID,
+            first_name: data[i].firstname,
+            last_name: data[i].lastname,
+            email: data[i].email,
+            phone: data[i].phone,
+            gender: data[i].gender,
+            // assign_role: data[i].assign_role.name,
+            job: data[i].job,
+            salary: data[i].salary,
+            department: data[i].department.name,
+            joining_date: data[i].joining_date.split("T")[0].toString(),
             action: (
               <h5 key={i + 1} className="mb-0">
                 {permissions && permissions.includes("edit") && (
@@ -122,7 +123,7 @@ const AllStaffs = () => {
                     color="primary"
                     type="button"
                     key={"edit" + i + 1}
-                    onClick={() => updateStaff(res[i])}
+                    onClick={() => updateStaff(data[i])}
                   >
                     <i className="fas fa-user-edit" />
                   </Button>
@@ -136,7 +137,7 @@ const AllStaffs = () => {
                   >
                     <Popconfirm
                       title="Sure to delete?"
-                      onConfirm={() => deleteStaffHandler(res[i]._id)}
+                      onConfirm={() => deleteStaffHandler(data[i]._id)}
                     >
                       <i className="fas fa-trash" />
                     </Popconfirm>
@@ -149,7 +150,7 @@ const AllStaffs = () => {
                   key={"view" + i + 1}
                   onClick={() => {
                     setViewModal(true);
-                    setSudentDetails(res[i]);
+                    setSudentDetails(data[i]);
                   }}
                 >
                   <i className="fas fa-user" />
@@ -158,13 +159,14 @@ const AllStaffs = () => {
             ),
           });
         }
-        setStaffList(data);
+        setStaffList(data1);
         setLoading(true);
         setCurrentItems(data.slice(itemOffset, endOffset));
         setPageCount(Math.ceil(data.length / itemsPerPage));
       } catch (err) {
         console.log(err);
         toast.error(fetchingStaffFailed);
+        setLoading(true);
       }
     };
     fetchStaffs();

@@ -82,7 +82,7 @@ export const sendRequestWithJson = (
   return axios({ method: method, url: url, data: body, headers: headers })
     .then((response) => {
       console.log(response);
-      return response.data;
+      return response;
     })
     .catch((error) => {
       if (error.response) {

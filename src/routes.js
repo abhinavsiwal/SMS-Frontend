@@ -77,6 +77,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddStaff,
         layout: "/admin",
+        permission:"add"
       },
       {
         path: "/all-staffs",
@@ -84,6 +85,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AllStaffs,
         layout: "/admin",
+        permission:"view"
       },
     ],
   },
@@ -132,7 +134,7 @@ export const adminRoutes = [
         miniName: "CT",
         component: ClassTeacher,
         layout: "/admin",
-        permission: "add",
+        permission: "edit",
       },
     ],
   },
@@ -149,6 +151,7 @@ export const adminRoutes = [
         miniName: "DL",
         component: DepartmentList,
         layout: "/admin",
+        permission:"view"
       },
       {
         path: "/department-head",
@@ -156,6 +159,8 @@ export const adminRoutes = [
         miniName: "DH",
         component: DepartmentHead,
         layout: "/admin",
+        permission:"edit"
+
       },
     ],
   },
@@ -180,6 +185,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddStudent,
         layout: "/admin",
+        permission:"add"
       },
       {
         path: "/all-students",
@@ -187,6 +193,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AllStudents,
         layout: "/admin",
+        permission:"view",
       },
     ],
   },
@@ -251,6 +258,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddTimeTable,
         layout: "/admin",
+        permission:"add"
       },
       {
         path: "/view_time_table",
@@ -258,6 +266,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewTimeTable,
         layout: "/admin",
+        permission:"view"
       },
     ],
   },
@@ -317,6 +326,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddRoute,
         layout: "/admin",
+        permission:"add"
       },
       {
         path: "/view-route",
@@ -324,6 +334,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewRoute,
         layout: "/admin",
+        permission:"view"
       },
     ],
   },
@@ -341,6 +352,7 @@ export const adminRoutes = [
         miniName: "A",
         component: Addproduct,
         layout: "/admin",
+        permission:"add",
       },
       {
         path: "/viewCart",
@@ -348,6 +360,7 @@ export const adminRoutes = [
         miniName: "V",
         component: Viewproduct,
         layout: "/admin",
+        permission:"view",
       },
     ],
   },

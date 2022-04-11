@@ -30,7 +30,7 @@ function Admin() {
 
   // let routes1 = [];
   let permittedRoute = [];
-
+  console.log(user);
   for (const key in user.permissions) {
     // console.log(key);
     // console.log(user.permissions[key]);
@@ -44,10 +44,22 @@ function Admin() {
     //   // let permittedViews = permitted.views.filter(
     //   //   (view) => user.role[key].toString() === view.permission.toString()
     //   // );
-    //   let permittedViews = permitted.views.filter(
-    //     (view) => "view" === view.permission.toString() 
-    //   );
-    //   permitted.views = permittedViews;
+    //   console.log(permitted.views); 
+    //   user.permissions[key].forEach(element => {
+    //     console.log(element);
+    //     for (let i = 0; i < permitted.views.length; i++) {
+    //       if(permitted.views[i].permission.toString() ===element.toString()){
+    //         console.log(true);
+    //         permitted.views=permitted.views[i];
+    //         return;
+    //       }
+          
+    //     }
+    //   });
+    //   // let permittedViews = permitted.views.filter(
+    //   //   (view) => "view" === view.permission.toString() 
+    //   // );
+    //   // permitted.views = permittedViews;
     // }
     if (permitted) {
       permittedRoute.push(permitted);

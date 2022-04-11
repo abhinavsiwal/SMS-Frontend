@@ -18,7 +18,7 @@ import {
 
 // import { Table } from "ant-table-extensions";
 import { Table } from "antd";
-import { postAttendance,searchAttendance } from "api/attendance";
+import { postAttendance, searchAttendance } from "api/attendance";
 import "./Attendance.css";
 
 //Loader
@@ -56,6 +56,8 @@ function Attendance() {
   });
   const { classes } = useSelector((state) => state.classReducer);
   const [attendanceData, setAttendanceData] = useState([]);
+  const [attendanceData1, setattendanceData1] = useState({});
+  const [viewAttendance, setViewAttendance] = useState(false);
   const [allAttendance, setAllAttendance] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState("");
@@ -68,8 +70,9 @@ function Attendance() {
   // const [loading, setLoading] = React.useState(true);
   const [attendanceStatus, setAttendanceStatus] = useState([]);
   const [atd, setAtd] = React.useState({});
+  const [columns, setColumns] = useState([]);
+  const [students1, setStudents1] = useState([]);
   const [file, setFile] = useState();
-
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
@@ -137,6 +140,23 @@ function Attendance() {
   };
 
   useEffect(() => {
+    let columns1 = [
+      {
+        title: "#",
+        width: 50,
+        dataIndex: "hash",
+        key: "hash",
+        fixed: "left",
+      },
+      {
+        title: "Name",
+        width: 50,
+        dataIndex: "name",
+        key: "name",
+        fixed: "left",
+      },
+    ];
+    setColumns(columns1);
     getAllStudents();
   }, []);
 
@@ -167,31 +187,18 @@ function Attendance() {
     setAttendanceData(tableData);
   };
   //Columns of ant Table
-  const columns = [
-    {
-      title: "#",
-      width: 50,
-      dataIndex: "hash",
-      key: "hash",
-      fixed: "left",
-    },
-    {
-      title: "Name",
-      width: 100,
-      dataIndex: "name",
-      key: "name",
-      fixed: "left",
-    },
-  ];
 
-  for (let i = 1; i <= endOfDayOfMonths; i++) {
-    columns.push({
-      key: i,
-      title: i,
-      width: 110,
-      dataIndex: "status",
-    });
-  }
+  // useEffect(() => {
+  //   console.log(attendanceData1.workingDay);
+  //   for (let i = 1; i <= attendanceData1.workingDay; i++) {
+  //     columns.push({
+  //       key: i,
+  //       title: i,
+  //       width: 110,
+  //       dataIndex: "status",
+  //     });
+  //   }
+  // }, [attendanceData]);
 
   useEffect(() => {
     getAllAttendance();
@@ -226,16 +233,22 @@ function Attendance() {
     console.log(event.target.value);
     console.log(attendance);
     let today = new Date();
-    let day = today.getDate()+1 ;
+    let day = today.getDate();
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
 
     let date = year + "-" + month + "-" + day;
-
+    let sessionId1;
+    sessions.map((data) => {
+      if (data.status === "current") {
+        // formData.set("session", data._id);
+        sessionId1=data._id
+      }
+    });
     let attendance1 = {
       attendance_status: event.target.value,
       date,
-      session: selectSessionId,
+      session: sessionId1,
       class: attendance.selectClass,
       section: attendance.selectSection,
       school: user.school,
@@ -253,6 +266,7 @@ function Attendance() {
       const data = await postAttendance(user._id, formData);
       console.log(data);
       toast.success(addAttendanceSuccess);
+      setModal(false)
     } catch (err) {
       console.log(err);
       toast.error(addAttendanceError);
@@ -262,17 +276,34 @@ function Attendance() {
   const searchHandler = async () => {
     console.log(attendance);
     const formData = new FormData();
-    formData.set("classId",attendance.selectClass);
-    formData.set("sectionId",attendance.selectSection);
+    formData.set("classId", attendance.selectClass);
+    formData.set("sectionId", attendance.selectSection);
     let data1 = {
-      class:attendance.selectClass,
-      section:attendance.selectSection,
-      start_date:attendance.dateFrom,
-      end_date:attendance.dateTo,
-    }
+      class: attendance.selectClass,
+      section: attendance.selectSection,
+      start_date: attendance.dateFrom,
+      end_date: attendance.dateTo,
+    };
     try {
-      const data = await searchAttendance(user._id, user.school,data1);
+      const data = await searchAttendance(user._id, user.school, data1);
       console.log(data);
+      setattendanceData1(data);
+      // delete data.workingDay;
+      // delete data.classTeacher;
+
+      setViewAttendance(true);
+      console.log(data.studentDatas);
+      let students = [];
+      for (const key in data.studentDatas) {
+        console.log(`${key}: ${data.studentDatas[key]}`);
+        console.log(key);
+        let obj = {};
+        obj[key] = data.studentDatas[key];
+        console.log(obj);
+        students.push(obj);
+      }
+      console.log(students);
+      setStudents1(students);
     } catch (err) {
       console.log(err);
     }
@@ -435,7 +466,7 @@ function Attendance() {
                     <option value="">Select Section</option>
                     {selectedClass.section &&
                       selectedClass.section.map((section) => {
-                        console.log(section.name);
+                        // console.log(section.name);
                         return (
                           <option
                             value={section._id}
@@ -448,33 +479,7 @@ function Attendance() {
                       })}
                   </Input>
                 </Col>
-                <Col>
-                  <label
-                    className="form-control-label"
-                    htmlFor="example4cols2Input"
-                  >
-                    Select Session
-                  </label>
-                  <Input
-                    id="example4cols3Input"
-                    type="select"
-                    onChange={(e) => setSelectSessionId(e.target.value)}
-                    value={selectSessionId}
-                    required
-                    className="form-control-sm"
-                  >
-                    <option value="">
-                      Select Session
-                    </option>
-                    {sessions.map((session) => {
-                      return (
-                        <option value={session._id} key={session._id}>
-                          {session.name}
-                        </option>
-                      );
-                    })}
-                  </Input>
-                </Col>
+              
                 <Col className="mt-4">
                   <Button color="primary" onClick={searchHandler}>
                     Search
@@ -486,40 +491,43 @@ function Attendance() {
         </Form>
       </Container>
       {/* )} */}
-
-      <Container className="mt--0 shadow-lg table-responsive" fluid>
-        <Row>
-          <Col>
-            <Card>
-              <CardHeader>
-                <div className="w-100">
-                  <div className="row">
-                    <div className="col-sm">
-                      <h3 className="start-end">
-                        {startOfMonth} - {endOfMonth}
-                      </h3>
-                    </div>
-                    <div className="col-sm Student-Attendance-Icons">
-                      <p
-                        className="ni ni-single-02"
-                        style={{ background: "green", color: "white" }}
-                      ></p>
-                      <span className="tags"> - Present</span>
-                      <p
-                        className="ni ni-single-02"
-                        style={{ background: "rgb(201, 3, 3)", color: "white" }}
-                      ></p>
-                      <span> - Absent</span>
-                      <p
-                        className="ni ni-single-02"
-                        style={{
-                          background: "rgb(243, 243, 71)",
-                          color: "white",
-                        }}
-                      ></p>
-                      <span> - Leave</span>
-                    </div>
-                    {/* {permissions && permissions.includes("edit") && ( */}
+      {viewAttendance && (
+        <Container className="mt--0 shadow-lg table-responsive" fluid>
+          <Row>
+            <Col>
+              <Card>
+                <CardHeader>
+                  <div className="w-100">
+                    <div className="row">
+                      <div className="col-sm">
+                        <h3 className="start-end">
+                          {startOfMonth} - {endOfMonth}
+                        </h3>
+                      </div>
+                      <div className="col-sm Student-Attendance-Icons">
+                        <p
+                          className="ni ni-single-02"
+                          style={{ background: "green", color: "white" }}
+                        ></p>
+                        <span className="tags"> - Present</span>
+                        <p
+                          className="ni ni-single-02"
+                          style={{
+                            background: "rgb(201, 3, 3)",
+                            color: "white",
+                          }}
+                        ></p>
+                        <span> - Absent</span>
+                        <p
+                          className="ni ni-single-02"
+                          style={{
+                            background: "rgb(243, 243, 71)",
+                            color: "white",
+                          }}
+                        ></p>
+                        <span> - Leave</span>
+                      </div>
+                      {/* {permissions && permissions.includes("edit") && ( */}
                       <div className="col-sm">
                         <Button
                           className="attendance-button"
@@ -529,95 +537,123 @@ function Attendance() {
                           Add Attendance
                         </Button>
                       </div>
-                    {/* )} */}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardBody>
-                <Table
-                  columns={columns}
-                  dataSource={attendanceData}
-                  scroll={{ x: 1300, y: 600 }}
-                />
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-        <Modal
-          backdrop="static"
-          size="xl"
-          scrollable
-          isOpen={modal}
-          toggle={toggle}
-          className="custom-modal-style"
-        >
-          <ModalHeader isClose={modal} toggle={toggle}>
-            Add Attendance
-          </ModalHeader>
-          <ModalBody className="modal-body">
-            <div>
-              {attendanceData.map((student, index) => {
-                // console.log(student);
-                return (
-                  <>
-                    <div className="d-flex justify-content-between studentAttendance">
-                      <div>
-                        <p key={student.key}>{student.name}</p>
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          onChange={submitAttendance(student.key)}
-                          value="P"
-                          checked={atd.present}
-                          name={index}
-                        />
-                        Present
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          onChange={submitAttendance(student.key)}
-                          value="A"
-                          name={index}
-                        />{" "}
-                        Absent
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          name={index}
-                          value="HF"
-                          onChange={submitAttendance(student.key)}
-                        />{" "}
-                        Half Day
-                      </div>
-                      <div>
-                        <input
-                          type="radio"
-                          value="L"
-                          name={index}
-                          onChange={submitAttendance(student.key)}
-                        />{" "}
-                        Leave
-                      </div>
+                      {/* )} */}
                     </div>
-                  </>
-                );
-              })}
-              <div className="col-sm">
-                <Button
-                  className="attendance-button"
-                  onClick={submitHandler}
-                  color="primary"
-                >
-                  Submit
-                </Button>
+                  </div>
+                </CardHeader>
+                <CardBody>
+                  {/* <Table
+                    columns={columns}
+                    dataSource={attendanceData}
+                    scroll={{ x: 1300, y: 600 }}
+                  /> */}
+
+                  <table>
+                    <tr>
+                      <th>#</th>
+                      <th>Name</th>
+                      {attendanceData1.workingDay.map((day) => {
+                        return <th key={day}>{day}</th>;
+                      })}
+                    </tr>
+                    {students1.map((student, index) => {
+                      console.log(student);
+                      return (
+                        <>
+                          <tr key={index} >
+                            <td>{index + 1}</td>
+                            <td>{Object.keys(student)}</td>
+                            {student[Object.keys(student)].map((status,index)=>{
+                              console.log(status,index);
+                              return(
+                                <td key={index} >{status}</td>
+                              )
+                            })}
+                          </tr>
+                        </>
+                      );
+                    })}
+                  </table>
+                </CardBody>
+              </Card>
+            </Col>
+          </Row>
+          <Modal
+            backdrop="static"
+            size="xl"
+            scrollable
+            isOpen={modal}
+            toggle={toggle}
+            className="custom-modal-style"
+          >
+            <ModalHeader isClose={modal} toggle={toggle}>
+              Add Attendance
+            </ModalHeader>
+            <ModalBody className="modal-body">
+              <div>
+                {attendanceData.map((student, index) => {
+                  // console.log(student);
+                  return (
+                    <>
+                      <div className="d-flex justify-content-between studentAttendance">
+                        <div>
+                          <p key={student.key}>{student.name}</p>
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={submitAttendance(student.key)}
+                            value="P"
+                            checked={atd.present}
+                            name={index}
+                          />
+                          Present
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            onChange={submitAttendance(student.key)}
+                            value="A"
+                            name={index}
+                          />{" "}
+                          Absent
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            name={index}
+                            value="HF"
+                            onChange={submitAttendance(student.key)}
+                          />{" "}
+                          Half Day
+                        </div>
+                        <div>
+                          <input
+                            type="radio"
+                            value="L"
+                            name={index}
+                            onChange={submitAttendance(student.key)}
+                          />{" "}
+                          Leave
+                        </div>
+                      </div>
+                    </>
+                  );
+                })}
+                <div className="col-sm">
+                  <Button
+                    className="attendance-button"
+                    onClick={submitHandler}
+                    color="primary"
+                  >
+                    Submit
+                  </Button>
+                </div>
               </div>
-            </div>
-          </ModalBody>
-        </Modal>
-      </Container>
+            </ModalBody>
+          </Modal>
+        </Container>
+      )}
     </div>
   );
 }
