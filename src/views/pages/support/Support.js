@@ -67,11 +67,12 @@ function Support() {
 
   let permissions = [];
   useEffect(() => {
-    if (user.permissions["Session"]) {
-      permissions = user.permissions["Session"];
+    console.log(user);
+    if (user.permissions["Support"]) {
+      permissions = user.permissions["Support"];
       console.log(permissions);
     }
-  }, []);
+  }, [checked]);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -284,7 +285,7 @@ function Support() {
       />
       <Container className="mt--6" fluid>
         <Row>
-        {permissions && permissions.includes("add") && (
+        {/* {permissions && permissions.includes("add".trim()) && ( */}
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
@@ -375,7 +376,7 @@ function Support() {
               </Card>
             </div>
           </Col>
-        )}
+        {/* )} */}
           <Col>
             <div className="card-wrapper">
               <Card>
