@@ -3,7 +3,9 @@ import { Table } from "ant-table-extensions";
 
 const AntTable = ({ columns, data, exportFileName }) => {
   return (
-    <div style={{ overflowX: "auto" }}>
+    <div
+    // style={{ overflowX: "auto" }}
+    >
       <Table
         style={{ whiteSpace: "pre" }}
         columns={columns}
@@ -16,7 +18,6 @@ const AntTable = ({ columns, data, exportFileName }) => {
           pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
           showSizeChanger: true,
         }}
-       
       />
     </div>
   );
