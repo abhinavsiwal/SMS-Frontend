@@ -47,6 +47,7 @@ import { useHistory } from "react-router-dom";
 function AddStaff() {
   const [step, setStep] = useState(0);
   const { user } = isAuthenticated();
+  const [loading, setloading] = useState(false);
   const [staffData, setStaffData] = useState({
     photo: "",
     firstname: "",

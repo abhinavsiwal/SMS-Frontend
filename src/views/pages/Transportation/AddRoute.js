@@ -83,13 +83,13 @@ function AddRoute() {
   };
 
   const getAllStaffs = async () => {
-    const res = await allStaffs(user.school, user._id);
-    console.log(res);
-    let canteenStaff = res.find((staff) => staff.assign_role === "canteen");
+    const {data} = await allStaffs(user.school, user._id);
+    console.log(data);
+    let canteenStaff = data.find((staff) => staff.assign_role === "canteen");
     setAllStaff(canteenStaff);
     let options = [];
-    for (let i = 0; i < res.length; i++) {
-      options.push({ value: res[i]._id, label: res[i].firstname });
+    for (let i = 0; i < data.length; i++) {
+      options.push({ value: data[i]._id, label: data[i].firstname });
     }
     console.log(options);
     setRoleOptions(options);
