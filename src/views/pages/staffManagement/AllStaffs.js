@@ -104,13 +104,13 @@ const AllStaffs = () => {
         for (let i = 0; i < data.length; i++) {
           data1.push({
             key: i,
-            sid: [i].SID,
+            sid: data[i].SID,
             first_name: data[i].firstname,
             last_name: data[i].lastname,
             email: data[i].email,
             phone: data[i].phone,
             gender: data[i].gender,
-            // assign_role: data[i].assign_role.name,
+            assign_role:data[i].assign_role && data[i].assign_role.name,
             job: data[i].job,
             salary: data[i].salary,
             department: data[i].department.name,
