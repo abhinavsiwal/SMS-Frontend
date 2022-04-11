@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
     staffEditing:false,
+    edited:false,
 }
 
 export const studentSlice = createSlice({
@@ -10,7 +11,10 @@ export const studentSlice = createSlice({
     reducers:{
         setStaffEditing:(state,{payload})=>{
             state.staffEditing = payload;
-        }
+        },
+        setEdited:(state,{payload})=>{
+            state.edited=payload
+        },
     }
 })
 

@@ -72,7 +72,7 @@ const AllStaffs = () => {
 
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
-
+  console.log(staffEditing);
   let permissions;
   useEffect(() => {
     // console.log(user);
@@ -80,7 +80,7 @@ const AllStaffs = () => {
       permissions = user.permissions["Staff Management"];
       console.log(permissions);
     }
-  }, []);
+  }, [staffEditing]);
 
   const handleStaffDetails = (id) => {
     console.log("id", id);
@@ -89,88 +89,89 @@ const AllStaffs = () => {
   };
 
   useEffect(() => {
-    const fetchStaffs = async () => {
-      const endOffset = itemOffset + itemsPerPage;
-      // console.log(userDetails.userDetails);
-      const payload = { school: userDetails.userDetails.school };
+    fetchStaffs();
+  }, [itemOffset, itemsPerPage, checked, staffEditing]);
 
-      try {
-        const{data} = await allStaffs(
-          userDetails.userDetails.school,
-          userDetails.userDetails._id
-        );
-        console.log(data);
-        const data1 = [];
-        for (let i = 0; i < data.length; i++) {
-          data1.push({
-            key: i,
-            sid: data[i].SID,
-            first_name: data[i].firstname,
-            last_name: data[i].lastname,
-            email: data[i].email,
-            phone: data[i].phone,
-            gender: data[i].gender,
-            assign_role:data[i].assign_role && data[i].assign_role.name,
-            job: data[i].job,
-            salary: data[i].salary,
-            department: data[i].department.name,
-            joining_date: data[i].joining_date.split("T")[0].toString(),
-            action: (
-              <h5 key={i + 1} className="mb-0">
-                {permissions && permissions.includes("edit") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() => updateStaff(data[i])}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                )}
-                {permissions && permissions.includes("delete") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => deleteStaffHandler(data[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
-                )}
+  const fetchStaffs = async () => {
+    const endOffset = itemOffset + itemsPerPage;
+    // console.log(userDetails.userDetails);
+    const payload = { school: userDetails.userDetails.school };
+
+    try {
+      const { data } = await allStaffs(
+        userDetails.userDetails.school,
+        userDetails.userDetails._id
+      );
+      console.log(data);
+      const data1 = [];
+      for (let i = 0; i < data.length; i++) {
+        data1.push({
+          key: i,
+          sid: data[i].SID,
+          first_name: data[i].firstname,
+          last_name: data[i].lastname,
+          email: data[i].email,
+          phone: data[i].phone,
+          gender: data[i].gender,
+          assign_role: data[i].assign_role && data[i].assign_role.name,
+          job: data[i].job,
+          salary: data[i].salary,
+          department: data[i].department.name,
+          joining_date: data[i].joining_date.split("T")[0].toString(),
+          action: (
+            <h5 key={i + 1} className="mb-0">
+              {permissions && permissions.includes("edit") && (
                 <Button
                   className="btn-sm pull-right"
-                  color="success"
+                  color="primary"
                   type="button"
-                  key={"view" + i + 1}
-                  onClick={() => {
-                    setViewModal(true);
-                    setSudentDetails(data[i]);
-                  }}
+                  key={"edit" + i + 1}
+                  onClick={() => updateStaff(data[i])}
                 >
-                  <i className="fas fa-user" />
+                  <i className="fas fa-user-edit" />
                 </Button>
-              </h5>
-            ),
-          });
-        }
-        setStaffList(data1);
-        setLoading(true);
-        setCurrentItems(data.slice(itemOffset, endOffset));
-        setPageCount(Math.ceil(data.length / itemsPerPage));
-      } catch (err) {
-        console.log(err);
-        toast.error(fetchingStaffFailed);
-        setLoading(true);
+              )}
+              {permissions && permissions.includes("delete") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => deleteStaffHandler(data[i]._id)}
+                  >
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
+              )}
+              <Button
+                className="btn-sm pull-right"
+                color="success"
+                type="button"
+                key={"view" + i + 1}
+                onClick={() => {
+                  setViewModal(true);
+                  setSudentDetails(data[i]);
+                }}
+              >
+                <i className="fas fa-user" />
+              </Button>
+            </h5>
+          ),
+        });
       }
-    };
-    fetchStaffs();
-  }, [itemOffset, itemsPerPage, checked]);
+      setStaffList(data1);
+      setLoading(true);
+      setCurrentItems(data.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(data.length / itemsPerPage));
+    } catch (err) {
+      console.log(err);
+      toast.error(fetchingStaffFailed);
+      setLoading(true);
+    }
+  };
 
   const deleteStaffHandler = async (staffId) => {
     try {
@@ -624,12 +625,22 @@ const AllStaffs = () => {
                                               </DropdownMenu>
                                             </UncontrolledDropdown>
                                           </CardHeader>
-                                          <CardImg
-                                            alt="..."
-                                            src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                                            top
-                                            className="p-4"
-                                          />
+                                          {staff.photo ? (
+                                            <CardImg
+                                              alt="..."
+                                              src={staff.photo}
+                                              top
+                                              className="p-4"
+                                            />
+                                          ) : (
+                                            <CardImg
+                                              alt="..."
+                                              src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                                              top
+                                              className="p-4"
+                                            />
+                                          )}
+
                                           <CardBody className="mt-0">
                                             <Row>
                                               <Col align="center">
@@ -637,7 +648,7 @@ const AllStaffs = () => {
                                                   SID
                                                 </h4>
                                                 <span className="text-md">
-                                                  {staff.sid}
+                                                  {staff.SID}
                                                 </span>
                                               </Col>
                                             </Row>
@@ -647,7 +658,7 @@ const AllStaffs = () => {
                                                   First Name
                                                 </h4>
                                                 <span className="text-md">
-                                                  {staff.first_name}
+                                                  {staff.firstname}
                                                 </span>
                                               </Col>
                                               <Col align="center">
@@ -655,7 +666,7 @@ const AllStaffs = () => {
                                                   Last Name
                                                 </h4>
                                                 <span className="text-md">
-                                                  {staff.last_name}
+                                                  {staff.lastname}
                                                 </span>
                                               </Col>
                                             </Row>
@@ -665,7 +676,8 @@ const AllStaffs = () => {
                                                   Assign Role
                                                 </h4>
                                                 <span className="text-md">
-                                                  {staff.assign_role.name}
+                                                  {staff.assign_role &&
+                                                    staff.assign_role.name}
                                                 </span>
                                               </Col>
                                               <Col align="center">
@@ -681,16 +693,14 @@ const AllStaffs = () => {
                                               <Col align="center">
                                                 <Button
                                                   className="mt-3"
-                                                  // onClick={() =>
-                                                  //   handleStaffDetails(staff)
-                                                  // }
+                                                  onClick={() => {
+                                                    setViewModal(true);
+                                                    setSudentDetails(staff);
+                                                  }}
                                                 >
-                                                  <Link
-                                                    to="/admin/staff-profile"
-                                                    className="mb-1"
-                                                  >
+                                                 
                                                     Read More
-                                                  </Link>
+                                                  
                                                 </Button>
                                               </Col>
                                             </Row>
@@ -788,7 +798,7 @@ const AllStaffs = () => {
                       <Col align="center">
                         <h4 className="mt-3 mb-1">Role</h4>
                         <span className="text-md">
-                          {/* {studentDetails.assign_role.name} */}
+                          { studentDetails.assign_role && studentDetails.assign_role.name}
                         </span>
                       </Col>
                       <Col align="center">
