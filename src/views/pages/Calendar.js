@@ -99,7 +99,7 @@ function CalendarView() {
 
   const getAllStaff = async () => {
     try {
-      const data = await allStaffs(user.school, user._id);
+      const {data} = await allStaffs(user.school, user._id);
       console.log(data, "@@@@@@@@");
       setStaff(data);
     } catch (err) {
@@ -655,7 +655,7 @@ function CalendarView() {
                       onChange={(e) => setStaffId(e.target.value)}
                     >
                       <option value={""}>{"Select Staff"}</option>
-                      {staff.map((staff, i) => (
+                      {staff && staff.map((staff, i) => (
                         <option key={i} value={staff._id}>
                           {staff.firstname} {staff.lastname}
                         </option>

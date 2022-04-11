@@ -60,20 +60,35 @@ const ClassTeacher = () => {
     }
   }, [checked]);
 
-  const assignClassTeacherHandler = (sectionId) => async (e) => {
-    console.log(sectionId);
+  const assignClassTeacherHandler = (section) => async (e) => {
+    console.log(section);
     console.log(e.target.value);
     let staffId = e.target.value;
     let formData = new FormData();
     formData.set("classTeacher", e.target.value);
     let formData1 = new FormData();
-    formData1.set("schoolClassTeacher", sectionId);
+    formData1.set("schoolClassTeacher", section._id);
     try {
       setLoading(true);
-      const data = await assignClassTeacher(sectionId, user._id, token, formData);
+      const data = await assignClassTeacher(section._id, user._id, token, formData);
       console.log(data);
-      const data1 = await updateStaff1(staffId, user._id, formData1);
-      console.log(data1);
+      if(section.classTeacher){
+        let formData1 = new FormData();
+        formData1.set("isClassTeacher",false);
+        const data1 = await updateStaff1(section.classTeacher._id, user._id, formData1);
+        console.log(data1);
+        let formData2 = new FormData();
+        formData2.set("schoolClassTeacher",section._id);
+        formData2.set("isClassTeacher",true)
+        const data2 = await updateStaff1(staffId, user._id, formData2);
+        console.log(data2);
+      }else{
+        let formData1 = new FormData();
+        formData1.set("isClassTeacher",true);
+        formData1.set("schoolClassTeacher",section._id);
+        const data1 = await updateStaff1(staffId, user._id, formData1);
+      }
+     
       toast.success(classTeacherAssignSuccess);
       setChecked(!checked)
       setLoading(false)
@@ -119,7 +134,7 @@ const ClassTeacher = () => {
                                 <Input
                                   id={section._id}
                                   type="select"
-                                  onChange={assignClassTeacherHandler(section._id)}
+                                  onChange={assignClassTeacherHandler(section)}
                                   value={section.classTeacher}
                                 >
                                   {section.classTeacher ? (

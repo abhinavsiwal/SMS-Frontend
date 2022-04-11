@@ -239,12 +239,15 @@ function Attendance() {
 
     let date = year + "-" + month + "-" + day;
     let sessionId1;
+    
     sessions.map((data) => {
       if (data.status === "current") {
         // formData.set("session", data._id);
-        sessionId1=data._id
+        sessionId1 = data._id;
       }
     });
+
+
     let attendance1 = {
       attendance_status: event.target.value,
       date,
@@ -266,7 +269,7 @@ function Attendance() {
       const data = await postAttendance(user._id, formData);
       console.log(data);
       toast.success(addAttendanceSuccess);
-      setModal(false)
+      setModal(false);
     } catch (err) {
       console.log(err);
       toast.error(addAttendanceError);
@@ -479,7 +482,7 @@ function Attendance() {
                       })}
                   </Input>
                 </Col>
-              
+
                 <Col className="mt-4">
                   <Button color="primary" onClick={searchHandler}>
                     Search
@@ -528,15 +531,17 @@ function Attendance() {
                         <span> - Leave</span>
                       </div>
                       {/* {permissions && permissions.includes("edit") && ( */}
-                      <div className="col-sm">
-                        <Button
-                          className="attendance-button"
-                          onClick={toggle}
-                          color="primary"
-                        >
-                          Add Attendance
-                        </Button>
-                      </div>
+                      {!attendanceData1.classTeacher && (
+                        <div className="col-sm">
+                          <Button
+                            className="attendance-button"
+                            onClick={toggle}
+                            color="primary"
+                          >
+                            Add Attendance
+                          </Button>
+                        </div>
+                      )}
                       {/* )} */}
                     </div>
                   </div>
@@ -557,18 +562,18 @@ function Attendance() {
                       })}
                     </tr>
                     {students1.map((student, index) => {
-                      console.log(student);
+                      // console.log(student);
                       return (
                         <>
-                          <tr key={index} >
+                          <tr key={index}>
                             <td>{index + 1}</td>
                             <td>{Object.keys(student)}</td>
-                            {student[Object.keys(student)].map((status,index)=>{
-                              console.log(status,index);
-                              return(
-                                <td key={index} >{status}</td>
-                              )
-                            })}
+                            {student[Object.keys(student)].map(
+                              (status, index) => {
+                                // console.log(status, index);
+                                return <td key={index}>{status}</td>;
+                              }
+                            )}
                           </tr>
                         </>
                       );

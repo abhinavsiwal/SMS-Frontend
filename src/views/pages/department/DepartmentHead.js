@@ -115,7 +115,6 @@ const DepartmentHead = () => {
     let deptId = e.target.value;
     let formData = new FormData();
     formData.set("secondary_head", e.target.value);
-    let formData1 = new FormData();
 
     try {
       setLoading(true);
@@ -126,17 +125,19 @@ const DepartmentHead = () => {
         formData
       );
       console.log(data);
-
-      if(department.seconday_head){
+      if(department.secondary_head){
+        let formData1 = new FormData();
         formData1.set("isHead",false);
         const data1 = await updateStaff1(department.secondary_head._id, user._id, formData1);
         console.log(data1);
         let formData2 = new FormData();
         formData2.set("head",department._id);
         formData2.set("isHead",true)
+  
         const data2 = await updateStaff1(deptId, user._id, formData2);
         console.log(data2);
       }else{
+        let formData1 = new FormData();
         formData1.set("head",department._id);
         formData1.set("isHead",true);
         const data1 = await updateStaff1(deptId, user._id, formData1);

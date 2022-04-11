@@ -20,6 +20,7 @@ import {
   ModalBody,
 } from "reactstrap";
 // core components
+import { Table } from "ant-table-extensions";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { SearchOutlined } from "@ant-design/icons";
 import AntTable from "../tables/AntTable";
@@ -560,28 +561,49 @@ const AllStaffs = () => {
                     </div>
                   </CardHeader>
                   <CardBody>
-                    <Button
-                      color="primary"
-                      className="mb-2"
-                      onClick={handlePrint}
-                      style={{ float: "right" }}
-                    >
-                      Print
-                    </Button>
+                    {permissions && permissions.includes("export") && (
+                      <Button
+                        color="primary"
+                        className="mb-2"
+                        onClick={handlePrint}
+                        style={{ float: "right" }}
+                      >
+                        Print
+                      </Button>
+                    )}
                     {!loading ? (
                       <Loader />
                     ) : (
                       <>
                         {view === 0 ? (
                           <>
-                            <div ref={componentRef}>
-                              <AntTable
+                            {permissions && permissions.includes("export") ? (
+                              <div ref={componentRef}>
+                                <AntTable
+                                  columns={columns}
+                                  data={staffList}
+                                  pagination={true}
+                                  exportFileName="StaffDetails"
+                                />
+                              </div>
+                            ) : (
+                              <Table
+                                style={{ whiteSpace: "pre" }}
                                 columns={columns}
-                                data={staffList}
-                                pagination={true}
-                                exportFileName="StaffDetails"
+                                dataSource={staffList}
+                                pagination={{
+                                  pageSizeOptions: [
+                                    "5",
+                                    "10",
+                                    "30",
+                                    "60",
+                                    "100",
+                                    "1000",
+                                  ],
+                                  showSizeChanger: true,
+                                }}
                               />
-                            </div>
+                            )}
                           </>
                         ) : (
                           <>
@@ -698,9 +720,7 @@ const AllStaffs = () => {
                                                     setSudentDetails(staff);
                                                   }}
                                                 >
-                                                 
-                                                    Read More
-                                                  
+                                                  Read More
                                                 </Button>
                                               </Col>
                                             </Row>
@@ -798,7 +818,8 @@ const AllStaffs = () => {
                       <Col align="center">
                         <h4 className="mt-3 mb-1">Role</h4>
                         <span className="text-md">
-                          { studentDetails.assign_role && studentDetails.assign_role.name}
+                          {studentDetails.assign_role &&
+                            studentDetails.assign_role.name}
                         </span>
                       </Col>
                       <Col align="center">
