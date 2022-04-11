@@ -362,7 +362,7 @@ const AddSubject = () => {
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
-                  )}
+                   )} 
                   {permissions && permissions.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
@@ -377,7 +377,7 @@ const AddSubject = () => {
                         <i className="fas fa-trash" />
                       </Popconfirm>
                     </Button>
-                  )}
+                 )} 
                 </h5>
               ),
             });
@@ -387,34 +387,34 @@ const AddSubject = () => {
               name: res[i].name,
               action: (
                 <h5 key={i + 1} className="mb-0">
+                 
+                  {permissions && permissions.includes("edit") && (
                   <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() => rowHandler(res[i]._id, res[i].name)}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                  {/* {permissions && permissions.includes("edit") && (
-                  
-                )} */}
-                  {/* {permissions && permissions.includes("delete") && (
-                  
-                )} */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => rowHandler(res[i]._id, res[i].name)}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button> 
+                )}
+                  {permissions && permissions.includes("delete") && (
+                   <Button
+                   className="btn-sm pull-right"
+                   color="danger"
+                   type="button"
+                   key={"delete" + i + 1}
+                 >
+                   <Popconfirm
+                     title="Sure to delete?"
+                     onConfirm={() => handleDelete(res[i]._id)}
+                   >
+                     <i className="fas fa-trash" />
+                   </Popconfirm>
+                 </Button>
+                )}
+                 
                 </h5>
               ),
             });
@@ -565,8 +565,13 @@ const AddSubject = () => {
                                       onChange={(event) =>
                                         handleChangeSubject(index, event)
                                       }
+                                      className="mb-2"
                                     />
-                                    <Button
+                                  
+                                  </div>
+                                );
+                              })}
+                                <Button
                                       color="primary"
                                       style={{
                                         height: "1rem",
@@ -581,9 +586,6 @@ const AddSubject = () => {
                                     >
                                       Add
                                     </Button>
-                                  </div>
-                                );
-                              })}
                             </Col>
                           </Row>
                          

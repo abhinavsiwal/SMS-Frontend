@@ -23,6 +23,7 @@ import { setClass } from "store/reducers/class";
 import { useReducer, useSelector } from "react";
 import { useDispatch } from "react-redux";
 import { Popconfirm } from "antd";
+import { Table } from "ant-table-extensions";
 import {
   updateClassError,
   addClassError,
@@ -341,115 +342,129 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && (
-            
-          )} */}
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Row>
-                  <Col className="d-flex justify-content-center mt-3 ml-4">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
-
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                        className="mt-3"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Class
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Class"
-                          type="text"
-                          onChange={handleChange("name")}
-                          value={classData.name}
-                          required
+          {permissions && permissions.includes("add") && (
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Row>
+                    <Col className="d-flex justify-content-center mt-3 ml-4">
+                      <form>
+                        <input
+                          type={"file"}
+                          id={"csvFileInput"}
+                          accept={".csv"}
+                          onChange={handleOnChange}
                         />
-                      </Col>
-                    </Row>
 
-                    <Row className="mt-4">
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
+                        <Button
+                          onClick={(e) => {
+                            handleOnSubmit(e);
+                          }}
+                          color="primary"
+                          className="mt-3"
                         >
-                          Class Abbreviation
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Class Abbreviation"
-                          type="text"
-                          onChange={handleChange("abbreviation")}
-                          value={classData.abbreviation}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4">
-                      <Col
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          width: "100%",
-                        }}
-                      >
-                        <Button color="primary" type="submit">
-                          Submit
+                          IMPORT CSV
                         </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
+                      </form>
+                    </Col>
+                  </Row>
+                  <Form onSubmit={handleFormChange} className="mb-4">
+                    <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Class
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Class"
+                            type="text"
+                            onChange={handleChange("name")}
+                            value={classData.name}
+                            required
+                          />
+                        </Col>
+                      </Row>
+
+                      <Row className="mt-4">
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Class Abbreviation
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Class Abbreviation"
+                            type="text"
+                            onChange={handleChange("abbreviation")}
+                            value={classData.abbreviation}
+                            required
+                          />
+                        </Col>
+                      </Row>
+                      <Row className="mt-4">
+                        <Col
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <Button color="primary" type="submit">
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Form>
+                </Card>
+              </div>
+            </Col>
+          )}
 
           <Col>
             <div className="card-wrapper">
               <Card>
                 <CardBody>
-                  <Button
-                    color="primary"
-                    className="mb-2"
-                    onClick={handlePrint}
-                    style={{ float: "right" }}
-                  >
-                    Print
-                  </Button>
-                  {loading && classList ? (
-                    <div ref={componentRef}>
-                      <AntTable
-                        columns={columns}
-                        data={classList}
-                        pagination={true}
-                        exportFileName="ClassDetails"
-                      />
-                    </div>
+                  {permissions && permissions.includes("export") ? (
+                    <>
+                      <Button
+                        color="primary"
+                        className="mb-2"
+                        onClick={handlePrint}
+                        style={{ float: "right" }}
+                      >
+                        Print
+                      </Button>
+                      {loading && classList ? (
+                        <div ref={componentRef}>
+                          <AntTable
+                            columns={columns}
+                            data={classList}
+                            pagination={true}
+                            exportFileName="ClassDetails"
+                          />
+                        </div>
+                      ) : (
+                        <Loader />
+                      )}
+                    </>
                   ) : (
-                    <Loader />
+                    <Table
+                    style={{ whiteSpace: "pre" }}
+                    columns={columns}
+                    dataSource={classList}
+                  
+                    pagination={{
+                      pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                      showSizeChanger: true,
+                    }}
+                    />
                   )}
                 </CardBody>
               </Card>

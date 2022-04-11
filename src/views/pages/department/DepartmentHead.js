@@ -66,25 +66,39 @@ const DepartmentHead = () => {
 
   const [formData] = useState(new FormData());
 
-  const primaryHeadHandler = (departmentId) => async (e) => {
-    console.log(departmentId);
+  const primaryHeadHandler = (department) => async (e) => {
+    console.log(department);
     console.log(e.target.value);
     let deptId = e.target.value;
     let formData = new FormData();
     formData.set("primary_head", e.target.value);
-    let formData1 = new FormData();
-    formData1.set("head", departmentId);
+    // formData1.set("head", department._id);
     try {
       setLoading(true);
       const data = await departmentHead(
-        departmentId,
+        department._id,
         user._id,
         token,
         formData
       );
       console.log(data);
-      const data1 = await updateStaff1(deptId, user._id, formData1);
-      console.log(data1);
+      let formData1 = new FormData();
+      if(department.primary_head){
+        formData1.set("isHead",false);
+        const data1 = await updateStaff1(department.primary_head._id, user._id, formData1);
+        console.log(data1);
+        let formData2 = new FormData();
+        formData2.set("head",department._id);
+        formData2.set("isHead",true)
+        const data2 = await updateStaff1(deptId, user._id, formData2);
+        console.log(data2);
+      }else{
+        formData1.set("head",department._id);
+        formData1.set("isHead",true);
+        const data1 = await updateStaff1(deptId, user._id, formData1);
+        console.log(data1);
+      }
+      
       setChecked(!checked);
       setLoading(false);
       toast.success(departmentHeadAssignSuccess);
@@ -94,6 +108,7 @@ const DepartmentHead = () => {
       toast.error(departmentHeadAssignError);
     }
   };
+
   const secondaryHeadHandler = (departmentId) => async (e) => {
     console.log(departmentId);
     console.log(e.target.value);
@@ -154,11 +169,12 @@ const DepartmentHead = () => {
                             <Input
                               id={clas._id}
                               type="select"
-                              onChange={primaryHeadHandler(clas._id)}
+                              onChange={primaryHeadHandler(clas)}
                               // value={subject[clas._id] || ""}
                               value={clas.primary_head && clas.primary_head._id}
                               placeholder="Select Staff"
                             >
+                              
                               {clas.primary_head ? (
                                 <option value="">
                                   {clas.primary_head.firstname}{" "}
