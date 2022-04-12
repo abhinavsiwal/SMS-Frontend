@@ -35,7 +35,7 @@ import Loader from "components/Loader/Loader";
 import TextArea from "antd/lib/input/TextArea";
 
 import { isAuthenticated } from "api/auth";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 
 // import moment Library
 import moment from "moment";
@@ -54,6 +54,7 @@ function ViewCanteen() {
   const [loading, setLoading] = React.useState(false);
   const [editing, setEditing] = useState(false);
   const [selectedCanteenId, setSelectedCanteenId] = useState();
+  const [isData, setisData] = useState(false);
   const [addMenu, setAddMenu] = React.useState({
     image: "",
     item: "",
@@ -61,7 +62,7 @@ function ViewCanteen() {
     publish: "",
     id: "",
   });
-
+  const [permissions, setPermissions] = useState([]);
   const [checked, setChecked] = useState(false);
 
   const columns = [
@@ -260,13 +261,15 @@ function ViewCanteen() {
     content: () => componentRef.current,
   });
 
-  let permissions = [];
+  let permission1 = [];
   useEffect(() => {
+    console.log(user);
     if (user.permissions["Canteen Management"]) {
-      permissions = user.permissions["Canteen Management"];
-      console.log(permissions);
+      permission1 = user.permissions["Canteen Management"];
+      setPermissions(permission1);
+      // console.log(permissions);
     }
-  }, []);
+  }, [checked,selectedCanteenId]);
 
   React.useEffect(() => {
     fetchCanteen();
@@ -294,8 +297,10 @@ function ViewCanteen() {
     console.log(selectedCanteen);
     const data = [];
     if (selectedCanteen.menu.length === 0) {
+      setisData(false);
       return;
     }
+    setisData(true);
     for (let i = 0; i < selectedCanteen.menu.length; i++) {
       data.push({
         key: i,
@@ -303,12 +308,14 @@ function ViewCanteen() {
         item_name: selectedCanteen.menu[i].item,
         start_time: selectedCanteen.menu[i].start_time,
         end_time: selectedCanteen.menu[i].end_time,
-        image: (<img width={100} height={100} src={selectedCanteen.menu[i].image} />),
+        image: (
+          <img width={100} height={100} src={selectedCanteen.menu[i].image} />
+        ),
         price: selectedCanteen.menu[i].price,
         publish: selectedCanteen.menu[i].publish,
         action: (
           <h5 key={i + 1} className="mb-0">
-            {permissions && permissions.includes("edit") && (
+            {permission1 && permission1.includes("edit") && (
               <Button
                 className="btn-sm pull-right"
                 color="primary"
@@ -319,7 +326,7 @@ function ViewCanteen() {
                 <i className="fas fa-user-edit" />
               </Button>
             )}
-            {permissions && permissions.includes("delete") && (
+            {permission1 && permission1.includes("delete") && (
               <Button
                 className="btn-sm pull-right"
                 color="danger"
@@ -426,6 +433,18 @@ function ViewCanteen() {
   return (
     <>
       <SimpleHeader name="Canteen" parentName="View Canteen" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Container className="mt--6 shadow-lg" fluid>
         <Card>
           <CardHeader>
@@ -467,7 +486,8 @@ function ViewCanteen() {
               Print
             </Button>
             {loading && viewCanteen ? (
-              <div ref={componentRef}>
+              isData?(
+                <div ref={componentRef}>
                 <AntTable
                   columns={columns}
                   data={viewCanteen}
@@ -475,6 +495,10 @@ function ViewCanteen() {
                   exportFileName="StudentDetails"
                 />
               </div>
+              ):(
+                <h3>No Menu Found</h3>
+              )
+            
             ) : (
               <Loader />
             )}

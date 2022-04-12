@@ -57,11 +57,13 @@ function SchoolProfile() {
     affiliate_board: "",
   });
 
-  let permissions = [];
+  const [permissions, setPermissions] = useState([]);
+
   useEffect(() => {
     console.log(user);
     if (user.permissions["School Profile Module"]) {
-      permissions = user.permissions["School Profile Module"];
+      let  permission1 = user.permissions["School Profile Module"];
+      setPermissions(permission1);
       console.log(permissions);
     }
   }, []);

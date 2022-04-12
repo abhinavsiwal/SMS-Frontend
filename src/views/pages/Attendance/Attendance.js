@@ -15,7 +15,7 @@ import {
   ModalBody,
   CardHeader,
 } from "reactstrap";
-
+import Loader from "components/Loader/Loader";
 // import { Table } from "ant-table-extensions";
 import { Table } from "antd";
 import { postAttendance, searchAttendance } from "api/attendance";
@@ -74,7 +74,8 @@ function Attendance() {
   const [students1, setStudents1] = useState([]);
   const [file, setFile] = useState();
   const fileReader = new FileReader();
-
+  const [loading, setLoading] = useState(false);
+  const [permissions, setPermissions] = useState([]);
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -92,12 +93,13 @@ function Attendance() {
   };
 
   // console.log("atd", atd);
-  let permissions = [];
+  let permission1 = [];
   useEffect(() => {
     console.log(user);
-    if (user.role["Attendance"]) {
-      permissions = user.role["Attendance"];
+    if (user.permissions["Attendance"]) {
+      permission1 = user.permissions["Attendance"];
       console.log(permissions);
+      setPermissions(permission1)
     }
     getSession();
   }, []);
@@ -288,6 +290,7 @@ function Attendance() {
       end_date: attendance.dateTo,
     };
     try {
+      setLoading(true);
       const data = await searchAttendance(user._id, user.school, data1);
       console.log(data);
       setattendanceData1(data);
@@ -307,8 +310,10 @@ function Attendance() {
       }
       console.log(students);
       setStudents1(students);
+      setLoading(false);
     } catch (err) {
       console.log(err);
+      setLoading(false);
     }
   };
 
@@ -331,7 +336,8 @@ function Attendance() {
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
-        <Form>
+        {loading?(<Loader />):(
+          <Form>
           <Card>
             <CardBody>
               <Row>
@@ -492,6 +498,8 @@ function Attendance() {
             </CardBody>
           </Card>
         </Form>
+        )}
+        
       </Container>
       {/* )} */}
       {viewAttendance && (

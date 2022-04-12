@@ -22,7 +22,7 @@ import { ToastContainer, toast } from "react-toastify";
 import AntTable from "../tables/AntTable";
 import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
-
+import { Table } from "ant-table-extensions";
 import { deleteSession } from "api/session";
 import { fetchingSessionError } from "constants/errors";
 import { addSessionError } from "constants/errors";
@@ -63,7 +63,7 @@ const AddSession = () => {
   const fileReader = new FileReader();
 
   const [check, setCheck] = useState(false);
-
+  const [permissions, setPermissions] = useState([]);
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -84,12 +84,12 @@ const AddSession = () => {
     content: () => componentRef.current,
   });
 
-  let permissions = [];
+  let permission1 = [];
   useEffect(() => {
     console.log(user);
     if (user.permissions["Session"]) {
-      permissions = user.permissions["Session"];
-      console.log(permissions);
+      permission1 = user.permissions["Session"];
+      setPermissions(permission1);
     }
   }, []);
 
@@ -112,26 +112,26 @@ const AddSession = () => {
               status: res[i].status,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {/* {permissions && permissions.includes("edit") && (
-                   
-                  )} */}
+                  {permission1 && permission1.includes("edit") && (
                   <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() =>
-                      rowHandler(
-                        res[i]._id,
-                        res[i].name,
-                        res[i].start_date.split("T")[0],
-                        res[i].start_date.split("T")[0],
-                        res[i].working_days
-                      )
-                    }
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() =>
+                    rowHandler(
+                      res[i]._id,
+                      res[i].name,
+                      res[i].start_date.split("T")[0],
+                      res[i].start_date.split("T")[0],
+                      res[i].working_days
+                    )
+                  }
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>   
+                  )}
+                
                   {/* {permissions && permissions.includes("delete") && (
                    
                   )} */}
@@ -410,7 +410,7 @@ const AddSession = () => {
         return record.year.toLowerCase().includes(value.toLowerCase());
       },
     },
-   
+
     {
       title: "Action",
       key: "action",
@@ -450,11 +450,7 @@ const AddSession = () => {
         return toast.error(resp.err);
       } else {
         toast.success(addSessionSuccess);
-        if (checked === false) {
-          setChecked(true);
-        } else {
-          setChecked(false);
-        }
+        setChecked(!checked);
       }
       // setReload(true);
     } catch (err) {
@@ -487,7 +483,6 @@ const AddSession = () => {
             <Col>
               <div className="card-wrapper">
                 <Card>
-                 
                   <Form onSubmit={handleFormChange} className="mb-4">
                     <CardBody>
                       <Row>
@@ -639,7 +634,8 @@ const AddSession = () => {
                     Print
                   </Button>
                   {loading && sessionList ? (
-                    <div ref={componentRef}>
+                     permission1 && permission1.includes("edit")? (
+                      <div ref={componentRef}>
                       <AntTable
                         columns={columns}
                         data={sessionList}
@@ -647,6 +643,21 @@ const AddSession = () => {
                         exportFileName="SessionDetails"
                       />
                     </div>
+                     ):(
+                    
+                      <Table
+                      style={{ whiteSpace: "pre" }}
+                        columns={columns}
+                        dataSource={sessionList}
+                        
+                        pagination={{
+                          pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                          showSizeChanger: true,
+                        }}
+                      />
+              
+                     )
+                  
                   ) : (
                     <Loader />
                   )}

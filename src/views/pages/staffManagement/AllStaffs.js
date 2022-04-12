@@ -60,7 +60,7 @@ const AllStaffs = () => {
   const [stafId, setStaffId] = useState("");
   const [viewModal, setViewModal] = useState(false);
   const [studentDetails, setSudentDetails] = useState({});
-
+const [permissions, setPermissions] = useState([]);
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % staffList.length;
     setItemOffset(newOffset);
@@ -74,11 +74,12 @@ const AllStaffs = () => {
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
   console.log(staffEditing);
-  let permissions;
+  let permission1=[];
   useEffect(() => {
     // console.log(user);
     if (user.permissions["Staff Management"]) {
-      permissions = user.permissions["Staff Management"];
+      permission1 = user.permissions["Staff Management"];
+      setPermissions(permission1);
       console.log(permissions);
     }
   }, [staffEditing]);
@@ -121,7 +122,7 @@ const AllStaffs = () => {
           joining_date: data[i].joining_date.split("T")[0].toString(),
           action: (
             <h5 key={i + 1} className="mb-0">
-              {permissions && permissions.includes("edit") && (
+              {permission1 && permission1.includes("edit") && (
                 <Button
                   className="btn-sm pull-right"
                   color="primary"
@@ -132,7 +133,7 @@ const AllStaffs = () => {
                   <i className="fas fa-user-edit" />
                 </Button>
               )}
-              {permissions && permissions.includes("delete") && (
+              {permission1 && permission1.includes("delete") && (
                 <Button
                   className="btn-sm pull-right"
                   color="danger"
@@ -538,7 +539,7 @@ const AllStaffs = () => {
               <SimpleHeader name="All Staffs" parentName="Staff Management" />
               <Container className="mt--6" fluid>
                 <Card className="mb-4">
-                  <CardHeader>
+                  <CardHeader className="buttons-head">
                     <div>
                       <Button
                         color={`${view === 0 ? "warning" : "primary"}`}
@@ -559,8 +560,6 @@ const AllStaffs = () => {
                         Grid View
                       </Button>
                     </div>
-                  </CardHeader>
-                  <CardBody>
                     {permissions && permissions.includes("export") && (
                       <Button
                         color="primary"
@@ -571,6 +570,9 @@ const AllStaffs = () => {
                         Print
                       </Button>
                     )}
+                  </CardHeader>
+                  <CardBody>
+                   
                     {!loading ? (
                       <Loader />
                     ) : (
@@ -578,7 +580,7 @@ const AllStaffs = () => {
                         {view === 0 ? (
                           <>
                             {permissions && permissions.includes("export") ? (
-                              <div ref={componentRef}>
+                              <div ref={componentRef} style={{overflowX:"auto"}} >
                                 <AntTable
                                   columns={columns}
                                   data={staffList}
@@ -587,6 +589,8 @@ const AllStaffs = () => {
                                 />
                               </div>
                             ) : (
+                              <div  style={{overflowX:"auto"}} >
+
                               <Table
                                 style={{ whiteSpace: "pre" }}
                                 columns={columns}
@@ -602,7 +606,8 @@ const AllStaffs = () => {
                                   ],
                                   showSizeChanger: true,
                                 }}
-                              />
+                                />
+                                </div>
                             )}
                           </>
                         ) : (

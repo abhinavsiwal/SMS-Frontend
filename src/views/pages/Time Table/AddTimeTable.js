@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //import react-strap
 import {
@@ -30,7 +30,7 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import Loader from "components/Loader/Loader";
 // import moment Library
 import moment from "moment";
 import { SCOPES } from "routeGuard/permission-maps";
@@ -59,6 +59,7 @@ function AddTimeTable() {
     selectMode: "",
     link: "",
   });
+  const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
   const [endDate, setEndDate] = React.useState(new Date());
@@ -79,6 +80,7 @@ function AddTimeTable() {
   const [formData] = React.useState(new FormData());
   const [lecturer, setLectures] = React.useState({});
   console.log("lecturer", lecturer);
+  const [permissions, setPermissions] = useState([]);
   const [lect, setLect] = React.useState({
     Monday: [],
     Tuesday: [],
@@ -95,6 +97,15 @@ function AddTimeTable() {
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
+  const { user } = isAuthenticated();
+  let permission1 = [];
+  useEffect(() => {
+    console.log(user);
+    if (user.permissions["Time table Management"]) {
+      permission1 = user.permissions["Session"];
+      setPermissions(permission1);
+    }
+  }, []);
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -206,7 +217,7 @@ function AddTimeTable() {
     try {
       const { user, token } = isAuthenticated();
       // const payload = { school: user.school };
-      const {data} = await allStaffs(user.school, user._id);
+      const { data } = await allStaffs(user.school, user._id);
       console.log("teachers", data);
       if (data.err) {
         return toast.error(data.err);
@@ -292,21 +303,21 @@ function AddTimeTable() {
     formData.set("lecture", JSON.stringify(lecturer));
 
     try {
+      setLoading(true);
       const resp = await createTimeTable(user._id, token, formData);
       console.log("resp", resp);
       if (resp.err) {
+        setLoading(false);
         return toast.error(resp.err);
       } else {
         toast.success("TimeTable Addedd Successfully");
         localStorage.removeItem("lecture");
-        if (checked === true) {
-          setChecked(false);
-        } else {
-          setChecked(true);
-        }
+        setLoading(false);
+        setChecked(!checked);
       }
     } catch (err) {
       toast.error("Something Went Wrong!");
+      setLoading(false);
     }
   };
 
@@ -334,11 +345,7 @@ function AddTimeTable() {
       lecturer.Saturday.splice(index, 1);
       localStorage.setItem("lecture", JSON.stringify(lecturer));
     }
-    if (checked === true) {
-      setChecked(false);
-    } else {
-      setChecked(true);
-    }
+    setChecked(!checked);
   };
 
   //Edit handler
@@ -387,11 +394,7 @@ function AddTimeTable() {
       localStorage.setItem("lecture", JSON.stringify(data));
     }
     setEditing(false);
-    if (checked === true) {
-      setChecked(false);
-    } else {
-      setChecked(true);
-    }
+    setChecked(!checked);
   };
 
   return (
@@ -582,13 +585,14 @@ function AddTimeTable() {
                     <option value="" disabled selected>
                       Teacher
                     </option>
-                    { teacherList && teacherList.map((teachers) => {
-                      return (
-                        <option value={teachers._id}>
-                          {teachers.firstname}
-                        </option>
-                      );
-                    })}
+                    {teacherList &&
+                      teacherList.map((teachers) => {
+                        return (
+                          <option value={teachers._id}>
+                            {teachers.firstname}
+                          </option>
+                        );
+                      })}
                     {/* <option>David</option>
                     <option>Sam</option>
                     <option>Mike</option>
@@ -661,353 +665,360 @@ function AddTimeTable() {
         theme="colored"
       />
       <SimpleHeader name="Student" parentName="Time Table" />
-      <PermissionsGate scopes={[SCOPES.canCreate]}>
-        <Container className="mt--6 shadow-lg" fluid>
-          <Form onSubmit={handleData}>
-            <Card>
-              <CardBody>
-                <Row className="">
-                  <Col className="d-flex justify-content-center mt-2">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+      {loading ? (
+        <Loader />
+      ) : (
+        permissions &&
+        permissions.includes("edit") && (
+          <Container className="mt--6 shadow-lg" fluid>
+            <Form onSubmit={handleData}>
+              <Card>
+                <CardBody>
+                  <Row className="">
+                    <Col className="d-flex justify-content-center mt-2">
+                      <form>
+                        <input
+                          type={"file"}
+                          id={"csvFileInput"}
+                          accept={".csv"}
+                          onChange={handleOnChange}
+                        />
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
+                        <Button
+                          onClick={(e) => {
+                            handleOnSubmit(e);
+                          }}
+                          color="primary"
+                        >
+                          IMPORT CSV
+                        </Button>
+                      </form>
+                    </Col>
+                  </Row>
+                  <Row className="m-4">
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
                       >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Row className="m-4">
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Select Class
-                    </Label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={handleChange("class")}
-                      value={timeTableData.class}
-                      required
-                    >
-                      <option value="" disabled selected>
                         Select Class
-                      </option>
-                      {classess.map((clas) => {
-                        return (
-                          <option key={clas._id} value={clas._id}>
-                            {clas.name}
-                          </option>
-                        );
-                      })}
-                    </Input>
-                  </Col>
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Select Section
-                    </Label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={handleChange("section")}
-                      value={timeTableData.section}
-                      required
-                      placeholder="Add Periods"
-                    >
-                      <option value="">Select Section</option>
-                      {selectedClass.section &&
-                        selectedClass.section.map((section) => {
-                          console.log(section.name);
+                      </Label>
+                      <Input
+                        id="example4cols3Input"
+                        type="select"
+                        onChange={handleChange("class")}
+                        value={timeTableData.class}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Select Class
+                        </option>
+                        {classess.map((clas) => {
                           return (
-                            <option
-                              value={section._id}
-                              key={section._id}
-                              selected
-                            >
-                              {section.name}
+                            <option key={clas._id} value={clas._id}>
+                              {clas.name}
                             </option>
                           );
                         })}
-                    </Input>
-                  </Col>
-                </Row>
+                      </Input>
+                    </Col>
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Select Section
+                      </Label>
+                      <Input
+                        id="example4cols3Input"
+                        type="select"
+                        onChange={handleChange("section")}
+                        value={timeTableData.section}
+                        required
+                        placeholder="Add Periods"
+                      >
+                        <option value="">Select Section</option>
+                        {selectedClass.section &&
+                          selectedClass.section.map((section) => {
+                            console.log(section.name);
+                            return (
+                              <option
+                                value={section._id}
+                                key={section._id}
+                                selected
+                              >
+                                {section.name}
+                              </option>
+                            );
+                          })}
+                      </Input>
+                    </Col>
+                  </Row>
 
-                {timeTableData.class !== null &&
-                  timeTableData.section !== null && (
-                    <>
-                      <Row className="m-4">
-                        <Col md="6">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Select Days
-                          </Label>
-                          <Select
-                            isMulti
-                            name="colors"
-                            options={roleOptions}
-                            onChange={handleSubjectChange}
-                            className="basic-multi-select"
-                            classNamePrefix="select"
-                            required
-                          />
-                        </Col>
-                        <Col md="6">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Add Lecture
-                          </Label>
-                          <Input
-                            id="example4cols3Input"
-                            type="text"
-                            onChange={handleChange("prd")}
-                            value={timeTableData.prd}
-                            placeholder="Add Periods"
-                            required
-                          ></Input>
-                        </Col>
-                      </Row>
-                      <Row className="m-4">
-                        <Col md="2">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          ></Label>
-                          <p
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Lecture Time
-                          </p>
-                        </Col>
-                        <Col md="2">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            From
-                          </Label>
-                          <DatePicker
-                            id="exampleFormControlSelect3"
-                            className="Period-Time"
-                            selected={startDate}
-                            onChange={(date) => setStartDate(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            dateFormat="h:mm aa"
-                          />
-                        </Col>
-                        <Col md="2">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            To
-                          </Label>
-                          <DatePicker
-                            id="exampleFormControlSelect3"
-                            className="Period-Time"
-                            selected={endDate}
-                            onChange={(date) => setEndDate(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            dateFormat="h:mm aa"
-                          />
-                        </Col>
+                  {timeTableData.class !== null &&
+                    timeTableData.section !== null && (
+                      <>
+                        <Row className="m-4">
+                          <Col md="6">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Select Days
+                            </Label>
+                            <Select
+                              isMulti
+                              name="colors"
+                              options={roleOptions}
+                              onChange={handleSubjectChange}
+                              className="basic-multi-select"
+                              classNamePrefix="select"
+                              required
+                            />
+                          </Col>
+                          <Col md="6">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Add Lecture
+                            </Label>
+                            <Input
+                              id="example4cols3Input"
+                              type="text"
+                              onChange={handleChange("prd")}
+                              value={timeTableData.prd}
+                              placeholder="Add Periods"
+                              required
+                            ></Input>
+                          </Col>
+                        </Row>
+                        <Row className="m-4">
+                          <Col md="2">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            ></Label>
+                            <p
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Lecture Time
+                            </p>
+                          </Col>
+                          <Col md="2">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              From
+                            </Label>
+                            <DatePicker
+                              id="exampleFormControlSelect3"
+                              className="Period-Time"
+                              selected={startDate}
+                              onChange={(date) => setStartDate(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={15}
+                              timeCaption="Time"
+                              dateFormat="h:mm aa"
+                            />
+                          </Col>
+                          <Col md="2">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="example-date-input"
+                            >
+                              To
+                            </Label>
+                            <DatePicker
+                              id="exampleFormControlSelect3"
+                              className="Period-Time"
+                              selected={endDate}
+                              onChange={(date) => setEndDate(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={15}
+                              timeCaption="Time"
+                              dateFormat="h:mm aa"
+                            />
+                          </Col>
 
-                        <Col md="2">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          ></Label>
-                          <p
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Recises Time
-                          </p>
-                        </Col>
-                        <Col md="2">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            From
-                          </Label>
-                          <DatePicker
-                            id="exampleFormControlSelect3"
-                            className="Period-Time"
-                            selected={startTimeRecises}
-                            onChange={(date) => setStartTimeRecises(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            dateFormat="h:mm aa"
-                          />
-                        </Col>
-                        <Col md="2">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            To
-                          </Label>
-                          <DatePicker
-                            id="exampleFormControlSelect3"
-                            className="Period-Time"
-                            selected={endTimeRecises}
-                            onChange={(date) => setEndTimeRecises(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            dateFormat="h:mm aa"
-                          />
-                        </Col>
-                      </Row>
+                          <Col md="2">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            ></Label>
+                            <p
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Recises Time
+                            </p>
+                          </Col>
+                          <Col md="2">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              From
+                            </Label>
+                            <DatePicker
+                              id="exampleFormControlSelect3"
+                              className="Period-Time"
+                              selected={startTimeRecises}
+                              onChange={(date) => setStartTimeRecises(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={15}
+                              timeCaption="Time"
+                              dateFormat="h:mm aa"
+                            />
+                          </Col>
+                          <Col md="2">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="example-date-input"
+                            >
+                              To
+                            </Label>
+                            <DatePicker
+                              id="exampleFormControlSelect3"
+                              className="Period-Time"
+                              selected={endTimeRecises}
+                              onChange={(date) => setEndTimeRecises(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={15}
+                              timeCaption="Time"
+                              dateFormat="h:mm aa"
+                            />
+                          </Col>
+                        </Row>
 
-                      <Row className="d-flex justify-content-center mb-4 m-4">
-                        <Col md="3">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Subjects
-                          </Label>
-                          <Input
-                            id="exampleFormControlSelect3"
-                            type="select"
-                            onChange={handleChange("subjects")}
-                            value={timeTableData.subjects}
-                            required
-                          >
-                            <option value="" disabled selected>
-                              Subjects
-                            </option>
-                            {subject.map((subject) => {
-                              return (
-                                <option value={subject._id}>
-                                  {subject.name}
-                                </option>
-                              );
-                            })}
-                            {/* <option>Physics</option>
-                            <option>Chemistry</option>
-                            <option>Maths</option>
-                            <option>Hindi</option> */}
-                          </Input>
-                        </Col>
-                        <Col md="3">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Teachers
-                          </Label>
-                          <Input
-                            id="exampleFormControlSelect3"
-                            type="select"
-                            onChange={handleChange("teachers")}
-                            value={timeTableData.teachers}
-                            required
-                          >
-                            <option value="" disabled selected>
-                              Teacher
-                            </option>
-                            {teacherList.map((teachers) => {
-                              return (
-                                <option
-                                  value={teachers.firstname + teachers.lastname}
-                                >
-                                  {teachers.firstname}
-                                </option>
-                              );
-                            })}
-                          </Input>
-                        </Col>
-
-                        <Col md="3">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="xample-date-input"
-                          >
-                            Select Mode
-                          </Label>
-                          <Input
-                            id="exampleFormControlSelect3"
-                            type="select"
-                            onChange={handleChange("selectMode")}
-                            value={timeTableData.selectMode}
-                            required
-                          >
-                            <option value="" disabled selected>
-                              Select Mode
-                            </option>
-                            <option>Offline</option>
-                            <option>Online</option>
-                          </Input>
-                        </Col>
-                        {timeTableData.selectMode === "Online" && (
+                        <Row className="d-flex justify-content-center mb-4 m-4">
                           <Col md="3">
                             <Label
                               className="form-control-label"
                               htmlFor="xample-date-input"
                             >
-                              Link
+                              Subjects
                             </Label>
                             <Input
                               id="exampleFormControlSelect3"
-                              type="text"
-                              onChange={handleChange("link")}
-                              value={timeTableData.link}
-                              placeholder="Enter Link here"
+                              type="select"
+                              onChange={handleChange("subjects")}
+                              value={timeTableData.subjects}
                               required
-                            ></Input>
+                            >
+                              <option value="" disabled selected>
+                                Subjects
+                              </option>
+                              {subject.map((subject) => {
+                                return (
+                                  <option value={subject._id}>
+                                    {subject.name}
+                                  </option>
+                                );
+                              })}
+                              {/* <option>Physics</option>
+                              <option>Chemistry</option>
+                              <option>Maths</option>
+                              <option>Hindi</option> */}
+                            </Input>
                           </Col>
-                        )}
-                      </Row>
-                      <Row className="d-flex justify-content-between">
-                        <div>
-                          <Button color="primary" type="submit">
-                            Add
-                          </Button>
-                        </div>
-                        <div>
-                          <Button color="primary" onClick={handleSubmitData}>
-                            Submit
-                          </Button>
-                        </div>
-                      </Row>
-                    </>
-                  )}
-              </CardBody>
-            </Card>
-          </Form>
-        </Container>
-      </PermissionsGate>
+                          <Col md="3">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Teachers
+                            </Label>
+                            <Input
+                              id="exampleFormControlSelect3"
+                              type="select"
+                              onChange={handleChange("teachers")}
+                              value={timeTableData.teachers}
+                              required
+                            >
+                              <option value="" disabled selected>
+                                Teacher
+                              </option>
+                              {teacherList.map((teachers) => {
+                                return (
+                                  <option
+                                    value={
+                                      teachers.firstname + teachers.lastname
+                                    }
+                                  >
+                                    {teachers.firstname}
+                                  </option>
+                                );
+                              })}
+                            </Input>
+                          </Col>
+
+                          <Col md="3">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="xample-date-input"
+                            >
+                              Select Mode
+                            </Label>
+                            <Input
+                              id="exampleFormControlSelect3"
+                              type="select"
+                              onChange={handleChange("selectMode")}
+                              value={timeTableData.selectMode}
+                              required
+                            >
+                              <option value="" disabled selected>
+                                Select Mode
+                              </option>
+                              <option>Offline</option>
+                              <option>Online</option>
+                            </Input>
+                          </Col>
+                          {timeTableData.selectMode === "Online" && (
+                            <Col md="3">
+                              <Label
+                                className="form-control-label"
+                                htmlFor="xample-date-input"
+                              >
+                                Link
+                              </Label>
+                              <Input
+                                id="exampleFormControlSelect3"
+                                type="text"
+                                onChange={handleChange("link")}
+                                value={timeTableData.link}
+                                placeholder="Enter Link here"
+                                required
+                              ></Input>
+                            </Col>
+                          )}
+                        </Row>
+                        <Row className="d-flex justify-content-between">
+                          <div>
+                            <Button color="primary" type="submit">
+                              Add
+                            </Button>
+                          </div>
+                          <div>
+                            <Button color="primary" onClick={handleSubmitData}>
+                              Submit
+                            </Button>
+                          </div>
+                        </Row>
+                      </>
+                    )}
+                </CardBody>
+              </Card>
+            </Form>
+          </Container>
+        )
+      )}
       <Container className="mt--0 shadow-lg table-responsive" fluid>
         <Card>
           <CardHeader>Time Table</CardHeader>

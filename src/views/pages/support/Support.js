@@ -1,20 +1,4 @@
-/*!
 
-=========================================================
-* Argon Dashboard PRO React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-// reactstrap components
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
@@ -67,10 +51,10 @@ function Support() {
 
   let permissions = [];
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user.permissions["Support"]) {
       permissions = user.permissions["Support"];
-      console.log(permissions);
+      // console.log(permissions);
     }
   }, [checked]);
 
@@ -240,7 +224,7 @@ function Support() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    console.log(supportData);
+    // console.log(supportData);
     formData.set("priority", supportData.priority);
     formData.set("root_caused", supportData.root_caused);
     formData.set("description", supportData.description);
@@ -251,7 +235,7 @@ function Support() {
     });
     try {
       const resp = await support(user._id, token, formData);
-      console.log(resp);
+      // console.log(resp);
      
       if (resp.err) {
         return toast.error(resp.err);

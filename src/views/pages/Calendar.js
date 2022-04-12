@@ -86,12 +86,15 @@ function CalendarView() {
   const [staff, setStaff] = useState([]);
   const [staffId, setStaffId] = useState("");
   const [filterSessionId, setFilterSessionId] = useState("");
+const [permissions, setPermissions] = useState([]);
 
-  let permissions = [];
+  let permission1 = [];
   useEffect(() => {
-    if (user.role["Calendar"]) {
-      permissions = user.role["Calendar"];
-      console.log(permissions);
+    // console.log(user);
+    if (user.permissions["School Calendar"]) {
+      permission1 = user.role["School Calendar"];
+      setPermissions(permission1)
+      // console.log(permissions);
     }
     getAllStaff();
     getSession();
@@ -100,7 +103,7 @@ function CalendarView() {
   const getAllStaff = async () => {
     try {
       const {data} = await allStaffs(user.school, user._id);
-      console.log(data, "@@@@@@@@");
+      // console.log(data, "@@@@@@@@");
       setStaff(data);
     } catch (err) {
       toast.error(fetchingStaffFailed);
@@ -133,7 +136,7 @@ function CalendarView() {
 
       // Add new event
       select: (info) => {
-        console.log("info", info);
+        // console.log("info", info);
 
         setModalAdd(true);
         setStartDate(startDate);
@@ -143,7 +146,7 @@ function CalendarView() {
 
       // Edit calendar event action
       eventClick: ({ event }) => {
-        console.log("event", event);
+        // console.log("event", event);
         setEventId(event.id);
         setEventTitle(event.title);
         setDescription(event.extendedProps.description);
@@ -199,7 +202,7 @@ function CalendarView() {
     createCalendar();
     const { user, token } = isAuthenticated();
     const events = await getCalender(user._id, user.school, token);
-    console.log("getevents", events);
+    // console.log("getevents", events);
     setEvents(events);
     events.map((events) => {
       return calendar.addEvent({
@@ -589,7 +592,7 @@ function CalendarView() {
                 />
               </CardBody>
             </Card>
-            {/* {permissions && permissions.includes("add") && ( */}
+            {permissions && permissions.includes("add") && (
             <Modal
               isOpen={modalAdd}
               toggle={() => setModalAdd(false)}
@@ -732,9 +735,9 @@ function CalendarView() {
                 </Button>
               </div>
             </Modal>
-            {/* )} */}
+             )}
 
-            {/* {permissions && permissions.includes("edit") && ( */}
+            {permissions && permissions.includes("edit") && (
             <Modal
               isOpen={modalChange}
               toggle={() => setModalChange(false)}
@@ -893,7 +896,7 @@ function CalendarView() {
                 </Button>
               </div>
             </Modal>
-            {/* )} */}
+            )}
           </div>
         </Row>
       </Container>

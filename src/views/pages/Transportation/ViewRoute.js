@@ -48,10 +48,10 @@ import moment from "moment";
 function ViewRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
-  console.log("start", startDuration);
+  // console.log("start", startDuration);
   const [endDate, setEndDate] = React.useState(new Date());
   const endDuration = moment(endDate).format("LT");
-  console.log("end", endDuration);
+  // console.log("end", endDuration);
   const [viewRoute, setViewRoute] = React.useState([]);
   const [modalState, setModalState] = React.useState(false);
   const [modalSupport, setModalSupport] = React.useState({});
@@ -67,9 +67,10 @@ function ViewRoute() {
     id: "",
     bus_no: "",
   });
+  const [editLoading, setEditLoading] = useState(false);
   const [staff, setStaff] = useState([]);
   // console.log("route", route);
-
+  // const [loading, setLoading] = useState(second)
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -83,18 +84,19 @@ function ViewRoute() {
 
   let permissions = [];
   useEffect(() => {
-    if (user.role["Transportation"]) {
-      permissions = user.role["Transportation"];
-      console.log(permissions);
+    // console.log(user);
+    if (user.permissions["Transportation management"]) {
+      permissions = user.permissions["Transportation management"];
+      // console.log(permissions);
     }
-  }, []);
+  }, [checked]);
 
   const handleSubjectChange = (e) => {
     var value = [];
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    console.log(value);
+    // console.log(value);
     setStaff(value);
   };
 
@@ -278,63 +280,64 @@ function ViewRoute() {
   }, [checked]);
 
   const getAllStaffs = async () => {
-    const res = await allStaffs(user.school, user._id);
-    console.log(res);
+    const { data } = await allStaffs(user.school, user._id);
+    // console.log(data);
     let options = [];
-    for (let i = 0; i < res.length; i++) {
-      options.push({ value: res[i]._id, label: res[i].firstname });
+    for (let i = 0; i < data.length; i++) {
+      options.push({ value: data[i]._id, label: data[i].firstname });
     }
-    console.log(options);
+    // console.log(options);
     setRoleOptions(options);
   };
 
   const fetchRoutes = async () => {
+    setLoading(true);
     let res = await routesAll(user._id, user.school);
-    console.log(res);
+    // console.log(res);
     const data = [];
+
     for (let i = 0; i < res.length; i++) {
       data.push({
         key: i,
         s_no: i + 1,
         route_name: res[i].name,
         bus_no: res[i].bus_number,
-        staff_members: res[i].staff[0].firstname,
+        staff_members: res[i].staff && res[i].staff[0].firstname,
         start_time: res[i].start,
         end_time: res[i].end,
         action: (
           <>
             <h5 key={i + 1} className="mb-0">
               <span>{res[i].startTime}</span>
-              {/* {permissions && permissions.includes("edit") && (
-                
-              )} */}
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-                onClick={() => {
-                  setEditData(res[i]);
-                }}
-              >
-                <i className="fas fa-user-edit" />
-              </Button>
-              {/* {permissions && permissions.includes("delete") && (
-              
-              )} */}
-              <Button
-                className="btn-sm pull-right"
-                color="danger"
-                type="button"
-                key={"delete" + i + 1}
-              >
-                <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => handleDelete(res[i]._id)}
+              {permissions && permissions.includes("edit") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => {
+                    setEditData(res[i]);
+                  }}
                 >
-                  <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
+                  <i className="fas fa-user-edit" />
+                </Button>
+              )}
+
+              {permissions && permissions.includes("delete") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
+                  >
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
+              )}
               <Button
                 className="btn-sm pull-right"
                 color="primary"
@@ -352,13 +355,14 @@ function ViewRoute() {
       });
     }
     setViewRoute(data);
-    setLoading(true);
+    setLoading(false);
   };
 
   const setEditData = (editingData) => {
     setEditing(true);
-    console.log("clicked");
-    console.log(editingData);
+
+    // console.log("clicked");
+    // console.log(editingData);
     setEditingRouteData({
       ...editingRouteData,
       route_name: editingData.name,
@@ -369,16 +373,19 @@ function ViewRoute() {
 
   const handleDelete = async (routeId) => {
     try {
+      setLoading(true);
       const data = await deleteRoute(user._id, routeId);
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
+      setLoading(false);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
+      setLoading(false);
     }
   };
   const editRouteHandler = async () => {
-    console.log(editingRouteData);
-    console.log(staff);
+    // console.log(editingRouteData);
+    // console.log(staff);
     const formData = new FormData();
     formData.set("bus_number", editingRouteData.bus_no);
     formData.set("name", editingRouteData.route_name);
@@ -389,11 +396,14 @@ function ViewRoute() {
     // formData.set("",)
 
     try {
+      setEditLoading(false);
       const data = await editRoute(user._id, editingRouteData.id, formData);
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
+      setEditLoading(false);
     } catch (err) {
       console.log(err);
+      setEditLoading(false);
     }
   };
 
@@ -422,117 +432,121 @@ function ViewRoute() {
           </button>
         </div>
         <ModalBody>
-          <Container>
-            <Form>
-              <Row>
-                <Col>
-                  {" "}
-                  <Label
-                    className="form-control-label"
-                    htmlFor="example4cols2Input"
-                  >
-                    Route Name
-                  </Label>
-                  <Input
-                    id="example4cols2Input"
-                    placeholder="Class"
-                    type="text"
-                    onChange={handleChange("route_name")}
-                    value={editingRouteData.route_name}
-                    required
-                  />
-                </Col>
-                <Col>
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Staff Member
-                  </Label>
-                  <Select
-                    isMulti
-                    name="colors"
-                    options={roleOptions}
-                    onChange={handleSubjectChange}
-                    className="basic-multi-select"
-                    classNamePrefix="select"
-                    required
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Label
-                    className="form-control-label"
-                    htmlFor="example4cols2Input"
-                  >
-                    Bus No.
-                  </Label>
-                  <Input
-                    id="example4cols2Input"
-                    placeholder="bus_no"
-                    type="text"
-                    onChange={handleChange("bus_no")}
-                    value={editingRouteData.bus_no}
-                    required
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    From
-                  </Label>
-                  <DatePicker
-                    id="exampleFormControlSelect3"
-                    className="Period-Time"
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                    required
-                  />
-                </Col>
-                <Col>
-                  <Label
-                    className="form-control-label"
-                    htmlFor="example-date-input"
-                  >
-                    To
-                  </Label>
-                  <DatePicker
-                    id="exampleFormControlSelect3"
-                    className="Period-Time"
-                    selected={endDate}
-                    onChange={(date) => setEndDate(date)}
-                    showTimeSelect
-                    showTimeSelectOnly
-                    timeIntervals={15}
-                    timeCaption="Time"
-                    dateFormat="h:mm aa"
-                    required
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Button
-                    className="primary mt-5"
-                    color="primary"
-                    onClick={editRouteHandler}
-                  >
-                    Edit Route
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Container>
+          {editLoading ? (
+            <Loader />
+          ) : (
+            <Container>
+              <Form>
+                <Row>
+                  <Col>
+                    {" "}
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Route Name
+                    </Label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Class"
+                      type="text"
+                      onChange={handleChange("route_name")}
+                      value={editingRouteData.route_name}
+                      required
+                    />
+                  </Col>
+                  <Col>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="xample-date-input"
+                    >
+                      Select Staff Member
+                    </Label>
+                    <Select
+                      isMulti
+                      name="colors"
+                      options={roleOptions}
+                      onChange={handleSubjectChange}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      required
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Bus No.
+                    </Label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="bus_no"
+                      type="text"
+                      onChange={handleChange("bus_no")}
+                      value={editingRouteData.bus_no}
+                      required
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="xample-date-input"
+                    >
+                      From
+                    </Label>
+                    <DatePicker
+                      id="exampleFormControlSelect3"
+                      className="Period-Time"
+                      selected={startDate}
+                      onChange={(date) => setStartDate(date)}
+                      showTimeSelect
+                      showTimeSelectOnly
+                      timeIntervals={15}
+                      timeCaption="Time"
+                      dateFormat="h:mm aa"
+                      required
+                    />
+                  </Col>
+                  <Col>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      To
+                    </Label>
+                    <DatePicker
+                      id="exampleFormControlSelect3"
+                      className="Period-Time"
+                      selected={endDate}
+                      onChange={(date) => setEndDate(date)}
+                      showTimeSelect
+                      showTimeSelectOnly
+                      timeIntervals={15}
+                      timeCaption="Time"
+                      dateFormat="h:mm aa"
+                      required
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Button
+                      className="primary mt-5"
+                      color="primary"
+                      onClick={editRouteHandler}
+                    >
+                      Edit Route
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </Container>
+          )}
         </ModalBody>
       </Modal>
 
@@ -550,8 +564,8 @@ function ViewRoute() {
             >
               Print
             </Button>
-            {loading && viewRoute ? (
-              <div ref={componentRef}>
+            {!loading && viewRoute ? (
+              <div ref={componentRef} style={{ overflowX: "auto" }}>
                 <AntTable
                   columns={columns}
                   data={viewRoute}

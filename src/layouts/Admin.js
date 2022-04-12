@@ -32,35 +32,38 @@ function Admin() {
   let permittedRoute = [];
   console.log(user);
   for (const key in user.permissions) {
-    // console.log(key);
-    // console.log(user.permissions[key]);
+    console.log(key);
+    console.log(user.permissions[key]);
     // routes1.push(key);
 
     let permitted = adminRoutes.find(
       (route) => key.toString() === route.module.toString()
     );
     // console.log(permitted);
-    // if (permitted && permitted.views) {
-    //   // let permittedViews = permitted.views.filter(
-    //   //   (view) => user.role[key].toString() === view.permission.toString()
-    //   // );
-    //   console.log(permitted.views); 
-    //   user.permissions[key].forEach(element => {
-    //     console.log(element);
-    //     for (let i = 0; i < permitted.views.length; i++) {
-    //       if(permitted.views[i].permission.toString() ===element.toString()){
-    //         console.log(true);
-    //         permitted.views=permitted.views[i];
-    //         return;
-    //       }
-          
-    //     }
-    //   });
-    //   // let permittedViews = permitted.views.filter(
-    //   //   (view) => "view" === view.permission.toString() 
-    //   // );
-    //   // permitted.views = permittedViews;
-    // }
+
+    if (permitted && permitted.views) {
+      console.log(permitted.views);
+    
+let permittedViews2=[];
+
+      user.permissions[key].forEach(element => {
+        console.log(element);
+        for (let i = 0; i < permitted.views.length; i++){
+          console.log(permitted.views[i]);
+          if(permitted.views[i].permission.toString() ===element.toString()){
+            console.log(true);
+            // permitted.views=permitted.views[i];
+            permittedViews2.push(permitted.views[i]);
+          }
+        }
+      });
+      console.log(permittedViews2);
+      let permittedViews = permitted.views.filter(
+        (view) => "view" === view.permission.toString() 
+      );
+    
+      permitted.views = permittedViews2;
+    }
     if (permitted) {
       permittedRoute.push(permitted);
     }
@@ -116,7 +119,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={routes}
+        routes={permittedRoute}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

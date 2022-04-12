@@ -69,7 +69,7 @@ export const adminRoutes = [
     name: "Staff Management",
     icon: "ni ni-single-02 text-orange",
     state: "examplesCollapse",
-    module: "Staff Mangement",
+    module: "Staff Management",
     views: [
       {
         path: "/add-staff",
@@ -219,7 +219,7 @@ export const adminRoutes = [
     icon: "ni ni-shop text-primary",
     component: Support,
     layout: "/admin",
-    module: "Support Management",
+    module: "Support",
   },
   {
     path: "/calendar",
@@ -310,7 +310,7 @@ export const adminRoutes = [
     icon: "ni ni-settings-gear-65 text-blue",
     component: RolePermissions,
     layout: "/admin",
-    module: "Roles and Permission",
+    module: "Role and Permissions",
   },
 
   {

@@ -34,7 +34,7 @@ const ClassTeacher = () => {
   useEffect(async () => {
     try {
       const classess = await allClass(user._id, user.school, token);
-      console.log("classes", classess);
+      // console.log("classes", classess);
       if (classess.err) {
         return toast.error(classess.err);
       }
@@ -50,7 +50,7 @@ const ClassTeacher = () => {
       const payload = { school: user.school };
 
       const teachers = await nonClassTeachers(user.school, user._id);
-      console.log(teachers);
+      // console.log(teachers);
       if (teachers.err) {
         return toast.error(teachers.err);
       }
@@ -61,8 +61,8 @@ const ClassTeacher = () => {
   }, [checked]);
 
   const assignClassTeacherHandler = (section) => async (e) => {
-    console.log(section);
-    console.log(e.target.value);
+    // console.log(section);
+    // console.log(e.target.value);
     let staffId = e.target.value;
     let formData = new FormData();
     formData.set("classTeacher", e.target.value);
@@ -71,17 +71,17 @@ const ClassTeacher = () => {
     try {
       setLoading(true);
       const data = await assignClassTeacher(section._id, user._id, token, formData);
-      console.log(data);
+      // console.log(data);
       if(section.classTeacher){
         let formData1 = new FormData();
         formData1.set("isClassTeacher",false);
         const data1 = await updateStaff1(section.classTeacher._id, user._id, formData1);
-        console.log(data1);
+        // console.log(data1);
         let formData2 = new FormData();
         formData2.set("schoolClassTeacher",section._id);
         formData2.set("isClassTeacher",true)
         const data2 = await updateStaff1(staffId, user._id, formData2);
-        console.log(data2);
+        // console.log(data2);
       }else{
         let formData1 = new FormData();
         formData1.set("isClassTeacher",true);

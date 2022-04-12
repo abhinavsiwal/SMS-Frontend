@@ -14,6 +14,7 @@ import {
   Form,
   CardBody,
 } from "reactstrap";
+import { Table } from "ant-table-extensions";
 // import { FaEdit } from "react-icons/fa";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import "./styles.css";
@@ -24,7 +25,7 @@ import {
   getDepartment,
   updateDepartment,
   deleteDepartment,
-  getNonHeads
+  getNonHeads,
 } from "api/department";
 import Select from "react-select";
 import { Popconfirm } from "antd";
@@ -61,7 +62,8 @@ const DepartmentList = () => {
   const [primaryHeadId, setPrimaryHeadId] = useState("");
   const [secondaryHeadId, setSecondaryHeadId] = useState("");
   // console.log("id", deparmentId);
-
+  const [addLoading, setAddLoading] = useState(false);
+  const [permissions, setPermissions] = useState([]);
   const [staff, setStaff] = useState([]);
 
   const componentRef = useRef();
@@ -69,26 +71,23 @@ const DepartmentList = () => {
     content: () => componentRef.current,
   });
 
-  let permissions = [];
   useEffect(() => {
     console.log(user);
     if (user.permissions["Department"]) {
-      permissions = user.permissions["Department"];
-      console.log(permissions);
+      let permission1 = user.permissions["Department"];
+      console.log(permission1);
+      setPermissions(permission1);
     }
-  }, []);
+  }, [checked]);
 
   useEffect(() => {
     getAllStaff();
     getSession();
-    getDepartmentsData();
+    // getDepartmentsData();
   }, []);
   useEffect(() => {
-  
     getDepartmentsData();
   }, [checked]);
-
-
 
   const getAllStaff = async () => {
     try {
@@ -171,6 +170,7 @@ const DepartmentList = () => {
 
   //Getting Department Data
   function getDepartmentsData() {
+    setLoading(true);
     getDepartment(user.school, user._id, token)
       .then((res) => {
         console.log("allClass", res);
@@ -183,43 +183,44 @@ const DepartmentList = () => {
             action: (
               <h5 key={i + 1} className="mb-0">
                 {/* {permissions && permissions.includes("edit") && ( */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    onClick={() =>
-                      rowHandler(res[i]._id, res[i].name, res[i].module)
-                    }
-                    key={"edit" + i + 1}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  onClick={() =>
+                    rowHandler(res[i]._id, res[i].name, res[i].module)
+                  }
+                  key={"edit" + i + 1}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
                 {/* )} */}
                 {/* {permissions && permissions.includes("delete") && ( */}
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
                   >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => handleDelete(res[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
                 {/* )} */}
               </h5>
             ),
           });
         }
         setClassList(data);
-        setLoading(true);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
         toast.error(fetchingDepartmentError);
+        setLoading(false);
       });
   }
 
@@ -236,15 +237,14 @@ const DepartmentList = () => {
   async function handleDelete(deparmentId) {
     const { user, token } = isAuthenticated();
     try {
+      setLoading(true);
       await deleteDepartment(deparmentId, user._id, token);
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
+      setLoading(false);
+      setChecked(!checked);
       toast.success(deleteDepartmentSuccess);
     } catch (err) {
       toast.error(deleteDepartmentError);
+      setLoading(false);
     }
   }
 
@@ -264,6 +264,7 @@ const DepartmentList = () => {
       const { user, token } = isAuthenticated();
       formData.set("name", editDepartmentName);
       // formData.set("module", JSON.stringify(editDepartmentModule));
+      setLoading(true);
       const updateDepartments = await updateDepartment(
         deparmentId,
         user._id,
@@ -272,13 +273,11 @@ const DepartmentList = () => {
       );
       console.log("updateDepartments", updateDepartments);
       setEditing(false);
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
+      setChecked(!checked);
+      setLoading(false);
       toast.success(updateDepartmentSuccess);
     } catch (err) {
+      setLoading(false);
       toast.error(updateDepartmentError);
     }
   }
@@ -310,18 +309,22 @@ const DepartmentList = () => {
       });
       // formData.set("role", JSON.stringify(role));
       // formData.set("module", JSON.stringify(data));
+      setAddLoading(true);
       const createDepartment = await addDepartment(user._id, token, formData);
       if (createDepartment.err) {
+        setAddLoading(false);
         return toast.error(createDepartment.err);
       }
-     setChecked(!checked)
+      setAddLoading(false);
+      setChecked(!checked);
       setName("");
       setPrimaryHeadId("");
       setSecondaryHeadId("");
       setSelectSessionId("");
       toast.success("Deparment Added Successfully");
     } catch (err) {
-      // toast.error("Something Went Wrong!");
+      setAddLoading(false);
+      toast.error("Something Went Wrong!");
     }
   };
 
@@ -342,68 +345,87 @@ const DepartmentList = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && ( */}
-          <Col lg="3">
-            <div className="card-wrapper">
-              <Card>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Department Name
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Department Name"
-                          type="text"
-                          onChange={(e) => setName(e.target.value)}
-                          required
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mt-4 float-right">
-                      <Col>
-                        <Button
-                          color="primary"
-                          type="submit"
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-          </Col>
-           {/* )} */}
+          {addLoading ? (
+            <Loader />
+          ) : (
+            permissions &&
+            permissions.includes("add") && (
+              <Col lg="3">
+                <div className="card-wrapper">
+                  <Card>
+                    <Form onSubmit={handleFormChange} className="mb-4">
+                      <CardBody>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Department Name
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Department Name"
+                              type="text"
+                              onChange={(e) => setName(e.target.value)}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4 float-right">
+                          <Col>
+                            <Button
+                              color="primary"
+                              type="submit"
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                              }}
+                            >
+                              Submit
+                            </Button>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                    </Form>
+                  </Card>
+                </div>
+              </Col>
+            )
+          )}
 
           <Col>
             <div className="card-wrapper">
               <Card>
                 <CardBody>
-                  <Button
-                    color="primary"
-                    className="mb-2"
-                    onClick={handlePrint}
-                    style={{ float: "right" }}
-                  >
-                    Print
-                  </Button>
-                  {loading && classList ? (
-                    <div ref={componentRef}>
-                      <AntTable
+                  {!loading && classList ? (
+                    permissions && permissions.includes("export") ? (
+                      <>
+                        <Button
+                          color="primary"
+                          className="mb-2"
+                          onClick={handlePrint}
+                          style={{ float: "right" }}
+                        >
+                          Print
+                        </Button>
+                        <div ref={componentRef}>
+                          <AntTable
+                            columns={columns}
+                            data={classList}
+                            pagination={true}
+                            exportFileName="ClassDetails"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <Table
+                        style={{ whiteSpace: "pre" }}
                         columns={columns}
-                        data={classList}
+                        dataSource={classList}
                         pagination={true}
-                        exportFileName="ClassDetails"
                       />
-                    </div>
+                    )
                   ) : (
                     <Loader />
                   )}
@@ -448,7 +470,6 @@ const DepartmentList = () => {
                 />
               </Col>
             </Row>
-     
           </ModalBody>
           <ModalFooter>
             <Button color="success" type="button" onClick={handleEdit}>

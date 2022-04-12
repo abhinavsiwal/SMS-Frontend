@@ -33,7 +33,7 @@ const DepartmentHead = () => {
       if (dept.err) {
         return toast.error(dept.err);
       }
-      console.log(dept);
+      // console.log(dept);
       setDepartments(dept);
       setLoading(false);
     } catch (err) {
@@ -48,7 +48,7 @@ const DepartmentHead = () => {
       const payload = { school: user.school };
 
       const staffData = await getNonHeads(user.school, user._id);
-      console.log("staffData", staffData);
+      // console.log("staffData", staffData);
       if (staffData.err) {
         return toast.error(staffData.err);
       }
@@ -67,8 +67,8 @@ const DepartmentHead = () => {
   const [formData] = useState(new FormData());
 
   const primaryHeadHandler = (department) => async (e) => {
-    console.log(department);
-    console.log(e.target.value);
+    // console.log(department);
+    // console.log(e.target.value);
     let deptId = e.target.value;
     let formData = new FormData();
     formData.set("primary_head", e.target.value);
@@ -81,22 +81,22 @@ const DepartmentHead = () => {
         token,
         formData
       );
-      console.log(data);
+      // console.log(data);
       let formData1 = new FormData();
       if(department.primary_head){
         formData1.set("isHead",false);
         const data1 = await updateStaff1(department.primary_head._id, user._id, formData1);
-        console.log(data1);
+        // console.log(data1);
         let formData2 = new FormData();
         formData2.set("head",department._id);
         formData2.set("isHead",true)
         const data2 = await updateStaff1(deptId, user._id, formData2);
-        console.log(data2);
+        // console.log(data2);
       }else{
         formData1.set("head",department._id);
         formData1.set("isHead",true);
         const data1 = await updateStaff1(deptId, user._id, formData1);
-        console.log(data1);
+        // console.log(data1);
       }
       
       setChecked(!checked);
@@ -110,8 +110,8 @@ const DepartmentHead = () => {
   };
 
   const secondaryHeadHandler = (department) => async (e) => {
-    console.log(department);
-    console.log(e.target.value);
+    // console.log(department);
+    // console.log(e.target.value);
     let deptId = e.target.value;
     let formData = new FormData();
     formData.set("secondary_head", e.target.value);
@@ -124,24 +124,24 @@ const DepartmentHead = () => {
         token,
         formData
       );
-      console.log(data);
+      // console.log(data); 
       if(department.secondary_head){
         let formData1 = new FormData();
         formData1.set("isHead",false);
         const data1 = await updateStaff1(department.secondary_head._id, user._id, formData1);
-        console.log(data1);
+        // console.log(data1);
         let formData2 = new FormData();
         formData2.set("head",department._id);
         formData2.set("isHead",true)
   
         const data2 = await updateStaff1(deptId, user._id, formData2);
-        console.log(data2);
+        // console.log(data2);
       }else{
         let formData1 = new FormData();
         formData1.set("head",department._id);
         formData1.set("isHead",true);
         const data1 = await updateStaff1(deptId, user._id, formData1);
-        console.log(data1);
+        // console.log(data1);
       }
       setChecked(!checked);
       setLoading(false);

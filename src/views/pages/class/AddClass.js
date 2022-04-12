@@ -43,15 +43,18 @@ const AddClass = () => {
   const [classList, setClassList] = useState([]);
   const [reload, setReload] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editClassName, setEditClassName] = useState("");
   const [classId, setClassId] = useState("");
   const [editClassAbv, setEditClassAbv] = useState("");
-  console.log("editClassAdv", editClassAbv);
+  // console.log("editClassAdv", editClassAbv);
   const [sessions, setSessions] = useState([]);
   const [checked, setChecked] = useState(false);
   const dispatch = useDispatch();
   const { user, token } = isAuthenticated();
+
+  const [permissions, setPermissions] = useState([]);
 
   const [classData, setClassData] = useState({
     name: "",
@@ -62,15 +65,22 @@ const AddClass = () => {
 
   const fileReader = new FileReader();
 
-  let permissions;
-
   useEffect(() => {
-    console.log(user);
-    if (user.permissions["Class, section and subject master"]) {
-      permissions = user.permissions["Class, section and subject master"];
-      console.log(permissions);
-    }
+    permissionHandler();
   }, [checked, reload]);
+
+  let permission1=[];
+  const permissionHandler = async () => {
+
+    // console.log(user);
+    if (user.permissions["Class, section and subject master"]) {
+      permission1 = user.permissions["Class, section and subject master"];
+      // console.log(permission);
+       setPermissions(permission1);
+      // console.log(permissions);
+    }
+  };
+
   useEffect(() => {
     getSession();
   }, []);
@@ -80,75 +90,76 @@ const AddClass = () => {
     content: () => componentRef.current,
   });
   useEffect(() => {
-    const getAllClasses = () => {
-      allClass(user._id, user.school, token)
-        .then((res) => {
-          console.log("allClass", res);
-          dispatch(setClass(res));
-          const data = [];
-          for (let i = 0; i < res.length; i++) {
-            data.push({
-              key: i,
-              name: res[i].name,
-              abbreviation: res[i].abbreviation,
-              action: (
-                <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="primary"
-                      type="button"
-                      key={"edit" + i + 1}
-                      onClick={() =>
-                        rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
-                      }
-                    >
-                      <i className="fas fa-user-edit" />
-                    </Button>
-                  )}
-
-                  {permissions && permissions.includes("delete") && (
-                    <Button
-                      className="btn-sm pull-right"
-                      color="danger"
-                      type="button"
-                      key={"delete" + i + 1}
-                    >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => handleDelete(res[i]._id)}
-                      >
-                        <i className="fas fa-trash" />
-                      </Popconfirm>
-                    </Button>
-                  )}
-                </h5>
-              ),
-            });
-          }
-          setClassList(data);
-          setLoading(true);
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error(fetchingClassError);
-        });
-    };
     getAllClasses();
   }, [reload, checked]);
+
+  const getAllClasses = async () => {
+    try {
+      const res = await allClass(user._id, user.school, token);
+
+      // console.log("allClass", res);
+      dispatch(setClass(res));
+      const data = [];
+      for (let i = 0; i < res.length; i++) {
+        await data.push({
+          key: i,
+          name: res[i].name,
+          abbreviation: res[i].abbreviation,
+          action: (
+            <h5 key={i + 1} className="mb-0">
+              {permission1 && permission1.includes("edit".trim()) && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() =>
+                    rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
+                  }
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
+              )}
+
+              {permission1 && permission1.includes("delete".trim()) && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => handleDelete(res[i]._id)}
+                  >
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
+              )}
+            </h5>
+          ),
+        });
+      }
+      setClassList(data);
+      setLoading(true);
+    } catch (err) {
+      console.log(err);
+      toast.error(fetchingClassError);
+      setLoading(true)
+    }
+  };
 
   const handleDelete = async (classId) => {
     const { user, token } = isAuthenticated();
     try {
+      setLoading(true);
       await deleteClass(classId, user._id, token);
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
+      setChecked(!checked);
+      setLoading(false);
       toast.success(deleteClassSuccess);
     } catch (err) {
       toast.error(deleteClassError);
+      setLoading(false);
     }
   };
 
@@ -164,7 +175,7 @@ const AddClass = () => {
     value.map((items) => {
       b.push([items.value, items.label]);
     });
-    console.log("b", b);
+    // console.log("b", b);
     formData.set("class", JSON.stringify(b));
   };
 
@@ -184,31 +195,31 @@ const AddClass = () => {
   };
 
   const handleEdit = async () => {
-    console.log("inside");
+    // console.log("inside");
     try {
       const { user, token } = isAuthenticated();
       formData.set("name", editClassName);
       formData.set("abbreviation", editClassAbv);
+      setLoading(true);
       const updatedClass = await updateClass(
         classId,
         user._id,
         token,
         formData
       );
-      console.log("updateClass", updatedClass);
+      // console.log("updateClass", updatedClass);
       if (updatedClass.err) {
+        setLoading(false);
         return toast.error(updatedClass.err);
       } else {
         setEditing(false);
         toast.success(updateClassSuccess);
-        if (checked === false) {
-          setChecked(true);
-        } else {
-          setChecked(false);
-        }
+        setChecked(!checked);
+        setLoading(false);
       }
     } catch (err) {
       toast.error(updateClassError);
+      setLoading(false);
     }
   };
 
@@ -297,6 +308,7 @@ const AddClass = () => {
       }
     });
     try {
+      setAddLoading(true);
       await addClass(user._id, token, formData);
       setClassData({
         name: "",
@@ -304,9 +316,11 @@ const AddClass = () => {
         abbreviation: "",
       });
       toast.success(addClassSuccess);
+      setAddLoading(false);
       setReload(true);
     } catch (err) {
       toast.error(addClassError);
+      setAddLoading(false);
     }
   };
 
@@ -342,90 +356,95 @@ const AddClass = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {permissions && permissions.includes("add") && (
-            <Col lg="4">
-              <div className="card-wrapper">
-                <Card>
-                  <Row>
-                    <Col className="d-flex justify-content-center mt-3 ml-4">
-                      <form>
-                        <input
-                          type={"file"}
-                          id={"csvFileInput"}
-                          accept={".csv"}
-                          onChange={handleOnChange}
-                        />
-
-                        <Button
-                          onClick={(e) => {
-                            handleOnSubmit(e);
-                          }}
-                          color="primary"
-                          className="mt-3"
-                        >
-                          IMPORT CSV
-                        </Button>
-                      </form>
-                    </Col>
-                  </Row>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Class
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Class"
-                            type="text"
-                            onChange={handleChange("name")}
-                            value={classData.name}
-                            required
+          <Col lg="4">
+            {!addLoading ? (
+              permissions &&
+              permissions.includes("add") && (
+                <div className="card-wrapper">
+                  <Card>
+                    <Row>
+                      <Col className="d-flex justify-content-center mt-3 ml-4">
+                        <form>
+                          <input
+                            type={"file"}
+                            id={"csvFileInput"}
+                            accept={".csv"}
+                            onChange={handleOnChange}
                           />
-                        </Col>
-                      </Row>
 
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
+                          <Button
+                            onClick={(e) => {
+                              handleOnSubmit(e);
+                            }}
+                            color="primary"
+                            className="mt-3"
                           >
-                            Class Abbreviation
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Class Abbreviation"
-                            type="text"
-                            onChange={handleChange("abbreviation")}
-                            value={classData.abbreviation}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            width: "100%",
-                          }}
-                        >
-                          <Button color="primary" type="submit">
-                            Submit
+                            IMPORT CSV
                           </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
-          )}
+                        </form>
+                      </Col>
+                    </Row>
+                    <Form onSubmit={handleFormChange} className="mb-4">
+                      <CardBody>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Class
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Class"
+                              type="text"
+                              onChange={handleChange("name")}
+                              value={classData.name}
+                              required
+                            />
+                          </Col>
+                        </Row>
+
+                        <Row className="mt-4">
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Class Abbreviation
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Class Abbreviation"
+                              type="text"
+                              onChange={handleChange("abbreviation")}
+                              value={classData.abbreviation}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              width: "100%",
+                            }}
+                          >
+                            <Button color="primary" type="submit">
+                              Submit
+                            </Button>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                    </Form>
+                  </Card>
+                </div>
+              )
+            ) : (
+              <Loader />
+            )}
+          </Col>
 
           <Col>
             <div className="card-wrapper">
@@ -456,14 +475,13 @@ const AddClass = () => {
                     </>
                   ) : (
                     <Table
-                    style={{ whiteSpace: "pre" }}
-                    columns={columns}
-                    dataSource={classList}
-                  
-                    pagination={{
-                      pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
-                      showSizeChanger: true,
-                    }}
+                      style={{ whiteSpace: "pre" }}
+                      columns={columns}
+                      dataSource={classList}
+                      pagination={{
+                        pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                        showSizeChanger: true,
+                      }}
                     />
                   )}
                 </CardBody>

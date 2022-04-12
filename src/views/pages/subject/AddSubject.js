@@ -48,7 +48,8 @@ const AddSubject = () => {
   const [groupName, setGroupName] = useState("");
   const [file, setFile] = useState();
   const [view, setView] = useState(0);
-
+  const [addLoading, setAddLoading] = useState(false);
+  const [permissions, setPermissions] = useState([])
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
@@ -72,13 +73,13 @@ const AddSubject = () => {
     content: () => componentRef.current,
   });
 
-  let permissions;
+
   useEffect(() => {
     if (user.permissions["Class, section and subject master"]) {
-      permissions = user.permissions["Class, section and subject master"];
-      console.log(permissions);
+    let  permission1 = user.permissions["Class, section and subject master"];
+      setPermissions(permission1)
     }
-  }, []);
+  }, [checked]);
 
   useEffect(() => {
     getAllClasses();
@@ -114,29 +115,28 @@ const AddSubject = () => {
 
   //Delete Subject
   const handleDelete = async (subjectId) => {
-    console.log("delete");
+    // console.log("delete");
     const { user, token } = isAuthenticated();
     try {
+      setLoading(true);
       await deleteSubject(subjectId, user._id, token);
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
+     setChecked(!checked)
+     setLoading(false);
     } catch (err) {
       toast.error("Something Went Wrong!");
+      setLoading(false);
     }
   };
 
   const rowHandler = (id, name) => {
-    console.log(id);
+    // console.log(id);
     setEditing(true);
     setEditSubjectName(name);
     setSubjectId(id);
   };
 
   const handleChangeSubject = (index, event) => {
-    console.log(index, event.target.value);
+    // console.log(index, event.target.value);
     const values = [...inputFields];
     values[index][event.target.name] = event.target.value;
     setInputFields(values);
@@ -147,25 +147,25 @@ const AddSubject = () => {
     try {
       const { user, token } = isAuthenticated();
       formData.set("name", editSubjectName);
+      setLoading(true);
       const updatedSubject = await updateSubject(
         subjectId,
         user._id,
         token,
         formData
       );
-      console.log("updateSubject", updatedSubject);
+      // console.log("updateSubject", updatedSubject);
       if (updatedSubject.err) {
+        setLoading(false);
         return toast.error(updatedSubject.err);
       } else {
         setEditing(false);
-        if (checked === false) {
-          setChecked(true);
-        } else {
-          setChecked(false);
-        }
+       setChecked(!checked)
+       setLoading(false);
       }
     } catch (err) {
       toast.error(err);
+      setLoading(false);
     }
   };
 
@@ -177,7 +177,7 @@ const AddSubject = () => {
 
   const handleFormChange = async (e) => {
     e.preventDefault();
-    console.log(inputFields);
+    // console.log(inputFields);
    
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
@@ -190,7 +190,7 @@ const AddSubject = () => {
         // console.log(inputFields[key].subjectName);
         list.push(inputFields[key].subjectName);
       }
-      console.log(list);
+      // console.log(list);
       formData.set("list", JSON.stringify(list));
     }
     
@@ -201,8 +201,10 @@ const AddSubject = () => {
     });
     
     try {
+      setAddLoading(true);
       const subject = await addSubject(user._id, token, formData);
       if (subject.err) {
+        setLoading(false);
         return toast.error(subject.err);
       }
       setSubjectData({
@@ -211,10 +213,12 @@ const AddSubject = () => {
         session: "",
       });
      setChecked(!checked)
+     setAddLoading(false);
       toast.success("Subject added successfully");
       setReload(true);
     } catch (err) {
       toast.error("Something Went Wrong");
+      setAddLoading(false);
     }
   };
 
@@ -339,13 +343,14 @@ const AddSubject = () => {
   const getAllClasses = () => {
     allSubjects(user._id, user.school, token)
       .then((res) => {
-        console.log("res", res);
+        setLoading(true);
+        // console.log("res", res);
         let data = [];
         let data1 = [];
 
         for (let i = 0; i < res.length; i++) {
           if (res[i].list.length > 0) {
-            console.log("here");
+            // console.log("here");
             data1.push({
               key: i,
               groupName: res[i].name,
@@ -422,7 +427,7 @@ const AddSubject = () => {
         }
         setSubjectList(data);
         setSubjectList1(data1);
-        setLoading(true);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -450,162 +455,165 @@ const AddSubject = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-          {/* {permissions && permissions.includes("add") && ( */}
-            <Col lg="4">
-              <div className="card-wrapper">
-                <Card>
-                  <Row>
-                    <Col className="d-flex justify-content-center mt-2 ml-4">
-                      <form>
-                        <input
-                          type={"file"}
-                          id={"csvFileInput"}
-                          accept={".csv"}
-                          onChange={handleOnChange}
-                        />
+          <Col lg="4">
+            
+          {
+          addLoading ?(<Loader />):( permissions && permissions.includes("add") && (
+            <div className="card-wrapper">
+              <Card>
+                <Row>
+                  <Col className="d-flex justify-content-center mt-2 ml-4">
+                    <form>
+                      <input
+                        type={"file"}
+                        id={"csvFileInput"}
+                        accept={".csv"}
+                        onChange={handleOnChange}
+                      />
 
-                        <Button
-                          onClick={(e) => {
-                            handleOnSubmit(e);
-                          }}
-                          color="primary"
-                          className="mt-2"
+                      <Button
+                        onClick={(e) => {
+                          handleOnSubmit(e);
+                        }}
+                        color="primary"
+                        className="mt-2"
+                      >
+                        IMPORT CSV
+                      </Button>
+                    </form>
+                  </Col>
+                </Row>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
                         >
-                          IMPORT CSV
-                        </Button>
-                      </form>
-                    </Col>
-                  </Row>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
+                          Select type
+                        </label>
+                        <Input
+                          id="exampleFormControlSelect3"
+                          type="select"
+                          // onChange={(e) => setType(e.target.value)}
+                          onChange={handleChange("type")}
+                          value={subjectData.type}
+                          required
+                        >
+                          <option value="" disabled selected>
                             Select type
-                          </label>
-                          <Input
-                            id="exampleFormControlSelect3"
-                            type="select"
-                            // onChange={(e) => setType(e.target.value)}
-                            onChange={handleChange("type")}
-                            value={subjectData.type}
-                            required
-                          >
-                            <option value="" disabled selected>
-                              Select type
-                            </option>
-                            <option>Single</option>
-                            <option>Group</option>
-                          </Input>
-                        </Col>
-                      </Row>
-                      {subjectData.type === "Single" && (
-                        <>
-                          <Row>
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Subject
-                              </label>
-                              <Input
-                                id="example4cols2Input"
-                                placeholder="Subject"
-                                type="text"
-                                onChange={handleChange("name")}
-                                value={subjectData.name}
-                                required
-                              />
-                            </Col>
-                          </Row>
-                          
-                        </>
-                      )}
-                      {subjectData.type === "Group" && (
-                        <>
-                          <Row>
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Group Name
-                              </label>
-                              <Input
-                                id="example4cols2Input"
-                                placeholder="Group Name"
-                                type="text"
-                                onChange={(e) => setGroupName(e.target.value)}
-                                value={groupName}
-                                required
-                              />
-                            </Col>
-                          </Row>
-                          <Row>
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Subject
-                              </label>
-                              {inputFields.map((inputField, index) => {
-                                return (
-                                  <div key={index}>
-                                    <Input
-                                      name="subjectName"
-                                      id="example4cols2Input"
-                                      placeholder="Subject"
-                                      type="text"
-                                      value={inputField.subjectName}
-                                      onChange={(event) =>
-                                        handleChangeSubject(index, event)
-                                      }
-                                      className="mb-2"
-                                    />
-                                  
-                                  </div>
-                                );
-                              })}
-                                <Button
-                                      color="primary"
-                                      style={{
-                                        height: "1rem",
-                                        width: "4rem",
-                                        fontSize: "0.5rem",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        marginTop: "0.7rem",
-                                        marginBottom: "0.7rem",
-                                      }}
-                                      onClick={handleAddFields}
-                                    >
-                                      Add
-                                    </Button>
-                            </Col>
-                          </Row>
-                         
-                        </>
-                      )}
-                      <Row className="mt-4">
-                        <Col
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          <Button color="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
+                          </option>
+                          <option>Single</option>
+                          <option>Group</option>
+                        </Input>
+                      </Col>
+                    </Row>
+                    {subjectData.type === "Single" && (
+                      <>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Subject
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Subject"
+                              type="text"
+                              onChange={handleChange("name")}
+                              value={subjectData.name}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        
+                      </>
+                    )}
+                    {subjectData.type === "Group" && (
+                      <>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Group Name
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Group Name"
+                              type="text"
+                              onChange={(e) => setGroupName(e.target.value)}
+                              value={groupName}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Subject
+                            </label>
+                            {inputFields.map((inputField, index) => {
+                              return (
+                                <div key={index}>
+                                  <Input
+                                    name="subjectName"
+                                    id="example4cols2Input"
+                                    placeholder="Subject"
+                                    type="text"
+                                    value={inputField.subjectName}
+                                    onChange={(event) =>
+                                      handleChangeSubject(index, event)
+                                    }
+                                    className="mb-2"
+                                  />
+                                
+                                </div>
+                              );
+                            })}
+                              <Button
+                                    color="primary"
+                                    style={{
+                                      height: "1rem",
+                                      width: "4rem",
+                                      fontSize: "0.5rem",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      marginTop: "0.7rem",
+                                      marginBottom: "0.7rem",
+                                    }}
+                                    onClick={handleAddFields}
+                                  >
+                                    Add
+                                  </Button>
+                          </Col>
+                        </Row>
+                       
+                      </>
+                    )}
+                    <Row className="mt-4">
+                      <Col
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+        ))
+         } 
             </Col>
-          {/* )} */}
           <Col>
             <div className="card-wrapper">
               <Card>
@@ -640,7 +648,7 @@ const AddSubject = () => {
                   >
                     Print
                   </Button>
-                  {!loading ? (
+                  {loading ? (
                     <Loader />
                   ) : (
                     <>

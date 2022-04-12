@@ -17,6 +17,7 @@ import {
   ModalFooter,
   Table,
 } from "reactstrap";
+import Loader from "components/Loader/Loader";
 import { Popconfirm, TimePicker } from "antd";
 import "./RolePermissions.css";
 import { isAuthenticated } from "api/auth";
@@ -25,6 +26,7 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { addRole, updateRole } from "api/rolesAndPermission";
 import { getAllRoles } from "api/rolesAndPermission";
 import { deleteRole } from "api/rolesAndPermission";
+import { toast, ToastContainer } from "react-toastify";
 
 function RolePermissions() {
   const [addRoleModal, setAddRoleModal] = React.useState(false);
@@ -46,9 +48,11 @@ function RolePermissions() {
     "Admin",
     "Field Engineers",
   ]);
+  const [mappingLoading, setMappingLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
   const [allRoles, setAllRoles] = useState([]);
   const [checked, setChecked] = useState(false);
-  console.log(roleName);
+  // console.log(roleName);
   const { user } = isAuthenticated();
   const [Permissions, setPermissions] = React.useState([
     "Add",
@@ -70,7 +74,7 @@ function RolePermissions() {
     "cnjdc",
     "jdnkjnc",
   ]);
-
+  const [permissions2, setPermissions2] = useState([]);
   const roleOption = [
     {
       value: "add",
@@ -102,35 +106,53 @@ function RolePermissions() {
   useEffect(() => {
     getAllRolesHandler();
     // setMappingRoleName(allRoles[0].name)
-  }, [reload]);
+  }, [reload, checked]);
+
+  let permission1 = [];
+  useEffect(() => {
+    // console.log(user);
+    if (user.permissions["Role and Permissions"]) {
+      permission1 = user.permissions["Role and Permissions"];
+      setPermissions2(permission1);
+      // console.log(permission1);
+    }
+  }, [checked]);
 
   const [reload, setReload] = useState(1);
   const addRoleHandler = async () => {
-    console.log(role);
+    // console.log(role);
     const formData = new FormData();
     formData.set("name", role);
     formData.set("school", user.school);
     try {
+      setAddLoading(false);
       const data = await addRole(user._id, formData);
-      console.log(data);
+      // console.log(data);
       setRole("");
       setAddRoleModal(false);
+      setAddLoading(false);
       setChecked(!checked);
     } catch (err) {
       console.log(err);
+      setAddLoading(false);
+      toast.error("Add role failed.");
     }
   };
 
   const getAllRolesHandler = async () => {
-    console.log(user);
+    // console.log(user);
     try {
+      setAddLoading(true);
       const data = await getAllRoles(user._id, user.school);
-      console.log(data);
+      // console.log(data);
       setAllRoles(data);
       setMappingRoleName(data[0].name);
       setMappingRoleId(data[0]._id);
+      setAddLoading(false);
     } catch (err) {
       console.log(err);
+      setAddLoading(false);
+      toast.error("Getting Roles failed");
     }
   };
 
@@ -144,24 +166,31 @@ function RolePermissions() {
     try {
       const formData = new FormData();
       formData.set("name", editRole);
+      setAddLoading(true);
       const data = await updateRole(user._id, editRoleId, formData);
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
       setEditRoleModal(false);
       setEditRole("");
       setEditRoleId("");
+      setAddLoading(false);
     } catch (err) {
+      setAddLoading(false);
       console.log(err);
+      toast.error("Edit Failed");
     }
   };
 
   const deleteRoleHandler = async (roleId) => {
     try {
+      setAddLoading(true);
       const data = await deleteRole(user._id, roleId);
-      console.log(data);
+      // console.log(data);
+      setAddLoading(false);
       setChecked(!checked);
     } catch (err) {
       console.log(err);
+      setAddLoading(false);
     }
   };
 
@@ -184,10 +213,10 @@ function RolePermissions() {
   };
 
   const managePermissonSubmit = async () => {
-    console.log(mappingRoleId);
-    console.log(mappingRoleMain);
+    // console.log(mappingRoleId);
+    // console.log(mappingRoleMain);
     let selectedRole = allRoles.find((role) => role._id === mappingRoleId);
-    console.log(selectedRole.name);
+    // console.log(selectedRole.name);
     try {
       const formData = new FormData();
       // formData.set("permissions", JSON.stringify(mappingPermissions.obj));
@@ -198,15 +227,20 @@ function RolePermissions() {
         temp.map((per) => permissionData.push(per.value));
         mappingRoleMain.permissions[key] = permissionData;
       }
-      console.log(mappingRoleMain.permissions)
+      // console.log(mappingRoleMain.permissions);
       formData.set("permissions", JSON.stringify(mappingRoleMain.permissions));
+      setMappingLoading(true);
       const data = await updateRole(user._id, mappingRoleId, formData);
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
       setManageModal(false);
       setMappingPermissions([]);
+      setMappingLoading(false);
+      toast.success("Permission Added successfully")
     } catch (err) {
       console.log(err);
+      setMappingLoading(false);
+      toast.error("Permission not Added ")
     }
   };
 
@@ -226,7 +260,7 @@ function RolePermissions() {
   };
 
   const handlePermissionChange = (name) => (value) => {
-    console.log(value);
+    // console.log(value);
     var data = mappingRoleMain;
     data.permissions[name] = value;
     setMappingRoleMain(data);
@@ -261,17 +295,34 @@ function RolePermissions() {
   return (
     <>
       <SimpleHeader name="Roles-Permissions" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Container className="mt--6" fluid>
         <Row>
-          <Col className="m-1">
-            <Button
-              color="primary"
-              type="button"
-              onClick={() => setManageModal(true)}
-            >
-              Manage Role Permissions Mapping
-            </Button>
-          </Col>
+          {permissions2 && permissions2.includes("edit") && (
+            <Col className="m-1">
+              <Button
+                color="primary"
+                type="button"
+                onClick={() => {
+                  setManageModal(true);
+                  setMappingRoleMain("");
+                }}
+              >
+                Manage Role Permissions Mapping
+              </Button>
+            </Col>
+          )}
         </Row>
         <Row className="d-flex justify-content-between">
           <Col lg="4">
@@ -279,13 +330,15 @@ function RolePermissions() {
               <CardHeader>
                 <div className="d-flex justify-content-between Role-Permissions">
                   <p>Manage Roles</p>
-                  <Button
-                    color="primary"
-                    type="button"
-                    onClick={() => setAddRoleModal(true)}
-                  >
-                    Add Roles
-                  </Button>
+                  {permissions2 && permissions2.includes("add") && (
+                    <Button
+                      color="primary"
+                      type="button"
+                      onClick={() => setAddRoleModal(true)}
+                    >
+                      Add Roles
+                    </Button>
+                  )}
                 </div>
               </CardHeader>
               <CardBody>
@@ -293,53 +346,55 @@ function RolePermissions() {
                   <p>Role Name</p>
                   <p>Actions</p>
                 </Col>
-                <Col md="6">
-                  <Input
-                    id="example4cols2Input"
-                    placeholder="Role Name"
-                    type="text"
-                    // onChange={handleChange("abbreviation")}
-                    required
-                  />
-                </Col>
 
-                <ListGroup className="m-1">
-                  {allRoles.map((role) => {
-                    return (
-                      <>
-                        <ListGroupItem>
-                          <Col className="d-flex justify-content-between">
-                            <div>{role.name}</div>
-                            <div className="d-flex justify-content-between">
-                              <Button
-                                className="btn-sm pull-right"
-                                color="primary"
-                                type="button"
-                                onClick={() =>
-                                  editRoleHandler(role.name, role._id)
-                                }
-                              >
-                                <i className="fas fa-user-edit" />
-                              </Button>
-                              <Button
-                                className="btn-sm pull-right"
-                                color="danger"
-                                type="button"
-                              >
-                                <Popconfirm
-                                  title="Sure to delete?"
-                                  onConfirm={() => deleteRoleHandler(role._id)}
-                                >
-                                  <i className="fas fa-trash" />
-                                </Popconfirm>
-                              </Button>
-                            </div>
-                          </Col>
-                        </ListGroupItem>
-                      </>
-                    );
-                  })}
-                </ListGroup>
+                {addLoading ? (
+                  <Loader />
+                ) : (
+                  <ListGroup className="m-1">
+                    {allRoles.map((role) => {
+                      return (
+                        <>
+                          <ListGroupItem>
+                            <Col className="d-flex justify-content-between">
+                              <div>{role.name}</div>
+                              <div className="d-flex justify-content-between">
+                                {permissions2 && permissions2.includes("edit") && (
+                                  <Button
+                                    className="btn-sm pull-right"
+                                    color="primary"
+                                    type="button"
+                                    onClick={() =>
+                                      editRoleHandler(role.name, role._id)
+                                    }
+                                  >
+                                    <i className="fas fa-user-edit" />
+                                  </Button>
+                                )}
+                                {permissions2 &&
+                                  permissions2.includes("delete") && (
+                                    <Button
+                                      className="btn-sm pull-right"
+                                      color="danger"
+                                      type="button"
+                                    >
+                                      <Popconfirm
+                                        title="Sure to delete?"
+                                        onConfirm={() =>
+                                          deleteRoleHandler(role._id)
+                                        }
+                                      >
+                                        <i className="fas fa-trash" />
+                                      </Popconfirm>
+                                    </Button>
+                                  )}
+                              </div>
+                            </Col>
+                          </ListGroupItem>
+                        </>
+                      );
+                    })}
+                  </ListGroup>
+                )}
               </CardBody>
             </Card>
           </Col>
@@ -547,52 +602,57 @@ function RolePermissions() {
               <span aria-hidden={true}>×</span>
             </button>
           </div>
-          {mappingRoleMain && mappingRoleMain !== "" && (
-            <>
-              <ModalBody>
-                <Table>
-                  <tbody>
-                    {user.module.map((module, index) => (
-                      <tr key={index + 12}>
-                        <td className="mt-4">{module}</td>
-                        <td>
-                          {mappingRoleMain.permissions &&
-                          mappingRoleMain.permissions[module] ? (
-                            <Select
-                              isMulti
-                              name="permissions"
-                              options={roleOption}
-                              value={mappingRoleMain.permissions[module]}
-                              onChange={handlePermissionChange(module)}
-                              className="basic-multi-select "
-                              classNamePrefix="select"
-                            />
-                          ) : (
-                            <Select
-                              isMulti
-                              name="permissions"
-                              options={roleOption}
-                              onChange={handlePermissionChange(module)}
-                              className="basic-multi-select "
-                              classNamePrefix="select"
-                            />
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="success"
-                  type="button"
-                  onClick={managePermissonSubmit}
-                >
-                  Submit
-                </Button>
-              </ModalFooter>
-            </>
+          {mappingLoading ? (
+            <Loader />
+          ) : (
+            mappingRoleMain &&
+            mappingRoleMain !== "" && (
+              <>
+                <ModalBody>
+                  <Table>
+                    <tbody>
+                      {user.module.map((module, index) => (
+                        <tr key={index + 12}>
+                          <td className="mt-4">{module}</td>
+                          <td>
+                            {mappingRoleMain.permissions &&
+                            mappingRoleMain.permissions[module] ? (
+                              <Select
+                                isMulti
+                                name="permissions"
+                                options={roleOption}
+                                value={mappingRoleMain.permissions[module]}
+                                onChange={handlePermissionChange(module)}
+                                className="basic-multi-select "
+                                classNamePrefix="select"
+                              />
+                            ) : (
+                              <Select
+                                isMulti
+                                name="permissions"
+                                options={roleOption}
+                                onChange={handlePermissionChange(module)}
+                                className="basic-multi-select "
+                                classNamePrefix="select"
+                              />
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="success"
+                    type="button"
+                    onClick={managePermissonSubmit}
+                  >
+                    Submit
+                  </Button>
+                </ModalFooter>
+              </>
+            )
           )}
         </Modal>
         {/* Add roles model */}

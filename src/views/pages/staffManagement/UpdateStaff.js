@@ -22,7 +22,7 @@ import { Country, State, City } from "country-state-city";
 import { updateStaffError } from "constants/errors";
 import { updateStaffSuccess } from "constants/success";
 import "./style.css";
-
+import Loader from "components/Loader/Loader";
 import { ToastContainer, toast } from "react-toastify";
 
 import { updateStaff } from "api/staff";
@@ -73,7 +73,7 @@ function UpdateStaff({ staffDetails }) {
 
   console.log("staff", staffData);
   const [formData] = useState(new FormData());
-
+  const [loading, setLoading] = useState(false);
   const [departments, setDeparments] = useState([]);
   // const [subject, setSubject] = useState([]);
   // console.log("sub", subject);
@@ -155,14 +155,18 @@ function UpdateStaff({ staffDetails }) {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     try {
+      setLoading(true);
       const resp = await updateStaff(staffData._id, user._id, formData);
       console.log(resp);
       if (resp.err) {
+        setLoading(false);
         return toast.error(resp.err);
       }
       toast.success(updateStaffSuccess);
       dispatch(setStaffEditing(false));
+      setLoading(false);
     } catch (err) {
+      setLoading(false);
       toast.error(updateStaffError);
     }
   };
@@ -264,650 +268,622 @@ function UpdateStaff({ staffDetails }) {
         theme="colored"
       />
       <Container className="mt--6 shadow-lg" fluid>
-        <Card className="mb-4 bg-transparent">
-          <CardHeader>
-            <Row className="d-flex justify-content-center">
-              <Col md="10">
-                <Stepper
-                  activeStep={step}
-                  styleConfig={{
-                    activeBgColor: "#e56813",
-                    completedBgColor: "#1cdc23",
-                    size: "3em",
-                  }}
-                >
-                  <Step label="Staff Member Details" />
-                  <Step label="Residential Details" />
-                  <Step label="Contact Details" />
-                  <Step label="Occupational Details" />
-                </Stepper>
-              </Col>
-            </Row>
-          </CardHeader>
-          {step === 0 && (
-            <Form onSubmit={handleFormChange} className="mb-4">
-              <CardBody>
-                <Row md="4" className="d-flex justify-content-center mb-4">
-                  <Col md="8">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example3cols2Input"
-                    >
-                      Upload Image
-                    </label>
-                    <div className="custom-file">
-                      <input
-                        className="custom-file-input"
-                        id="customFileLang"
-                        lang="en"
-                        type="file"
-                        // required
-                        onChange={handleFileChange("image")}
-                        accept="image/*"
-                      />
-                      <label
-                        className="custom-file-label"
-                        htmlFor="customFileLang"
-                      >
-                        Select file
-                      </label>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md="4">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
-                    >
-                      Date of Joining
-                    </Label>
-                    <Input
-                      id="example-date-input"
-                      type="date"
-                      onChange={handleChange("joining_date")}
-                      value={staffData.joining_date.slice(0, 10)}
-                      required
-                    />
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        First Name
-                      </label>
-                      <Input
-                        id="example4cols2Input"
-                        placeholder="First Name"
-                        type="text"
-                        onChange={handleChange("firstname")}
-                        value={staffData.firstname}
-                        required
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols3Input"
-                      >
-                        Last Name
-                      </label>
-                      <Input
-                        id="example4cols3Input"
-                        placeholder="Last Name"
-                        type="text"
-                        onChange={handleChange("lastname")}
-                        value={staffData.lastname}
-                        required
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md="4">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
-                    >
-                      DOB
-                    </Label>
-                    <Input
-                      id="example-date-input"
-                      type="date"
-                      onChange={handleChange("date_of_birth")}
-                      value={staffData.date_of_birth.slice(0, 10)}
-                      required
-                    />
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Gender
-                    </label>
-                    <Input
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={handleChange("gender")}
-                      value={staffData.gender}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Gender
-                      </option>
-                      <option>Male</option>
-                      <option>Female</option>
-                    </Input>
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Email
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Email"
-                      onChange={handleChange("email")}
-                      value={staffData.email}
-                      type="email"
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Contact Number
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Contact Number"
-                      type="number"
-                      onChange={handleChange("phone")}
-                      value={staffData.phone}
-                      required
-                    />
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Alternate Contact Number
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Alternate Contact Number"
-                      onChange={handleChange("alternate_phone")}
-                      value={staffData.alternate_phone}
-                      type="number"
-                      required
-                    />
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Blood Group
-                    </label>
-                    <Input
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={handleChange("bloodgroup")}
-                      value={staffData.bloodgroup}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Blood Group
-                      </option>
-                      <option>A+</option>
-                      <option>A-</option>
-                      <option>B+</option>
-                      <option>B-</option>
-                      <option>O+</option>
-                      <option>O-</option>
-                      <option>AB+</option>
-                      <option>AB-</option>
-                    </Input>
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Birth Place
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Birth Place"
-                      onChange={handleChange("birth_place")}
-                      value={staffData.birth_place}
-                      type="text"
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Caste
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Caste"
-                      type="text"
-                      onChange={handleChange("caste")}
-                      value={staffData.caste}
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Religion
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Religion"
-                      type="text"
-                      onChange={handleChange("religion")}
-                      value={staffData.religion}
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Mother Tongue
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Mother Tongue"
-                      type="text"
-                      onChange={handleChange("mother_tongue")}
-                      value={staffData.mother_tongue}
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4 float-right mr-4">
-                  <Button color="primary" type="submit">
-                    Next
-                  </Button>
-                </Row>
-              </CardBody>
-            </Form>
-          )}
-          {step === 1 && (
-            <Form onSubmit={handleFormChange} className="mb-4">
-              <CardBody>
-                <Row className="mb-4">
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Present Address
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Present Address"
-                      type="text"
-                      onChange={handleChange("present_address")}
-                      value={staffData.present_address}
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mb-4">
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Permanent Address
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Permanent Address"
-                      onChange={handleChange("permanent_address")}
-                      value={staffData.permanent_address}
-                      type="text"
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Pin Code
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Pin Code"
-                      onChange={handleChange("pincode")}
-                      value={staffData.pincode}
-                      type="number"
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Country
-                    </label>
-                    <Select
-                      id="country"
-                      name="country"
-                      label="country"
-                      options={updatedCountries}
-                      required
-                      value={cscd.country}
-                      onChange={handleCSCChange("country")}
-                    />
-                  </Col>
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      State
-                    </label>
-                    <Select
-                      id="state"
-                      name="state"
-                      label="state"
-                      options={updatedStates(
-                        cscd.country ? cscd.country.isoCode : null
-                      )}
-                      required
-                      value={cscd.state}
-                      onChange={handleCSCChange("state")}
-                    />
-                  </Col>
-                  <Col md="3">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      City
-                    </label>
-                    <Select
-                      id="city"
-                      name="city"
-                      label="city"
-                      options={
-                        cscd.state
-                          ? updatedCities(cscd.country.value, cscd.state.value)
-                          : updatedCities(null, null)
-                      }
-                      required
-                      value={cscd.city}
-                      onChange={handleCSCChange("city")}
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4 d-flex justify-content-between">
-                  <Button
-                    className="ml-4"
-                    color="primary"
-                    type="button"
-                    onClick={() => {
-                      setStep((step) => {
-                        return step - 1;
-                      });
-                      window.scrollTo(0, 0);
+        {loading ? (
+          <Loader />
+        ) : (
+          <Card className="mb-4 bg-transparent">
+            <CardHeader>
+              <Row className="d-flex justify-content-center">
+                <Col md="10">
+                  <Stepper
+                    activeStep={step}
+                    styleConfig={{
+                      activeBgColor: "#e56813",
+                      completedBgColor: "#1cdc23",
+                      size: "3em",
                     }}
                   >
-                    Previous
-                  </Button>
-                  <Button className="mr-4" color="primary" type="submit">
-                    Next
-                  </Button>
-                </Row>
-              </CardBody>
-            </Form>
-          )}
-          {step === 2 && (
-            <Form onSubmit={handleFormChange} className="mb-4">
-              <CardBody>
-                <Row>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols1Input"
-                    >
-                      Contact Person Name
-                    </label>
-                    <Input
-                      id="example4cols1Input"
-                      placeholder="Name"
-                      type="text"
-                      onChange={handleChange("contact_person_name")}
-                      value={staffData.contact_person_name}
-                      required
-                    />
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
+                    <Step label="Staff Member Details" />
+                    <Step label="Residential Details" />
+                    <Step label="Contact Details" />
+                    <Step label="Occupational Details" />
+                  </Stepper>
+                </Col>
+              </Row>
+            </CardHeader>
+            {step === 0 && (
+              <Form onSubmit={handleFormChange} className="mb-4">
+                <CardBody>
+                  <Row md="4" className="d-flex justify-content-center mb-4">
+                    <Col md="8">
                       <label
                         className="form-control-label"
-                        htmlFor="example4cols2Input"
+                        htmlFor="example3cols2Input"
                       >
-                        Relation
+                        Upload Image
                       </label>
-                      <Input
-                        id="example4cols2Input"
-                        placeholder="Relation"
-                        type="text"
-                        onChange={handleChange("contact_person_relation")}
-                        value={staffData.contact_person_relation}
-                        required
-                      />
-                    </FormGroup>
-                  </Col>
-                  <Col md="4">
-                    <FormGroup>
-                      <label
+                      <div className="custom-file">
+                        <input
+                          className="custom-file-input"
+                          id="customFileLang"
+                          lang="en"
+                          type="file"
+                          // required
+                          onChange={handleFileChange("image")}
+                          accept="image/*"
+                        />
+                        <label
+                          className="custom-file-label"
+                          htmlFor="customFileLang"
+                        >
+                          Select file
+                        </label>
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md="4">
+                      <Label
                         className="form-control-label"
-                        htmlFor="example4cols3Input"
+                        htmlFor="example-date-input"
                       >
-                        Contact Number
-                      </label>
+                        Date of Joining
+                      </Label>
                       <Input
-                        id="example4cols3Input"
-                        placeholder="Contact Number"
-                        onChange={handleChange("contact_person_phone")}
-                        value={staffData.contact_person_phone}
-                        type="number"
-                        required
-                      />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md="8">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Address
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Address"
-                      type="text"
-                      onChange={handleChange("contact_person_address")}
-                      value={staffData.contact_person_address}
-                      required
-                    />
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Pin Number
-                    </label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Pin Number"
-                      type="number"
-                      onChange={handleChange("contact_person_pincode")}
-                      value={staffData.contact_person_pincode}
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  {/* Change variable here */}
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Country
-                    </label>
-                    <Select
-                      id="country"
-                      name="country"
-                      label="country"
-                      options={updatedCountries}
-                      required
-                      value={cpcscd.contact_person_country}
-                      onChange={handlecpCSCChange("contact_person_country")}
-                    />
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      State
-                    </label>
-                    <Select
-                      id="state"
-                      name="state"
-                      label="state"
-                      options={updatedStates(
-                        cpcscd.contact_person_country
-                          ? cpcscd.contact_person_country.isoCode
-                          : null
-                      )}
-                      required
-                      value={cpcscd.contact_person_state}
-                      onChange={handlecpCSCChange("contact_person_state")}
-                    />
-                  </Col>
-                  <Col md="4">
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      City
-                    </label>
-                    <Select
-                      id="city"
-                      name="city"
-                      label="city"
-                      options={
-                        cpcscd.contact_person_state
-                          ? updatedCities(
-                              cpcscd.contact_person_country.value,
-                              cpcscd.contact_person_state.value
-                            )
-                          : updatedCities(null, null)
-                      }
-                      required
-                      value={cpcscd.contact_person_city}
-                      onChange={handlecpCSCChange("contact_person_city")}
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4 d-flex justify-content-between">
-                  <Button
-                    className="ml-4"
-                    color="primary"
-                    type="button"
-                    onClick={() => {
-                      setStep((step) => {
-                        return step - 1;
-                      });
-                      window.scrollTo(0, 0);
-                    }}
-                  >
-                    Previous
-                  </Button>
-                  <Button className="mr-4" color="primary" type="submit">
-                    Next
-                  </Button>
-                </Row>
-              </CardBody>
-            </Form>
-          )}
-          {step === 3 && (
-            <Form onSubmit={handleSubmitForm} className="mb-4">
-              <CardBody>
-                <Row>
-                  {staffData.job === undefined ? (
-                    <Col md="12">
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Salary
-                      </label>
-                      <Input
-                        id="example4cols2Input"
-                        placeholder="Salary"
-                        type="number"
-                        onChange={handleChange("salary")}
-                        value={staffData.salary}
+                        id="example-date-input"
+                        type="date"
+                        onChange={handleChange("joining_date")}
+                        value={staffData.joining_date.slice(0, 10)}
                         required
                       />
                     </Col>
-                  ) : (
-                    <>
-                      <Col md="6">
+                    <Col md="4">
+                      <FormGroup>
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
                         >
-                          Job
+                          First Name
                         </label>
                         <Input
                           id="example4cols2Input"
-                          placeholder="Salary"
+                          placeholder="First Name"
                           type="text"
-                          onChange={handleChange("job")}
-                          value={staffData.job}
+                          onChange={handleChange("firstname")}
+                          value={staffData.firstname}
                           required
                         />
-                      </Col>
-                      <Col md="6">
+                      </FormGroup>
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols3Input"
+                        >
+                          Last Name
+                        </label>
+                        <Input
+                          id="example4cols3Input"
+                          placeholder="Last Name"
+                          type="text"
+                          onChange={handleChange("lastname")}
+                          value={staffData.lastname}
+                          required
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md="4">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example-date-input"
+                      >
+                        DOB
+                      </Label>
+                      <Input
+                        id="example-date-input"
+                        type="date"
+                        onChange={handleChange("date_of_birth")}
+                        value={staffData.date_of_birth.slice(0, 10)}
+                        required
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        Gender
+                      </label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("gender")}
+                        value={staffData.gender}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Gender
+                        </option>
+                        <option>Male</option>
+                        <option>Female</option>
+                      </Input>
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Email
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Email"
+                        onChange={handleChange("email")}
+                        value={staffData.email}
+                        type="email"
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4">
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Contact Number
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Contact Number"
+                        type="number"
+                        onChange={handleChange("phone")}
+                        value={staffData.phone}
+                        required
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Alternate Contact Number
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Alternate Contact Number"
+                        onChange={handleChange("alternate_phone")}
+                        value={staffData.alternate_phone}
+                        type="number"
+                        required
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        Blood Group
+                      </label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("bloodgroup")}
+                        value={staffData.bloodgroup}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Blood Group
+                        </option>
+                        <option>A+</option>
+                        <option>A-</option>
+                        <option>B+</option>
+                        <option>B-</option>
+                        <option>O+</option>
+                        <option>O-</option>
+                        <option>AB+</option>
+                        <option>AB-</option>
+                      </Input>
+                    </Col>
+                  </Row>
+                  <Row className="mt-4">
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Birth Place
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Birth Place"
+                        onChange={handleChange("birth_place")}
+                        value={staffData.birth_place}
+                        type="text"
+                        required
+                      />
+                    </Col>
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Caste
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Caste"
+                        type="text"
+                        onChange={handleChange("caste")}
+                        value={staffData.caste}
+                        required
+                      />
+                    </Col>
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Religion
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Religion"
+                        type="text"
+                        onChange={handleChange("religion")}
+                        value={staffData.religion}
+                        required
+                      />
+                    </Col>
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Mother Tongue
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Mother Tongue"
+                        type="text"
+                        onChange={handleChange("mother_tongue")}
+                        value={staffData.mother_tongue}
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4 float-right mr-4">
+                    <Button color="primary" type="submit">
+                      Next
+                    </Button>
+                  </Row>
+                </CardBody>
+              </Form>
+            )}
+            {step === 1 && (
+              <Form onSubmit={handleFormChange} className="mb-4">
+                <CardBody>
+                  <Row className="mb-4">
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Present Address
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Present Address"
+                        type="text"
+                        onChange={handleChange("present_address")}
+                        value={staffData.present_address}
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mb-4">
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Permanent Address
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Permanent Address"
+                        onChange={handleChange("permanent_address")}
+                        value={staffData.permanent_address}
+                        type="text"
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4">
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Pin Code
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Pin Code"
+                        onChange={handleChange("pincode")}
+                        value={staffData.pincode}
+                        type="number"
+                        required
+                      />
+                    </Col>
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        Country
+                      </label>
+                      <Select
+                        id="country"
+                        name="country"
+                        label="country"
+                        options={updatedCountries}
+                        required
+                        value={cscd.country}
+                        onChange={handleCSCChange("country")}
+                      />
+                    </Col>
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        State
+                      </label>
+                      <Select
+                        id="state"
+                        name="state"
+                        label="state"
+                        options={updatedStates(
+                          cscd.country ? cscd.country.isoCode : null
+                        )}
+                        required
+                        value={cscd.state}
+                        onChange={handleCSCChange("state")}
+                      />
+                    </Col>
+                    <Col md="3">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        City
+                      </label>
+                      <Select
+                        id="city"
+                        name="city"
+                        label="city"
+                        options={
+                          cscd.state
+                            ? updatedCities(
+                                cscd.country.value,
+                                cscd.state.value
+                              )
+                            : updatedCities(null, null)
+                        }
+                        required
+                        value={cscd.city}
+                        onChange={handleCSCChange("city")}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4 d-flex justify-content-between">
+                    <Button
+                      className="ml-4"
+                      color="primary"
+                      type="button"
+                      onClick={() => {
+                        setStep((step) => {
+                          return step - 1;
+                        });
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      Previous
+                    </Button>
+                    <Button className="mr-4" color="primary" type="submit">
+                      Next
+                    </Button>
+                  </Row>
+                </CardBody>
+              </Form>
+            )}
+            {step === 2 && (
+              <Form onSubmit={handleFormChange} className="mb-4">
+                <CardBody>
+                  <Row>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols1Input"
+                      >
+                        Contact Person Name
+                      </label>
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={handleChange("contact_person_name")}
+                        value={staffData.contact_person_name}
+                        required
+                      />
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Relation
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Relation"
+                          type="text"
+                          onChange={handleChange("contact_person_relation")}
+                          value={staffData.contact_person_relation}
+                          required
+                        />
+                      </FormGroup>
+                    </Col>
+                    <Col md="4">
+                      <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols3Input"
+                        >
+                          Contact Number
+                        </label>
+                        <Input
+                          id="example4cols3Input"
+                          placeholder="Contact Number"
+                          onChange={handleChange("contact_person_phone")}
+                          value={staffData.contact_person_phone}
+                          type="number"
+                          required
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md="8">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Address
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Address"
+                        type="text"
+                        onChange={handleChange("contact_person_address")}
+                        value={staffData.contact_person_address}
+                        required
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Pin Number
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Pin Number"
+                        type="number"
+                        onChange={handleChange("contact_person_pincode")}
+                        value={staffData.contact_person_pincode}
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4">
+                    {/* Change variable here */}
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        Country
+                      </label>
+                      <Select
+                        id="country"
+                        name="country"
+                        label="country"
+                        options={updatedCountries}
+                        required
+                        value={cpcscd.contact_person_country}
+                        onChange={handlecpCSCChange("contact_person_country")}
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        State
+                      </label>
+                      <Select
+                        id="state"
+                        name="state"
+                        label="state"
+                        options={updatedStates(
+                          cpcscd.contact_person_country
+                            ? cpcscd.contact_person_country.isoCode
+                            : null
+                        )}
+                        required
+                        value={cpcscd.contact_person_state}
+                        onChange={handlecpCSCChange("contact_person_state")}
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
+                        City
+                      </label>
+                      <Select
+                        id="city"
+                        name="city"
+                        label="city"
+                        options={
+                          cpcscd.contact_person_state
+                            ? updatedCities(
+                                cpcscd.contact_person_country.value,
+                                cpcscd.contact_person_state.value
+                              )
+                            : updatedCities(null, null)
+                        }
+                        required
+                        value={cpcscd.contact_person_city}
+                        onChange={handlecpCSCChange("contact_person_city")}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4 d-flex justify-content-between">
+                    <Button
+                      className="ml-4"
+                      color="primary"
+                      type="button"
+                      onClick={() => {
+                        setStep((step) => {
+                          return step - 1;
+                        });
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      Previous
+                    </Button>
+                    <Button className="mr-4" color="primary" type="submit">
+                      Next
+                    </Button>
+                  </Row>
+                </CardBody>
+              </Form>
+            )}
+            {step === 3 && (
+              <Form onSubmit={handleSubmitForm} className="mb-4">
+                <CardBody>
+                  <Row>
+                    {staffData.job === undefined ? (
+                      <Col md="12">
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -923,32 +899,67 @@ function UpdateStaff({ staffDetails }) {
                           required
                         />
                       </Col>
-                    </>
-                  )}
-                </Row>
+                    ) : (
+                      <>
+                        <Col md="6">
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Job
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Salary"
+                            type="text"
+                            onChange={handleChange("job")}
+                            value={staffData.job}
+                            required
+                          />
+                        </Col>
+                        <Col md="6">
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Salary
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Salary"
+                            type="number"
+                            onChange={handleChange("salary")}
+                            value={staffData.salary}
+                            required
+                          />
+                        </Col>
+                      </>
+                    )}
+                  </Row>
 
-                <Row className="mt-4 d-flex justify-content-between">
-                  <Button
-                    className="ml-4"
-                    color="primary"
-                    type="button"
-                    onClick={() => {
-                      setStep((step) => {
-                        return step - 1;
-                      });
-                      window.scrollTo(0, 0);
-                    }}
-                  >
-                    Previous
-                  </Button>
-                  <Button className="mr-4" color="success" type="submit">
-                    Submit
-                  </Button>
-                </Row>
-              </CardBody>
-            </Form>
-          )}
-        </Card>
+                  <Row className="mt-4 d-flex justify-content-between">
+                    <Button
+                      className="ml-4"
+                      color="primary"
+                      type="button"
+                      onClick={() => {
+                        setStep((step) => {
+                          return step - 1;
+                        });
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      Previous
+                    </Button>
+                    <Button className="mr-4" color="success" type="submit">
+                      Submit
+                    </Button>
+                  </Row>
+                </CardBody>
+              </Form>
+            )}
+          </Card>
+        )}
       </Container>
     </>
   );

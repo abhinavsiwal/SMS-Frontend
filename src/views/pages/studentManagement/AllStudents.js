@@ -36,6 +36,7 @@ import PermissionsGate from "routeGuard/PermissionGate";
 
 import { setStudentEditing } from "store/reducers/student";
 import { SCOPES } from "routeGuard/permission-maps";
+import { Table } from "ant-table-extensions";
 
 const AllStudents = () => {
   const history = useHistory();
@@ -48,7 +49,7 @@ const AllStudents = () => {
   const [checked, setChecked] = useState(false);
   // Pagination
   const [currentItems, setCurrentItems] = useState(null);
-  console.log("currentItems", currentItems);
+  // console.log("currentItems", currentItems);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
   const [editing, setEditing] = useState(false);
@@ -59,111 +60,116 @@ const AllStudents = () => {
     const newOffset = (event.selected * itemsPerPage) % studentList.length;
     setItemOffset(newOffset);
   };
+  const [permissions, setPermissions] = useState([]);
   const [viewModal, setViewModal] = useState(false);
   const [studentDetails, setSudentDetails] = useState({});
   const componentRef = useRef();
+
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-
-  let permissions = [];
+  let permission1=[];
   useEffect(() => {
+    const {user} = isAuthenticated();
     if (user.permissions["Student Management"]) {
-      permissions = user.permissions["Student Management"];
-      console.log(permissions);
+     permission1 = user.permissions["Student Management"];
+      setPermissions(permission1);
+      // console.log(permissions);
     }
-  }, []);
+  }, [checked]);
   useEffect(() => {
-    const fetchStudents = async () => {
-      const endOffset = itemOffset + itemsPerPage;
-      const payload = { school: user.school };
-      const res = await allStudents(
-        user.school,
-        user._id,
-        token,
-        JSON.stringify(payload)
-      );
-      console.log("res", res);
-      if (res.err) {
-        return toast.error(res.err);
-      } else {
-        const data = [];
-        for (let i = 0; i < res.length; i++) {
-          data.push({
-            key: i,
-            sid: res[i].SID,
-            first_name: res[i].firstname,
-            last_name: res[i].lastname,
-            email: res[i].email,
-            phone: res[i].phone,
-            gender: res[i].gender,
-            dob: res[i].date_of_birth.split("T")[0].toString(),
-            class: "Class",
-            section: "Section",
-            roll: "Roll",
-            joining_date: res[i].joining_date.split("T")[0].toString(),
-            action: (
-              <h5 key={i + 1} className="mb-0">
-                {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
-                {permissions && permissions.includes("edit") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="primary"
-                    type="button"
-                    key={"edit" + i + 1}
-                    onClick={() => {
-                      updateStudentHandler(res[i]);
-                    }}
-                  >
-                    <i className="fas fa-user-edit" />
-                  </Button>
-                )}
-                {/* </Link> */}
-                {permissions && permissions.includes("edit") && (
-                  <Button
-                    className="btn-sm pull-right"
-                    color="danger"
-                    type="button"
-                    key={"delete" + i + 1}
-                  >
-                    <Popconfirm
-                      title="Sure to delete?"
-                      onConfirm={() => deleteStudentHandler(res[i]._id)}
-                    >
-                      <i className="fas fa-trash" />
-                    </Popconfirm>
-                  </Button>
-                )}
-                <Button
-                  className="btn-sm pull-right"
-                  color="success"
-                  type="button"
-                  key={"view" + i + 1}
-                  onClick={() => {
-                    setViewModal(true);
-                    setSudentDetails(res[i]);
-                  }}
-                >
-                  <i className="fas fa-user" />
-                </Button>
-              </h5>
-            ),
-          });
-        }
-        setStudentList(data);
-        setCurrentItems(data.slice(itemOffset, endOffset));
-        setPageCount(Math.ceil(data.length / itemsPerPage));
-        setLoading(true);
-      }
-    };
+   
     fetchStudents();
   }, [itemOffset, itemsPerPage, checked]);
+
+  const fetchStudents = async () => {
+    const endOffset = itemOffset + itemsPerPage;
+    const payload = { school: user.school };
+    const res = await allStudents(
+      user.school,
+      user._id,
+      token,
+      JSON.stringify(payload)
+    );
+    // console.log("res", res);
+    if (res.err) {
+      return toast.error(res.err);
+    } else {
+      const data = [];
+      for (let i = 0; i < res.length; i++) {
+        data.push({
+          key: i,
+          sid: res[i].SID,
+          first_name: res[i].firstname,
+          last_name: res[i].lastname,
+          email: res[i].email,
+          phone: res[i].phone,
+          gender: res[i].gender,
+          dob: res[i].date_of_birth.split("T")[0].toString(),
+          class: "Class",
+          section: "Section",
+          roll: "Roll",
+          joining_date: res[i].joining_date.split("T")[0].toString(),
+          action: (
+            <h5 key={i + 1} className="mb-0">
+              {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}
+              {permission1 && permission1.includes("edit") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="primary"
+                  type="button"
+                  key={"edit" + i + 1}
+                  onClick={() => {
+                    updateStudentHandler(res[i]);
+                  }}
+                >
+                  <i className="fas fa-user-edit" />
+                </Button>
+              )}
+              {/* </Link> */}
+              {permission1 && permission1.includes("delete") && (
+                <Button
+                  className="btn-sm pull-right"
+                  color="danger"
+                  type="button"
+                  key={"delete" + i + 1}
+                >
+                  <Popconfirm
+                    title="Sure to delete?"
+                    onConfirm={() => deleteStudentHandler(res[i]._id)}
+                  >
+                    <i className="fas fa-trash" />
+                  </Popconfirm>
+                </Button>
+              )}
+              <Button
+                className="btn-sm pull-right"
+                color="success"
+                type="button"
+                key={"view" + i + 1}
+                onClick={() => {
+                  setViewModal(true);
+                  setSudentDetails(res[i]);
+                }}
+              >
+                <i className="fas fa-user" />
+              </Button>
+            </h5>
+          ),
+        });
+      }
+      setStudentList(data);
+      setCurrentItems(data.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(data.length / itemsPerPage));
+      setLoading(true);
+    }
+  };
 
   const deleteStudentHandler = async (studentId) => {
     const { user } = isAuthenticated();
     try {
       const data = await deleteStudent(studentId, user._id);
-      console.log(data);
+      // console.log(data);
       if (checked === false) {
         setChecked(true);
       } else {
@@ -175,8 +181,8 @@ const AllStudents = () => {
   };
 
   const updateStudentHandler = (studentData) => {
-    console.log("Update Student");
-    console.log(studentData);
+    // console.log("Update Student");
+    // console.log(studentData);
     dispatch(setStudentEditing(true));
     setEditingData(studentData);
     // return <UpdateStudent studentDetails={studentData} />;
@@ -517,7 +523,7 @@ const AllStudents = () => {
           <SimpleHeader name="All Students" />
           <Container className="mt--6" fluid>
             <Card className="mb-4">
-              <CardHeader>
+              <CardHeader className="buttons-head">
                 <div>
                   <Button
                     color={`${view === 0 ? "warning" : "primary"}`}
@@ -538,20 +544,22 @@ const AllStudents = () => {
                     Grid View
                   </Button>
                 </div>
+                {permissions && permissions.includes("export") && (
+                  <Button
+                    color="primary"
+                    className="mb-2"
+                    onClick={handlePrint}
+                  >
+                    Print
+                  </Button>
+                )}
               </CardHeader>
               <CardBody>
-                <Button
-                  color="primary"
-                  className="mb-2"
-                  onClick={handlePrint}
-                  style={{ float: "right" }}
-                >
-                  Print
-                </Button>
                 {view === 0 ? (
                   <>
                     {loading && studentList ? (
-                      <div ref={componentRef}>
+                      permissions && permissions.includes("export") ? (
+                        <div ref={componentRef} style={{ overflowX: "auto" }}>
                         <AntTable
                           columns={columns}
                           data={studentList}
@@ -559,6 +567,21 @@ const AllStudents = () => {
                           exportFileName="StudentDetails"
                         />
                       </div>
+                      ):(
+                        <div ref={componentRef} style={{ overflowX: "auto" }}>
+                        <Table
+                          columns={columns}
+                          dataSource={studentList}
+                          pagination={{
+                            pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                            showSizeChanger: true,
+                          }}
+                          style={{ whiteSpace: "pre" }}
+                          // exportFileName="StudentDetails"
+                        />
+                      </div>
+                      )
+                    
                     ) : (
                       <Loader />
                     )}
@@ -701,77 +724,75 @@ const AllStudents = () => {
               </CardBody>
             </Card>
             <Modal
-                  className="modal-dialog-centered"
-                  isOpen={viewModal}
-                  toggle={() => setViewModal(false)}
+              className="modal-dialog-centered"
+              isOpen={viewModal}
+              toggle={() => setViewModal(false)}
+            >
+              <div className="modal-header">
+                <h6 className="modal-title" id="modal-title-default">
+                  Support Details
+                </h6>
+                <button
+                  aria-label="Close"
+                  className="close"
+                  data-dismiss="modal"
+                  type="button"
+                  onClick={() => setViewModal(false)}
                 >
-                  <div className="modal-header">
-                    <h6 className="modal-title" id="modal-title-default">
-                      Support Details
-                    </h6>
-                    <button
-                      aria-label="Close"
-                      className="close"
-                      data-dismiss="modal"
-                      type="button"
-                      onClick={() => setViewModal(false)}
-                    >
-                      <span aria-hidden={true}>×</span>
-                    </button>
-                  </div>
-                  <ModalBody>
-                    <Row>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">SID</h4>
-                        <span className="text-md">{studentDetails.SID}</span>
-                      </Col>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">First Name</h4>
-                        <span className="text-md">
-                          {studentDetails.firstname}
-                        </span>
-                      </Col>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Last Name</h4>
-                        <span className="text-md">
-                          {studentDetails.lastname}
-                        </span>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Email</h4>
-                        <span className="text-md">{studentDetails.email}</span>
-                      </Col>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Phone</h4>
-                        <span className="text-md">{studentDetails.phone}</span>
-                      </Col>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Gender</h4>
-                        <span className="text-md">{studentDetails.gender}</span>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Roll No.</h4>
-                        <span className="text-md">
-                          {studentDetails.roll_number}
-                        </span>
-                      </Col>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Aadhar Number</h4>
-                        <span className="text-md">{studentDetails.aadhar_number}</span>
-                      </Col>
-                      <Col align="center">
-                        <h4 className="mt-3 mb-1">Caste</h4>
-                        <span className="text-md">{studentDetails.caste}</span>
-                      </Col>
-                    </Row>
+                  <span aria-hidden={true}>×</span>
+                </button>
+              </div>
+              <ModalBody>
+                <Row>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">SID</h4>
+                    <span className="text-md">{studentDetails.SID}</span>
+                  </Col>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">First Name</h4>
+                    <span className="text-md">{studentDetails.firstname}</span>
+                  </Col>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Last Name</h4>
+                    <span className="text-md">{studentDetails.lastname}</span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Email</h4>
+                    <span className="text-md">{studentDetails.email}</span>
+                  </Col>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Phone</h4>
+                    <span className="text-md">{studentDetails.phone}</span>
+                  </Col>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Gender</h4>
+                    <span className="text-md">{studentDetails.gender}</span>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Roll No.</h4>
+                    <span className="text-md">
+                      {studentDetails.roll_number}
+                    </span>
+                  </Col>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Aadhar Number</h4>
+                    <span className="text-md">
+                      {studentDetails.aadhar_number}
+                    </span>
+                  </Col>
+                  <Col align="center">
+                    <h4 className="mt-3 mb-1">Caste</h4>
+                    <span className="text-md">{studentDetails.caste}</span>
+                  </Col>
+                </Row>
 
-                    <Row></Row>
-                  </ModalBody>
-                </Modal>
+                <Row></Row>
+              </ModalBody>
+            </Modal>
           </Container>
         </>
       ) : (
