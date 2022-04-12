@@ -19,7 +19,7 @@ export const sendRequest = (
   let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
   var token = encryption.toString(CryptoJS.enc.Utf8);
   
-  console.log(token);
+  // console.log(token);
   const headers = {
     "Content-Type": "multipart/form-data",
     Authorization: `Bearer ${token}`,
@@ -29,7 +29,7 @@ export const sendRequest = (
 
   return axios({ method: method, url: url, data: body, headers: headers })
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       return response;
     })
     .catch((error) => {
@@ -62,7 +62,7 @@ export const sendRequestWithJson = (
   body = {}, //default value for body
   method = "GET" // default method get
 ) => {
-  console.log(body);
+  // console.log(body);
 
   // e.preventDefault();
   let encryptedToken = JSON.parse(
@@ -73,7 +73,7 @@ export const sendRequestWithJson = (
   let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
   var token = encryption.toString(CryptoJS.enc.Utf8);
   
-  console.log(token);
+  // console.log(token);
   const headers = {
     "Content-Type": "application/json",
     Accept:"application/json",
@@ -81,7 +81,7 @@ export const sendRequestWithJson = (
   };
   return axios({ method: method, url: url, data: body, headers: headers })
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       return response;
     })
     .catch((error) => {
@@ -120,7 +120,7 @@ export const sendRequestWithoutAuth = (
   // e.preventDefault();
   return axios({ method: method, url: url, data: body })
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       return response;
     })
     .catch((error) => {
