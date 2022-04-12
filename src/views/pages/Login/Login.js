@@ -81,7 +81,7 @@ function Login() {
   const handleSubmit = async(e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log(username, password);
+    // console.log(username, password);
     await dispatch(login({ username, password }));
     setIsLoading(false);
   };

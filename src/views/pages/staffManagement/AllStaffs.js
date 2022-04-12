@@ -80,12 +80,12 @@ const [permissions, setPermissions] = useState([]);
     if (user.permissions["Staff Management"]) {
       permission1 = user.permissions["Staff Management"];
       setPermissions(permission1);
-      console.log(permissions);
+      // console.log(permissions);
     }
   }, [staffEditing]);
 
   const handleStaffDetails = (id) => {
-    console.log("id", id);
+    // console.log("id", id);
     setStaffId(id);
     setComponent(true);
   };
@@ -104,7 +104,7 @@ const [permissions, setPermissions] = useState([]);
         userDetails.userDetails.school,
         userDetails.userDetails._id
       );
-      console.log(data);
+      // console.log(data);
       const data1 = [];
       for (let i = 0; i < data.length; i++) {
         data1.push({
@@ -178,7 +178,7 @@ const [permissions, setPermissions] = useState([]);
   const deleteStaffHandler = async (staffId) => {
     try {
       const data = await deleteStaff(staffId, user._id);
-      console.log(data);
+      // console.log(data);
       if (checked === false) {
         setChecked(true);
       } else {
@@ -196,7 +196,7 @@ const [permissions, setPermissions] = useState([]);
   const updateStaff = async (staffDetails) => {
     // setEditing(true);
     dispatch(setStaffEditing(true));
-    console.log(staffDetails);
+    // console.log(staffDetails);
     setEditingData(staffDetails);
   };
 
