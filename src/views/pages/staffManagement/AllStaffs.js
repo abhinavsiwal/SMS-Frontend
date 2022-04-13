@@ -29,7 +29,7 @@ import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { deleteStaff } from "api/staff";
 import Loader from "components/Loader/Loader";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 import { Popconfirm } from "antd";
 import UpdateStaff from "./UpdateStaff";
 import { useSelector, useDispatch } from "react-redux";
@@ -530,6 +530,18 @@ const [permissions, setPermissions] = useState([]);
 
   return (
     <React.Fragment>
+        <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       {component ? (
         <Staffdetails data={stafId} />
       ) : (

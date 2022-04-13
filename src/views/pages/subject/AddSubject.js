@@ -73,10 +73,10 @@ const AddSubject = () => {
     content: () => componentRef.current,
   });
 
-
+  let permission1=[]
   useEffect(() => {
     if (user.permissions["Class, section and subject master"]) {
-    let  permission1 = user.permissions["Class, section and subject master"];
+    permission1 = user.permissions["Class, section and subject master"];
       setPermissions(permission1)
     }
   }, [checked]);
@@ -85,12 +85,6 @@ const AddSubject = () => {
     getAllClasses();
     getSession();
   }, [reload, checked]);
-
-  const roleOptions = [
-    { value: "Math", label: "Math" },
-    { value: "English", label: "English" },
-    { value: "Science", label: "Science" },
-  ];
 
   //Getting Session data
   const getSession = async () => {
@@ -201,10 +195,12 @@ const AddSubject = () => {
     });
     
     try {
+      setLoading(true);
       setAddLoading(true);
       const subject = await addSubject(user._id, token, formData);
       if (subject.err) {
         setLoading(false);
+        setAddLoading(false);
         return toast.error(subject.err);
       }
       setSubjectData({
@@ -214,11 +210,13 @@ const AddSubject = () => {
       });
      setChecked(!checked)
      setAddLoading(false);
-      toast.success("Subject added successfully");
+setLoading(false)
+     toast.success("Subject added successfully");
       setReload(true);
     } catch (err) {
       toast.error("Something Went Wrong");
       setAddLoading(false);
+      setLoading(false)
     }
   };
 
@@ -357,7 +355,7 @@ const AddSubject = () => {
               subjects: res[i].list,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                  {permissions && permissions.includes("edit") && (
+                  {permission1 && permission1.includes("edit") && (
                     <Button
                       className="btn-sm pull-right"
                       color="primary"
@@ -368,7 +366,7 @@ const AddSubject = () => {
                       <i className="fas fa-user-edit" />
                     </Button>
                    )} 
-                  {permissions && permissions.includes("delete") && (
+                  {permission1 && permission1.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
                       color="danger"
@@ -393,7 +391,7 @@ const AddSubject = () => {
               action: (
                 <h5 key={i + 1} className="mb-0">
                  
-                  {permissions && permissions.includes("edit") && (
+                  {permission1 && permission1.includes("edit") && (
                   <Button
                   className="btn-sm pull-right"
                   color="primary"
@@ -404,7 +402,7 @@ const AddSubject = () => {
                   <i className="fas fa-user-edit" />
                 </Button> 
                 )}
-                  {permissions && permissions.includes("delete") && (
+                  {permission1 && permission1.includes("delete") && (
                    <Button
                    className="btn-sm pull-right"
                    color="danger"

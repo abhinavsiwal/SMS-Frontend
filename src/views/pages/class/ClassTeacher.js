@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Container, Card, Table, Input } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import "./styles.css";
-import { allClass, assignClassTeacher,nonClassTeachers } from "api/class";
-import { toast,ToastContainer } from "react-toastify";
+import { allClass, assignClassTeacher, nonClassTeachers } from "api/class";
+import { toast, ToastContainer } from "react-toastify";
 import { isAuthenticated } from "api/auth";
-import { allStaffs,updateStaff1 } from "api/staff";
+import { allStaffs, updateStaff1 } from "api/staff";
 
 import {
   fetchingClassError,
@@ -33,17 +33,21 @@ const ClassTeacher = () => {
 
   useEffect(async () => {
     try {
+      setLoading(true);
       const classess = await allClass(user._id, user.school, token);
       // console.log("classes", classess);
       if (classess.err) {
+        setLoading(false);
         return toast.error(classess.err);
       }
       setClassList(classess);
       // setLoading(true);
       // toast.success(fetchingClassSuccess)
+      setLoading(false);
     } catch (err) {
       toast.error(fetchingClassError);
     }
+    setLoading(false);
 
     try {
       const { user, token } = isAuthenticated();
@@ -70,28 +74,37 @@ const ClassTeacher = () => {
     formData1.set("schoolClassTeacher", section._id);
     try {
       setLoading(true);
-      const data = await assignClassTeacher(section._id, user._id, token, formData);
+      const data = await assignClassTeacher(
+        section._id,
+        user._id,
+        token,
+        formData
+      );
       // console.log(data);
-      if(section.classTeacher){
+      if (section.classTeacher) {
         let formData1 = new FormData();
-        formData1.set("isClassTeacher",false);
-        const data1 = await updateStaff1(section.classTeacher._id, user._id, formData1);
+        formData1.set("isClassTeacher", false);
+        const data1 = await updateStaff1(
+          section.classTeacher._id,
+          user._id,
+          formData1
+        );
         // console.log(data1);
         let formData2 = new FormData();
-        formData2.set("schoolClassTeacher",section._id);
-        formData2.set("isClassTeacher",true)
+        formData2.set("schoolClassTeacher", section._id);
+        formData2.set("isClassTeacher", true);
         const data2 = await updateStaff1(staffId, user._id, formData2);
         // console.log(data2);
-      }else{
+      } else {
         let formData1 = new FormData();
-        formData1.set("isClassTeacher",true);
-        formData1.set("schoolClassTeacher",section._id);
+        formData1.set("isClassTeacher", true);
+        formData1.set("schoolClassTeacher", section._id);
         const data1 = await updateStaff1(staffId, user._id, formData1);
       }
-     
+
       toast.success(classTeacherAssignSuccess);
-      setChecked(!checked)
-      setLoading(false)
+      setChecked(!checked);
+      setLoading(false);
     } catch (err) {
       console.log(err);
       toast.error(classTeacherAssignError);
@@ -123,11 +136,15 @@ const ClassTeacher = () => {
                   <tr key={clas._id} className="teacher-table-row">
                     <td className="teacher-table-class">{clas.name}</td>
                     <tbody>
-                      {clas.section &&
+                      {clas.section ? (
                         clas.section.map((section) => {
                           return (
-                            <tr key={section._id} className="teacher-table-row">
-                              <td className="teacher-table-class">
+                            <tr
+                              key={section._id}
+                              className="teacher-table-row"
+                              style={{ marginLeft: "2rem" }}
+                            >
+                              <td className="teacher-table-class"  style={{ marginLeft: "2rem" }}>
                                 {section.name}
                               </td>
                               <td>
@@ -138,13 +155,13 @@ const ClassTeacher = () => {
                                   value={section.classTeacher}
                                 >
                                   {section.classTeacher ? (
-                                <option value="">
-                                  {section.classTeacher.firstname}{" "}
-                                  {section.classTeacher.secondname}{" "}
-                                </option>
-                              ) : (
-                                <option value="">Class Teacher</option>
-                              )}
+                                    <option value="">
+                                      {section.classTeacher.firstname}{" "}
+                                      {section.classTeacher.secondname}{" "}
+                                    </option>
+                                  ) : (
+                                    <option value="">Class Teacher</option>
+                                  )}
 
                                   {teacherList.map((tech, i) => (
                                     <option key={i} value={tech._id}>
@@ -155,7 +172,12 @@ const ClassTeacher = () => {
                               </td>
                             </tr>
                           );
-                        })}
+                        })
+                      ) : (
+                        <tr>
+                          <td>No Section</td>
+                        </tr>
+                      )}
                     </tbody>
                   </tr>
                 ))}

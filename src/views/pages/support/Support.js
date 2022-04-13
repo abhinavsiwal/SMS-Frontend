@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
@@ -33,6 +32,7 @@ function Support() {
     root_caused: "",
     description: "",
   });
+  const [addLoading, setAddLoading] = useState(false);
   const { user, token } = isAuthenticated();
   const [supportList, setSupportList] = useState([]);
   const [modalState, setModalState] = useState(false);
@@ -76,6 +76,7 @@ function Support() {
 
   useEffect(() => {
     const getAllSupports = async () => {
+      setLoading(true);
       allSupports(user._id, user.school, token)
         .then((res) => {
           const data = [];
@@ -105,11 +106,12 @@ function Support() {
             });
           }
           setSupportList(data);
-          setLoading(true);
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
           toast.error(fetchingSupportError);
+          setLoading(false);
         });
     };
     getAllSupports();
@@ -234,21 +236,21 @@ function Support() {
       description: "",
     });
     try {
+      setAddLoading(true);
       const resp = await support(user._id, token, formData);
       // console.log(resp);
-     
+
       if (resp.err) {
+        setAddLoading(false);
         return toast.error(resp.err);
       }
-     
-      if (checked === false) {
-        setChecked(true);
-      } else {
-        setChecked(false);
-      }
-    
+
+      setAddLoading(false);
+      setChecked(!checked);
+
       toast.success(addSupportSuccess);
     } catch (err) {
+      setAddLoading(false);
       toast.error(addSupportError);
     }
   };
@@ -269,7 +271,7 @@ function Support() {
       />
       <Container className="mt--6" fluid>
         <Row>
-        {/* {permissions && permissions.includes("add".trim()) && ( */}
+          {/* {permissions && permissions.includes("add".trim()) && ( */}
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
@@ -295,72 +297,79 @@ function Support() {
                     </form>
                   </Col>
                 </Row>
-                <Form  className="mb-4">
-                  <CardBody className="ml-4 mr-4">
-                    <Row>
-                      <label
-                        className="form-control-label"
-                        htmlFor="exampleFormControlSelect1"
-                      >
-                        Priority
-                      </label>
-                      <Input
-                        id="exampleFormControlSelect1"
-                        type="select"
-                        onChange={handleChange("priority")}
-                        value={supportData.priority}
-                        required
-                      >
-                        <option value="P1">P1 - Critical</option>
-                        <option value="P2">P2 - Medium</option>
-                        <option value="P3">P3 - Normal</option>
-                      </Input>
-                    </Row>
-                    <Row className="mt-4">
-                      <label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Root Caused
-                      </label>
-                      <Input
-                        id="example4cols2Input"
-                        placeholder="Root Caused"
-                        type="text"
-                        onChange={handleChange("root_caused")}
-                        value={supportData.root_caused}
-                        required
-                      />
-                    </Row>
-                    <Row className="mt-4">
-                      <label
-                        className="form-control-label"
-                        htmlFor="exampleFormControlTextarea1"
-                      >
-                        Description
-                      </label>
-                      <Input
-                        id="exampleFormControlTextarea1"
-                        rows="5"
-                        type="textarea"
-                        onChange={handleChange("description")}
-                        value={supportData.description}
-                        required
-                      />
-                    </Row>
-                    <Row className="mt-4">
-                      <Col style={{display:"flex",justifyContent:"center"}} >
-                      <Button color="primary" onClick={handleFormChange}>
-                        Submit
-                      </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
+                <Form className="mb-4" onSubmit={handleFormChange} >
+                  {addLoading ? (
+                    <Loader />
+                  ) : (
+                    <CardBody className="ml-4 mr-4">
+                      <Row>
+                        <label
+                          className="form-control-label"
+                          htmlFor="exampleFormControlSelect1"
+                        >
+                          Priority
+                        </label>
+                        <Input
+                          id="exampleFormControlSelect1"
+                          type="select"
+                          onChange={handleChange("priority")}
+                          value={supportData.priority}
+                          required
+                        >
+                          <option value="" >Select Priority</option>
+                          <option value="P1">P1 - Critical</option>
+                          <option value="P2">P2 - Medium</option>
+                          <option value="P3">P3 - Normal</option>
+                        </Input>
+                      </Row>
+                      <Row className="mt-4">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Root Caused
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Root Caused"
+                          type="text"
+                          onChange={handleChange("root_caused")}
+                          value={supportData.root_caused}
+                          required
+                        />
+                      </Row>
+                      <Row className="mt-4">
+                        <label
+                          className="form-control-label"
+                          htmlFor="exampleFormControlTextarea1"
+                        >
+                          Description
+                        </label>
+                        <Input
+                          id="exampleFormControlTextarea1"
+                          rows="5"
+                          type="textarea"
+                          onChange={handleChange("description")}
+                          value={supportData.description}
+                          required
+                        />
+                      </Row>
+                      <Row className="mt-4">
+                        <Col
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <Button color="primary" >
+                            Submit
+                          </Button>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  )}
                 </Form>
               </Card>
             </div>
           </Col>
-        {/* )} */}
+          {/* )} */}
           <Col>
             <div className="card-wrapper">
               <Card>
@@ -373,7 +382,7 @@ function Support() {
                   >
                     Print
                   </Button>
-                  {loading && supportList ? (
+                  {!loading && supportList ? (
                     <div ref={componentRef}>
                       <AntTable
                         columns={columns}

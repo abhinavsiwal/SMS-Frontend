@@ -25,11 +25,12 @@ import {
 } from "reactstrap";
 // core components
 
+import Loader from "components/Loader/Loader";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { schoolProfile, editProfile } from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 import { fetchingSchoolProfileError } from "constants/errors";
 import { updateSchoolError } from "constants/errors";
 import { updateSchoolSuccess } from "constants/success";
@@ -59,13 +60,13 @@ function SchoolProfile() {
   });
 
   const [permissions, setPermissions] = useState([]);
-
+  const [editLoading, setEditLoading] = useState(false);
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user.permissions["School Profile Module"]) {
-      let  permission1 = user.permissions["School Profile Module"];
+      let permission1 = user.permissions["School Profile Module"];
       setPermissions(permission1);
-      console.log(permissions);
+      // console.log(permissions);
     }
   }, []);
 
@@ -75,9 +76,10 @@ function SchoolProfile() {
 
   const getSchoolDetails = async () => {
     try {
+      setLoading(true);
       const { data } = await schoolProfile(user.school, user._id);
-      console.log(user);
-      console.log(data);
+      // console.log(user);
+      // console.log(data);
       setSchoolDetails(data);
       setEditSchoolProfile({
         ...editSchoolProfile,
@@ -94,8 +96,10 @@ function SchoolProfile() {
         fax_no: "",
         affiliate_board: data.affiliate_board,
       });
+      setLoading(false);
     } catch (err) {
       console.log(err);
+      setLoading(false);
       toast.error(fetchingSchoolProfileError);
     }
   };
@@ -105,8 +109,9 @@ function SchoolProfile() {
     setEditSchoolProfile({ ...editSchoolProfile, [name]: event.target.value });
   };
 
-  const handleEdit = async () => {
-    console.log(editSchoolProfile);
+  const handleEdit = async (e) => {
+    e.preventDefault();
+    // console.log(editSchoolProfile);
 
     formData.set("schoolname", editSchoolProfile.school_name);
     formData.set("abbreviation", editSchoolProfile.abbreviation);
@@ -121,17 +126,16 @@ function SchoolProfile() {
     formData.set("telephone", editSchoolProfile.telephone);
 
     try {
-
-      setLoading(true);
+      setEditLoading(true);
       const data = await editProfile(user.school, user._id, formData);
-      console.log(data);
+      // console.log(data);
       setEditing(false);
       setChecked(!checked);
-      setLoading(false);
-      toast.success(updateSchoolSuccess)
+      setEditLoading(false);
+      toast.success(updateSchoolSuccess);
     } catch (err) {
       console.log(err);
-      setLoading(false);
+      setEditLoading(false);
       toast.error(updateSchoolError);
     }
   };
@@ -139,6 +143,18 @@ function SchoolProfile() {
   return (
     <>
       <SimpleHeader name="School Profile" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <Modal
         style={{ height: "75vh" }}
         isOpen={editing}
@@ -160,434 +176,432 @@ function SchoolProfile() {
             <span aria-hidden={true}>×</span>
           </button>
         </div>
-        <ModalBody>
-          <Form>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  School Name
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("school_name")}
-                  value={editSchoolProfile.school_name}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Abbreviation
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("abbreviation")}
-                  value={editSchoolProfile.abbreviation}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Affiliated Board
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("affialiate_board")}
-                  value={editSchoolProfile.affiliate_board}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  School Address
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("school_address")}
-                  value={editSchoolProfile.school_address}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Pin Code
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("pin_code")}
-                  value={editSchoolProfile.pin_code}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Country
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("country")}
-                  value={editSchoolProfile.country}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  State
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("state")}
-                  value={editSchoolProfile.state}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  City
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("city")}
-                  value={editSchoolProfile.city}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  SchoolEmail
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("school_email")}
-                  value={editSchoolProfile.school_email}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Primary Contact No
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("primary_contact_no")}
-                  value={editSchoolProfile.primary_contact_no}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Telephone
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("telephone")}
-                  value={editSchoolProfile.telephone}
-                  required
-                />
-              </Col>
-              <Col>
-                <Label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Fax No
-                </Label>
-                <Input
-                  id="example4cols2Input"
-                  placeholder="Class"
-                  type="text"
-                  onChange={handleChange("fax_no")}
-                  value={editSchoolProfile.fax_no}
-                  required
-                />
-              </Col>
-            </Row>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="success" type="button" onClick={handleEdit}>
-            Save changes
-          </Button>
-        </ModalFooter>
-      </Modal>
-      <Container className="mt--6" fluid>
-        <Row>
-          <Col lg="4">
-            <div className="card-wrapper">
-              <Card>
-                <Col align="center">
-                  <CardImg
-                    alt="..."
-                    src="https://trancaes.files.wordpress.com/2015/09/school-logo-new.jpg"
-                    top
-                    className="p-4"
-                    style={{ width: "80%", height: "100%" }}
+        {editLoading ? (
+          <Loader />
+        ) : (
+          <ModalBody>
+            <Form onSubmit={handleEdit} >
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    School Name
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("school_name")}
+                    value={editSchoolProfile.school_name}
+                    required
                   />
                 </Col>
-                <CardBody className="mt-0">
-                  <Row>
-                    <Col align="center">
-                      <h4 className="mt-0 mb-1">School Name</h4>
-                      <span className="text-md">
-                        {schoolDetails.schoolname}
-                      </span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col align="center">
-                      <h4 className="mt-3 mb-1">Abbreviation</h4>
-                      <span className="text-md">
-                        {schoolDetails.abbreviation}
-                      </span>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col align="center">
-                      <h4 className="mt-3 mb-1">Affiliated Board</h4>
-                      <span className="text-md">
-                        {schoolDetails.affiliateBoard}
-                      </span>
-                    </Col>
-                  </Row>
-                </CardBody>
-              </Card>
-            </div>
-          </Col>
-          <Col>
-            <div className="card-wrapper">
-              <Card>
-                <CardHeader>
-                  <Row>
-                    <Col md="10">
-                      <Nav pills style={{ cursor: "pointer" }}>
-                        <NavItem>
-                          <NavLink
-                            className={activeTab === "1" ? "active" : ""}
-                            onClick={() => setActiveTab("1")}
-                          >
-                            Details
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink
-                            className={activeTab === "2" ? "active" : ""}
-                            onClick={() => setActiveTab("2")}
-                          >
-                            Contact
-                          </NavLink>
-                        </NavItem>
-                      </Nav>
-                    </Col>
-                    {permissions && permissions.includes("edit") && (
-                      <Col className="text-right">
-                        <Button
-                          className="btn-icon"
-                          color="primary"
-                          type="button"
-                          onClick={() => setEditing(true)}
-                        >
-                          <span className="btn-inner--icon">
-                            <FaEdit />
-                          </span>
-                        </Button>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Abbreviation
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("abbreviation")}
+                    value={editSchoolProfile.abbreviation}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Affiliated Board
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("affiliate_board")}
+                    value={editSchoolProfile.affiliate_board}
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    School Address
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("school_address")}
+                    value={editSchoolProfile.school_address}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Pin Code
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("pin_code")}
+                    value={editSchoolProfile.pin_code}
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Country
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("country")}
+                    value={editSchoolProfile.country}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    State
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("state")}
+                    value={editSchoolProfile.state}
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    City
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("city")}
+                    value={editSchoolProfile.city}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    SchoolEmail
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("school_email")}
+                    value={editSchoolProfile.school_email}
+                    required
+                  />
+                </Col>
+                <Col>
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Primary Contact No
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("primary_contact_no")}
+                    value={editSchoolProfile.primary_contact_no}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Telephone
+                  </Label>
+                  <Input
+                    id="example4cols2Input"
+                    placeholder="Class"
+                    type="text"
+                    onChange={handleChange("telephone")}
+                    value={editSchoolProfile.telephone}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Button
+                color="success"
+                type="submit"
+                className="mt-2 mb-2"
+                style={{ float: "right" }}
+                
+              >
+                Save changes
+              </Button>
+            </Form>
+          </ModalBody>
+        )}
+      </Modal>
+      <Container className="mt--6" fluid>
+        {loading ? (
+          <Loader />
+        ) : (
+          <Row>
+            <Col lg="4">
+              <div className="card-wrapper">
+                <Card>
+                  <Col align="center">
+                    <CardImg
+                      alt="..."
+                      src="https://trancaes.files.wordpress.com/2015/09/school-logo-new.jpg"
+                      top
+                      className="p-4"
+                      style={{ width: "80%", height: "100%" }}
+                    />
+                  </Col>
+                  <CardBody className="mt-0">
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-0 mb-1">School Name</h4>
+                        <span className="text-md">
+                          {schoolDetails.schoolname}
+                        </span>
                       </Col>
-                     )}
-                  </Row>
-                </CardHeader>
-                <CardBody>
-                  <TabContent activeTab={activeTab}>
-                    <TabPane tabId="1">
-                      <ListGroup flush>
-                        <Row>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    School Address
-                                  </h5>
-                                  <small>{schoolDetails.address}</small>
+                    </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Abbreviation</h4>
+                        <span className="text-md">
+                          {schoolDetails.abbreviation}
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Affiliated Board</h4>
+                        <span className="text-md">
+                          {schoolDetails.affiliate_board}
+                        </span>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Card>
+              </div>
+            </Col>
+            <Col>
+              <div className="card-wrapper">
+                <Card>
+                  <CardHeader>
+                    <Row>
+                      <Col md="10">
+                        <Nav pills style={{ cursor: "pointer" }}>
+                          <NavItem>
+                            <NavLink
+                              className={activeTab === "1" ? "active" : ""}
+                              onClick={() => setActiveTab("1")}
+                            >
+                              Details
+                            </NavLink>
+                          </NavItem>
+                          <NavItem>
+                            <NavLink
+                              className={activeTab === "2" ? "active" : ""}
+                              onClick={() => setActiveTab("2")}
+                            >
+                              Contact
+                            </NavLink>
+                          </NavItem>
+                        </Nav>
+                      </Col>
+                      {permissions && permissions.includes("edit") && (
+                        <Col className="text-right">
+                          <Button
+                            className="btn-icon"
+                            color="primary"
+                            type="button"
+                            onClick={() => setEditing(true)}
+                          >
+                            <span className="btn-inner--icon">
+                              <FaEdit />
+                            </span>
+                          </Button>
+                        </Col>
+                      )}
+                    </Row>
+                  </CardHeader>
+                  <CardBody>
+                    <TabContent activeTab={activeTab}>
+                      <TabPane tabId="1">
+                        <ListGroup flush>
+                          <Row>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      School Address
+                                    </h5>
+                                    <small>{schoolDetails.address}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col md="4">
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Pin Code
-                                  </h5>
-                                  <small>{schoolDetails.pincode}</small>
+                              </ListGroupItem>
+                            </Col>
+                            <Col md="4">
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Pin Code
+                                    </h5>
+                                    <small>{schoolDetails.pincode}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
-                        <Row className="mt-4">
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Country
-                                  </h5>
-                                  <small>{schoolDetails.country}</small>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                          <Row className="mt-4">
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Country
+                                    </h5>
+                                    <small>{schoolDetails.country}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">City</h5>
-                                  <small>{schoolDetails.city}</small>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      City
+                                    </h5>
+                                    <small>{schoolDetails.city}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    State
-                                  </h5>
-                                  <small>{schoolDetails.state}</small>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      State
+                                    </h5>
+                                    <small>{schoolDetails.state}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
-                      </ListGroup>
-                    </TabPane>
-                    <TabPane tabId="2">
-                      <ListGroup flush>
-                        <Row>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    School Email
-                                  </h5>
-                                  <small>{schoolDetails.email}</small>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                        </ListGroup>
+                      </TabPane>
+                      <TabPane tabId="2">
+                        <ListGroup flush>
+                          <Row>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      School Email
+                                    </h5>
+                                    <small>{schoolDetails.email}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Primary Contact Number
-                                  </h5>
-                                  <small>+91 {schoolDetails.phone}</small>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Primary Contact Number
+                                    </h5>
+                                    <small>+91 {schoolDetails.phone}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
-                        <Row className="mt-4">
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Telephone
-                                  </h5>
-                                  <small>{schoolDetails.telephone}</small>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                          <Row className="mt-4">
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Telephone
+                                    </h5>
+                                    <small>{schoolDetails.telephone}</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Fax No.
-                                  </h5>
-                                  <small>+91 123456789</small>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Fax No.
+                                    </h5>
+                                    <small>+91 123456789</small>
+                                  </div>
                                 </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
-                      </ListGroup>
-                    </TabPane>
-                  </TabContent>
-                </CardBody>
-              </Card>
-            </div>
-          </Col>
-        </Row>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                        </ListGroup>
+                      </TabPane>
+                    </TabContent>
+                  </CardBody>
+                </Card>
+              </div>
+            </Col>
+          </Row>
+        )}
       </Container>
     </>
   );
