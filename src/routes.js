@@ -134,7 +134,7 @@ export const adminRoutes = [
         miniName: "CT",
         component: ClassTeacher,
         layout: "/admin",
-        permission: "edit",
+        permission: "add",
       },
     ],
   },
@@ -280,7 +280,7 @@ export const adminRoutes = [
     views: [
       {
         path: "/add-canteen",
-        name: "add",
+        name: "Add Canteen",
         miniName: "A",
         component: AddCanteen,
         layout: "/admin",

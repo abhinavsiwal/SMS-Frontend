@@ -592,7 +592,7 @@ const [permissions, setPermissions] = useState([]);
                 />
               </CardBody>
             </Card>
-            {permissions && permissions.includes("add") && (
+            {permissions && permissions.includes("add".trim()) && (
             <Modal
               isOpen={modalAdd}
               toggle={() => setModalAdd(false)}

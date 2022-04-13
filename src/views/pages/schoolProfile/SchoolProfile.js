@@ -42,6 +42,7 @@ function SchoolProfile() {
   const { user } = isAuthenticated();
   const [formData] = useState(new FormData());
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [editSchoolProfile, setEditSchoolProfile] = useState({
     school_name: "",
     abbreviation: "",
@@ -120,13 +121,17 @@ function SchoolProfile() {
     formData.set("telephone", editSchoolProfile.telephone);
 
     try {
+
+      setLoading(true);
       const data = await editProfile(user.school, user._id, formData);
       console.log(data);
       setEditing(false);
       setChecked(!checked);
+      setLoading(false);
       toast.success(updateSchoolSuccess)
     } catch (err) {
       console.log(err);
+      setLoading(false);
       toast.error(updateSchoolError);
     }
   };

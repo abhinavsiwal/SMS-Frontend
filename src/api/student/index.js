@@ -84,3 +84,19 @@ export const isAuthenticateStudent = (userId, token, data) => {
       throw error;
     });
 };
+
+
+export const filterStudent=async(schoolId,userId,formData)=>{
+  try {
+    const {data} = await sendRequestWithJson(
+      `${process.env.REACT_APP_API_URL}/api/school/student/custom/all/${schoolId}/${userId}`,
+      JSON.stringify(formData),
+      "POST"
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  } 
+}
