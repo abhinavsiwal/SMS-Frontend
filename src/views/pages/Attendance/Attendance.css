@@ -66,7 +66,13 @@
 
 .Student-Attendance-Icons {
   text-align: center;
+  display: flex;
+  justify-content: center;
+
+  align-items: center;
 }
+
+
 
 .Student-Attendance-Icons > p {
   font-size: 2rem;

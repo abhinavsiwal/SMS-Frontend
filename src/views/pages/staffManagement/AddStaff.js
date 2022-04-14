@@ -526,6 +526,9 @@ function AddStaff() {
                         value={staffData.email}
                         type="email"
                         required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                        oninvalid="this.setCustomValidity('Witinnovation')"
+                        onvalid="this.setCustomValidity('')"
                       />
                     </Col>
                   </Row>
@@ -545,6 +548,8 @@ function AddStaff() {
                         pattern="[1-9]{1}[0-9]{9}"
                         value={staffData.phone}
                         required
+                        oninvalid="this.setCustomValidity('Witinnovation')"
+                        onvalid="this.setCustomValidity('')"
                       />
                     </Col>
                     <Col md="4">

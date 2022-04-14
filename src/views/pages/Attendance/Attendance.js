@@ -14,10 +14,11 @@ import {
   ModalHeader,
   ModalBody,
   CardHeader,
+  Table,
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 // import { Table } from "ant-table-extensions";
-import { Table } from "antd";
+// import { Table } from "antd";
 import { postAttendance, searchAttendance } from "api/attendance";
 import "./Attendance.css";
 
@@ -30,7 +31,7 @@ import { useSelector } from "react-redux";
 //import moment from moment for Date
 import moment from "moment";
 import { getAttendence } from "api/attendance";
-import { allStudents,filterStudent } from "api/student";
+import { allStudents, filterStudent } from "api/student";
 import { isAuthenticated } from "api/auth";
 import { sendRequestWithJson, sendRequest } from "api/api";
 import { toast, ToastContainer } from "react-toastify";
@@ -76,6 +77,7 @@ function Attendance() {
   const fileReader = new FileReader();
   const [loading, setLoading] = useState(false);
   const [permissions, setPermissions] = useState([]);
+  const [addLoading, setAddLoading] = useState(false);
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -137,7 +139,7 @@ function Attendance() {
         (item) => item._id.toString() === event.target.value.toString()
       );
       // console.log(selectedClass);
-      // setSelectedClass(selectedClass);
+      setSelectedClass(selectedClass);
     }
   };
 
@@ -165,7 +167,7 @@ function Attendance() {
     setAttendance({ ...attendance, atd });
   }, [atd]);
   let tableData = [];
- 
+
   //Columns of ant Table
 
   // useEffect(() => {
@@ -229,27 +231,27 @@ function Attendance() {
 
     let attendance1 = {};
 
+    addAttendance &&
+      addAttendance.forEach((element, index) => {
+        console.log(element);
+        if (element.student === studentId) {
+          // console.log("here");
+          addAttendance[index].attendance_status = event.target.value;
+          return;
+        } else {
+          attendance1 = {
+            attendance_status: event.target.value,
+            date,
+            session: sessionId1,
+            class: attendance.selectClass,
+            section: attendance.selectSection,
+            school: user.school,
+            student: studentId,
+          };
+        }
+      });
 
-  addAttendance &&  addAttendance.forEach((element,index) => {
-      // console.log(element);
-      if (element.student === studentId) {
-        // console.log("here");
-        addAttendance[index].attendance_status = event.target.value;
-        return;
-      } else {
-        attendance1 = {
-          attendance_status: event.target.value,
-          date,
-          session: sessionId1,
-          class: attendance.selectClass,
-          section: attendance.selectSection,
-          school: user.school,
-          student: studentId,
-        };
-      }
-    });
-
-    if(addAttendance.length===0){
+    if (addAttendance.length === 0) {
       attendance1 = {
         attendance_status: event.target.value,
         date,
@@ -261,48 +263,50 @@ function Attendance() {
       };
     }
 
-
-
-      setAddAttendance([...addAttendance, attendance1]);
+    setAddAttendance([...addAttendance, attendance1]);
 
     // console.log(attendance1);
     // attendance2.push(attendance1);
     // console.log(attendance2);
-
   };
 
   const submitHandler = async () => {
     // console.log(addAttendance);
-    
+
     let arr = addAttendance;
-    const uniqueAttendance = Array.from(new Set(arr.map(a=>a.student))).map(id=>{
-      return arr.find(a=>a.student===id)
-    })
+    const uniqueAttendance = Array.from(new Set(arr.map((a) => a.student))).map(
+      (id) => {
+        return arr.find((a) => a.student === id);
+      }
+    );
 
-    
     // console.log(uniqueAttendance);
-    let newAttendance = uniqueAttendance.filter(value=>Object.keys(value).length!==0);;
+    let newAttendance = uniqueAttendance.filter(
+      (value) => Object.keys(value).length !== 0
+    );
     // console.log(newAttendance);
-
 
     let formData = new FormData();
     formData.set("attendance", JSON.stringify(newAttendance));
-    formData.set("school",user.school);
-    formData.set("class",attendance.selectClass);
-    formData.set("section",attendance.selectSection);
+    formData.set("school", user.school);
+    formData.set("class", attendance.selectClass);
+    formData.set("section", attendance.selectSection);
     try {
+      setAddLoading(true);
       const data = await postAttendance(user._id, formData);
       // console.log(data);
       toast.success(addAttendanceSuccess);
       setModal(false);
+      setAddLoading(false);
     } catch (err) {
       console.log(err);
+      setAddLoading(false);
       toast.error(addAttendanceError);
     }
   };
 
   const searchHandler = async () => {
-    getAllStudents(attendance.selectSection,attendance.selectClass)
+    getAllStudents(attendance.selectSection, attendance.selectClass);
     // console.log(attendance);
     const formData = new FormData();
     formData.set("classId", attendance.selectClass);
@@ -329,7 +333,7 @@ function Attendance() {
         // console.log(key);
         let obj = {};
         obj[key] = data.studentDatas[key];
-        // console.log(obj);
+        console.log(obj);
         students.push(obj);
       }
       // console.log(students);
@@ -341,28 +345,24 @@ function Attendance() {
     }
   };
 
-  const getAllStudents = async (section,clas) => {
+  const getAllStudents = async (section, clas) => {
     const formData = {
       section,
-      class:clas,
-    }
+      class: clas,
+    };
     // console.log(formData);
-    const data = await filterStudent(
-      user.school,
-      user._id,
-      formData
-    );
+    const data = await filterStudent(user.school, user._id, formData);
     // console.log(data);
     //Data of ant Table
     // console.log(res);
 
-    for (let i = 0; i <data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       // console.log(res[i]._id);
 
       tableData.push({
         key: data[i]._id,
         hash: `${i + 1}`,
-        name: data[i].firstname+data[i].lastname,
+        name: data[i].firstname + data[i].lastname,
       });
     }
     setAttendanceData(tableData);
@@ -568,27 +568,35 @@ function Attendance() {
                         </h3>
                       </div>
                       <div className="col-sm Student-Attendance-Icons">
-                        <p
-                          className="ni ni-single-02"
-                          style={{ background: "green", color: "white" }}
-                        ></p>
-                        <span className="tags"> - Present</span>
-                        <p
-                          className="ni ni-single-02"
-                          style={{
-                            background: "rgb(201, 3, 3)",
-                            color: "white",
-                          }}
-                        ></p>
-                        <span> - Absent</span>
-                        <p
-                          className="ni ni-single-02"
-                          style={{
-                            background: "rgb(243, 243, 71)",
-                            color: "white",
-                          }}
-                        ></p>
-                        <span> - Leave</span>
+                        <div style={{display:"flex",}}  >
+                          <p
+                            className="ni ni-single-02"
+                            style={{ background: "green", color: "white",fontSize: '30px',borderRadius: '50%' }}
+                          ></p>
+                          <span className="tags"> - Present</span>
+                        </div>
+                        <div style={{display:"flex",margin:"0 1rem"}} >
+                          <p
+                            className="ni ni-single-02"
+                            style={{
+                              background: "rgb(201, 3, 3)",
+                              color: "white",
+                              fontSize: '30px',borderRadius: '50%'
+                            }}
+                          ></p>
+                          <span> - Absent</span>
+                        </div>
+                        <div style={{display:"flex"}} >
+                          <p
+                            className="ni ni-single-02"
+                            style={{
+                              background: "rgb(243, 243, 71)",
+                              color: "white",
+                              fontSize: '30px',borderRadius: '50%'
+                            }}
+                          ></p>
+                          <span> - Leave</span>
+                        </div>
                       </div>
                       {/* {permissions && permissions.includes("edit") && ( */}
                       {!attendanceData1.classTeacher && (
@@ -654,70 +662,87 @@ function Attendance() {
             <ModalHeader isClose={modal} toggle={toggle}>
               Add Attendance
             </ModalHeader>
-            <ModalBody className="modal-body">
-              <div>
-                {attendanceData.map((student, index) => {
-                  // console.log(student);
-                  return (
-                    <>
-                      <div className="d-flex justify-content-between studentAttendance">
-                        <div style={{width:"20%"}}>
-                          <p key={student.key} style={{fontSize:"1.2rem",fontWeight:"400"}} >{student.name}</p>
-                        </div>
-                        
-                        <div  >
-                          <input
-                            type="radio"
-                            onChange={submitAttendance(student.key)}
-                            value="P"
-                            checked={atd.present}
-                            name={index}
-                          />
-                          Present
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            onChange={submitAttendance(student.key)}
-                            value="A"
-                            name={index}
-                          />{" "}
-                          Absent
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            name={index}
-                            value="HF"
-                            onChange={submitAttendance(student.key)}
-                          />{" "}
-                          Half Day
-                        </div>
-                        <div>
-                          <input
-                            type="radio"
-                            value="L"
-                            name={index}
-                            onChange={submitAttendance(student.key)}
-                          />{" "}
-                          Leave
-                        </div>
-                      </div>
-                      <hr style={{margin:"0.5rem"}} />
-                    </>
-                  );
-                })}
-                <div className="col-sm">
-                  <Button
-                    className="attendance-button"
-                    onClick={submitHandler}
-                    color="primary"
-                  >
-                    Submit
-                  </Button>
+            {addLoading ? (
+              <Loader />
+            ) : (
+              <ModalBody className="modal-body">
+                <div>
+                  <Table bordered>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Half Day</th>
+                        <th>Leave</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {attendanceData &&
+                        attendanceData.map((student, index) => {
+                          return (
+                            <>
+                              <tr key={index}>
+                                <td style={{ fontWeight: "500" }}>
+                                  {student.name}
+                                </td>
+                                <td>
+                                  {" "}
+                                  <input
+                                    type="radio"
+                                    onChange={submitAttendance(student.key)}
+                                    value="P"
+                                    checked={atd.present}
+                                    name={index}
+                                  />
+                                  Present
+                                </td>
+                                <td>
+                                  <input
+                                    type="radio"
+                                    onChange={submitAttendance(student.key)}
+                                    value="A"
+                                    name={index}
+                                  />{" "}
+                                  Absent
+                                </td>
+                                <td>
+                                  <input
+                                    type="radio"
+                                    name={index}
+                                    value="HF"
+                                    onChange={submitAttendance(student.key)}
+                                  />{" "}
+                                  Half Day
+                                </td>
+                                <td>
+                                  <input
+                                    type="radio"
+                                    value="L"
+                                    name={index}
+                                    onChange={submitAttendance(student.key)}
+                                  />{" "}
+                                  Leave
+                                </td>
+                              </tr>
+                            </>
+                          );
+                        })}
+                    </tbody>
+                  </Table>
+
+                  <div className="col-sm">
+                    <Button
+                      className="attendance-button"
+                      onClick={submitHandler}
+                      color="primary"
+                    >
+                      Submit
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </ModalBody>
+              </ModalBody>
+            )}
           </Modal>
         </Container>
       )}

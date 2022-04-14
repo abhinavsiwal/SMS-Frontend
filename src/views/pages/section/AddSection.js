@@ -13,7 +13,7 @@ import {
   ModalBody,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
-
+import { useReducer, useSelector } from "react";
 import { isAuthenticated } from "api/auth";
 import { allClass } from "api/class";
 import {
@@ -45,6 +45,8 @@ import { deleteSectionSuccess, addSectionSuccess } from "constants/success";
 
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
+import { useDispatch } from "react-redux";
+import { setClass } from "store/reducers/class";
 
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
@@ -60,7 +62,7 @@ const AddSection = () => {
   const [file, setFile] = useState();
   const [editing, setEditing] = useState(false);
   const fileReader = new FileReader();
-
+const dispatch=useDispatch();
   const [editingSectionName, setEditingSectionName] = useState("");
   const [editingAbbv, setEditingAbbv] = useState("");
   const [editingClassId, setEditingClassId] = useState("");
@@ -252,6 +254,7 @@ const AddSection = () => {
       await setClassList(res);
       // console.log(res);
       await setTableClassSelectId(res[0]._id);
+      dispatch(setClass(res));
       // setLoading(true);
     } catch (err) {
       console.log(err);

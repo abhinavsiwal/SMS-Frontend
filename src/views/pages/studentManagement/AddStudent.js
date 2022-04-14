@@ -561,6 +561,7 @@ function AddStudent() {
                         onChange={handleChange("email")}
                         required
                         value={studentData.email}
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                       />
                     </Col>
                     <Col>
@@ -1038,6 +1039,7 @@ function AddStudent() {
                                 onChange={handleChange("parent_email")}
                                 required
                                 value={studentData.parent_email}
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                               />
                             </FormGroup>
                           </Col>
@@ -1473,6 +1475,7 @@ function AddStudent() {
                                 type="text"
                                 onChange={handleChange("guardian_email")}
                                 required
+                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                                 value={studentData.guardian_email}
                               />
                             </FormGroup>

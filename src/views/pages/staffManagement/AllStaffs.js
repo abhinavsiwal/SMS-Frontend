@@ -73,7 +73,7 @@ const [permissions, setPermissions] = useState([]);
 
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
-  console.log(staffEditing);
+  // console.log(staffEditing);
   let permission1=[];
   useEffect(() => {
     // console.log(user);
