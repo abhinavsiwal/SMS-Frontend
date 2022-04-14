@@ -98,10 +98,13 @@ const DepartmentHead = () => {
           formData1
         );
         console.log(data1);
+        toast.success("Primary Head Removed");
         setChecked(!checked);
         setLoading(false);
+        
       } catch (err) {
         console.log(err);
+        toast.error("Error in Removing Primary Head");
         setLoading(false);
       }
 
@@ -181,10 +184,12 @@ const DepartmentHead = () => {
           formData1
         );
         console.log(data1);
+        toast.success("Secondary Head Removed");
         setChecked(!checked)
         setLoading(false);
       } catch (err) {
         console.log(err);
+        toast.error("Error in removing Secondary Head");
         setLoading(false);
       }
 

@@ -38,7 +38,7 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 import "./style.css";
 import { FaEdit } from "react-icons/fa";
 
-function Staffdetails({ data,backHandle }) {
+function Staffdetails({ data, backHandle }) {
   console.log(data);
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
@@ -47,17 +47,17 @@ function Staffdetails({ data,backHandle }) {
     <>
       <SimpleHeader name="Staff Profile" parentName="Staff Management" />
       <Container className="mt--6" fluid>
-      <Row>
-              <Col className="mt--3 ">
-                <Button
-                  className="float-left mb-2"
-                  color="dark"
-                  onClick={backHandle}
-                >
-                  <i className="ni ni-bold-left"></i>
-                </Button>
-              </Col>
-            </Row>
+        <Row>
+          <Col className="mt--3 ">
+            <Button
+              className="float-left mb-2"
+              color="dark"
+              onClick={backHandle}
+            >
+              <i className="ni ni-bold-left"></i>
+            </Button>
+          </Col>
+        </Row>
         <Row>
           <Col lg="4">
             <div className="card-wrapper">
@@ -76,16 +76,16 @@ function Staffdetails({ data,backHandle }) {
                         {data.firstname} {data.lastname}
                       </span>
                     </Col>
-                    
+
                     <Col align="center">
-                      <h4 className="mt-3 mb-1">Class</h4>
-                      <span className="text-md">Not Available</span>
+                      <h4 className="mt-3 mb-1">Department</h4>
+                      <span className="text-md">{data.department && data.department.name}</span>
                     </Col>
                   </Row>
                   <Row>
                     <Col align="center">
-                      <h4 className="mt-3 mb-1">Section</h4>
-                      <span className="text-md">Not Available</span>
+                      <h4 className="mt-3 mb-1">Job</h4>
+                      <span className="text-md">{data.job}</span>
                     </Col>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Phone</h4>
@@ -94,8 +94,12 @@ function Staffdetails({ data,backHandle }) {
                   </Row>
                   <Row>
                     <Col align="center">
-                      <h4 className="mt-3 mb-1">Address</h4>
-                      <span className="text-md">Not Available</span>
+                      <h4 className="mt-3 mb-1">Present Address</h4>
+                      <span className="text-md">{data.present_address}</span>
+                    </Col>
+                    <Col align="center">
+                      <h4 className="mt-3 mb-1">Permanent Address</h4>
+                      <span className="text-md">{data.permanent_address}</span>
                     </Col>
                   </Row>
                 </CardBody>
@@ -143,7 +147,7 @@ function Staffdetails({ data,backHandle }) {
                         </NavItem>
                       </Nav>
                     </Col>
-                    <Col className="text-right">
+                    {/* <Col className="text-right">
                       <Button
                         className="btn-icon"
                         color="primary"
@@ -153,7 +157,7 @@ function Staffdetails({ data,backHandle }) {
                           <FaEdit />
                         </span>
                       </Button>
-                    </Col>
+                    </Col> */}
                   </Row>
                 </CardHeader>
 
@@ -169,7 +173,7 @@ function Staffdetails({ data,backHandle }) {
                                   <h5 className="checklist-title mb-0">
                                     Joining Date
                                   </h5>
-                                  <small>{data.joining_date}</small>
+                                  <small>{data.joining_date &&  data.joining_date}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
@@ -186,53 +190,40 @@ function Staffdetails({ data,backHandle }) {
                               </div>
                             </ListGroupItem>
                           </Col>
+                          </Row>
+                          <Row className="mt-4" >
+                        
                           <Col md="4">
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
                                   <h5 className="checklist-title mb-0">SID</h5>
-                                  <small>{data.sid}</small>
+                                  <small>{data.SID}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
                           </Col>
-                        </Row>
-                        {/* <Row className="mt-4">
-                          <Col>
+                          <Col md="4">
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Country
-                                  </h5>
-                                  <small>{data.country}</small>
+                                  <h5 className="checklist-title mb-0">Phone no</h5>
+                                  <small>{data.phone}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
                           </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">City</h5>
-                                  <small>{data.city}</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
+                          <Col md="4">
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    State
-                                  </h5>
-                                  <small>{data.state}</small>
+                                  <h5 className="checklist-title mb-0">Alternate Phone no</h5>
+                                  <small>{data.alternate_phone}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
                           </Col>
-                        </Row> */}
+                      </Row>
                         <Row className="mt-4">
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
@@ -271,51 +262,12 @@ function Staffdetails({ data,backHandle }) {
                         </Row>
                       </ListGroup>
                     </TabPane>
-                     <TabPane tabId="2">
+                    <TabPane tabId="2">
                       <ListGroup flush>
-                        <Row>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Primary Contact Number
-                                  </h5>
-                                  <small>+91 {data.alternate_phone}</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
-                        <Row className="mt-4">
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Telephone
-                                  </h5>
-                                  <small>{}</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Fax No.
-                                  </h5>
-                                  <small>+91 123456789</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
+                       
                       </ListGroup>
-                    </TabPane> 
-                     <TabPane tabId="4">
+                    </TabPane>
+                    <TabPane tabId="4">
                       <ListGroup flush>
                         <Row>
                           <Col>
@@ -420,7 +372,7 @@ function Staffdetails({ data,backHandle }) {
                           </Col>
                         </Row>
                       </ListGroup>
-                    </TabPane> 
+                    </TabPane>
                   </TabContent>
                 </CardBody>
               </Card>

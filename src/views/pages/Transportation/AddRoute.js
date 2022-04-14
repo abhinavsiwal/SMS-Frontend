@@ -12,6 +12,7 @@ import {
   Button,
   CardHeader,
   Table,
+  FormText
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 //React Datepicker
@@ -59,7 +60,7 @@ function AddRoute() {
   const [addStops, setAddStops] = React.useState([]);
   // console.log("addStops", addStops);
   const [allStaff, setAllStaff] = useState([]);
-
+const [disableButton, setDisableButton] = useState(true);
   const [busNo, setBusNo] = React.useState("");
   const [sessions, setSessions] = React.useState([]);
   const [session, setSession] = React.useState("");
@@ -196,6 +197,16 @@ function AddRoute() {
       toast.error("Route not Added.");
     }
   };
+
+const placeBlurHandler=()=>{
+  console.log("here");
+  if(placeName.length>0){
+    setDisableButton(false);
+  }else{
+    setDisableButton(true);
+  }
+}
+
 
   return (
     <>
@@ -359,6 +370,8 @@ function AddRoute() {
                             type="text"
                             onChange={(e) => setPlaceName(e.target.value)}
                             required
+                            onBlur={placeBlurHandler}
+                            
                           />
                         </Col>
                       </Row>
@@ -408,7 +421,7 @@ function AddRoute() {
 
                     <Row>
                       <Col className="ml-3">
-                        <Button color="primary" onClick={addStop}>
+                        <Button color="primary" onClick={addStop} disabled={disableButton} >
                           Add
                         </Button>
                       </Col>

@@ -68,6 +68,43 @@ const ClassTeacher = () => {
     // console.log(section);
     // console.log(e.target.value);
     let staffId = e.target.value;
+
+    if (e.target.value === "") {
+      return;
+    }
+    if (e.target.value === "delete") {
+      try {
+        let formData = new FormData();
+        formData.set("id", section._id);
+        formData.set("removeClassTeacher", true);
+        setLoading(true);
+        const data = await assignClassTeacher(
+          section._id,
+          user._id,
+          token,
+          formData
+        );
+        console.log(data);
+        let formData1 = new FormData();
+        formData1.set("isClassTeacher", false);
+        const data1 = await updateStaff1(
+          section.classTeacher._id,
+          user._id,
+          formData1
+        );
+        console.log(data1);
+        toast.success("Class Teacher Removed Successfully");
+        setChecked(!checked);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        toast.error("Error in Removing Class Teacher");
+        setLoading(false);
+      }
+
+      return;
+    }
+
     let formData = new FormData();
     formData.set("classTeacher", e.target.value);
     let formData1 = new FormData();
@@ -144,7 +181,10 @@ const ClassTeacher = () => {
                               className="teacher-table-row"
                               style={{ marginLeft: "2rem" }}
                             >
-                              <td className="teacher-table-class"  style={{ marginLeft: "2rem" }}>
+                              <td
+                                className="teacher-table-class"
+                                style={{ marginLeft: "2rem" }}
+                              >
                                 {section.name}
                               </td>
                               <td>
@@ -155,10 +195,18 @@ const ClassTeacher = () => {
                                   value={section.classTeacher}
                                 >
                                   {section.classTeacher ? (
-                                    <option value="">
-                                      {section.classTeacher.firstname}{" "}
-                                      {section.classTeacher.secondname}{" "}
-                                    </option>
+                                    <>
+                                      <option value="">
+                                        {section.classTeacher.firstname}{" "}
+                                        {section.classTeacher.secondname}{" "}
+                                      </option>
+                                      <option
+                                        value="delete"
+                                        style={{ fontWeight: "500" }}
+                                      >
+                                        Delete Class Teacher
+                                      </option>
+                                    </>
                                   ) : (
                                     <option value="">Class Teacher</option>
                                   )}

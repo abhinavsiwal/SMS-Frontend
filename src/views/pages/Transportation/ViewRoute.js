@@ -302,7 +302,7 @@ function ViewRoute() {
         s_no: i + 1,
         route_name: res[i].name,
         bus_no: res[i].bus_number,
-        staff_members: res[i].staff && res[i].staff[0].firstname,
+        // staff_members: res[i].staff && res[i].staff[0].firstname,
         start_time: res[i].start,
         end_time: res[i].end,
         action: (
@@ -396,11 +396,12 @@ function ViewRoute() {
     // formData.set("",)
 
     try {
-      setEditLoading(false);
+      setEditLoading(true);
       const data = await editRoute(user._id, editingRouteData.id, formData);
       // console.log(data);
       setChecked(!checked);
       setEditLoading(false);
+      setEditing(false);
     } catch (err) {
       console.log(err);
       setEditLoading(false);
@@ -540,7 +541,7 @@ function ViewRoute() {
                       color="primary"
                       onClick={editRouteHandler}
                     >
-                      Edit Route
+                      Save Changes
                     </Button>
                   </Col>
                 </Row>
