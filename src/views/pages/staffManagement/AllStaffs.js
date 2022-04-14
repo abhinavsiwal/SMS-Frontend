@@ -49,6 +49,7 @@ const AllStaffs = () => {
   const [editing, setEditing] = useState(false);
   const [view, setView] = useState(0);
   const [staffList, setStaffList] = useState([]);
+  const [page, setPage] = useState(0);
   // Pagination
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
@@ -84,9 +85,9 @@ const [permissions, setPermissions] = useState([]);
     }
   }, [staffEditing]);
 
-  const handleStaffDetails = (id) => {
+  const handleStaffDetails = (data) => {
     // console.log("id", id);
-    setStaffId(id);
+    setStaffId(data);
     setComponent(true);
   };
 
@@ -153,10 +154,7 @@ const [permissions, setPermissions] = useState([]);
                 color="success"
                 type="button"
                 key={"view" + i + 1}
-                onClick={() => {
-                  setViewModal(true);
-                  setSudentDetails(data[i]);
-                }}
+                onClick={() => handleStaffDetails(data[i])}
               >
                 <i className="fas fa-user" />
               </Button>
@@ -528,6 +526,10 @@ const [permissions, setPermissions] = useState([]);
     },
   ];
 
+const backHandler = () => {
+  setComponent(false);
+}
+
   return (
     <React.Fragment>
         <ToastContainer
@@ -543,7 +545,7 @@ const [permissions, setPermissions] = useState([]);
         theme="colored"
       />
       {component ? (
-        <Staffdetails data={stafId} />
+        <Staffdetails data={stafId} backHandle={backHandler} />
       ) : (
         <>
           {!staffEditing ? (
@@ -732,10 +734,7 @@ const [permissions, setPermissions] = useState([]);
                                               <Col align="center">
                                                 <Button
                                                   className="mt-3"
-                                                  onClick={() => {
-                                                    setViewModal(true);
-                                                    setSudentDetails(staff);
-                                                  }}
+                                                  onClick={() => handleStaffDetails(staff)}
                                                 >
                                                   Read More
                                                 </Button>

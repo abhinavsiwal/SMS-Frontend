@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { isAuthenticated } from "api/auth";
 import { allStudents, deleteStudent } from "api/student";
-
+import StudentDetails from "./StudentDetails";
 import {
   Card,
   CardHeader,
@@ -26,7 +26,7 @@ import AntTable from "../tables/AntTable";
 import { Link } from "react-router-dom";
 import Loader from "components/Loader/Loader";
 import { Popconfirm } from "antd";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ReactPaginate from "react-paginate";
 import { useHistory } from "react-router";
 import UpdateStudent from "./UpdateStudent";
@@ -47,6 +47,7 @@ const AllStudents = () => {
   const [view, setView] = useState(0);
   const [studentList, setStudentList] = useState([]);
   const [checked, setChecked] = useState(false);
+  const [component, setComponent] = useState(false);
   // Pagination
   const [currentItems, setCurrentItems] = useState(null);
   // console.log("currentItems", currentItems);
@@ -64,23 +65,28 @@ const AllStudents = () => {
   const [viewModal, setViewModal] = useState(false);
   const [studentDetails, setSudentDetails] = useState({});
   const componentRef = useRef();
-
+  const [studentData, setStudentData] = useState({});
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-  let permission1=[];
+  let permission1 = [];
   useEffect(() => {
-    const {user} = isAuthenticated();
+    const { user } = isAuthenticated();
     if (user.permissions["Student Management"]) {
-     permission1 = user.permissions["Student Management"];
+      permission1 = user.permissions["Student Management"];
       setPermissions(permission1);
       // console.log(permissions);
     }
   }, [checked]);
   useEffect(() => {
-   
     fetchStudents();
   }, [itemOffset, itemsPerPage, checked]);
+
+  const handleStaffDetails = (data) => {
+    // console.log("id", id);
+    setStudentData(data);
+    setComponent(true);
+  };
 
   const fetchStudents = async () => {
     const endOffset = itemOffset + itemsPerPage;
@@ -147,10 +153,7 @@ const AllStudents = () => {
                 color="success"
                 type="button"
                 key={"view" + i + 1}
-                onClick={() => {
-                  setViewModal(true);
-                  setSudentDetails(res[i]);
-                }}
+                onClick={() => handleStaffDetails(res[i])}
               >
                 <i className="fas fa-user" />
               </Button>
@@ -516,287 +519,331 @@ const AllStudents = () => {
     },
   ];
 
+
+const backHandler = ()=>{
+  setComponent(false);
+}
+
   return (
     <>
-      {!studentEditing ? (
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      {component ? (
+        <StudentDetails data={studentData} backHandle={backHandler} />
+      ) : (
         <>
-          <SimpleHeader name="All Students" />
-          <Container className="mt--6" fluid>
-            <Card className="mb-4">
-              <CardHeader className="buttons-head">
-                <div>
-                  <Button
-                    color={`${view === 0 ? "warning" : "primary"}`}
-                    type="button"
-                    onClick={() => {
-                      setView(0);
-                    }}
-                  >
-                    List View
-                  </Button>{" "}
-                  <Button
-                    color={`${view === 1 ? "warning" : "primary"}`}
-                    type="button"
-                    onClick={() => {
-                      setView(1);
-                    }}
-                  >
-                    Grid View
-                  </Button>
-                </div>
-                {permissions && permissions.includes("export") && (
-                  <Button
-                    color="primary"
-                    className="mb-2"
-                    onClick={handlePrint}
-                  >
-                    Print
-                  </Button>
-                )}
-              </CardHeader>
-              <CardBody>
-                {view === 0 ? (
-                  <>
-                    {loading && studentList ? (
-                      permissions && permissions.includes("export") ? (
-                        <div ref={componentRef} style={{ overflowX: "auto" }}>
-                        <AntTable
-                          columns={columns}
-                          data={studentList}
-                          pagination={true}
-                          exportFileName="StudentDetails"
-                        />
-                      </div>
-                      ):(
-                        <div ref={componentRef} style={{ overflowX: "auto" }}>
-                        <Table
-                          columns={columns}
-                          dataSource={studentList}
-                          pagination={{
-                            pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
-                            showSizeChanger: true,
-                          }}
-                          style={{ whiteSpace: "pre" }}
-                          // exportFileName="StudentDetails"
-                        />
-                      </div>
-                      )
-                    
-                    ) : (
-                      <Loader />
+          {!studentEditing ? (
+            <>
+              <SimpleHeader name="All Students" />
+              <Container className="mt--6" fluid>
+                <Card className="mb-4">
+                  <CardHeader className="buttons-head">
+                    <div>
+                      <Button
+                        color={`${view === 0 ? "warning" : "primary"}`}
+                        type="button"
+                        onClick={() => {
+                          setView(0);
+                        }}
+                      >
+                        List View
+                      </Button>{" "}
+                      <Button
+                        color={`${view === 1 ? "warning" : "primary"}`}
+                        type="button"
+                        onClick={() => {
+                          setView(1);
+                        }}
+                      >
+                        Grid View
+                      </Button>
+                    </div>
+                    {permissions && permissions.includes("export") && (
+                      <Button
+                        color="primary"
+                        className="mb-2"
+                        onClick={handlePrint}
+                      >
+                        Print
+                      </Button>
                     )}
-                  </>
-                ) : (
-                  <>
-                    <Container className="" fluid>
-                      <Row className="card-wrapper">
-                        {currentItems !== null && (
-                          <>
-                            {currentItems.map((student, index) => (
-                              <Col md="4" key={index}>
-                                <Card>
-                                  <CardHeader align="right">
-                                    <UncontrolledDropdown>
-                                      <DropdownToggle
-                                        className="btn-icon-only text-light"
-                                        color=""
-                                        role="button"
-                                        size="sm"
-                                      >
-                                        <i className="fas fa-ellipsis-v" />
-                                      </DropdownToggle>
-                                      <DropdownMenu
-                                        className="dropdown-menu-arrow"
-                                        right
-                                      >
-                                        <DropdownItem
-                                          href="#pablo"
-                                          onClick={(e) => e.preventDefault()}
-                                        >
-                                          Edit
-                                        </DropdownItem>
-                                        <DropdownItem
-                                          href="#pablo"
-                                          onClick={(e) => e.preventDefault()}
-                                        >
-                                          Delete
-                                        </DropdownItem>
-                                      </DropdownMenu>
-                                    </UncontrolledDropdown>
-                                  </CardHeader>
-                                  <CardImg
-                                    alt="..."
-                                    src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                                    top
-                                    className="p-4"
-                                  />
-                                  <CardBody className="mt-0">
-                                    <Row>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">SID</h4>
-                                        <span className="text-md">
-                                          {student.sid}
-                                        </span>
-                                      </Col>
-                                    </Row>
-                                    <Row>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">
-                                          First Name
-                                        </h4>
-                                        <span className="text-md">
-                                          {student.first_name}
-                                        </span>
-                                      </Col>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">Last Name</h4>
-                                        <span className="text-md">
-                                          {student.last_name}
-                                        </span>
-                                      </Col>
-                                    </Row>
-                                    <Row>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">Class</h4>
-                                        <span className="text-md">
-                                          {student.class}
-                                        </span>
-                                      </Col>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">Section</h4>
-                                        <span className="text-md">
-                                          {student.section}
-                                        </span>
-                                      </Col>
-                                      <Col align="center">
-                                        <h4 className="mt-3 mb-1">Roll</h4>
-                                        <span className="text-md">
-                                          {student.roll}
-                                        </span>
-                                      </Col>
-                                    </Row>
-                                    <Row>
-                                      <Col align="center">
-                                        <Button className="mt-3">
-                                          <Link
-                                            to="/admin/student-profile"
-                                            className="mb-1"
-                                          >
-                                            Read More
-                                          </Link>
-                                        </Button>
-                                      </Col>
-                                    </Row>
-                                  </CardBody>
-                                </Card>
-                              </Col>
-                            ))}
-                          </>
+                  </CardHeader>
+                  <CardBody>
+                    {view === 0 ? (
+                      <>
+                        {loading && studentList ? (
+                          permissions && permissions.includes("export") ? (
+                            <div
+                              ref={componentRef}
+                              style={{ overflowX: "auto" }}
+                            >
+                              <AntTable
+                                columns={columns}
+                                data={studentList}
+                                pagination={true}
+                                exportFileName="StudentDetails"
+                              />
+                            </div>
+                          ) : (
+                            <div
+                              ref={componentRef}
+                              style={{ overflowX: "auto" }}
+                            >
+                              <Table
+                                columns={columns}
+                                dataSource={studentList}
+                                pagination={{
+                                  pageSizeOptions: [
+                                    "5",
+                                    "10",
+                                    "30",
+                                    "60",
+                                    "100",
+                                    "1000",
+                                  ],
+                                  showSizeChanger: true,
+                                }}
+                                style={{ whiteSpace: "pre" }}
+                                // exportFileName="StudentDetails"
+                              />
+                            </div>
+                          )
+                        ) : (
+                          <Loader />
                         )}
-                      </Row>
-                    </Container>
+                      </>
+                    ) : (
+                      <>
+                        <Container className="" fluid>
+                          <Row className="card-wrapper">
+                            {currentItems !== null && (
+                              <>
+                                {currentItems.map((student, index) => (
+                                  <Col md="4" key={index}>
+                                    <Card>
+                                      <CardHeader align="right">
+                                        <UncontrolledDropdown>
+                                          <DropdownToggle
+                                            className="btn-icon-only text-light"
+                                            color=""
+                                            role="button"
+                                            size="sm"
+                                          >
+                                            <i className="fas fa-ellipsis-v" />
+                                          </DropdownToggle>
+                                          <DropdownMenu
+                                            className="dropdown-menu-arrow"
+                                            right
+                                          >
+                                            <DropdownItem
+                                              href="#pablo"
+                                              onClick={(e) =>
+                                                e.preventDefault()
+                                              }
+                                            >
+                                              Edit
+                                            </DropdownItem>
+                                            <DropdownItem
+                                              href="#pablo"
+                                              onClick={(e) =>
+                                                e.preventDefault()
+                                              }
+                                            >
+                                              Delete
+                                            </DropdownItem>
+                                          </DropdownMenu>
+                                        </UncontrolledDropdown>
+                                      </CardHeader>
+                                      <CardImg
+                                        alt="..."
+                                        src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
+                                        top
+                                        className="p-4"
+                                      />
+                                      <CardBody className="mt-0">
+                                        <Row>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">SID</h4>
+                                            <span className="text-md">
+                                              {student.sid}
+                                            </span>
+                                          </Col>
+                                        </Row>
+                                        <Row>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              First Name
+                                            </h4>
+                                            <span className="text-md">
+                                              {student.first_name}
+                                            </span>
+                                          </Col>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              Last Name
+                                            </h4>
+                                            <span className="text-md">
+                                              {student.last_name}
+                                            </span>
+                                          </Col>
+                                        </Row>
+                                        <Row>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">Class</h4>
+                                            <span className="text-md">
+                                              {student.class}
+                                            </span>
+                                          </Col>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">
+                                              Section
+                                            </h4>
+                                            <span className="text-md">
+                                              {student.section}
+                                            </span>
+                                          </Col>
+                                          <Col align="center">
+                                            <h4 className="mt-3 mb-1">Roll</h4>
+                                            <span className="text-md">
+                                              {student.roll}
+                                            </span>
+                                          </Col>
+                                        </Row>
+                                        <Row>
+                                          <Col align="center">
+                                            <Button className="mt-3" onClick={()=>handleStaffDetails(student)} >
+                                            
+                                                Read More
+                                          
+                                            </Button>
+                                          </Col>
+                                        </Row>
+                                      </CardBody>
+                                    </Card>
+                                  </Col>
+                                ))}
+                              </>
+                            )}
+                          </Row>
+                        </Container>
+                        <Row>
+                          <Col className="d-flex justify-content-around mt-4">
+                            <ReactPaginate
+                              nextLabel=">"
+                              onPageChange={handlePageClick}
+                              pageRangeDisplayed={3}
+                              marginPagesDisplayed={2}
+                              pageCount={pageCount}
+                              previousLabel="<"
+                              pageClassName="page-item"
+                              pageLinkClassName="page-link"
+                              previousClassName="page-item"
+                              previousLinkClassName="page-link"
+                              nextClassName="page-item"
+                              nextLinkClassName="page-link"
+                              breakLabel="..."
+                              breakClassName="page-item"
+                              breakLinkClassName="page-link"
+                              containerClassName="pagination"
+                              activeClassName="active"
+                              renderOnZeroPageCount={null}
+                            />
+                          </Col>
+                        </Row>
+                      </>
+                    )}
+                  </CardBody>
+                </Card>
+                <Modal
+                  className="modal-dialog-centered"
+                  isOpen={viewModal}
+                  toggle={() => setViewModal(false)}
+                >
+                  <div className="modal-header">
+                    <h6 className="modal-title" id="modal-title-default">
+                      Support Details
+                    </h6>
+                    <button
+                      aria-label="Close"
+                      className="close"
+                      data-dismiss="modal"
+                      type="button"
+                      onClick={() => setViewModal(false)}
+                    >
+                      <span aria-hidden={true}>×</span>
+                    </button>
+                  </div>
+                  <ModalBody>
                     <Row>
-                      <Col className="d-flex justify-content-around mt-4">
-                        <ReactPaginate
-                          nextLabel=">"
-                          onPageChange={handlePageClick}
-                          pageRangeDisplayed={3}
-                          marginPagesDisplayed={2}
-                          pageCount={pageCount}
-                          previousLabel="<"
-                          pageClassName="page-item"
-                          pageLinkClassName="page-link"
-                          previousClassName="page-item"
-                          previousLinkClassName="page-link"
-                          nextClassName="page-item"
-                          nextLinkClassName="page-link"
-                          breakLabel="..."
-                          breakClassName="page-item"
-                          breakLinkClassName="page-link"
-                          containerClassName="pagination"
-                          activeClassName="active"
-                          renderOnZeroPageCount={null}
-                        />
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">SID</h4>
+                        <span className="text-md">{studentDetails.SID}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">First Name</h4>
+                        <span className="text-md">
+                          {studentDetails.firstname}
+                        </span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Last Name</h4>
+                        <span className="text-md">
+                          {studentDetails.lastname}
+                        </span>
                       </Col>
                     </Row>
-                  </>
-                )}
-              </CardBody>
-            </Card>
-            <Modal
-              className="modal-dialog-centered"
-              isOpen={viewModal}
-              toggle={() => setViewModal(false)}
-            >
-              <div className="modal-header">
-                <h6 className="modal-title" id="modal-title-default">
-                  Support Details
-                </h6>
-                <button
-                  aria-label="Close"
-                  className="close"
-                  data-dismiss="modal"
-                  type="button"
-                  onClick={() => setViewModal(false)}
-                >
-                  <span aria-hidden={true}>×</span>
-                </button>
-              </div>
-              <ModalBody>
-                <Row>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">SID</h4>
-                    <span className="text-md">{studentDetails.SID}</span>
-                  </Col>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">First Name</h4>
-                    <span className="text-md">{studentDetails.firstname}</span>
-                  </Col>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Last Name</h4>
-                    <span className="text-md">{studentDetails.lastname}</span>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Email</h4>
-                    <span className="text-md">{studentDetails.email}</span>
-                  </Col>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Phone</h4>
-                    <span className="text-md">{studentDetails.phone}</span>
-                  </Col>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Gender</h4>
-                    <span className="text-md">{studentDetails.gender}</span>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Roll No.</h4>
-                    <span className="text-md">
-                      {studentDetails.roll_number}
-                    </span>
-                  </Col>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Aadhar Number</h4>
-                    <span className="text-md">
-                      {studentDetails.aadhar_number}
-                    </span>
-                  </Col>
-                  <Col align="center">
-                    <h4 className="mt-3 mb-1">Caste</h4>
-                    <span className="text-md">{studentDetails.caste}</span>
-                  </Col>
-                </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Email</h4>
+                        <span className="text-md">{studentDetails.email}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Phone</h4>
+                        <span className="text-md">{studentDetails.phone}</span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Gender</h4>
+                        <span className="text-md">{studentDetails.gender}</span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Roll No.</h4>
+                        <span className="text-md">
+                          {studentDetails.roll_number}
+                        </span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Aadhar Number</h4>
+                        <span className="text-md">
+                          {studentDetails.aadhar_number}
+                        </span>
+                      </Col>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Caste</h4>
+                        <span className="text-md">{studentDetails.caste}</span>
+                      </Col>
+                    </Row>
 
-                <Row></Row>
-              </ModalBody>
-            </Modal>
-          </Container>
+                    <Row></Row>
+                  </ModalBody>
+                </Modal>
+              </Container>
+            </>
+          ) : (
+            <UpdateStudent studentDetails={editingData} />
+          )}
         </>
-      ) : (
-        <UpdateStudent studentDetails={editingData} />
       )}
     </>
   );

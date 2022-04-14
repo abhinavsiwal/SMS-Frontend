@@ -35,10 +35,10 @@ import {
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-
+import "./style.css";
 import { FaEdit } from "react-icons/fa";
 
-function Staffdetails({ data }) {
+function Staffdetails({ data,backHandle }) {
   console.log(data);
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
@@ -47,6 +47,17 @@ function Staffdetails({ data }) {
     <>
       <SimpleHeader name="Staff Profile" parentName="Staff Management" />
       <Container className="mt--6" fluid>
+      <Row>
+              <Col className="mt--3 ">
+                <Button
+                  className="float-left mb-2"
+                  color="dark"
+                  onClick={backHandle}
+                >
+                  <i className="ni ni-bold-left"></i>
+                </Button>
+              </Col>
+            </Row>
         <Row>
           <Col lg="4">
             <div className="card-wrapper">
@@ -62,9 +73,10 @@ function Staffdetails({ data }) {
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Name</h4>
                       <span className="text-md">
-                        {data.first_name} {data.last_name}
+                        {data.firstname} {data.lastname}
                       </span>
                     </Col>
+                    
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Class</h4>
                       <span className="text-md">Not Available</span>
@@ -259,7 +271,7 @@ function Staffdetails({ data }) {
                         </Row>
                       </ListGroup>
                     </TabPane>
-                    {/* <TabPane tabId="2">
+                     <TabPane tabId="2">
                       <ListGroup flush>
                         <Row>
                           <Col>
@@ -302,8 +314,8 @@ function Staffdetails({ data }) {
                           </Col>
                         </Row>
                       </ListGroup>
-                    </TabPane> */}
-                    {/* <TabPane tabId="4">
+                    </TabPane> 
+                     <TabPane tabId="4">
                       <ListGroup flush>
                         <Row>
                           <Col>
@@ -408,7 +420,7 @@ function Staffdetails({ data }) {
                           </Col>
                         </Row>
                       </ListGroup>
-                    </TabPane> */}
+                    </TabPane> 
                   </TabContent>
                 </CardBody>
               </Card>
