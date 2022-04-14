@@ -68,11 +68,48 @@ const DepartmentHead = () => {
 
   const primaryHeadHandler = (department) => async (e) => {
     // console.log(department);
-    // console.log(e.target.value);
+    console.log(e.target.value);
     let deptId = e.target.value;
+
+    if (e.target.value === "") {
+      return;
+    }
+
+    // formData1.set("head", department._id);
+    if (e.target.value === "delete") {
+      console.log(true);
+      try {
+        const formData = new FormData();
+        formData.set("id", department._id);
+        formData.set("removePrimaryHead", true);
+        setLoading(true);
+        const data = await departmentHead(
+          department._id,
+          user._id,
+          token,
+          formData
+        );
+        console.log(data);
+        const formData1 = new FormData();
+        formData1.set("isHead", false);
+        const data1 = await updateStaff1(
+          department.primary_head._id,
+          user._id,
+          formData1
+        );
+        console.log(data1);
+        setChecked(!checked);
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+      }
+
+      return;
+    }
+
     let formData = new FormData();
     formData.set("primary_head", e.target.value);
-    // formData1.set("head", department._id);
     try {
       setLoading(true);
       const data = await departmentHead(
@@ -83,22 +120,26 @@ const DepartmentHead = () => {
       );
       // console.log(data);
       let formData1 = new FormData();
-      if(department.primary_head){
-        formData1.set("isHead",false);
-        const data1 = await updateStaff1(department.primary_head._id, user._id, formData1);
+      if (department.primary_head) {
+        formData1.set("isHead", false);
+        const data1 = await updateStaff1(
+          department.primary_head._id,
+          user._id,
+          formData1
+        );
         // console.log(data1);
         let formData2 = new FormData();
-        formData2.set("head",department._id);
-        formData2.set("isHead",true)
+        formData2.set("head", department._id);
+        formData2.set("isHead", true);
         const data2 = await updateStaff1(deptId, user._id, formData2);
         // console.log(data2);
-      }else{
-        formData1.set("head",department._id);
-        formData1.set("isHead",true);
+      } else {
+        formData1.set("head", department._id);
+        formData1.set("isHead", true);
         const data1 = await updateStaff1(deptId, user._id, formData1);
         // console.log(data1);
       }
-      
+
       setChecked(!checked);
       setLoading(false);
       toast.success(departmentHeadAssignSuccess);
@@ -113,6 +154,43 @@ const DepartmentHead = () => {
     // console.log(department);
     // console.log(e.target.value);
     let deptId = e.target.value;
+
+    if (e.target.value === "") {
+      return;
+    }
+
+    if (e.target.value === "delete") {
+      console.log(true);
+      try {
+        const formData = new FormData();
+        formData.set("id", department._id);
+        formData.set("removeSecondaryHead", true);
+        setLoading(true);
+        const data = await departmentHead(
+          department._id,
+          user._id,
+          token,
+          formData
+        );
+        console.log(data);
+        const formData1 = new FormData();
+        formData1.set("isHead", false);
+        const data1 = await updateStaff1(
+          department.secondary_head._id,
+          user._id,
+          formData1
+        );
+        console.log(data1);
+        setChecked(!checked)
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+      }
+
+      return;
+    }
+
     let formData = new FormData();
     formData.set("secondary_head", e.target.value);
 
@@ -124,22 +202,26 @@ const DepartmentHead = () => {
         token,
         formData
       );
-      // console.log(data); 
-      if(department.secondary_head){
+      // console.log(data);
+      if (department.secondary_head) {
         let formData1 = new FormData();
-        formData1.set("isHead",false);
-        const data1 = await updateStaff1(department.secondary_head._id, user._id, formData1);
+        formData1.set("isHead", false);
+        const data1 = await updateStaff1(
+          department.secondary_head._id,
+          user._id,
+          formData1
+        );
         // console.log(data1);
         let formData2 = new FormData();
-        formData2.set("head",department._id);
-        formData2.set("isHead",true)
-  
+        formData2.set("head", department._id);
+        formData2.set("isHead", true);
+
         const data2 = await updateStaff1(deptId, user._id, formData2);
         // console.log(data2);
-      }else{
+      } else {
         let formData1 = new FormData();
-        formData1.set("head",department._id);
-        formData1.set("isHead",true);
+        formData1.set("head", department._id);
+        formData1.set("isHead", true);
         const data1 = await updateStaff1(deptId, user._id, formData1);
         // console.log(data1);
       }
@@ -188,12 +270,19 @@ const DepartmentHead = () => {
                               value={clas.primary_head && clas.primary_head._id}
                               placeholder="Select Staff"
                             >
-                              
                               {clas.primary_head ? (
-                                <option value="">
-                                  {clas.primary_head.firstname}{" "}
-                                  {clas.primary_head.secondname}{" "}
-                                </option>
+                                <>
+                                  <option value={clas.primary_head.firstname}>
+                                    {clas.primary_head.firstname}{" "}
+                                    {clas.primary_head.secondname}{" "}
+                                  </option>
+                                  <option
+                                    value="delete"
+                                    style={{ fontWeight: "500" }}
+                                  >
+                                    Delete Primary Head
+                                  </option>
+                                </>
                               ) : (
                                 <option value="">Primary Head</option>
                               )}
@@ -218,10 +307,18 @@ const DepartmentHead = () => {
                               placeholder="Select Staff"
                             >
                               {clas.secondary_head ? (
-                                <option value="">
-                                  {clas.secondary_head.firstname}{" "}
-                                  {clas.secondary_head.secondname}{" "}
-                                </option>
+                                <>
+                                  <option value="">
+                                    {clas.secondary_head.firstname}{" "}
+                                    {clas.secondary_head.secondname}{" "}
+                                  </option>
+                                  <option
+                                    value="delete"
+                                    style={{ fontWeight: "500" }}
+                                  >
+                                    Delete Secondary Head
+                                  </option>
+                                </>
                               ) : (
                                 <option value="">Secondary Head</option>
                               )}
