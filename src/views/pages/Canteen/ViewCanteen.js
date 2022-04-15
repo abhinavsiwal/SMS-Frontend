@@ -35,7 +35,7 @@ import Loader from "components/Loader/Loader";
 import TextArea from "antd/lib/input/TextArea";
 
 import { isAuthenticated } from "api/auth";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 // import moment Library
 import moment from "moment";
@@ -62,9 +62,10 @@ function ViewCanteen() {
     publish: "",
     id: "",
   });
+  const [deleted, setDeleted] = useState(false);
   const [permissions, setPermissions] = useState([]);
   const [checked, setChecked] = useState(false);
-
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
   const columns = [
     {
       title: "S No.",
@@ -96,14 +97,14 @@ function ViewCanteen() {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.canteen_name.toLowerCase().includes(value.toLowerCase());
+        return record.item_name.toLowerCase().includes(value.toLowerCase());
       },
     },
 
     {
       title: "Start Time",
       dataIndex: "start_time",
-      sorter: (a, b) => a.description > b.description,
+      sorter: (a, b) => a.start_time > b.start_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -126,7 +127,7 @@ function ViewCanteen() {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.description.toLowerCase().includes(value.toLowerCase());
+        return record.start_time.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
@@ -155,42 +156,20 @@ function ViewCanteen() {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.description.toLowerCase().includes(value.toLowerCase());
+        return record.end_time.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
       title: "Image",
       dataIndex: "image",
-      sorter: (a, b) => a.image > b.image,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.image.toLowerCase().includes(value.toLowerCase());
-      },
+     
+    
+     
     },
     {
       title: "Price",
       dataIndex: "price",
-      sorter: (a, b) => a.prize > b.prize,
+      sorter: (a, b) => a.price > b.price,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -213,7 +192,7 @@ function ViewCanteen() {
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.prize.toLowerCase().includes(value.toLowerCase());
+        return record.price.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
@@ -255,7 +234,7 @@ function ViewCanteen() {
   ];
 
   const { user, token } = isAuthenticated();
-
+  const [editLoading, setEditLoading] = useState(false);
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -269,27 +248,38 @@ function ViewCanteen() {
       setPermissions(permission1);
       // console.log(permissions);
     }
-  }, [checked,selectedCanteenId]);
+  }, [checked, selectedCanteenId]);
 
   React.useEffect(() => {
     fetchCanteen();
   }, [checked]);
   const fetchCanteen = async () => {
+    setLoading(true);
     const res = await allCanteens(user._id, user.school); // Call your function here
     console.log(res);
     await setAllCanteen(res);
-    await setSelectedCanteenId(res[0]._id);
 
-    setLoading(true);
+    setLoading(false);
   };
   useEffect(() => {
     if (selectedCanteenId) {
       tableData();
     }
-  }, [selectedCanteenId]);
+  }, [selectedCanteenId, deleted]);
 
   const tableData = async () => {
-    console.log(selectedCanteenId);
+    // console.log(selectedCanteenId);
+
+    if (selectedCanteenId === undefined) {
+      return;
+    }
+
+    if (selectedCanteenId === "empty") {
+      console.log("empty");
+      setisData(false);
+      setShowDeleteButton(false);
+      return;
+    }
     console.log(allCanteen);
     let selectedCanteen = await allCanteen.find(
       (canteen) => canteen._id === selectedCanteenId
@@ -298,8 +288,10 @@ function ViewCanteen() {
     const data = [];
     if (selectedCanteen.menu.length === 0) {
       setisData(false);
+      setShowDeleteButton(true);
       return;
     }
+    setShowDeleteButton(true);
     setisData(true);
     for (let i = 0; i < selectedCanteen.menu.length; i++) {
       data.push({
@@ -348,7 +340,7 @@ function ViewCanteen() {
       });
     }
     setViewCanteen(data);
-    setLoading(true);
+    setLoading(false);
   };
 
   //values of addMenu
@@ -394,38 +386,51 @@ function ViewCanteen() {
     formData.set("publish", addMenu.publish);
 
     try {
+      setEditLoading(true);
       const data = await menuItemEdit(addMenu.id, user._id, formData);
 
       console.log(data);
       setChecked(!checked);
       toast.success("Item edited successfully");
       setEditing(false);
+      setSelectedCanteenId("empty");
+      setDeleted(!deleted);
+      setEditLoading(false);
     } catch (err) {
       console.log(err);
+      setEditLoading(false);
       toast.error("Error editing item");
     }
   };
 
   const deleteCanteenHandler = async () => {
     try {
+      setLoading(true);
       const data = await canteenDelete(selectedCanteenId, user._id);
       console.log(data);
       setChecked(!checked);
+      setLoading(false);
       toast.success("Canteen Deleted Successfully");
     } catch (err) {
       console.log(err);
+      setLoading(false);
       toast.error("Canteen Not Deleted");
     }
   };
 
   const deleteMenuItemHandler = async (itemId) => {
     try {
+      setLoading(true);
       const data = await menuItemDelete(itemId, user._id);
       console.log(data);
       setChecked(!checked);
+      setLoading(false);
+      setSelectedCanteenId("empty");
+      setDeleted(!deleted);
       toast.success("Canteen Deleted Successfully");
     } catch (err) {
       console.log(err);
+      setLoading(false);
       toast.error("Canteen Not Deleted");
     }
   };
@@ -458,21 +463,24 @@ function ViewCanteen() {
               required
               style={{ maxWidth: "10rem" }}
             >
+              <option value="empty">Select Canteen</option>
               {allCanteen.map((canteen) => {
                 return (
-                  <option key={canteen._id} value={canteen._id} selected>
+                  <option key={canteen._id} value={canteen._id}>
                     {canteen.name}
                   </option>
                 );
               })}
             </Input>
-            {permissions && permissions.includes("delete") && (
-              <Button
-                color="danger"
-                className="mt-3"
-                onClick={deleteCanteenHandler}
-              >
-                Delete Canteen
+
+            {showDeleteButton && permissions && permissions.includes("delete") && (
+              <Button color="danger" className="mt-3">
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => deleteCanteenHandler()}
+                >
+                  DeleteCanteen <i className="fas fa-trash" />
+                </Popconfirm>
               </Button>
             )}
           </CardHeader>
@@ -485,20 +493,19 @@ function ViewCanteen() {
             >
               Print
             </Button>
-            {loading && viewCanteen ? (
-              isData?(
+            {!loading && viewCanteen ? (
+              isData ? (
                 <div ref={componentRef}>
-                <AntTable
-                  columns={columns}
-                  data={viewCanteen}
-                  pagination={true}
-                  exportFileName="StudentDetails"
-                />
-              </div>
-              ):(
+                  <AntTable
+                    columns={columns}
+                    data={viewCanteen}
+                    pagination={true}
+                    exportFileName="StudentDetails"
+                  />
+                </div>
+              ) : (
                 <h3>No Menu Found</h3>
               )
-            
             ) : (
               <Loader />
             )}
@@ -524,144 +531,148 @@ function ViewCanteen() {
               <span aria-hidden={true}>×</span>
             </button>
           </div>
-          <ModalBody>
-            <Form className="mb-4" onSubmit={handleEditSubmit}>
-              <CardBody>
-                <Row md="4" className="d-flex justify-content-center mb-4">
-                  <Col md="8">
-                    <label
-                      className="form-control-label"
-                      htmlFor="example3cols2Input"
-                    >
-                      Upload Image
-                    </label>
-                    <div className="custom-file">
-                      <input
-                        className="custom-file-input"
-                        id="customFileLang"
-                        lang="en"
-                        type="file"
-                        onChange={handleFileChange("image")}
-                        accept="image/*"
-                      />
+          {editLoading ? (
+            <Loader />
+          ) : (
+            <ModalBody>
+              <Form className="mb-4" onSubmit={handleEditSubmit}>
+                <CardBody>
+                  <Row md="4" className="d-flex justify-content-center mb-4">
+                    <Col md="8">
                       <label
-                        className="custom-file-label"
-                        htmlFor="customFileLang"
+                        className="form-control-label"
+                        htmlFor="example3cols2Input"
                       >
-                        Select file
+                        Upload Image
                       </label>
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Item Name
-                    </Label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Name"
-                      type="text"
-                      onChange={handleChangeMenu("item")}
-                      value={addMenu.item}
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Price
-                    </Label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="Price"
-                      type="Number"
-                      onChange={handleChangeMenu("price")}
-                      value={addMenu.price}
-                      required
-                    />
-                  </Col>
-                  <Col md="6">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
-                      Publish
-                    </Label>
-                    <Input
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={handleChangeMenu("publish")}
-                      value={addMenu.publish}
-                      required
-                    >
-                      <option value="" disabled selected>
+                      <div className="custom-file">
+                        <input
+                          className="custom-file-input"
+                          id="customFileLang"
+                          lang="en"
+                          type="file"
+                          onChange={handleFileChange("image")}
+                          accept="image/*"
+                        />
+                        <label
+                          className="custom-file-label"
+                          htmlFor="customFileLang"
+                        >
+                          Select file
+                        </label>
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Item Name
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={handleChangeMenu("item")}
+                        value={addMenu.item}
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4">
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Price
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Price"
+                        type="Number"
+                        onChange={handleChangeMenu("price")}
+                        value={addMenu.price}
+                        required
+                      />
+                    </Col>
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="exampleFormControlSelect3"
+                      >
                         Publish
-                      </option>
-                      <option>Yes</option>
-                      <option>No</option>
-                    </Input>
-                  </Col>
-                </Row>
-                <Row className="mt-4">
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      From
-                    </Label>
-                    <DatePicker
-                      id="exampleFormControlSelect3"
-                      className="Period-Time"
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={15}
-                      timeCaption="Time"
-                      dateFormat="h:mm aa"
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
-                    >
-                      To
-                    </Label>
-                    <DatePicker
-                      id="exampleFormControlSelect3"
-                      className="Period-Time"
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      showTimeSelect
-                      showTimeSelectOnly
-                      timeIntervals={15}
-                      timeCaption="Time"
-                      dateFormat="h:mm aa"
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row className="mt-4 float-right">
-                  <Col>
-                    <Button color="primary" type="submit">
-                      Add Menu
-                    </Button>
-                  </Col>
-                </Row>
-              </CardBody>
-            </Form>
-          </ModalBody>
+                      </Label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChangeMenu("publish")}
+                        value={addMenu.publish}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Publish
+                        </option>
+                        <option>Yes</option>
+                        <option>No</option>
+                      </Input>
+                    </Col>
+                  </Row>
+                  <Row className="mt-4">
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        From
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                        required
+                      />
+                    </Col>
+                    <Col md="3">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example-date-input"
+                      >
+                        To
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-4 float-right">
+                    <Col>
+                      <Button color="primary" type="submit">
+                        Save Changes
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Form>
+            </ModalBody>
+          )}
         </Modal>
       </Container>
     </>

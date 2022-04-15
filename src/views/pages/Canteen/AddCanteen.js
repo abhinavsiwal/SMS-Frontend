@@ -29,7 +29,7 @@ import moment from "moment";
 import { allStaffs } from "api/staff";
 //React-Select
 import Select from "react-select";
-
+import { useHistory } from "react-router-dom";
 import { canteenAdd, allCanteens, menuAdd } from "../../../api/canteen/index";
 import { toast, ToastContainer } from "react-toastify";
 import { fetchingStaffFailed } from "constants/errors";
@@ -40,6 +40,7 @@ import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
 function AddCanteen() {
+  const history = useHistory();
   const [startDate, setStartDate] = React.useState(new Date());
   const startDuration = moment(startDate).format("LT");
   // console.log("start", startDuration);
@@ -52,6 +53,7 @@ function AddCanteen() {
   const [allCanteen, setAllCanteen] = useState([]);
   const [checked, setChecked] = useState(false);
   const [file, setFile] = useState();
+  // import { useHistory } from "react-router-dom";
 
   const [canteenLoading, setCanteenLoading] = useState(false);
   const [menuLoading, setMenuLoading] = useState(false);
@@ -216,6 +218,7 @@ function AddCanteen() {
         price: "",
         publish: "",
       });
+      history.push("/admin/view-canteen");
     } catch (err) {
       toast.error(addCanteenError);
       setMenuLoading(false);
@@ -522,6 +525,7 @@ function AddCanteen() {
                             placeholder="Description"
                             type="Number"
                             onChange={handleChangeMenu("description")}
+                            required
                             value={addMenu.description}
                           />
                         </Col>
