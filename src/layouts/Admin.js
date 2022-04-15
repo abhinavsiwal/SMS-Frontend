@@ -7,7 +7,7 @@ import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import { isAuthenticated } from "api/auth";
 import routes, { adminRoutes, viewerRoutes } from "routes.js";
-
+import Profile from 'views/pages/Staff Profile/Profile';
 function Admin() {
   const [sidenavOpen, setSidenavOpen] = React.useState(true);
   const location = useLocation();
@@ -30,6 +30,14 @@ function Admin() {
 
   // let routes1 = [];
   let permittedRoute = [];
+  permittedRoute.push({
+    path: "/profile",
+    name: "Profile",
+    icon: "ni ni-shop text-primary",
+    component: Profile,
+    layout: "/admin",
+    module: "Profile",
+  });
   // console.log(user);
   for (const key in user.permissions) {
     // console.log(key);
@@ -43,14 +51,14 @@ function Admin() {
 
     if (permitted && permitted.views) {
       // console.log(permitted.views);
-    
-let permittedViews2=[];
 
-      user.permissions[key].forEach(element => {
+      let permittedViews2 = [];
+
+      user.permissions[key].forEach((element) => {
         // console.log(element);
-        for (let i = 0; i < permitted.views.length; i++){
+        for (let i = 0; i < permitted.views.length; i++) {
           // console.log(permitted.views[i]);
-          if(permitted.views[i].permission.toString() ===element.toString()){
+          if (permitted.views[i].permission.toString() === element.toString()) {
             // console.log(true);
             // permitted.views=permitted.views[i];
             permittedViews2.push(permitted.views[i]);
@@ -59,9 +67,9 @@ let permittedViews2=[];
       });
       // console.log(permittedViews2);
       let permittedViews = permitted.views.filter(
-        (view) => "view" === view.permission.toString() 
+        (view) => "view" === view.permission.toString()
       );
-    
+
       permitted.views = permittedViews2;
     }
     if (permitted) {
@@ -114,7 +122,7 @@ let permittedViews2=[];
     return location.pathname.indexOf("admin/alternative-dashboard") === -1
       ? "dark"
       : "light";
-  }; 
+  };
 
   return (
     <>

@@ -26,3 +26,18 @@ export const editProfile = async (schoolId, userId,formData) => {
     throw err;
   }
 };
+
+export const adminProfileEdit = async (userId, formData) => {
+  try {
+    const {data} = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/admin/detail/edit/${userId}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}
