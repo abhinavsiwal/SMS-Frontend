@@ -23,7 +23,7 @@ function AdminFooter() {
   return (
     <>
       <Container fluid>
-        <footer className="footer pt-0">
+        {/* <footer className="footer pt-0">
           <Row className="align-items-center justify-content-lg-between">
             <Col lg="6">
               <div className="copyright text-center text-lg-left text-muted">
@@ -74,7 +74,7 @@ function AdminFooter() {
               </Nav>
             </Col>
           </Row>
-        </footer>
+        </footer> */}
       </Container>
     </>
   );

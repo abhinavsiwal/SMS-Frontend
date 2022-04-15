@@ -48,7 +48,7 @@ function Login() {
   useEffect(() => {
 
     if (!localStorage.getItem("persist:root")) {
-      console.log("here");
+      // console.log("here");
       dispatch(setToken(""));
       dispatch(setExpiry(""))
       dispatch(setUserDetails({}));
@@ -56,8 +56,8 @@ function Login() {
     }
   
     if (token) {
-      console.log(token);
-      console.log("Login");
+      // console.log(token);
+      // console.log("Login");
       toast.success(loginSuccess);
       // console.log("logged in");
       setRedirect(true);
