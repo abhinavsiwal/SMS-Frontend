@@ -22,6 +22,12 @@ function Admin() {
   // console.log(user.role);
   // console.log(adminRoutes);
 
+  useEffect(() => {
+    if(!user){
+      return;
+    }
+  } , [user]);
+
   let routes1 = [];
   // for (const key in user.role) {
   //   console.log(key);

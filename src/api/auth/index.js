@@ -2,6 +2,12 @@ import CryptoJS from "crypto-js";
 
 export const isAuthenticated = () => {
 
+  if (!localStorage.getItem("persist:root")) {
+    console.log("here");
+    
+    return false;
+  }
+
   let encryptedToken = JSON.parse(
     JSON.parse(localStorage.getItem("persist:root")).authReducer
   ).token;

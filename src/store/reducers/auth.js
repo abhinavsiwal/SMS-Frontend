@@ -51,6 +51,9 @@ export const authSlice = createSlice({
     },
     [login.fulfilled]: (state, { payload }) => {
       console.log(payload);
+      if(!payload){
+        return;
+      }
       let encryptedToken = CryptoJS.AES.encrypt(
         payload.token,
         process.env.REACT_APP_CRYPTO_SECRET

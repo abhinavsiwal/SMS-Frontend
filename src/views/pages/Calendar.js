@@ -592,8 +592,10 @@ const [permissions, setPermissions] = useState([]);
                 />
               </CardBody>
             </Card>
-            {permissions && permissions.includes("add".trim()) && (
-            <Modal
+            {/* {permissions && permissions.includes("add".trim()) && (
+          
+             )} */}
+  <Modal
               isOpen={modalAdd}
               toggle={() => setModalAdd(false)}
               className="modal-dialog-centered modal-secondary"
@@ -735,10 +737,10 @@ const [permissions, setPermissions] = useState([]);
                 </Button>
               </div>
             </Modal>
-             )}
-
-            {permissions && permissions.includes("edit") && (
-            <Modal
+            {/* {permissions && permissions.includes("edit") && (
+          
+            )} */}
+              <Modal
               isOpen={modalChange}
               toggle={() => setModalChange(false)}
               className="modal-dialog-centered modal-secondary"
@@ -896,7 +898,6 @@ const [permissions, setPermissions] = useState([]);
                 </Button>
               </div>
             </Modal>
-            )}
           </div>
         </Row>
       </Container>

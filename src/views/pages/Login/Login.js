@@ -1,19 +1,4 @@
-/*!
 
-=========================================================
-* Argon Dashboard PRO React - v1.2.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-pro-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import { useState, useEffect } from "react";
 // nodejs library that concatenates classes
@@ -40,6 +25,7 @@ import { adminLogin, staffLogin, studentLogin } from "api/login";
 import validator from "validator";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../store/reducers/auth";
+import { setToken,setExpiry,setUserDetails } from "../../../store/reducers/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { loginSuccess } from "constants/success";
 import { loginError } from "constants/errors";
@@ -61,22 +47,26 @@ function Login() {
 
   useEffect(() => {
 
-
-
+    if (!localStorage.getItem("persist:root")) {
+      console.log("here");
+      dispatch(setToken(""));
+      dispatch(setExpiry(""))
+      dispatch(setUserDetails({}));
+      return;
+    }
+  
     if (token) {
+      console.log(token);
+      console.log("Login");
       toast.success(loginSuccess);
       // console.log("logged in");
       setRedirect(true);
     }
-    if (error) {
-      console.log(error);
-      setErrormsg(error.message);
-      // toast.error(loginError)
-    }
+ 
    
   }, [token]);
 
- 
+
 
   const handleSubmit = async(e) => {
     e.preventDefault();
