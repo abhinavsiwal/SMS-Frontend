@@ -34,7 +34,7 @@ import "assets/vendor/nucleo/css/nucleo.css";
 import "assets/scss/argon-dashboard-pro-react.scss?v1.2.0";
 
 import "antd/dist/antd.css";
-
+import "./index.css"
 // import AdminLayout from "layouts/Admin.js";
 // import RTLLayout from "layouts/RTL.js";
 // import AuthLayout from "layouts/Auth.js";

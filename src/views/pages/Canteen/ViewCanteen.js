@@ -162,9 +162,6 @@ function ViewCanteen() {
     {
       title: "Image",
       dataIndex: "image",
-     
-    
-     
     },
     {
       title: "Price",

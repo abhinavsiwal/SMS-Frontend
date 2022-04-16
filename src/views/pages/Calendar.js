@@ -32,7 +32,7 @@ import {
 // import { events as eventsVariables } from "variables/general.js";
 
 import { ToastContainer, toast } from "react-toastify";
-
+import Loader from "components/Loader/Loader";
 //React Datepicker
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -58,6 +58,7 @@ import { updateCalendarError } from "constants/errors";
 import { deleteCalendarError, fetchingStaffFailed } from "constants/errors";
 
 import { allStaffs } from "api/staff";
+
 let calendar;
 
 function CalendarView() {
@@ -89,6 +90,9 @@ function CalendarView() {
   const [permissions, setPermissions] = useState([]);
   const [eventDetails, setEventDetails] = useState({});
   const [viewModal, setViewModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [addLoading, setAddLoading] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
   let permission1 = [];
   useEffect(() => {
     // console.log(user);
@@ -175,12 +179,13 @@ function CalendarView() {
 
       // Edit calendar event action
       eventClick: ({ event }) => {
-        // console.log("event", event);
+        console.log("event", event);
         setEventId(event.id);
         setEventTitle(event.title);
         setDescription(event.extendedProps.description);
         setRadios("exams");
         setEvent(event);
+        setAssignTeachers(event.extendedProps.assignTeachers);
         setModalChange(true);
       },
     });
@@ -214,12 +219,15 @@ function CalendarView() {
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
     try {
+      setAddLoading(true);
       await addCalender(user._id, token, formData);
       setModalAdd(false);
       toast.success("Event addedd successfully");
-      setChecked(true);
+      setChecked(!checked);
+      setAddLoading(false);
     } catch (err) {
       toast.error(err);
+      setAddLoading(false);
     }
     setEvents(undefined);
     setStartDate(undefined);
@@ -236,8 +244,9 @@ function CalendarView() {
 
   const getEvents = async () => {
     const { user, token } = isAuthenticated();
+    setLoading(true);
     const events = await getCalender(user._id, user.school, token);
-    // console.log("getevents", events);
+    console.log("getevents", events);
     setEvents(events);
     events.map((events) => {
       return calendar.addEvent({
@@ -281,6 +290,7 @@ function CalendarView() {
     });
     setEventList(data);
     setChecked(false);
+    setLoading(false);
   };
 
   //Edit Events
@@ -301,6 +311,7 @@ function CalendarView() {
     });
 
     try {
+      setEditLoading(true);
       const updateEvents = await updateEvent(
         user._id,
         eventId,
@@ -309,7 +320,9 @@ function CalendarView() {
       );
       setEvents(updateEvents);
       setChecked(true);
+      setEditLoading(false);
     } catch (err) {
+      setEditLoading(false);
       toast.error(updateCalendarError);
     }
     setModalChange(false);
@@ -513,7 +526,7 @@ function CalendarView() {
     <>
       {alert}
       <Modal
-        style={{ height: "65vh",marginTop:"8rem" }}
+        style={{ height: "65vh", marginTop: "8rem" }}
         isOpen={editing}
         toggle={() => setEditing(false)}
         size="lg"
@@ -533,8 +546,11 @@ function CalendarView() {
             <span aria-hidden={true}>×</span>
           </button>
         </div>
-        <ModalBody>
-          {/* <Label className="form-control-label" htmlFor="example-date-input">
+        {editLoading ? (
+          <Loader />
+        ) : (
+          <ModalBody>
+            {/* <Label className="form-control-label" htmlFor="example-date-input">
             Search
           </Label>
           <Input
@@ -545,8 +561,9 @@ function CalendarView() {
             required
           />
           <Button className="mt-2">Search</Button> */}
-          <Table columns={columns} dataSource={eventList} />
-        </ModalBody>
+            <Table columns={columns} dataSource={eventList} />
+          </ModalBody>
+        )}
       </Modal>
       <ToastContainer
         position="bottom-right"
@@ -671,143 +688,151 @@ function CalendarView() {
               toggle={() => setModalAdd(false)}
               className="modal-dialog-centered modal-secondary"
             >
-              <div className="modal-body">
-                <form className="new-event--form">
-                  <FormGroup>
-                    <label className="form-control-label">Event title</label>
-                    <Input
-                      className="form-control-alternative new-event--title"
-                      placeholder="Event Title"
-                      type="text"
-                      onChange={(e) => setEventTitle(e.target.value)}
-                      required
-                    />
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
+              {addLoading ? (
+                <Loader />
+              ) : (
+                <>
+                  <div className="modal-body">
+                    <form className="new-event--form">
+                      <FormGroup>
+                        <label className="form-control-label">
+                          Event title
+                        </label>
+                        <Input
+                          className="form-control-alternative new-event--title"
+                          placeholder="Event Title"
+                          type="text"
+                          onChange={(e) => setEventTitle(e.target.value)}
+                          required
+                        />
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          From
+                        </Label>
+                        <DatePicker
+                          className="p-2 endDate"
+                          showTimeSelect
+                          dateFormat="yyyy MMMM, dd h:mm aa"
+                          selected={startDate}
+                          selectsStart
+                          startDate={startDate}
+                          onChange={(date) => setStartDate(date)}
+                          strictParsing
+                          value={startDate}
+                          required
+                        />
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          To
+                        </Label>
+                        <DatePicker
+                          className="p-2 endDate"
+                          showTimeSelect
+                          dateFormat="yyyy MMMM, dd h:mm aa"
+                          selected={endDate}
+                          selectsStart
+                          startDate={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          strictParsing
+                          value={endDate}
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup>
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Teacher
+                        </Label>
+                        <Input
+                          type="select"
+                          onChange={(e) => setStaffId(e.target.value)}
+                        >
+                          <option value={""}>{"Select Staff"}</option>
+                          {staff &&
+                            staff.map((staff, i) => (
+                              <option key={i} value={staff._id}>
+                                {staff.firstname} {staff.lastname}
+                              </option>
+                            ))}
+                        </Input>
+                      </FormGroup>
+                      <FormGroup>
+                        <textarea
+                          className="form-control-alternative new-event--title w-100 descrip"
+                          placeholder="Description"
+                          type="text"
+                          onChange={(e) => setDescription(e.target.value)}
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup className="mb-0">
+                        <label className="form-control-label d-block mb-3">
+                          Status color
+                        </label>
+                        <ButtonGroup
+                          className="btn-group-toggle btn-group-colors event-tag"
+                          data-toggle="buttons"
+                        >
+                          <Button
+                            className={classnames("bg-info", {
+                              active: radios === "bg-info",
+                            })}
+                            color=""
+                            id="bg-info"
+                            type="button"
+                            onClick={() => setRadios("bg-info")}
+                            value="bg-info"
+                          />
+                          <Button
+                            className={classnames("bg-warning", {
+                              active: radios === "bg-warning",
+                            })}
+                            color=""
+                            id="bg-warning"
+                            type="button"
+                            onClick={() => setRadios("bg-warning")}
+                            value="bg-warning"
+                          />
+                          <Button
+                            className={classnames("bg-danger", {
+                              active: radios === "bg-danger",
+                            })}
+                            color=""
+                            id="bg-danger"
+                            type="button"
+                            onClick={() => setRadios("bg-danger")}
+                            value="bg-danger"
+                          />
+                        </ButtonGroup>
+                      </FormGroup>
+                    </form>
+                  </div>
+                  <div className="modal-footer">
+                    <Button
+                      className="new-event--add"
+                      color="primary"
+                      type="button"
+                      onClick={handleSubmitEvent}
                     >
-                      From
-                    </Label>
-                    <DatePicker
-                      className="p-2 endDate"
-                      showTimeSelect
-                      dateFormat="yyyy MMMM, dd h:mm aa"
-                      selected={startDate}
-                      selectsStart
-                      startDate={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      strictParsing
-                      value={startDate}
-                      required
-                    />
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
+                      Add event
+                    </Button>
+                    <Button
+                      className="ml-auto"
+                      color="link"
+                      type="button"
+                      onClick={() => setModalAdd(false)}
                     >
-                      To
-                    </Label>
-                    <DatePicker
-                      className="p-2 endDate"
-                      showTimeSelect
-                      dateFormat="yyyy MMMM, dd h:mm aa"
-                      selected={endDate}
-                      selectsStart
-                      startDate={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      strictParsing
-                      value={endDate}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
-                    >
-                      Teacher
-                    </Label>
-                    <Input
-                      type="select"
-                      onChange={(e) => setStaffId(e.target.value)}
-                    >
-                      <option value={""}>{"Select Staff"}</option>
-                      {staff &&
-                        staff.map((staff, i) => (
-                          <option key={i} value={staff._id}>
-                            {staff.firstname} {staff.lastname}
-                          </option>
-                        ))}
-                    </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <textarea
-                      className="form-control-alternative new-event--title w-100 descrip"
-                      placeholder="Description"
-                      type="text"
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup className="mb-0">
-                    <label className="form-control-label d-block mb-3">
-                      Status color
-                    </label>
-                    <ButtonGroup
-                      className="btn-group-toggle btn-group-colors event-tag"
-                      data-toggle="buttons"
-                    >
-                      <Button
-                        className={classnames("bg-info", {
-                          active: radios === "bg-info",
-                        })}
-                        color=""
-                        id="bg-info"
-                        type="button"
-                        onClick={() => setRadios("bg-info")}
-                        value="bg-info"
-                      />
-                      <Button
-                        className={classnames("bg-warning", {
-                          active: radios === "bg-warning",
-                        })}
-                        color=""
-                        id="bg-warning"
-                        type="button"
-                        onClick={() => setRadios("bg-warning")}
-                        value="bg-warning"
-                      />
-                      <Button
-                        className={classnames("bg-danger", {
-                          active: radios === "bg-danger",
-                        })}
-                        color=""
-                        id="bg-danger"
-                        type="button"
-                        onClick={() => setRadios("bg-danger")}
-                        value="bg-danger"
-                      />
-                    </ButtonGroup>
-                  </FormGroup>
-                </form>
-              </div>
-              <div className="modal-footer">
-                <Button
-                  className="new-event--add"
-                  color="primary"
-                  type="button"
-                  onClick={handleSubmitEvent}
-                >
-                  Add event
-                </Button>
-                <Button
-                  className="ml-auto"
-                  color="link"
-                  type="button"
-                  onClick={() => setModalAdd(false)}
-                >
-                  Close
-                </Button>
-              </div>
+                      Close
+                    </Button>
+                  </div>
+                </>
+              )}
             </Modal>
             {/* {permissions && permissions.includes("edit") && (
           
@@ -817,158 +842,168 @@ function CalendarView() {
               toggle={() => setModalChange(false)}
               className="modal-dialog-centered modal-secondary"
             >
-              <div className="modal-body">
-                <Form className="edit-event--form">
-                  <FormGroup>
-                    <label className="form-control-label">Event title</label>
-                    <Input
-                      className="form-control-alternative edit-event--title"
-                      placeholder="Event Title"
-                      type="text"
-                      defaultValue={eventTitle}
-                      onChange={(e) => setEventTitle(e.target.value)}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
+              {editLoading ? (
+                <Loader />
+              ) : (
+                <>
+                  <div className="modal-body">
+                    <Form className="edit-event--form">
+                      <FormGroup>
+                        <label className="form-control-label">
+                          Event title
+                        </label>
+                        <Input
+                          className="form-control-alternative edit-event--title"
+                          placeholder="Event Title"
+                          type="text"
+                          defaultValue={eventTitle}
+                          onChange={(e) => setEventTitle(e.target.value)}
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup>
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          From
+                        </Label>
+                        <DatePicker
+                          className="p-2 endDate"
+                          showTimeSelect
+                          dateFormat="yyyy MMMM, dd h:mm aa"
+                          selected={startDate}
+                          selectsStart
+                          startDate={startDate}
+                          onChange={(date) => setStartDate(date)}
+                          strictParsing
+                          value={startDate}
+                          required
+                        />
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          To
+                        </Label>
+                        <DatePicker
+                          className="p-2 endDate"
+                          showTimeSelect
+                          dateFormat="yyyy MMMM, dd h:mm aa"
+                          // dateFormat="'YYYY-MM-dd', h:mm"
+                          selected={endDate}
+                          selectsStart
+                          startDate={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          strictParsing
+                          value={endDate}
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup>
+                        <Label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Assignteacher
+                        </Label>
+                        <Input
+                          className="form-control-alternative new-event--title descrip"
+                          id="exampleFormControlSelect3"
+                          type="select"
+                          onChange={(e) => setAssignTeachers(e.target.value)}
+                          required
+                        >
+                          <option value="" selected>
+                            {assignTeachers}
+                          </option>
+                          {staff.map((staff, i) => (
+                            <option key={i} value={staff._id}>
+                              {staff.firstname} {staff.lastname}
+                            </option>
+                          ))}
+                        </Input>
+                      </FormGroup>
+                      <FormGroup>
+                        <label className="form-control-label">
+                          Description
+                        </label>
+                        <Input
+                          className="form-control-alternative edit-event--description textarea-autosize"
+                          placeholder="Event Desctiption"
+                          type="textarea"
+                          defaultValue={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          required
+                        />
+                        <i className="form-group--bar" />
+                      </FormGroup>
+                      <input className="edit-event--id" type="hidden" />
+                      <FormGroup>
+                        <label className="form-control-label d-block mb-3">
+                          Status color
+                        </label>
+                        <ButtonGroup
+                          className="btn-group-toggle btn-group-colors event-tag mb-0"
+                          data-toggle="buttons"
+                        >
+                          <Button
+                            className={classnames("bg-info", {
+                              active: radios === "bg-info",
+                            })}
+                            color=""
+                            id="bg-info"
+                            type="button"
+                            onClick={() => setRadios("bg-info")}
+                            value="bg-info"
+                          />
+                          <Button
+                            className={classnames("bg-warning", {
+                              active: radios === "bg-warning",
+                            })}
+                            color=""
+                            id="bg-warning"
+                            type="button"
+                            onClick={() => setRadios("bg-warning")}
+                            value="bg-warning"
+                          />
+                          <Button
+                            className={classnames("bg-danger", {
+                              active: radios === "bg-danger",
+                            })}
+                            color=""
+                            id="bg-danger"
+                            type="button"
+                            onClick={() => setRadios("bg-danger")}
+                            value="vaccation"
+                          />
+                        </ButtonGroup>
+                      </FormGroup>
+                    </Form>
+                  </div>
+                  <div className="modal-footer">
+                    <Button color="primary" onClick={changeEvent}>
+                      Update
+                    </Button>
+                    <Button
+                      color="danger"
+                      onClick={() => {
+                        setModalChange(false);
+                        deleteEventSweetAlert();
+                      }}
                     >
-                      From
-                    </Label>
-                    <DatePicker
-                      className="p-2 endDate"
-                      showTimeSelect
-                      dateFormat="yyyy MMMM, dd h:mm aa"
-                      selected={startDate}
-                      selectsStart
-                      startDate={startDate}
-                      onChange={(date) => setStartDate(date)}
-                      strictParsing
-                      value={startDate}
-                      required
-                    />
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
+                      Delete
+                    </Button>
+                    <Button
+                      className="ml-auto"
+                      color="link"
+                      onClick={() => setModalChange(false)}
                     >
-                      To
-                    </Label>
-                    <DatePicker
-                      className="p-2 endDate"
-                      showTimeSelect
-                      dateFormat="yyyy MMMM, dd h:mm aa"
-                      // dateFormat="'YYYY-MM-dd', h:mm"
-                      selected={endDate}
-                      selectsStart
-                      startDate={endDate}
-                      onChange={(date) => setEndDate(date)}
-                      strictParsing
-                      value={endDate}
-                      required
-                    />
-                  </FormGroup>
-                  <FormGroup>
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
-                    >
-                      Assignteacher
-                    </Label>
-                    <Input
-                      className="form-control-alternative new-event--title descrip"
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={(e) => setAssignTeachers(e.target.value)}
-                      required
-                    >
-                      <option value="" selected>
-                        {assignTeachers}
-                      </option>
-                      {staff.map((staff, i) => (
-                        <option key={i} value={staff._id}>
-                          {staff.firstname} {staff.lastname}
-                        </option>
-                      ))}
-                    </Input>
-                  </FormGroup>
-                  <FormGroup>
-                    <label className="form-control-label">Description</label>
-                    <Input
-                      className="form-control-alternative edit-event--description textarea-autosize"
-                      placeholder="Event Desctiption"
-                      type="textarea"
-                      defaultValue={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      required
-                    />
-                    <i className="form-group--bar" />
-                  </FormGroup>
-                  <input className="edit-event--id" type="hidden" />
-                  <FormGroup>
-                    <label className="form-control-label d-block mb-3">
-                      Status color
-                    </label>
-                    <ButtonGroup
-                      className="btn-group-toggle btn-group-colors event-tag mb-0"
-                      data-toggle="buttons"
-                    >
-                      <Button
-                        className={classnames("bg-info", {
-                          active: radios === "bg-info",
-                        })}
-                        color=""
-                        id="bg-info"
-                        type="button"
-                        onClick={() => setRadios("bg-info")}
-                        value="bg-info"
-                      />
-                      <Button
-                        className={classnames("bg-warning", {
-                          active: radios === "bg-warning",
-                        })}
-                        color=""
-                        id="bg-warning"
-                        type="button"
-                        onClick={() => setRadios("bg-warning")}
-                        value="bg-warning"
-                      />
-                      <Button
-                        className={classnames("bg-danger", {
-                          active: radios === "bg-danger",
-                        })}
-                        color=""
-                        id="bg-danger"
-                        type="button"
-                        onClick={() => setRadios("bg-danger")}
-                        value="vaccation"
-                      />
-                    </ButtonGroup>
-                  </FormGroup>
-                </Form>
-              </div>
-              <div className="modal-footer">
-                <Button color="primary" onClick={changeEvent}>
-                  Update
-                </Button>
-                <Button
-                  color="danger"
-                  onClick={() => {
-                    setModalChange(false);
-                    deleteEventSweetAlert();
-                  }}
-                >
-                  Delete
-                </Button>
-                <Button
-                  className="ml-auto"
-                  color="link"
-                  onClick={() => setModalChange(false)}
-                >
-                  Close
-                </Button>
-              </div>
+                      Close
+                    </Button>
+                  </div>
+                </>
+              )}
             </Modal>
           </div>
         </Row>
@@ -1000,9 +1035,7 @@ function CalendarView() {
             </Col>
             <Col align="center">
               <h4 className="mt-3 mb-1">Event Detail</h4>
-              <span className="text-md">
-                {eventDetails.description}
-              </span>
+              <span className="text-md">{eventDetails.description}</span>
             </Col>
             <Col align="center">
               <h4 className="mt-3 mb-1">Event type</h4>
@@ -1020,19 +1053,16 @@ function CalendarView() {
             </Col>
             <Col align="center">
               <h4 className="mt-3 mb-1">Event Teachers</h4>
-              { eventDetails.assignTeachers && eventDetails.assignTeachers.map((teacher, i) => {
-                return (
-                  <span className="text-md" key={i}>
-                    {teacher.firstname} {teacher.lastname}
-                  </span>
-                )
-              })}
-            
+              {eventDetails.assignTeachers &&
+                eventDetails.assignTeachers.map((teacher, i) => {
+                  return (
+                    <span className="text-md" key={i}>
+                      {teacher.firstname} {teacher.lastname}
+                    </span>
+                  );
+                })}
             </Col>
           </Row>
-        
-
-        
         </ModalBody>
       </Modal>
     </>

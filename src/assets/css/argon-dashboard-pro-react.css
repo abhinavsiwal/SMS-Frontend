@@ -28318,3 +28318,15 @@ button:focus,
 }
 
 /*# sourceMappingURL=argon-dashboard-pro-react.css.map */
+
+
+textarea:focus, input:focus {
+  color: black;
+}
+
+input, select, textarea{
+  color: black;
+}
+input, select, textarea{
+  color: black;
+}
