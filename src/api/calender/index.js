@@ -50,7 +50,7 @@ export const deleteEvents = (eventId, userId, token) => {
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
   })
     .then((data) => {
-      console.log("data", data);
+      // console.log("data", data);
       return data.json();
     })
     .catch((error) => {

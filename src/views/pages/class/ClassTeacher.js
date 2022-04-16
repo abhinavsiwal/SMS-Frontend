@@ -84,7 +84,7 @@ const ClassTeacher = () => {
           token,
           formData
         );
-        console.log(data);
+        // console.log(data);
         let formData1 = new FormData();
         formData1.set("isClassTeacher", false);
         const data1 = await updateStaff1(
@@ -92,7 +92,7 @@ const ClassTeacher = () => {
           user._id,
           formData1
         );
-        console.log(data1);
+        // console.log(data1);
         toast.success("Class Teacher Removed Successfully");
         setChecked(!checked);
         setLoading(false);

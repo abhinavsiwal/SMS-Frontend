@@ -21,7 +21,7 @@ export const postAttendance = async (userId, bodyData) => {
       bodyData,
       "POST"
     );
-    console.log(data);
+    // console.log(data);
   } catch (err) {
     console.log(err);
     throw err;
@@ -35,7 +35,7 @@ export const searchAttendance = async (userId, schoolId, bodyData) => {
       JSON.stringify(bodyData),
       "POST"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);

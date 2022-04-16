@@ -9,7 +9,7 @@ export const addStudent = (userId, token, data = {}) => {
     body: data,
   })
     .then((data) => {
-      console.log("stu", data);
+      // console.log("stu", data);
       return data.json();
     })
     .catch((error) => {
@@ -42,7 +42,7 @@ export const deleteStudent = async (studentId, id) => {
       {},
       "DELETE"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.log(error);
@@ -58,7 +58,7 @@ export const updateStudent = async (studentId, id, formData) => {
       "PUT"
     );
 
-    console.log(data);
+    // console.log(data);
   } catch (err) {
     console.log(err);
     throw err;
@@ -66,7 +66,7 @@ export const updateStudent = async (studentId, id, formData) => {
 };
 
 export const isAuthenticateStudent = (userId, token, data) => {
-  console.log(data);
+  // console.log(data);
   const url = `${process.env.REACT_APP_API_URL}/api/school/student/parent/check/${userId}`;
   return fetch(url, {
     method: "POST",
@@ -93,7 +93,7 @@ export const filterStudent=async(schoolId,userId,formData)=>{
       JSON.stringify(formData),
       "POST"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.log(error);

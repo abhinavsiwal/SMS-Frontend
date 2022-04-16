@@ -44,18 +44,18 @@ function ViewAllCanteen() {
   const fetchStaff = async () => {
     setLoading(true);
     const res = await allCanteens(user._id, user.school); // Call your function here
-    console.log(res);
+    // console.log(res);
     await setAllCanteen(res);
     await setSelectedCanteenId(res[0]._id);
     setLoading(false);
   };
 
   const selectedStaff = (canteenId) => {
-    console.log(canteenId);
+    // console.log(canteenId);
     setCheck(true);
 
     const canteen = allCanteen.find((canteen) => canteen._id === canteenId);
-    console.log(canteen);
+    // console.log(canteen);
     setSelectedCanteen(canteen);
   };
 

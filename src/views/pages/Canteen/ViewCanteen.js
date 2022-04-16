@@ -242,7 +242,7 @@ function ViewCanteen() {
 
   let permission1 = [];
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user.permissions["Canteen Management"]) {
       permission1 = user.permissions["Canteen Management"];
       setPermissions(permission1);
@@ -256,7 +256,7 @@ function ViewCanteen() {
   const fetchCanteen = async () => {
     setLoading(true);
     const res = await allCanteens(user._id, user.school); // Call your function here
-    console.log(res);
+    // console.log(res);
     await setAllCanteen(res);
 
     setLoading(false);
@@ -275,16 +275,16 @@ function ViewCanteen() {
     }
 
     if (selectedCanteenId === "empty") {
-      console.log("empty");
+      // console.log("empty");
       setisData(false);
       setShowDeleteButton(false);
       return;
     }
-    console.log(allCanteen);
+    // console.log(allCanteen);
     let selectedCanteen = await allCanteen.find(
       (canteen) => canteen._id === selectedCanteenId
     );
-    console.log(selectedCanteen);
+    // console.log(selectedCanteen);
     const data = [];
     if (selectedCanteen.menu.length === 0) {
       setisData(false);
@@ -355,7 +355,7 @@ function ViewCanteen() {
 
   function rowHandler(sectionData) {
     setEditing(true);
-    console.log(sectionData);
+    // console.log(sectionData);
     setAddMenu({
       ...addMenu,
       item: sectionData.item,
@@ -371,9 +371,9 @@ function ViewCanteen() {
   //Edit Canteen
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    console.log(addMenu);
-    console.log(startDuration);
-    console.log(endDuration);
+    // console.log(addMenu);
+    // console.log(startDuration);
+    // console.log(endDuration);
 
     let formData = new FormData();
     formData.set("school", user.school);
@@ -389,7 +389,7 @@ function ViewCanteen() {
       setEditLoading(true);
       const data = await menuItemEdit(addMenu.id, user._id, formData);
 
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
       toast.success("Item edited successfully");
       setEditing(false);
@@ -407,7 +407,7 @@ function ViewCanteen() {
     try {
       setLoading(true);
       const data = await canteenDelete(selectedCanteenId, user._id);
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
       setLoading(false);
       toast.success("Canteen Deleted Successfully");
@@ -422,7 +422,7 @@ function ViewCanteen() {
     try {
       setLoading(true);
       const data = await menuItemDelete(itemId, user._id);
-      console.log(data);
+      // console.log(data);
       setChecked(!checked);
       setLoading(false);
       setSelectedCanteenId("empty");

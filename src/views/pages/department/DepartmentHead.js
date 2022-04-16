@@ -68,7 +68,7 @@ const DepartmentHead = () => {
 
   const primaryHeadHandler = (department) => async (e) => {
     // console.log(department);
-    console.log(e.target.value);
+    // console.log(e.target.value);
     let deptId = e.target.value;
 
     if (e.target.value === "") {
@@ -77,7 +77,7 @@ const DepartmentHead = () => {
 
     // formData1.set("head", department._id);
     if (e.target.value === "delete") {
-      console.log(true);
+      // console.log(true);
       try {
         const formData = new FormData();
         formData.set("id", department._id);
@@ -89,7 +89,7 @@ const DepartmentHead = () => {
           token,
           formData
         );
-        console.log(data);
+        // console.log(data);
         const formData1 = new FormData();
         formData1.set("isHead", false);
         const data1 = await updateStaff1(
@@ -97,7 +97,7 @@ const DepartmentHead = () => {
           user._id,
           formData1
         );
-        console.log(data1);
+        // console.log(data1);
         toast.success("Primary Head Removed");
         setChecked(!checked);
         setLoading(false);
@@ -163,7 +163,7 @@ const DepartmentHead = () => {
     }
 
     if (e.target.value === "delete") {
-      console.log(true);
+      // console.log(true);
       try {
         const formData = new FormData();
         formData.set("id", department._id);
@@ -175,7 +175,7 @@ const DepartmentHead = () => {
           token,
           formData
         );
-        console.log(data);
+        // console.log(data);
         const formData1 = new FormData();
         formData1.set("isHead", false);
         const data1 = await updateStaff1(
@@ -183,7 +183,7 @@ const DepartmentHead = () => {
           user._id,
           formData1
         );
-        console.log(data1);
+        // console.log(data1);
         toast.success("Secondary Head Removed");
         setChecked(!checked)
         setLoading(false);

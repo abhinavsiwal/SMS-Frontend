@@ -80,7 +80,7 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
 
   const logoutHandler=(e)=>{
     e.preventDefault();
-    console.log("logged out");
+    // console.log("logged out");
 
 
     dispatch(setToken(""));

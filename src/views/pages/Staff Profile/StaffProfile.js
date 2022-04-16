@@ -25,7 +25,7 @@ function StaffProfile() {
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
   const { user} = isAuthenticated();
-  console.log(user);
+  // console.log(user);
   
 
   return (

@@ -48,7 +48,7 @@ const DepartmentList = () => {
   const [editing, setEditing] = useState(false);
   // const [isActive, setIsActive] = useState(false);
   const [data, setData] = useState([]);
-  console.log("setData", data);
+  // console.log("setData", data);
   const [classList, setClassList] = useState([]);
   const [editDepartmentName, setEditDepartmentName] = useState("");
   // const [editDepartmentModule, setEditDepartmentModule] = useState([]);
@@ -72,10 +72,10 @@ const DepartmentList = () => {
   });
 
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user.permissions["Department"]) {
       let permission1 = user.permissions["Department"];
-      console.log(permission1);
+      // console.log(permission1);
       setPermissions(permission1);
     }
   }, [checked]);
@@ -92,7 +92,7 @@ const DepartmentList = () => {
   const getAllStaff = async () => {
     try {
       const data = await getNonHeads(user.school, user._id);
-      console.log(data, "@@@@@@@@");
+      // console.log(data, "@@@@@@@@");
       setStaff(data);
     } catch (err) {
       toast.error(fetchingStaffFailed);
@@ -156,7 +156,7 @@ const DepartmentList = () => {
     const { user, token } = isAuthenticated();
     try {
       const session = await allSessions(user._id, user.school, token);
-      console.log(session);
+      // console.log(session);
       if (session.err) {
         return toast.error(session.err);
       } else {
@@ -173,7 +173,7 @@ const DepartmentList = () => {
     setLoading(true);
     getDepartment(user.school, user._id, token)
       .then((res) => {
-        console.log("allClass", res);
+        // console.log("allClass", res);
         const data = [];
         for (let i = 0; i < res.length; i++) {
           data.push({
@@ -254,7 +254,7 @@ const DepartmentList = () => {
     value.map((items) => {
       b.push([items.value, items.label]);
     });
-    console.log("b", b);
+    // console.log("b", b);
     formData.set("module", JSON.stringify(b));
   };
 
@@ -271,7 +271,7 @@ const DepartmentList = () => {
         token,
         formData
       );
-      console.log("updateDepartments", updateDepartments);
+      // console.log("updateDepartments", updateDepartments);
       setEditing(false);
       setChecked(!checked);
       setLoading(false);
@@ -288,20 +288,20 @@ const DepartmentList = () => {
     value.map((items) => {
       a.push([items.value, items.label]);
     });
-    console.log("a", a);
+    // console.log("a", a);
     // formData.set("module", JSON.stringify(a));
   };
 
   //Create department
   const handleFormChange = async (e) => {
     e.preventDefault();
-    console.log("here");
+    // console.log("here");
     // const role = [primaryHeadId, secondaryHeadId];
     const { user, token } = isAuthenticated();
     try {
       formData.set("school", user.school);
       formData.set("name", name);
-      console.log(sessions);
+      // console.log(sessions);
       sessions.map((data) => {
         if (data.status === "current") {
           formData.set("session", data._id);

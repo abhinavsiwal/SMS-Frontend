@@ -49,7 +49,7 @@ export const deleteSection=async(userId,sectionId)=>{
   const url = `${process.env.REACT_APP_API_URL}/api/school/section/delete/${sectionId}/${userId}`;
 try {
   const {data } = await sendRequest(url,{},"DELETE");
-  console.log(data);
+  // console.log(data);
   return data;
 } catch (err) {
   console.log(err);
@@ -62,7 +62,7 @@ export const editSection=async(userId,sectionId,formData)=>{
   const url = `${process.env.REACT_APP_API_URL}/api/school/section/edit/${sectionId}/${userId}`;
   try {
     const {data } = await sendRequest(url,formData,"PUT");
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);

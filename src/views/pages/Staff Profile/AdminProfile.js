@@ -104,7 +104,7 @@ function AdminProfile() {
     try {
       setEditLoading(true);
       const data = await adminProfileEdit(user._id, formData);
-      console.log(data);
+      // console.log(data);
 
       setEditSchoolProfile({
         ...editSchoolProfile,

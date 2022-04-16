@@ -142,7 +142,7 @@ function CalendarView() {
           click: function () {
             // so something before
             // toastr.warning("PREV button is going to be executed")
-            console.log("prev");
+            // console.log("prev");
             // do the original command
             calendar.prev();
             // do something after
@@ -155,7 +155,7 @@ function CalendarView() {
             // so something before
             // toastr.success("NEXT button is going to be executed")
             // do the original command
-            console.log("next");
+            // console.log("next");
             calendar.next();
             // do something after
             // toastr.success("NEXT button executed")
@@ -186,12 +186,12 @@ function CalendarView() {
     });
     calendar.render();
     setCurrentDate(calendar.view.title);
-    console.log(calendar.view.title);
+    // console.log(calendar.view.title);
   };
 
   const changeView = (newView) => {
     calendar.changeView(newView);
-    console.log(calendar.view.title);
+    // console.log(calendar.view.title);
     setCurrentDate(calendar.view.title);
   };
 
@@ -268,7 +268,7 @@ function CalendarView() {
               key={"view" + index + 1}
               onClick={() => {
                 setViewModal(true);
-                console.log(events);
+                // console.log(events);
                 setEventDetails(events);
               }}
             >

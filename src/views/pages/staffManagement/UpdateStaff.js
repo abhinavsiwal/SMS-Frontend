@@ -71,19 +71,19 @@ function UpdateStaff({ staffDetails }) {
     subject: staffDetails.subject,
   });
 
-  console.log("staff", staffData);
+  // console.log("staff", staffData);
   const [formData] = useState(new FormData());
   const [loading, setLoading] = useState(false);
   const [departments, setDeparments] = useState([]);
   // const [subject, setSubject] = useState([]);
   // console.log("sub", subject);
   const [a, setA] = useState([]);
-  console.log("a", a);
+  // console.log("a", a);
 
   const roleOptions = [
     // { value: "chemistry", label: "Chemistry" }
   ];
-  console.log("role", roleOptions);
+  // console.log("role", roleOptions);
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -97,7 +97,7 @@ function UpdateStaff({ staffDetails }) {
 
   const handleSubjectChange = (e) => {
     var value = [];
-    console.log("val", value);
+    // console.log("val", value);
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
@@ -157,7 +157,7 @@ function UpdateStaff({ staffDetails }) {
     try {
       setLoading(true);
       const resp = await updateStaff(staffData._id, user._id, formData);
-      console.log(resp);
+      // console.log(resp);
       if (resp.err) {
         setLoading(false);
         return toast.error(resp.err);
@@ -215,7 +215,7 @@ function UpdateStaff({ staffDetails }) {
       try {
         const Subjects = await allSubjects(user._id, user.school, token);
         var list = [];
-        console.log("subject", Subjects);
+        // console.log("subject", Subjects);
         Subjects[0].list.map(async (sub) => {
           list.push({
             value: sub,
@@ -223,7 +223,7 @@ function UpdateStaff({ staffDetails }) {
           });
         });
         setA(list);
-        console.log("list", list);
+        // console.log("list", list);
       } catch (err) {
         toast.error("Something Went Wrong!");
       }
@@ -234,7 +234,7 @@ function UpdateStaff({ staffDetails }) {
     const { user, token } = isAuthenticated();
     try {
       const dept = await getDepartment(user.school, user._id, token);
-      console.log("dept", dept);
+      // console.log("dept", dept);
       setDeparments(dept);
     } catch (err) {
       toast.error("Something Went Wrong!");

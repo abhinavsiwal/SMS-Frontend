@@ -6,7 +6,7 @@ import AdminProfile from './AdminProfile'
 import { FaAmericanSignLanguageInterpreting } from 'react-icons/fa';
 const Profile = () => {
     const { user} = isAuthenticated();
-    console.log(user);
+    // console.log(user);
 
 if(user.user==="schoolAdmin"){
     return <AdminProfile />

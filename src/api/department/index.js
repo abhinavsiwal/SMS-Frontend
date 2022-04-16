@@ -66,7 +66,7 @@ export const departmentHead=(departmentId,userId,token,formData)=>{
     body: formData,
   })
     .then((data) => {
-      console.log("data", data);
+      // console.log("data", data);
       return data.json();
     })
     .catch((error) => {
@@ -80,7 +80,7 @@ export const getNonHeads=async(schoolId,adminId)=>{
     const {data} = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/staff/head/${schoolId}/${adminId}`
     );
-    console.log(data,"$$$$$$$$");
+    // console.log(data,"$$$$$$$$");
     return data;
   } catch (err) {
     console.log(err);

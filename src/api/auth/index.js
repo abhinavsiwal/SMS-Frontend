@@ -3,7 +3,7 @@ import CryptoJS from "crypto-js";
 export const isAuthenticated = () => {
 
   if (!localStorage.getItem("persist:root")) {
-    console.log("here");
+    // console.log("here");
     
     return false;
   }

@@ -233,7 +233,7 @@ function Attendance() {
 
     addAttendance &&
       addAttendance.forEach((element, index) => {
-        console.log(element);
+        // console.log(element);
         if (element.student === studentId) {
           // console.log("here");
           addAttendance[index].attendance_status = event.target.value;
@@ -334,7 +334,7 @@ function Attendance() {
         // console.log(key);
         let obj = {};
         obj[key] = data.studentDatas[key];
-        console.log(obj);
+        // console.log(obj);
         students.push(obj);
       }
       // console.log(students);

@@ -57,7 +57,7 @@ export const updateTimeTable = (timeTableId, userId, token, data) => {
 };
 
 export const getSingleTimeTable = (schoolId, userId, token, data) => {
-  console.log(data);
+  // console.log(data);
   const url = `${process.env.REACT_APP_API_URL}/api/school/timetable/custom/all/${schoolId}/${userId}`;
   return fetch(url, {
     method: "POST",

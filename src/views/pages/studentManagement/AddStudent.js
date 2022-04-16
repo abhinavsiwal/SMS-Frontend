@@ -159,7 +159,7 @@ function AddStudent() {
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
     setStudentData({ ...studentData, [name]: event.target.value });
-    console.log(name);
+    // console.log(name);
     if (name === "class") {
       // console.log("@@@@@@@@=>", event.target.value);
       // setSelectedClassId(event.target.value);

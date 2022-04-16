@@ -86,7 +86,7 @@ const AddSession = () => {
 
   let permission1 = [];
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user.permissions["Session"]) {
       permission1 = user.permissions["Session"];
       setPermissions(permission1);
@@ -98,7 +98,7 @@ const AddSession = () => {
       // All Sections
       allSessions(user._id, user.school, token)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           const data = [];
           for (let i = 0; i < res.length; i++) {
             data.push({
@@ -180,7 +180,7 @@ const AddSession = () => {
 
   //Edit Session
   const handleEditSubmit = async () => {
-    console.log("clicked");
+    // console.log("clicked");
     const { user, token } = isAuthenticated();
     let formData = new FormData();
     formData.set("name", editSessionName);
@@ -196,7 +196,7 @@ const AddSession = () => {
         token,
         formData
       );
-      console.log("updateDepartments", updateSession);
+      // console.log("updateDepartments", updateSession);
       setEditing(false);
       if (checked === false) {
         setChecked(true);
@@ -439,7 +439,7 @@ const AddSession = () => {
     formData.set("working_time", startTimeDuration);
     try {
       const resp = await addSession(user._id, token, formData);
-      console.log(resp);
+      // console.log(resp);
       setSessionData({
         name: "",
         start_date: "",

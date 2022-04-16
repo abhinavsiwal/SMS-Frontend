@@ -40,12 +40,12 @@ function Addtocart() {
     setChecked(true);
   };
   useEffect(() => {
-    console.log(cartItems);
+    // console.log(cartItems);
     dispatch(getTotal());
   }, [dispatch, cartItems]);
 
   const increaseQty = (product) => {
-    console.log("clicked");
+    // console.log("clicked");
     if (product.quantity < product.stock) {
       dispatch(increaseCart(product));
     } else {

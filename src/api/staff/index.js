@@ -21,7 +21,7 @@ export const allStaffs = async (schoolId, adminId) => {
     const data = await sendRequestWithJson(
       `${process.env.REACT_APP_API_URL}/api/school/staff/all/${schoolId}/${adminId}`
     );
-    console.log(data,"$$$$$$$$");
+    // console.log(data,"$$$$$$$$");
     return data;
   } catch (err) {
     console.log(err);
@@ -37,7 +37,7 @@ export const addAttendance = () => {
   })
     .then((data) => data.json())
     .then((data) => {
-      console.log("data", data);
+      // console.log("data", data);
       return data;
     })
     .catch((error) => {
@@ -46,14 +46,14 @@ export const addAttendance = () => {
 };
 
 export const deleteStaff = async (staffId, id) => {
-  console.log(staffId,id);
+  // console.log(staffId,id);
   try {
     const data = await sendRequestWithJson(
       `${process.env.REACT_APP_API_URL}/api/school/staff/delete/${staffId}/${id}`,
       {},
       "DELETE"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.log(error);
@@ -68,7 +68,7 @@ export const updateStaff= async(staffId,id,formData)=>{
       formData,
       "PUT"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.log(error);
@@ -82,7 +82,7 @@ export const updateStaff1= async(staffId,id,formData)=>{
       formData,
       "PUT"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (error) {
     console.log(error);

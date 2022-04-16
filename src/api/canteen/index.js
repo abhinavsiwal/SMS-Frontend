@@ -7,7 +7,7 @@ export const canteenAdd = async (userId, formData) => {
       formData,
       "POST"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);
@@ -20,7 +20,7 @@ export const allCanteens = async (userId,schoolId) => {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/canteen/all/${schoolId}/${userId}`
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
       console.log(err);
@@ -35,7 +35,7 @@ export const menuAdd = async (userId, formData) => {
       formData,
       "POST"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);
@@ -51,7 +51,7 @@ export const canteenDelete= async(canteenId,userId)=>{
       {},
       "DELETE"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);
@@ -66,7 +66,7 @@ export const menuItemDelete=async(itemId,userId)=>{
       {},
       "DELETE"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);
@@ -81,7 +81,7 @@ export const menuItemEdit=async(itemId,userId,formData)=>{
       formData,
       "PUT"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);

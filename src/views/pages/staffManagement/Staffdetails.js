@@ -23,7 +23,7 @@ import "./style.css";
 import { FaEdit } from "react-icons/fa";
 
 function Staffdetails({ data, backHandle }) {
-  console.log(data);
+  // console.log(data);
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
 

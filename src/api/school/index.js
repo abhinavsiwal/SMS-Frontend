@@ -19,7 +19,7 @@ export const editProfile = async (schoolId, userId,formData) => {
       formData,
       "PUT"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);
@@ -34,7 +34,7 @@ export const adminProfileEdit = async (userId, formData) => {
       formData,
       "PUT"
     );
-    console.log(data);
+    // console.log(data);
     return data;
   } catch (err) {
     console.log(err);

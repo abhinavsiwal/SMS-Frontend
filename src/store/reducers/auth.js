@@ -15,11 +15,11 @@ const initialState = {
 export const login = createAsyncThunk(
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
-    console.log(username, password);
+    // console.log(username, password);
     if (username && password) {
       try {
         const data = await signIn(username, password);
-        console.log(data);
+        // console.log(data);
         return data;
       } catch (err) {
         console.log(err);
@@ -50,7 +50,7 @@ export const authSlice = createSlice({
       state.loading = true;
     },
     [login.fulfilled]: (state, { payload }) => {
-      console.log(payload);
+      // console.log(payload);
       if(!payload){
         return;
       }

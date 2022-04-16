@@ -35,7 +35,7 @@ export const updateSubject = (subjectId, userId, token, data) => {
     body: data,
   })
     .then((data) => {
-      console.log("data", data);
+      // console.log("data", data);
       return data.json();
     })
     .catch((error) => {
