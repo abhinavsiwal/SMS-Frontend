@@ -86,14 +86,15 @@ function CalendarView() {
   const [staff, setStaff] = useState([]);
   const [staffId, setStaffId] = useState("");
   const [filterSessionId, setFilterSessionId] = useState("");
-const [permissions, setPermissions] = useState([]);
-
+  const [permissions, setPermissions] = useState([]);
+  const [eventDetails, setEventDetails] = useState({});
+  const [viewModal, setViewModal] = useState(false);
   let permission1 = [];
   useEffect(() => {
     // console.log(user);
     if (user.permissions["School Calendar"]) {
       permission1 = user.role["School Calendar"];
-      setPermissions(permission1)
+      setPermissions(permission1);
       // console.log(permissions);
     }
     getAllStaff();
@@ -102,7 +103,7 @@ const [permissions, setPermissions] = useState([]);
 
   const getAllStaff = async () => {
     try {
-      const {data} = await allStaffs(user.school, user._id);
+      const { data } = await allStaffs(user.school, user._id);
       // console.log(data, "@@@@@@@@");
       setStaff(data);
     } catch (err) {
@@ -132,7 +133,35 @@ const [permissions, setPermissions] = useState([]);
       selectable: true,
       // editable: true,
       // events: events,
-      headerToolbar: "",
+      headerToolbar: {
+        left: "title",
+      },
+      customButtons: {
+        prev: {
+          text: "Prev",
+          click: function () {
+            // so something before
+            // toastr.warning("PREV button is going to be executed")
+            console.log("prev");
+            // do the original command
+            calendar.prev();
+            // do something after
+            // toastr.warning("PREV button executed")
+          },
+        },
+        next: {
+          text: "Next",
+          click: function () {
+            // so something before
+            // toastr.success("NEXT button is going to be executed")
+            // do the original command
+            console.log("next");
+            calendar.next();
+            // do something after
+            // toastr.success("NEXT button executed")
+          },
+        },
+      },
 
       // Add new event
       select: (info) => {
@@ -157,10 +186,12 @@ const [permissions, setPermissions] = useState([]);
     });
     calendar.render();
     setCurrentDate(calendar.view.title);
+    console.log(calendar.view.title);
   };
 
   const changeView = (newView) => {
     calendar.changeView(newView);
+    console.log(calendar.view.title);
     setCurrentDate(calendar.view.title);
   };
 
@@ -198,8 +229,12 @@ const [permissions, setPermissions] = useState([]);
   };
 
   //Get Events
-  useEffect(async () => {
+  useEffect(() => {
     createCalendar();
+    getEvents();
+  }, [checked]);
+
+  const getEvents = async () => {
     const { user, token } = isAuthenticated();
     const events = await getCalender(user._id, user.school, token);
     // console.log("getevents", events);
@@ -218,17 +253,35 @@ const [permissions, setPermissions] = useState([]);
 
     //Ant Table Data Source
     const data = [];
-    events.map((events) => {
+    events.map((events, index) => {
       data.push({
         key: events._id,
         event_name: events.name,
         start_date: events.event_from.split("T")[0],
         end_date: events.event_to.split("T")[0],
+        action: (
+          <h5 key={index + 1} className="mb-0">
+            <Button
+              className="btn-sm pull-right"
+              color="primary"
+              type="button"
+              key={"view" + index + 1}
+              onClick={() => {
+                setViewModal(true);
+                console.log(events);
+                setEventDetails(events);
+              }}
+            >
+              {/* <i className="fas fa-user" /> */}
+              View More{" "}
+            </Button>
+          </h5>
+        ),
       });
     });
     setEventList(data);
     setChecked(false);
-  }, [checked]);
+  };
 
   //Edit Events
   const changeEvent = async () => {
@@ -330,12 +383,26 @@ const [permissions, setPermissions] = useState([]);
       (event) => event.session.toString() === filterSessionId.toString()
     );
     const data = [];
-    filteredEvents.map((events) => {
+    filteredEvents.map((events, index) => {
       data.push({
         key: events._id,
         event_name: events.name,
         start_date: events.event_from.split("T")[0],
         end_date: events.event_to.split("T")[0],
+        action: (
+          <h5 key={index + 1} className="mb-0">
+            <Button
+              className="btn-sm pull-right"
+              color="success"
+              type="button"
+              key={"view" + index + 1}
+              // onClick={() => handleStaffDetails(data[i])}
+            >
+              <i className="fas fa-user" />
+              View More{" "}
+            </Button>
+          </h5>
+        ),
       });
     });
     setEventList(data);
@@ -434,13 +501,19 @@ const [permissions, setPermissions] = useState([]);
         return record.end_date.toLowerCase().includes(value.toLowerCase());
       },
     },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
   ];
 
   return (
     <>
       {alert}
       <Modal
-        style={{ height: "75vh" }}
+        style={{ height: "65vh",marginTop:"8rem" }}
         isOpen={editing}
         toggle={() => setEditing(false)}
         size="lg"
@@ -492,9 +565,9 @@ const [permissions, setPermissions] = useState([]);
           <div className="header-body">
             <Row className="align-items-center py-4">
               <Col lg="6">
-                <h6 className="fullcalendar-title h2 text-white d-inline-block mb-0 mr-1">
+                {/* <h6 className="fullcalendar-title h2 text-white d-inline-block mb-0 mr-1">
                   {currentDate}
-                </h6>
+                </h6> */}
                 <Breadcrumb
                   className="d-none d-md-inline-block ml-lg-4"
                   listClassName="breadcrumb-links breadcrumb-dark"
@@ -523,11 +596,12 @@ const [permissions, setPermissions] = useState([]);
                 >
                   View Events
                 </Button>
-                <Button
+                {/* <Button
                   className="fullcalendar-btn-prev btn-neutral"
                   color="default"
                   onClick={() => {
-                    calendar.next();
+                    calendar.prev();
+                    
                   }}
                   size="sm"
                 >
@@ -537,12 +611,12 @@ const [permissions, setPermissions] = useState([]);
                   className="fullcalendar-btn-next btn-neutral"
                   color="default"
                   onClick={() => {
-                    calendar.prev();
+                    calendar.next();
                   }}
                   size="sm"
                 >
                   <i className="fas fa-angle-right" />
-                </Button>
+                </Button> */}
 
                 <Button
                   className="btn-neutral"
@@ -580,9 +654,6 @@ const [permissions, setPermissions] = useState([]);
         <Row>
           <div className="col">
             <Card className="card-calendar w-100">
-              <CardHeader>
-                <h5 className="h3 mb-0">Calendar</h5>
-              </CardHeader>
               <CardBody className="p-0">
                 <div
                   className="calendar"
@@ -595,7 +666,7 @@ const [permissions, setPermissions] = useState([]);
             {/* {permissions && permissions.includes("add".trim()) && (
           
              )} */}
-  <Modal
+            <Modal
               isOpen={modalAdd}
               toggle={() => setModalAdd(false)}
               className="modal-dialog-centered modal-secondary"
@@ -660,11 +731,12 @@ const [permissions, setPermissions] = useState([]);
                       onChange={(e) => setStaffId(e.target.value)}
                     >
                       <option value={""}>{"Select Staff"}</option>
-                      {staff && staff.map((staff, i) => (
-                        <option key={i} value={staff._id}>
-                          {staff.firstname} {staff.lastname}
-                        </option>
-                      ))}
+                      {staff &&
+                        staff.map((staff, i) => (
+                          <option key={i} value={staff._id}>
+                            {staff.firstname} {staff.lastname}
+                          </option>
+                        ))}
                     </Input>
                   </FormGroup>
                   <FormGroup>
@@ -740,7 +812,7 @@ const [permissions, setPermissions] = useState([]);
             {/* {permissions && permissions.includes("edit") && (
           
             )} */}
-              <Modal
+            <Modal
               isOpen={modalChange}
               toggle={() => setModalChange(false)}
               className="modal-dialog-centered modal-secondary"
@@ -901,6 +973,68 @@ const [permissions, setPermissions] = useState([]);
           </div>
         </Row>
       </Container>
+      <Modal
+        className="modal-dialog-centered"
+        isOpen={viewModal}
+        toggle={() => setViewModal(false)}
+      >
+        <div className="modal-header">
+          <h6 className="modal-title" id="modal-title-default">
+            Event Details
+          </h6>
+          <button
+            aria-label="Close"
+            className="close"
+            data-dismiss="modal"
+            type="button"
+            onClick={() => setViewModal(false)}
+          >
+            <span aria-hidden={true}>×</span>
+          </button>
+        </div>
+        <ModalBody>
+          <Row>
+            <Col align="center">
+              <h4 className="mt-3 mb-1">Event Name</h4>
+              <span className="text-md">{eventDetails.name}</span>
+            </Col>
+            <Col align="center">
+              <h4 className="mt-3 mb-1">Event Detail</h4>
+              <span className="text-md">
+                {eventDetails.description}
+              </span>
+            </Col>
+            <Col align="center">
+              <h4 className="mt-3 mb-1">Event type</h4>
+              <span className="text-md">{eventDetails.event_type}</span>
+            </Col>
+          </Row>
+          <Row>
+            <Col align="center">
+              <h4 className="mt-3 mb-1">Event From</h4>
+              <span className="text-md">{eventDetails.event_from}</span>
+            </Col>
+            <Col align="center">
+              <h4 className="mt-3 mb-1">Event to</h4>
+              <span className="text-md">{eventDetails.event_to}</span>
+            </Col>
+            <Col align="center">
+              <h4 className="mt-3 mb-1">Event Teachers</h4>
+              { eventDetails.assignTeachers && eventDetails.assignTeachers.map((teacher, i) => {
+                return (
+                  <span className="text-md" key={i}>
+                    {teacher.firstname} {teacher.lastname}
+                  </span>
+                )
+              })}
+            
+            </Col>
+          </Row>
+        
+
+        
+        </ModalBody>
+      </Modal>
     </>
   );
 }

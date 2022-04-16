@@ -14,3 +14,14 @@
   /* padding-left: 15px; */
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
+
+.fc-header-toolbar .fc-toolbar .fc-toolbar-1tr {
+  height: 3rem !important;
+}
+.fc-toolbar{
+  height: 3rem !important;
+margin: 0.5rem;
+}
+.fc-toolbar-1tr{
+  height: 3rem !important;
+}

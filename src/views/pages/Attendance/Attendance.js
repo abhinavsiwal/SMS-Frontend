@@ -296,6 +296,7 @@ function Attendance() {
       const data = await postAttendance(user._id, formData);
       // console.log(data);
       toast.success(addAttendanceSuccess);
+      searchHandler();
       setModal(false);
       setAddLoading(false);
     } catch (err) {
