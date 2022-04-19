@@ -42,6 +42,7 @@
     "react-form-stepper": "^1.4.3",
     "react-icons": "^4.3.1",
     "react-jvectormap": "0.0.16",
+    "react-loading-screen": "0.0.17",
     "react-notification-alert": "0.0.13",
     "react-paginate": "^8.1.0",
     "react-perfect-scrollbar": "1.5.8",
