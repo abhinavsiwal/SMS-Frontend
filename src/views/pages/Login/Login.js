@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useState, useEffect } from "react";
 // nodejs library that concatenates classes
@@ -25,7 +24,11 @@ import { adminLogin, staffLogin, studentLogin } from "api/login";
 import validator from "validator";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../store/reducers/auth";
-import { setToken,setExpiry,setUserDetails } from "../../../store/reducers/auth";
+import {
+  setToken,
+  setExpiry,
+  setUserDetails,
+} from "../../../store/reducers/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { loginSuccess } from "constants/success";
 import { loginError } from "constants/errors";
@@ -42,19 +45,18 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [focusedEmail, setfocusedEmail] = useState(false);
   const [focusedPassword, setfocusedPassword] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   const { loading, error, token } = useSelector((state) => state.authReducer);
 
   useEffect(() => {
-
     if (!localStorage.getItem("persist:root")) {
       // console.log("here");
       dispatch(setToken(""));
-      dispatch(setExpiry(""))
+      dispatch(setExpiry(""));
       dispatch(setUserDetails({}));
       return;
     }
-  
+
     if (token) {
       // console.log(token);
       // console.log("Login");
@@ -62,13 +64,9 @@ function Login() {
       // console.log("logged in");
       setRedirect(true);
     }
- 
-   
   }, [token]);
 
-
-
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     // console.log(username, password);
@@ -138,12 +136,29 @@ function Login() {
                       </InputGroupAddon>
                       <Input
                         placeholder="Password"
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         onFocus={() => setfocusedPassword(true)}
                         onBlur={() => setfocusedPassword(true)}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                       />
+                      <InputGroupAddon addonType="append">
+                        {showPassword ? (
+                          <InputGroupText
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setShowPassword(false)}
+                          >
+                            <i className="fa fa-eye-slash" />
+                          </InputGroupText>
+                        ) : (
+                          <InputGroupText
+                            style={{ cursor: "pointer" }}
+                            onClick={() => setShowPassword(true)}
+                          >
+                            <i className="fa fa-eye" />
+                          </InputGroupText>
+                        )}
+                      </InputGroupAddon>
                     </InputGroup>
                   </FormGroup>
                   {errormsg ? <Alert color="danger">{errormsg}</Alert> : null}
@@ -162,22 +177,21 @@ function Login() {
                   </div>
                   <div className="text-center">
                     <Button className="my-4" color="info" type="submit">
-                    {isLoading ? (
-                      <React.Fragment>
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                        {/* <span className="visually-hidden">Loading...</span> */}
-                      </React.Fragment>
-                    ) : (
-                      <React.Fragment>
-                        <i className="ci-user me-2 ms-n1"></i>
-                        Login
-                      </React.Fragment>
-                    )}
-                    
+                      {isLoading ? (
+                        <React.Fragment>
+                          <span
+                            className="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                          ></span>
+                          {/* <span className="visually-hidden">Loading...</span> */}
+                        </React.Fragment>
+                      ) : (
+                        <React.Fragment>
+                          <i className="ci-user me-2 ms-n1"></i>
+                          Login
+                        </React.Fragment>
+                      )}
                     </Button>
                   </div>
                 </Form>

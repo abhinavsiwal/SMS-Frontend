@@ -81,7 +81,7 @@ function Attendance() {
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
-
+  const [today, setToday] = useState("");
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
@@ -93,6 +93,17 @@ function Attendance() {
       fileReader.readAsText(file);
     }
   };
+
+  useEffect(() => {
+    let today1 = new Date();
+    console.log(today1);
+    let day = today1.getDate();
+    console.log(day);
+    let month = today1.getMonth() + 1;
+    let year = today1.getFullYear();
+    let date = day + "-" + month + "-" + year;
+    setToday(date);
+  }, []);
 
   // console.log("atd", atd);
   let permission1 = [];
@@ -569,33 +580,36 @@ function Attendance() {
                         </h3>
                       </div>
                       <div className="col-sm Student-Attendance-Icons">
-                        <div style={{display:"flex",}}  >
-                          <p
-                            className="ni ni-single-02"
-                            style={{ background: "green", color: "white",fontSize: '30px',borderRadius: '50%' }}
-                          ></p>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "baseline",
+                          }}
+                        >
+                          <p style={{ fontSize: "1.2rem", fontWeight: 500 }}>
+                            P
+                          </p>
                           <span className="tags"> - Present</span>
                         </div>
-                        <div style={{display:"flex",margin:"0 1rem"}} >
-                          <p
-                            className="ni ni-single-02"
-                            style={{
-                              background: "rgb(201, 3, 3)",
-                              color: "white",
-                              fontSize: '30px',borderRadius: '50%'
-                            }}
-                          ></p>
+                        <div
+                          style={{
+                            display: "flex",
+                            margin: "0 1rem",
+                            alignItems: "baseline",
+                          }}
+                        >
+                          <p style={{ fontSize: "1.2rem", fontWeight: 500 }}>
+                            A
+                          </p>
                           <span> - Absent</span>
                         </div>
-                        <div style={{display:"flex"}} >
-                          <p
-                            className="ni ni-single-02"
-                            style={{
-                              background: "rgb(243, 243, 71)",
-                              color: "white",
-                              fontSize: '30px',borderRadius: '50%'
-                            }}
-                          ></p>
+                        <div
+                          style={{ display: "flex", alignItems: "baseline" }}
+                        >
+                          <p style={{ fontSize: "1.2rem", fontWeight: 500 }}>
+                            L
+                          </p>
                           <span> - Leave</span>
                         </div>
                       </div>
@@ -661,7 +675,8 @@ function Attendance() {
             className="custom-modal-style"
           >
             <ModalHeader isClose={modal} toggle={toggle}>
-              Add Attendance
+              Add Attendance <br />
+              <span    >{today}</span>
             </ModalHeader>
             {addLoading ? (
               <Loader />
