@@ -179,7 +179,7 @@ function CalendarView() {
 
       // Edit calendar event action
       eventClick: ({ event }) => {
-        console.log("event", event);
+        // console.log("event", event);
         setEventId(event.id);
         setEventTitle(event.title);
         setDescription(event.extendedProps.description);
@@ -246,7 +246,7 @@ function CalendarView() {
     const { user, token } = isAuthenticated();
     setLoading(true);
     const events = await getCalender(user._id, user.school, token);
-    console.log("getevents", events);
+    // console.log("getevents", events);
     setEvents(events);
     events.map((events) => {
       return calendar.addEvent({

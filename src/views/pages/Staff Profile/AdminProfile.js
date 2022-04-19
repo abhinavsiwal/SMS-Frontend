@@ -54,7 +54,7 @@ function AdminProfile() {
   const [permissions, setPermissions] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
   useEffect(() => {
-    console.log(user);
+    // console.log(user);
     if (user.permissions["School Profile Module"]) {
       let permission1 = user.permissions["School Profile Module"];
       setPermissions(permission1);
