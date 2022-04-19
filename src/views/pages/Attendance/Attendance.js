@@ -28,8 +28,11 @@ import "./Attendance.css";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { useSelector } from "react-redux";
+import LoadingScreen from "react-loading-screen";
+
 //import moment from moment for Date
 import moment from "moment";
+
 import { getAttendence } from "api/attendance";
 import { allStudents, filterStudent } from "api/student";
 import { isAuthenticated } from "api/auth";
@@ -97,6 +100,7 @@ function Attendance() {
   // console.log("atd", atd);
   let permission1 = [];
   useEffect(() => {
+    setLoading(true);
     // console.log(user);
     if (user.permissions["Attendance"]) {
       permission1 = user.permissions["Attendance"];
@@ -104,6 +108,7 @@ function Attendance() {
       setPermissions(permission1);
     }
     getSession();
+    setLoading(true);
   }, []);
 
   //Getting Session data
@@ -183,7 +188,9 @@ function Attendance() {
   // }, [attendanceData]);
 
   useEffect(() => {
+    setLoading(true);
     getAllAttendance();
+    setLoading(false);
   }, []);
 
   const getAllAttendance = async () => {
@@ -306,6 +313,7 @@ function Attendance() {
   };
 
   const searchHandler = async () => {
+    setLoading(true);
     getAllStudents(attendance.selectSection, attendance.selectClass);
     // console.log(attendance);
     const formData = new FormData();
@@ -318,7 +326,6 @@ function Attendance() {
       end_date: attendance.dateTo,
     };
     try {
-      setLoading(true);
       const data = await searchAttendance(user._id, user.school, data1);
       // console.log(data);
       setattendanceData1(data);
@@ -368,8 +375,6 @@ function Attendance() {
     setAttendanceData(tableData);
   };
 
-  // const attendanceValueChangeHandler = (value) => {};
-
   return (
     <div>
       <SimpleHeader name="Student" parentName="Attendance" />
@@ -387,201 +392,186 @@ function Attendance() {
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
-        {loading ? (
-          <Loader />
-        ) : (
-          <Form>
-            <Card>
-              <CardBody>
-                
-                <Row>
-                  <Col className="d-flex justify-content-center mt-2">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
+        <Form>
+          <Card>
+            <CardBody>
+              <LoadingScreen
+                loading={loading}
+                bgColor="#f1f1f1"
+                spinnerColor="#9ee5f8"
+                textColor="#676767"
+                text="Please Wait..."
+              ></LoadingScreen>
+              <Row>
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Session
+                  </label>
 
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Session
-                    </label>
-
-                    <select
-                      className="form-control"
-                      required
-                      // onChange={handleChange("session")}
-                    >
-                      <option value="">Select Session</option>
-                      {sessions &&
-                        sessions.map((data) => {
-                          return (
-                            <option key={data._id} value={data._id}>
-                              {data.name}
-                            </option>
-                          );
-                        })}
-                    </select>
-                  </Col>
-                </Row>
-                <br />
-                <Row md="4" className="d-flex justify-content-center mb-4">
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      From
-                    </Label>
-                    <Input
-                      className="form-control-sm"
-                      id="example-date-input"
-                      type="date"
-                      onChange={handleChange("dateFrom")}
-                      value={attendance.dateFrom}
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="example-date-input"
-                    >
-                      To
-                    </Label>
-                    <Input
-                      className="form-control-sm"
-                      id="example-date-input"
-                      type="date"
-                      onChange={handleChange("dateTo")}
-                      value={attendance.dateTo}
-                    />
-                  </Col>
-                  {/* </Row> */}
-                  {/* <Row className="d-flex justify-content-center mb-4"> */}
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Name
-                    </Label>
-                    <Input
-                      className="form-control-sm"
-                      id="example4cols2Input"
-                      placeholder="Name"
-                      onChange={handleChange("name")}
-                      value={attendance.name}
-                      type="text"
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      StudentID
-                    </Label>
-                    <Input
-                      className="form-control-sm"
-                      id="example4cols2Input"
-                      placeholder="StudentID"
-                      type="text"
-                      onChange={handleChange("studentId")}
-                      value={attendance.studentId}
-                      required
-                    />
-                  </Col>
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Select Class
-                    </Label>
-                    <Input
-                      className="form-control-sm"
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={handleChange("selectClass")}
-                      value={attendance.selectClass}
-                      required
-                    >
-                      <option value="">Select Class</option>
-                      {classes &&
-                        classes.map((clas, index) => {
-                          // setselectedClassIndex(index)
-                          // console.log(clas);
-                          return (
-                            <option value={clas._id} key={index}>
-                              {clas.name}
-                            </option>
-                          );
-                        })}
-                    </Input>
-                  </Col>
-                  <Col md="3">
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Select Section
-                    </Label>
-                    <Input
-                      className="form-control-sm"
-                      id="exampleFormControlSelect3"
-                      type="select"
-                      onChange={handleChange("selectSection")}
-                      value={attendance.selectSection}
-                      required
-                    >
-                      <option value="">Select Section</option>
-                      {selectedClass.section &&
-                        selectedClass.section.map((section) => {
-                          // console.log(section.name);
-                          return (
-                            <option
-                              value={section._id}
-                              key={section._id}
-                              selected
-                            >
-                              {section.name}
-                            </option>
-                          );
-                        })}
-                    </Input>
-                  </Col>
-
-                  <Col className="mt-4">
-                    <Button color="primary" onClick={searchHandler}>
-                      Search
-                    </Button>
-                  </Col>
-                </Row>
-              </CardBody>
-            </Card>
-          </Form>
-        )}
+                  <select
+                    className="form-control"
+                    required
+                    // onChange={handleChange("session")}
+                  >
+                    <option value="">Select Session</option>
+                    {sessions &&
+                      sessions.map((data) => {
+                        return (
+                          <option key={data._id} value={data._id}>
+                            {data.name}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </Col>
+              </Row>
+              <br />
+              <Row md="4" className="d-flex justify-content-center mb-4">
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Name
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="example4cols2Input"
+                    placeholder="Name"
+                    onChange={handleChange("name")}
+                    value={attendance.name}
+                    type="text"
+                    required
+                  />
+                </Col>
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    StudentID
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="example4cols2Input"
+                    placeholder="StudentID"
+                    type="text"
+                    onChange={handleChange("studentId")}
+                    value={attendance.studentId}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row md="4" className="d-flex justify-content-center mb-4">
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    From
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="example-date-input"
+                    type="date"
+                    onChange={handleChange("dateFrom")}
+                    value={attendance.dateFrom}
+                    required
+                  />
+                </Col>
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="example-date-input"
+                  >
+                    To
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="example-date-input"
+                    type="date"
+                    onChange={handleChange("dateTo")}
+                    value={attendance.dateTo}
+                  />
+                </Col>
+                {/* </Row> */}
+                {/* <Row className="d-flex justify-content-center mb-4"> */}
+              </Row>
+              <Row>
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Class
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="exampleFormControlSelect3"
+                    type="select"
+                    onChange={handleChange("selectClass")}
+                    value={attendance.selectClass}
+                    required
+                  >
+                    <option value="">Select Class</option>
+                    {classes &&
+                      classes.map((clas, index) => {
+                        // setselectedClassIndex(index)
+                        // console.log(clas);
+                        return (
+                          <option value={clas._id} key={index}>
+                            {clas.name}
+                          </option>
+                        );
+                      })}
+                  </Input>
+                </Col>
+                <Col md="6">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Section
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="exampleFormControlSelect3"
+                    type="select"
+                    onChange={handleChange("selectSection")}
+                    value={attendance.selectSection}
+                    required
+                  >
+                    <option value="">Select Section</option>
+                    {selectedClass.section &&
+                      selectedClass.section.map((section) => {
+                        // console.log(section.name);
+                        return (
+                          <option
+                            value={section._id}
+                            key={section._id}
+                            selected
+                          >
+                            {section.name}
+                          </option>
+                        );
+                      })}
+                  </Input>
+                </Col>
+              </Row>
+              <Row>
+                <Col className="mt-4">
+                  <Button color="primary" onClick={searchHandler}>
+                    Search
+                  </Button>
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Form>
       </Container>
-      {/* )} */}
       {viewAttendance && (
         <Container className="mt--0 shadow-lg table-responsive" fluid>
           <Row>
