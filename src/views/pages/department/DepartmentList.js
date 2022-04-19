@@ -56,6 +56,7 @@ const DepartmentList = () => {
   const [formData] = useState(new FormData());
   const [name, setName] = useState("");
   const [checked, setChecked] = useState(false);
+  const [sessionID, setSessionID] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessions, setSessions] = useState([]);
   const [selectSessionId, setSelectSessionId] = useState("");
@@ -301,12 +302,7 @@ const DepartmentList = () => {
     try {
       formData.set("school", user.school);
       formData.set("name", name);
-      console.log(sessions);
-      sessions.map((data) => {
-        if (data.status === "current") {
-          formData.set("session", data._id);
-        }
-      });
+      formData.set("session", sessionID);
       // formData.set("role", JSON.stringify(role));
       // formData.set("module", JSON.stringify(data));
       setAddLoading(true);
@@ -318,6 +314,7 @@ const DepartmentList = () => {
       setAddLoading(false);
       setChecked(!checked);
       setName("");
+      setSessionID("");
       setPrimaryHeadId("");
       setSecondaryHeadId("");
       setSelectSessionId("");
@@ -355,6 +352,33 @@ const DepartmentList = () => {
                   <Card>
                     <Form onSubmit={handleFormChange} className="mb-4">
                       <CardBody>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Session
+                            </label>
+
+                            <select
+                              className="form-control"
+                              required
+                              onChange={(e) => setSessionID(e.target.value)}
+                            >
+                              <option value="">Select Session</option>
+                              {sessions &&
+                                sessions.map((data) => {
+                                  return (
+                                    <option key={data._id} value={data._id}>
+                                      {data.name}
+                                    </option>
+                                  );
+                                })}
+                            </select>
+                          </Col>
+                        </Row>
+                        <br />
                         <Row>
                           <Col>
                             <label

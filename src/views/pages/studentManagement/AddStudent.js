@@ -282,11 +282,6 @@ function AddStudent() {
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
 
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
     try {
       setLoading(true);
 
@@ -439,6 +434,33 @@ function AddStudent() {
                     </Col>
                   </Row>
                   <Row>
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Session
+                      </label>
+
+                      <select
+                        className="form-control"
+                        required
+                        onChange={handleChange("session")}
+                      >
+                        <option value="">Select Session</option>
+                        {sessions &&
+                          sessions.map((data) => {
+                            return (
+                              <option key={data._id} value={data._id}>
+                                {data.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </Col>
+                  </Row>
+                  <br />
+                  <Row>
                     <Col md="4">
                       <Label
                         className="form-control-label"
@@ -455,42 +477,39 @@ function AddStudent() {
                       />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          First Name
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="First Name"
-                          type="text"
-                          onChange={handleChange("firstname")}
-                          value={studentData.firstname}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        First Name
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="First Name"
+                        type="text"
+                        onChange={handleChange("firstname")}
+                        value={studentData.firstname}
+                        required
+                      />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Last Name
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Last Name"
-                          type="text"
-                          onChange={handleChange("lastname")}
-                          value={studentData.lastname}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Last Name
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Last Name"
+                        type="text"
+                        onChange={handleChange("lastname")}
+                        value={studentData.lastname}
+                        required
+                      />
                     </Col>
                   </Row>
+                  <br />
                   <Row>
                     <Col md="4">
                       <Label

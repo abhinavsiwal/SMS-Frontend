@@ -393,6 +393,7 @@ function Attendance() {
           <Form>
             <Card>
               <CardBody>
+                
                 <Row>
                   <Col className="d-flex justify-content-center mt-2">
                     <form>
@@ -414,6 +415,33 @@ function Attendance() {
                     </form>
                   </Col>
                 </Row>
+                <Row>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Session
+                    </label>
+
+                    <select
+                      className="form-control"
+                      required
+                      // onChange={handleChange("session")}
+                    >
+                      <option value="">Select Session</option>
+                      {sessions &&
+                        sessions.map((data) => {
+                          return (
+                            <option key={data._id} value={data._id}>
+                              {data.name}
+                            </option>
+                          );
+                        })}
+                    </select>
+                  </Col>
+                </Row>
+                <br />
                 <Row md="4" className="d-flex justify-content-center mb-4">
                   <Col md="3">
                     <Label
@@ -568,31 +596,38 @@ function Attendance() {
                         </h3>
                       </div>
                       <div className="col-sm Student-Attendance-Icons">
-                        <div style={{display:"flex",}}  >
+                        <div style={{ display: "flex" }}>
                           <p
                             className="ni ni-single-02"
-                            style={{ background: "green", color: "white",fontSize: '30px',borderRadius: '50%' }}
+                            style={{
+                              background: "green",
+                              color: "white",
+                              fontSize: "30px",
+                              borderRadius: "50%",
+                            }}
                           ></p>
                           <span className="tags"> - Present</span>
                         </div>
-                        <div style={{display:"flex",margin:"0 1rem"}} >
+                        <div style={{ display: "flex", margin: "0 1rem" }}>
                           <p
                             className="ni ni-single-02"
                             style={{
                               background: "rgb(201, 3, 3)",
                               color: "white",
-                              fontSize: '30px',borderRadius: '50%'
+                              fontSize: "30px",
+                              borderRadius: "50%",
                             }}
                           ></p>
                           <span> - Absent</span>
                         </div>
-                        <div style={{display:"flex"}} >
+                        <div style={{ display: "flex" }}>
                           <p
                             className="ni ni-single-02"
                             style={{
                               background: "rgb(243, 243, 71)",
                               color: "white",
-                              fontSize: '30px',borderRadius: '50%'
+                              fontSize: "30px",
+                              borderRadius: "50%",
                             }}
                           ></p>
                           <span> - Leave</span>

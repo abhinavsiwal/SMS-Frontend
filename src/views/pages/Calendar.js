@@ -84,6 +84,7 @@ function CalendarView() {
   const [eventList, setEventList] = React.useState([]);
   const [selectSessionId, setSelectSessionId] = useState("");
   const [staff, setStaff] = useState([]);
+  const [sessionID, setSessionID] = useState("");
   const [staffId, setStaffId] = useState("");
   const [filterSessionId, setFilterSessionId] = useState("");
 const [permissions, setPermissions] = useState([]);
@@ -174,11 +175,6 @@ const [permissions, setPermissions] = useState([]);
     formData.set("event_type", radios);
     formData.set("school", user.school);
     formData.set("assignTeachers", JSON.stringify([staffId]));
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
 
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
@@ -240,12 +236,14 @@ const [permissions, setPermissions] = useState([]);
     formData.set("description", description);
     // formData.set("assignTeachers", assignTeachers)
     formData.set("event_type", radios);
+    formData.set("session", sessionID);
     formData.set("school", user.school);
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
+    // sessions.map((data) => {
+    //   if (data.status === "current") {
+    //     formData.set("session", data._id);
+    //   }
+    // });
+    
 
     try {
       const updateEvents = await updateEvent(
@@ -665,6 +663,32 @@ const [permissions, setPermissions] = useState([]);
                       ))}
                     </Input>
                   </FormGroup>
+                  <Row>
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Session
+                      </label>
+
+                      <select
+                        className="form-control"
+                        required
+                        onChange={(e) => setSessionID(e.target.value)}
+                      >
+                        <option value="">Select Session</option>
+                        {sessions &&
+                          sessions.map((data) => {
+                            return (
+                              <option key={data._id} value={data._id}>
+                                {data.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </Col>
+                  </Row>
                   <FormGroup>
                     <textarea
                       className="form-control-alternative new-event--title w-100 descrip"

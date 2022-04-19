@@ -60,6 +60,7 @@ const AddClass = () => {
     name: "",
     session: "",
     abbreviation: "",
+    session: "",
   });
   const [file, setFile] = useState();
 
@@ -69,14 +70,13 @@ const AddClass = () => {
     permissionHandler();
   }, [checked, reload]);
 
-  let permission1=[];
+  let permission1 = [];
   const permissionHandler = async () => {
-
     // console.log(user);
     if (user.permissions["Class, section and subject master"]) {
       permission1 = user.permissions["Class, section and subject master"];
       // console.log(permission);
-       setPermissions(permission1);
+      setPermissions(permission1);
       // console.log(permissions);
     }
   };
@@ -145,7 +145,7 @@ const AddClass = () => {
     } catch (err) {
       console.log(err);
       toast.error(fetchingClassError);
-      setLoading(true)
+      setLoading(true);
     }
   };
 
@@ -302,11 +302,6 @@ const AddClass = () => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
     try {
       setAddLoading(true);
       await addClass(user._id, token, formData);
@@ -386,6 +381,32 @@ const AddClass = () => {
                     </Row>
                     <Form onSubmit={handleFormChange} className="mb-4">
                       <CardBody>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Session
+                            </label>
+
+                            <select
+                              className="form-control"
+                              onChange={handleChange("session")}
+                            >
+                              <option>Select Session</option>
+                              {sessions &&
+                                sessions.map((data) => {
+                                  return (
+                                    <option key={data._id} value={data._id}>
+                                      {data.name}
+                                    </option>
+                                  );
+                                })}
+                            </select>
+                          </Col>
+                        </Row>
+                        <br />
                         <Row>
                           <Col>
                             <label

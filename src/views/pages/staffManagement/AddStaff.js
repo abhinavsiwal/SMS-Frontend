@@ -54,6 +54,7 @@ function AddStaff() {
     lastname: "",
     email: "",
     phone: "",
+    session: "",
     alternate_phone: "",
     date_of_birth: "",
     gender: "",
@@ -61,6 +62,7 @@ function AddStaff() {
     caste: "",
     religion: "",
     mother_tongue: "",
+    session: "",
     bloodgroup: "",
     joining_date: "",
     present_address: "",
@@ -193,11 +195,6 @@ function AddStaff() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
     try {
       setloading(true);
       const resp = await addStaff(user._id, token, formData);
@@ -423,6 +420,33 @@ function AddStaff() {
                     </Col>
                   </Row>
                   <Row>
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Session
+                      </label>
+
+                      <select
+                        className="form-control"
+                        required
+                        onChange={handleChange("session")}
+                      >
+                        <option value="">Select Session</option>
+                        {sessions &&
+                          sessions.map((data) => {
+                            return (
+                              <option key={data._id} value={data._id}>
+                                {data.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </Col>
+                  </Row>
+                  <br />
+                  <Row>
                     <Col md="4">
                       <Label
                         className="form-control-label"
@@ -439,42 +463,39 @@ function AddStaff() {
                       />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          First Name
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="First Name"
-                          type="text"
-                          onChange={handleChange("firstname")}
-                          value={staffData.firstname}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        First Name
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="First Name"
+                        type="text"
+                        onChange={handleChange("firstname")}
+                        value={staffData.firstname}
+                        required
+                      />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Last Name
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Last Name"
-                          type="text"
-                          onChange={handleChange("lastname")}
-                          value={staffData.lastname}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Last Name
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Last Name"
+                        type="text"
+                        onChange={handleChange("lastname")}
+                        value={staffData.lastname}
+                        required
+                      />
                     </Col>
                   </Row>
+                  <br />
                   <Row>
                     <Col md="4">
                       <Label

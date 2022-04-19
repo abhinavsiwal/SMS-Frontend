@@ -49,7 +49,7 @@ const AddSubject = () => {
   const [file, setFile] = useState();
   const [view, setView] = useState(0);
   const [addLoading, setAddLoading] = useState(false);
-  const [permissions, setPermissions] = useState([])
+  const [permissions, setPermissions] = useState([]);
   const fileReader = new FileReader();
 
   const handleOnChange = (e) => {
@@ -73,11 +73,11 @@ const AddSubject = () => {
     content: () => componentRef.current,
   });
 
-  let permission1=[]
+  let permission1 = [];
   useEffect(() => {
     if (user.permissions["Class, section and subject master"]) {
-    permission1 = user.permissions["Class, section and subject master"];
-      setPermissions(permission1)
+      permission1 = user.permissions["Class, section and subject master"];
+      setPermissions(permission1);
     }
   }, [checked]);
 
@@ -114,8 +114,8 @@ const AddSubject = () => {
     try {
       setLoading(true);
       await deleteSubject(subjectId, user._id, token);
-     setChecked(!checked)
-     setLoading(false);
+      setChecked(!checked);
+      setLoading(false);
     } catch (err) {
       toast.error("Something Went Wrong!");
       setLoading(false);
@@ -154,8 +154,8 @@ const AddSubject = () => {
         return toast.error(updatedSubject.err);
       } else {
         setEditing(false);
-       setChecked(!checked)
-       setLoading(false);
+        setChecked(!checked);
+        setLoading(false);
       }
     } catch (err) {
       toast.error(err);
@@ -172,7 +172,7 @@ const AddSubject = () => {
   const handleFormChange = async (e) => {
     e.preventDefault();
     // console.log(inputFields);
-   
+
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
     if (subjectData.name.length > 0) {
@@ -187,13 +187,7 @@ const AddSubject = () => {
       // console.log(list);
       formData.set("list", JSON.stringify(list));
     }
-    
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
-    
+
     try {
       setLoading(true);
       setAddLoading(true);
@@ -208,15 +202,15 @@ const AddSubject = () => {
         name: "",
         session: "",
       });
-     setChecked(!checked)
-     setAddLoading(false);
-setLoading(false)
-     toast.success("Subject added successfully");
+      setChecked(!checked);
+      setAddLoading(false);
+      setLoading(false);
+      toast.success("Subject added successfully");
       setReload(true);
     } catch (err) {
       toast.error("Something Went Wrong");
       setAddLoading(false);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -365,7 +359,7 @@ setLoading(false)
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
-                   )} 
+                  )}
                   {permission1 && permission1.includes("delete") && (
                     <Button
                       className="btn-sm pull-right"
@@ -380,7 +374,7 @@ setLoading(false)
                         <i className="fas fa-trash" />
                       </Popconfirm>
                     </Button>
-                 )} 
+                  )}
                 </h5>
               ),
             });
@@ -390,34 +384,32 @@ setLoading(false)
               name: res[i].name,
               action: (
                 <h5 key={i + 1} className="mb-0">
-                 
                   {permission1 && permission1.includes("edit") && (
-                  <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() => rowHandler(res[i]._id, res[i].name)}
-                >
-                  <i className="fas fa-user-edit" />
-                </Button> 
-                )}
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                      onClick={() => rowHandler(res[i]._id, res[i].name)}
+                    >
+                      <i className="fas fa-user-edit" />
+                    </Button>
+                  )}
                   {permission1 && permission1.includes("delete") && (
-                   <Button
-                   className="btn-sm pull-right"
-                   color="danger"
-                   type="button"
-                   key={"delete" + i + 1}
-                 >
-                   <Popconfirm
-                     title="Sure to delete?"
-                     onConfirm={() => handleDelete(res[i]._id)}
-                   >
-                     <i className="fas fa-trash" />
-                   </Popconfirm>
-                 </Button>
-                )}
-                 
+                    <Button
+                      className="btn-sm pull-right"
+                      color="danger"
+                      type="button"
+                      key={"delete" + i + 1}
+                    >
+                      <Popconfirm
+                        title="Sure to delete?"
+                        onConfirm={() => handleDelete(res[i]._id)}
+                      >
+                        <i className="fas fa-trash" />
+                      </Popconfirm>
+                    </Button>
+                  )}
                 </h5>
               ),
             });
@@ -454,164 +446,192 @@ setLoading(false)
       <Container className="mt--6" fluid>
         <Row>
           <Col lg="4">
-            
-          {
-          addLoading ?(<Loader />):( permissions && permissions.includes("add") && (
-            <div className="card-wrapper">
-              <Card>
-                <Row>
-                  <Col className="d-flex justify-content-center mt-2 ml-4">
-                    <form>
-                      <input
-                        type={"file"}
-                        id={"csvFileInput"}
-                        accept={".csv"}
-                        onChange={handleOnChange}
-                      />
-
-                      <Button
-                        onClick={(e) => {
-                          handleOnSubmit(e);
-                        }}
-                        color="primary"
-                        className="mt-2"
-                      >
-                        IMPORT CSV
-                      </Button>
-                    </form>
-                  </Col>
-                </Row>
-                <Form onSubmit={handleFormChange} className="mb-4">
-                  <CardBody>
+            {addLoading ? (
+              <Loader />
+            ) : (
+              permissions &&
+              permissions.includes("add") && (
+                <div className="card-wrapper">
+                  <Card>
                     <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Select type
-                        </label>
-                        <Input
-                          id="exampleFormControlSelect3"
-                          type="select"
-                          // onChange={(e) => setType(e.target.value)}
-                          onChange={handleChange("type")}
-                          value={subjectData.type}
-                          required
-                        >
-                          <option value="" disabled selected>
-                            Select type
-                          </option>
-                          <option>Single</option>
-                          <option>Group</option>
-                        </Input>
+                      <Col className="d-flex justify-content-center mt-2 ml-4">
+                        <form>
+                          <input
+                            type={"file"}
+                            id={"csvFileInput"}
+                            accept={".csv"}
+                            onChange={handleOnChange}
+                          />
+
+                          <Button
+                            onClick={(e) => {
+                              handleOnSubmit(e);
+                            }}
+                            color="primary"
+                            className="mt-2"
+                          >
+                            IMPORT CSV
+                          </Button>
+                        </form>
                       </Col>
                     </Row>
-                    {subjectData.type === "Single" && (
-                      <>
+                    <Form onSubmit={handleFormChange} className="mb-4">
+                      <CardBody>
                         <Row>
                           <Col>
                             <label
                               className="form-control-label"
                               htmlFor="example4cols2Input"
                             >
-                              Subject
+                              Session
+                            </label>
+
+                            <select
+                              className="form-control"
+                              onChange={handleChange("session")}
+                            >
+                              <option>Select Session</option>
+                              {sessions &&
+                                sessions.map((data) => {
+                                  return (
+                                    <option key={data._id} value={data._id}>
+                                      {data.name}
+                                    </option>
+                                  );
+                                })}
+                            </select>
+                          </Col>
+                        </Row>
+                        <br />
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Select type
                             </label>
                             <Input
-                              id="example4cols2Input"
-                              placeholder="Subject"
-                              type="text"
-                              onChange={handleChange("name")}
-                              value={subjectData.name}
+                              id="exampleFormControlSelect3"
+                              type="select"
+                              // onChange={(e) => setType(e.target.value)}
+                              onChange={handleChange("type")}
+                              value={subjectData.type}
                               required
-                            />
-                          </Col>
-                        </Row>
-                        
-                      </>
-                    )}
-                    {subjectData.type === "Group" && (
-                      <>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
                             >
-                              Group Name
-                            </label>
-                            <Input
-                              id="example4cols2Input"
-                              placeholder="Group Name"
-                              type="text"
-                              onChange={(e) => setGroupName(e.target.value)}
-                              value={groupName}
-                              required
-                            />
+                              <option value="" disabled selected>
+                                Select type
+                              </option>
+                              <option>Single</option>
+                              <option>Group</option>
+                            </Input>
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <label
-                              className="form-control-label"
-                              htmlFor="example4cols2Input"
-                            >
-                              Subject
-                            </label>
-                            {inputFields.map((inputField, index) => {
-                              return (
-                                <div key={index}>
-                                  <Input
-                                    name="subjectName"
-                                    id="example4cols2Input"
-                                    placeholder="Subject"
-                                    type="text"
-                                    value={inputField.subjectName}
-                                    onChange={(event) =>
-                                      handleChangeSubject(index, event)
-                                    }
-                                    className="mb-2"
-                                  />
-                                
-                                </div>
-                              );
-                            })}
-                              <Button
-                                    color="primary"
-                                    style={{
-                                      height: "1rem",
-                                      width: "4rem",
-                                      fontSize: "0.5rem",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      marginTop: "0.7rem",
-                                      marginBottom: "0.7rem",
-                                    }}
-                                    onClick={handleAddFields}
-                                  >
-                                    Add
-                                  </Button>
+                        {subjectData.type === "Single" && (
+                          <>
+                            <Row>
+                              <Col>
+                                <label
+                                  className="form-control-label"
+                                  htmlFor="example4cols2Input"
+                                >
+                                  Subject
+                                </label>
+                                <Input
+                                  id="example4cols2Input"
+                                  placeholder="Subject"
+                                  type="text"
+                                  onChange={handleChange("name")}
+                                  value={subjectData.name}
+                                  required
+                                />
+                              </Col>
+                            </Row>
+                          </>
+                        )}
+                        {subjectData.type === "Group" && (
+                          <>
+                            <Row>
+                              <Col>
+                                <label
+                                  className="form-control-label"
+                                  htmlFor="example4cols2Input"
+                                >
+                                  Group Name
+                                </label>
+                                <Input
+                                  id="example4cols2Input"
+                                  placeholder="Group Name"
+                                  type="text"
+                                  onChange={(e) => setGroupName(e.target.value)}
+                                  value={groupName}
+                                  required
+                                />
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col>
+                                <label
+                                  className="form-control-label"
+                                  htmlFor="example4cols2Input"
+                                >
+                                  Subject
+                                </label>
+                                {inputFields.map((inputField, index) => {
+                                  return (
+                                    <div key={index}>
+                                      <Input
+                                        name="subjectName"
+                                        id="example4cols2Input"
+                                        placeholder="Subject"
+                                        type="text"
+                                        value={inputField.subjectName}
+                                        onChange={(event) =>
+                                          handleChangeSubject(index, event)
+                                        }
+                                        className="mb-2"
+                                      />
+                                    </div>
+                                  );
+                                })}
+                                <Button
+                                  color="primary"
+                                  style={{
+                                    height: "1rem",
+                                    width: "4rem",
+                                    fontSize: "0.5rem",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginTop: "0.7rem",
+                                    marginBottom: "0.7rem",
+                                  }}
+                                  onClick={handleAddFields}
+                                >
+                                  Add
+                                </Button>
+                              </Col>
+                            </Row>
+                          </>
+                        )}
+                        <Row className="mt-4">
+                          <Col
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                            }}
+                          >
+                            <Button color="primary" type="submit">
+                              Submit
+                            </Button>
                           </Col>
                         </Row>
-                       
-                      </>
-                    )}
-                    <Row className="mt-4">
-                      <Col
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <Button color="primary" type="submit">
-                          Submit
-                        </Button>
-                      </Col>
-                    </Row>
-                  </CardBody>
-                </Form>
-              </Card>
-            </div>
-        ))
-         } 
-            </Col>
+                      </CardBody>
+                    </Form>
+                  </Card>
+                </div>
+              )
+            )}
+          </Col>
           <Col>
             <div className="card-wrapper">
               <Card>
