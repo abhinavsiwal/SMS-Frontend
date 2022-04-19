@@ -53,6 +53,7 @@ function AddRoute() {
   const [addRoute, setAddRoute] = React.useState("");
   const [placeName, setPlaceName] = React.useState("");
   const [multiSelect, setMultiSelect] = React.useState();
+  const [sessionID, setSessionID] = React.useState("");
 
   const [check, setCheck] = React.useState(false);
   const [allRoutes, setAllRoutes] = useState([]);
@@ -165,11 +166,7 @@ const [disableButton, setDisableButton] = useState(true);
     let formData = new FormData();
     formData.set("name", addRoute);
     formData.set("bus_number", busNo);
-    sessions.map((data) => {
-      if (data.status === "current") {
-        formData.set("session", data._id);
-      }
-    });
+    formData.set("session", sessionID);
     formData.set("start", startDuration);
     formData.set("end", endDuration);
     formData.set("school", user.school);
@@ -188,7 +185,7 @@ const [disableButton, setDisableButton] = useState(true);
         toast.success("Route Added Successfully");
         setAddRoute("");
         setPlaceName("");
-        setSession("");
+        setSessionID("");
         setBusNo("");
         setLoading(false);
       }
@@ -257,6 +254,33 @@ const placeBlurHandler=()=>{
                   </Row>
                   <Form className="mb-4" onSubmit={handleSubmit}>
                     <CardBody>
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Session
+                          </label>
+
+                          <select
+                            className="form-control"
+                            required
+                            onChange={(e) => setSessionID(e.target.value)}
+                          >
+                            <option value="">Select Session</option>
+                            {sessions &&
+                              sessions.map((data) => {
+                                return (
+                                  <option key={data._id} value={data._id}>
+                                    {data.name}
+                                  </option>
+                                );
+                              })}
+                          </select>
+                        </Col>
+                      </Row>
+                      <br />
                       <Row className="d-flex justify-content-center">
                         <Col md="6">
                           <Label

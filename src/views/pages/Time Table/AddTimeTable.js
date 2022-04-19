@@ -77,7 +77,7 @@ function AddTimeTable() {
     }
   };
 
-  const getAllSection = async () => {
+  const getAllSession = async () => {
     const { user, token } = isAuthenticated();
     try {
       const session = await allSessions(user._id, user.school, token);
@@ -122,7 +122,7 @@ function AddTimeTable() {
   useEffect(async () => {
     setShowLoad(true);
     await getAllClass();
-    await getAllSection();
+    await getAllSession();
     setShowLoad(false);
   }, []);
 
@@ -144,6 +144,20 @@ function AddTimeTable() {
     if (e.target.value === "") {
     } else {
       setSelectedSection(JSON.parse(e.target.value));
+    }
+  };
+
+  const handleSession = (e) => {
+    e.preventDefault();
+    if (e.target.value === "") {
+    } else {
+      var data = JSON.parse(e.target.value);
+      var working_days = [];
+      for (var i = 0; i < data.working_days; i++) {
+        working_days.push(days[i]);
+      }
+      setDays(working_days);
+      setCurrentSession(data._id);
     }
   };
 
@@ -169,6 +183,17 @@ function AddTimeTable() {
         setShowLoad(false);
         return toast.error("TimeTable is Already Created");
       } else {
+        sessions.map((data) => {
+          if (data.status === "current") {
+            // formData.set("session", data._id);
+            var working_days = [];
+            for (var i = 0; i < data.working_days; i++) {
+              working_days.push(days[i]);
+            }
+            setDays(working_days);
+            setCurrentSession(data._id);
+          }
+        });
         setShowLoad(false);
         setStep(1);
       }
@@ -248,17 +273,6 @@ function AddTimeTable() {
         } else {
           await getAllStaff();
           await getAllSubject();
-          sessions.map((data) => {
-            if (data.status === "current") {
-              // formData.set("session", data._id);
-              var working_days = [];
-              for (var i = 0; i < data.working_days; i++) {
-                working_days.push(days[i]);
-              }
-              setDays(working_days);
-              setCurrentSession(data._id);
-            }
-          });
           var period_Array_Main = [];
           await periodArray.map(async (data) => {
             if (data.name && data.name === "Lunch") {
@@ -442,6 +456,30 @@ function AddTimeTable() {
                           );
                         })}
                     </Input>
+                  </Col>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Session
+                    </label>
+
+                    <select
+                      required
+                      className="form-control"
+                      onChange={handleSession}
+                    >
+                      <option value="">Select Session</option>
+                      {sessions &&
+                        sessions.map((data) => {
+                          return (
+                            <option key={data._id} value={JSON.stringify(data)}>
+                              {data.name}
+                            </option>
+                          );
+                        })}
+                    </select>
                   </Col>
                   <Col>
                     <label
