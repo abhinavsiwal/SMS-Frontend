@@ -448,7 +448,7 @@ function Attendance() {
                       className="form-control-label"
                       htmlFor="example-date-input"
                     >
-                      To
+                      To 
                     </Label>
                     <Input
                       className="form-control-sm"
