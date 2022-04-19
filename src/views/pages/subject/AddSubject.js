@@ -325,7 +325,10 @@ setLoading(false)
       render: (subjects) => (
         <>
           {subjects.map((subject) => {
-            return <p>{subject}</p>;
+            // console.log(subject);
+            let subject1 = JSON.parse(subject);
+            // console.log(subject1);
+            return <p>{subject1.toString()}</p>;
           })}
         </>
       ),
@@ -341,6 +344,7 @@ setLoading(false)
   const getAllClasses = () => {
     allSubjects(user._id, user.school, token)
       .then((res) => {
+        // console.log(res);
         setLoading(true);
         // console.log("res", res);
         let data = [];

@@ -96,9 +96,9 @@ function Attendance() {
 
   useEffect(() => {
     let today1 = new Date();
-    console.log(today1);
+    // console.log(today1);
     let day = today1.getDate();
-    console.log(day);
+    // console.log(day);
     let month = today1.getMonth() + 1;
     let year = today1.getFullYear();
     let date = day + "-" + month + "-" + year;
