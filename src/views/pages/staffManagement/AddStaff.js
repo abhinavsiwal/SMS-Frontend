@@ -15,6 +15,9 @@ import {
   Form,
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
+import TextArea from "antd/lib/input/TextArea";
+
+
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 
@@ -86,6 +89,7 @@ function AddStaff() {
     qualification: "",
     department: "",
     subject: "",
+    job_description:"",
   });
   const history = useHistory();
   const [allRoles, setAllRoles] = useState([]);
@@ -1143,7 +1147,7 @@ function AddStaff() {
                   {staffData.assign_role_name !== "" &&
                     staffData.assign_role_name !== "Teacher" && (
                       <Row>
-                        <Col md="12">
+                          <Col md="12">
                           <FormGroup>
                             <label
                               className="form-control-label"
@@ -1161,6 +1165,25 @@ function AddStaff() {
                             />
                           </FormGroup>
                         </Col>
+                        <Col md="12">
+                          <FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Job Description
+                            </label>
+                            <TextArea
+                              id="example4cols3Input"
+                              placeholder="Job Description"
+                              type="text"
+                              onChange={handleChange("job_description")}
+                              value={staffData.job_description}
+                              required
+                            />
+                          </FormGroup>
+                        </Col>
+                      
                       </Row>
                     )}
                   <Row className="mt-4 d-flex justify-content-between">

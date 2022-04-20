@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { signIn } from "../../api/login/index";
 import CryptoJS from "crypto-js";
-import validator from "validator";
+// import validator from "validator";
 
 
 const initialState = {

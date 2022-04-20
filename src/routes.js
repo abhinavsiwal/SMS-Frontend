@@ -39,7 +39,7 @@ import ClassTeacher from "views/pages/class/ClassTeacher";
 import AddClass from "views/pages/class/AddClass";
 import AddSubject from "views/pages/subject/AddSubject";
 import AllStudents from "views/pages/studentManagement/AllStudents";
-import UpdateStudent from "views/pages/studentManagement/UpdateStudent";
+// import UpdateStudent from "views/pages/studentManagementp/UpdateStudent";
 import AllStaffs from "views/pages/staffManagement/AllStaffs";
 import Calendar from "views/pages/Calendar.js";
 import Attendance from "views/pages/Attendance/Attendance";
@@ -878,6 +878,28 @@ const routes = [
         name: "View Route",
         miniName: "V",
         component: ViewRoute,
+        layout: "/admin",
+      },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Credential Master",
+    icon: "ni ni-settings-gear-65 text-red",
+    state: "credentialCollapse",
+    views: [
+      {
+        path: "/student-credentials",
+        name: "Student",
+        miniName: "A",
+        // component: AddRoute,
+        layout: "/admin",
+      },
+      {
+        path: "/staff-credentials",
+        name: "Staff",
+        miniName: "S",
+        // component: ViewRoute,
         layout: "/admin",
       },
     ],

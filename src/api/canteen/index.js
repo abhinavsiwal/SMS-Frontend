@@ -11,7 +11,7 @@ export const canteenAdd = async (userId, formData) => {
     return data;
   } catch (err) {
     console.log(err);
-    throw new err;
+    throw new err();
   }
 };
 
@@ -24,7 +24,7 @@ export const allCanteens = async (userId,schoolId) => {
     return data;
   } catch (err) {
       console.log(err);
-      throw new err;
+      throw new err();
   }
 };
 
@@ -39,7 +39,7 @@ export const menuAdd = async (userId, formData) => {
     return data;
   } catch (err) {
     console.log(err);
-    throw err;
+    throw err();
   }
 };
 
@@ -55,7 +55,7 @@ export const canteenDelete= async(canteenId,userId)=>{
     return data;
   } catch (err) {
     console.log(err);
-    throw err;
+    throw err();
   }
 }
 
@@ -70,7 +70,7 @@ export const menuItemDelete=async(itemId,userId)=>{
     return data;
   } catch (err) {
     console.log(err);
-    throw err;
+    throw err();
   }
 }
 
@@ -85,6 +85,6 @@ export const menuItemEdit=async(itemId,userId,formData)=>{
     return data;
   } catch (err) {
     console.log(err);
-    throw err;
+    throw err();
   }
 }

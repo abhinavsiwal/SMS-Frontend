@@ -1,4 +1,4 @@
-import { sendRequestWithJson } from "api/api";
+
 import { sendRequest } from "api/api";
 
 export const addClass = (userId, token, data = {}) => {

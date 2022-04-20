@@ -1,4 +1,4 @@
-import { cloneElement } from "react";
+// import { cloneElement } from "react";
 import { PERMISSIONS, ROLES } from "./permission-maps";
 import useGetRole from "./useGetRole";
 import { isAuthenticated } from "api/auth";
@@ -16,8 +16,8 @@ export const hasPermission = ({ permissions, scopes }) => {
 };
 
 export default function PermissionsGate({ children, scopes = [] }) {
-  const role = useGetRole();
-  const { user } = isAuthenticated();
+  // const role = useGetRole();
+  // const { user } = isAuthenticated();
   const permissions = PERMISSIONS[ROLES.owner];
   // console.log(role);
   // console.log(user.role);

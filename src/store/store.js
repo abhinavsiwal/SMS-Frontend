@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
 import {
-  persistStore,
+
   persistReducer,
   FLUSH,
   REHYDRATE,
@@ -11,7 +11,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { PersistGate } from "redux-persist/integration/react";
+// import { PersistGate } from "redux-persist/integration/react";
 
 import authReducer from './reducers/auth'
 import studentReducer from './reducers/student'

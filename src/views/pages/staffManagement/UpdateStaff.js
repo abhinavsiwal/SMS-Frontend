@@ -205,7 +205,9 @@ function UpdateStaff({ staffDetails }) {
       ...city,
     }));
 
-  useEffect(() => {}, [cscd, cpcscd]);
+    console.log(staffData);
+  useEffect(() => {
+  }, [cscd, cpcscd]);
 
   useEffect(async () => {
     if (step === 3) {
@@ -634,6 +636,7 @@ function UpdateStaff({ staffDetails }) {
                         required
                         value={cscd.country}
                         onChange={handleCSCChange("country")}
+                        initialValue={staffData.country ? staffData.country : null}
                       />
                     </Col>
                     <Col md="3">
@@ -653,6 +656,7 @@ function UpdateStaff({ staffDetails }) {
                         required
                         value={cscd.state}
                         onChange={handleCSCChange("state")}
+                        initialValue={staffData.state  ? staffData.state : null}
                       />
                     </Col>
                     <Col md="3">
@@ -677,6 +681,7 @@ function UpdateStaff({ staffDetails }) {
                         required
                         value={cscd.city}
                         onChange={handleCSCChange("city")}
+                        initialValue={staffData.city?staffData.city:null}
                       />
                     </Col>
                   </Row>

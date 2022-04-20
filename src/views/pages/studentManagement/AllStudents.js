@@ -112,9 +112,9 @@ const AllStudents = () => {
           phone: res[i].phone,
           gender: res[i].gender,
           dob: res[i].date_of_birth.split("T")[0].toString(),
-          class: "Class",
-          section: "Section",
-          roll: "Roll",
+          class: res[i].class && res[i].class.name,
+          section: res[i].section && res[i].section.name,
+          roll: res[i].roll_number,
           joining_date: res[i].joining_date.split("T")[0].toString(),
           action: (
             <h5 key={i + 1} className="mb-0">
