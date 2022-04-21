@@ -464,6 +464,7 @@ function AddStaff() {
                         onChange={handleChange("joining_date")}
                         value={staffData.joining_date}
                         required
+                        
                       />
                     </Col>
                     <Col md="4">
@@ -503,7 +504,7 @@ function AddStaff() {
                   <Row>
                     <Col md="4">
                       <Label
-                        className="form-control-label"
+                        cl ssName="form-control-label"
                         htmlFor="example-date-input"
                       >
                         DOB
@@ -568,7 +569,7 @@ function AddStaff() {
                       <Input
                         id="example4cols2Input"
                         placeholder="Contact Number"
-                        type="text"
+                        type="number"
                         onChange={handleChange("phone")}
                         pattern="[1-9]{1}[0-9]{9}"
                         value={staffData.phone}
@@ -589,7 +590,7 @@ function AddStaff() {
                         placeholder="Alternate Contact Number"
                         onChange={handleChange("alternate_phone")}
                         value={staffData.alternate_phone}
-                        type="text"
+                        type="number"
                         pattern="[1-9]{1}[0-9]{9}"
                         required
                       />
@@ -885,7 +886,7 @@ function AddStaff() {
                           placeholder="Contact Number"
                           onChange={handleChange("contact_person_phone")}
                           value={staffData.contact_person_phone}
-                          type="text"
+                          type="number"
                           pattern="[1-9]{1}[0-9]{9}"
                           required
                         />
@@ -1042,9 +1043,9 @@ function AddStaff() {
                     </Col>
                   </Row>
                   {staffData.department && (
-                    <Row>
+                    <Row className="mt-2 mb-2" >
                       <Col md="6">
-                        <FormGroup>
+                        <>
                           <label
                             className="form-control-label"
                             htmlFor="example4cols2Input"
@@ -1085,7 +1086,7 @@ function AddStaff() {
                                 );
                               })}
                           </Input>
-                        </FormGroup>
+                        </>
                       </Col>
 
                       <Col md="6">

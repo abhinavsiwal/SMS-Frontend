@@ -280,64 +280,6 @@ const AllStudents = () => {
       },
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      sorter: (a, b) => a.email > b.email,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.email.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      sorter: (a, b) => a.phone > b.phone,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.phone.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
       title: "Gender",
       dataIndex: "gender",
       sorter: (a, b) => a.gender > b.gender,
@@ -483,6 +425,65 @@ const AllStudents = () => {
       },
     },
     {
+      title: "Email",
+      dataIndex: "email",
+      sorter: (a, b) => a.email > b.email,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.email.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      sorter: (a, b) => a.phone > b.phone,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.phone.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+
+    {
       title: "Joining Date",
       dataIndex: "joining_date",
       sorter: (a, b) => a.joining_date > b.joining_date,
@@ -519,10 +520,9 @@ const AllStudents = () => {
     },
   ];
 
-
-const backHandler = ()=>{
-  setComponent(false);
-}
+  const backHandler = () => {
+    setComponent(false);
+  };
 
   return (
     <>
@@ -664,12 +664,14 @@ const backHandler = ()=>{
                                           </DropdownMenu>
                                         </UncontrolledDropdown>
                                       </CardHeader>
-                                      <CardImg
-                                        alt="..."
-                                        src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                                        top
-                                        className="p-4"
-                                      />
+                                      {student.photo && (
+                                        <CardImg
+                                          alt="..."
+                                          src={student.photo}
+                                          top
+                                          className="p-4"
+                                        />
+                                      )}
                                       <CardBody className="mt-0">
                                         <Row>
                                           <Col align="center">
@@ -721,10 +723,13 @@ const backHandler = ()=>{
                                         </Row>
                                         <Row>
                                           <Col align="center">
-                                            <Button className="mt-3" onClick={()=>handleStaffDetails(student)} >
-                                            
-                                                Read More
-                                          
+                                            <Button
+                                              className="mt-3"
+                                              onClick={() =>
+                                                handleStaffDetails(student)
+                                              }
+                                            >
+                                              Read More
                                             </Button>
                                           </Col>
                                         </Row>

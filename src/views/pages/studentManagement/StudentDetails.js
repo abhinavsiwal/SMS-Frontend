@@ -1,4 +1,3 @@
-
 // reactstrap components
 import React, { useState } from "react";
 import {
@@ -23,36 +22,31 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 import "./style.css";
 import { FaEdit } from "react-icons/fa";
 
-function Staffdetails({ data,backHandle }) {
+function Staffdetails({ data, backHandle }) {
   // console.log(data);
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
 
   return (
     <>
-      <SimpleHeader name="Staff Profile" parentName="Staff Management" />
+      <SimpleHeader name="Student Profile" parentName="Student Management" />
       <Container className="mt--6" fluid>
-      <Row>
-              <Col className="mt--3 ">
-                <Button
-                  className="float-left mb-2"
-                  color="dark"
-                  onClick={backHandle}
-                >
-                  <i className="ni ni-bold-left"></i>
-                </Button>
-              </Col>
-            </Row>
+        <Row>
+          <Col className="mt--3 ">
+            <Button
+              className="float-left mb-2"
+              color="dark"
+              onClick={backHandle}
+            >
+              <i className="ni ni-bold-left"></i>
+            </Button>
+          </Col>
+        </Row>
         <Row>
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-                <CardImg
-                  alt="..."
-                  src={data.photo}
-                  top
-                  className="p-4"
-                />
+                <CardImg alt="..." src={data.photo} top className="p-4" />
                 <CardBody>
                   <Row>
                     <Col align="center">
@@ -61,20 +55,24 @@ function Staffdetails({ data,backHandle }) {
                         {data.firstname} {data.lastname}
                       </span>
                     </Col>
-                    
+
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Class</h4>
-                      <span className="text-md">{data.class && data.class.name}</span>
+                      <span className="text-md">
+                        {data.class && data.class.name}
+                      </span>
                     </Col>
                   </Row>
                   <Row>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Section</h4>
-                      <span className="text-md">{data.section && data.section.name}</span>
+                      <span className="text-md">
+                        {data.section && data.section.name}
+                      </span>
                     </Col>
                     <Col align="center">
-                      <h4 className="mt-3 mb-1">Phone</h4>
-                      <span className="text-md">+91 {data.phone}</span>
+                      <h4 className="mt-3 mb-1">Roll No</h4>
+                      <span className="text-md">{data.roll}</span>
                     </Col>
                   </Row>
                   <Row>
@@ -146,7 +144,7 @@ function Staffdetails({ data,backHandle }) {
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
                       <ListGroup flush>
-                        <Row  >
+                        <Row>
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-info">
@@ -171,8 +169,8 @@ function Staffdetails({ data,backHandle }) {
                               </div>
                             </ListGroupItem>
                           </Col>
-                          </Row>
-                          <Row className="mt-4" >
+                        </Row>
+                        <Row className="mt-4">
                           <Col md="4">
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
@@ -187,7 +185,9 @@ function Staffdetails({ data,backHandle }) {
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">Aadhar Number</h5>
+                                  <h5 className="checklist-title mb-0">
+                                    Aadhar Number
+                                  </h5>
                                   <small>{data.aadhar_number}</small>
                                 </div>
                               </div>
@@ -197,14 +197,16 @@ function Staffdetails({ data,backHandle }) {
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">Phone</h5>
+                                  <h5 className="checklist-title mb-0">
+                                    Phone
+                                  </h5>
                                   <small>{data.phone}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
                           </Col>
                         </Row>
-                         <Row className="mt-4">
+                        <Row className="mt-4">
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
@@ -239,7 +241,7 @@ function Staffdetails({ data,backHandle }) {
                               </div>
                             </ListGroupItem>
                           </Col>
-                        </Row> 
+                        </Row>
                         <Row className="mt-4">
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
@@ -265,207 +267,206 @@ function Staffdetails({ data,backHandle }) {
                               </div>
                             </ListGroupItem>
                           </Col>
-                        
                         </Row>
                       </ListGroup>
                     </TabPane>
-                     <TabPane tabId="2">
-                      <ListGroup flush>
-                    
-                      </ListGroup>
-                    </TabPane> 
-                     <TabPane tabId="4">
-                         {data.guardian_name ?(
-                               <ListGroup flush>
-                               <Row>
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-success">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                           Guardian Name
-                                         </h5>
-                                         <small>{data.guardian_name}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-info">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                           Guardian Phone
-                                         </h5>
-                                         <small>{data.guardian_phone}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-info">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                           Guardian Email
-                                         </h5>
-                                         <small>{data.guardian_email}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                               </Row>
-                               <Row className="mt-4">
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-info">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                        Guardian Address
-                                         </h5>
-                                         <small>{data.guardian_address}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                              
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-info">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                           Contact Person Pincode
-                                         </h5>
-                                         <small>{data.contact_person_pincode}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                               </Row>
-                               <Row className="mt-4">
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-info">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                           Contact Person Relation
-                                         </h5>
-                                         <small>{data.contact_person_relation}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                                 <Col>
-                                   <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                     <div className="checklist-item checklist-item-success">
-                                       <div className="checklist-info">
-                                         <h5 className="checklist-title mb-0">
-                                           Contact Person Address
-                                         </h5>
-                                         <small>{data.contact_person_address}</small>
-                                       </div>
-                                     </div>
-                                   </ListGroupItem>
-                                 </Col>
-                               </Row>
-                             </ListGroup>
-                         ):(
-                            <ListGroup flush>
-                            <Row>
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-success">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person Country
-                                      </h5>
-                                      <small>{data.contact_person_country}</small>
-                                    </div>
+                    <TabPane tabId="2">
+                      <ListGroup flush></ListGroup>
+                    </TabPane>
+                    <TabPane tabId="4">
+                      {data.guardian_name ? (
+                        <ListGroup flush>
+                          <Row>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Guardian Name
+                                    </h5>
+                                    <small>{data.guardian_name}</small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-info">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person State
-                                      </h5>
-                                      <small>{data.contact_person_state}</small>
-                                    </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Guardian Phone
+                                    </h5>
+                                    <small>{data.guardian_phone}</small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-info">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person City
-                                      </h5>
-                                      <small>+91 {data.contact_person_city}</small>
-                                    </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Guardian Email
+                                    </h5>
+                                    <small>{data.guardian_email}</small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                            </Row>
-                            <Row className="mt-4">
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-info">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person Name
-                                      </h5>
-                                      <small>{data.contact_person_name}</small>
-                                    </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                          <Row className="mt-4">
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Guardian Address
+                                    </h5>
+                                    <small>{data.guardian_address}</small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-info">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person Phone
-                                      </h5>
-                                      <small>{data.contact_person_phone}</small>
-                                    </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Pincode
+                                    </h5>
+                                    <small>{data.contact_person_pincode}</small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-info">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person Pincode
-                                      </h5>
-                                      <small>{data.contact_person_pincode}</small>
-                                    </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                          <Row className="mt-4">
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Relation
+                                    </h5>
+                                    <small>
+                                      {data.contact_person_relation}
+                                    </small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                            </Row>
-                            <Row className="mt-4">
-                             
-                              <Col>
-                                <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                  <div className="checklist-item checklist-item-success">
-                                    <div className="checklist-info">
-                                      <h5 className="checklist-title mb-0">
-                                        Contact Person Address
-                                      </h5>
-                                      <small>{data.contact_person_address}</small>
-                                    </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Address
+                                    </h5>
+                                    <small>{data.contact_person_address}</small>
                                   </div>
-                                </ListGroupItem>
-                              </Col>
-                            </Row>
-                          </ListGroup>
-                         )}
-                    
-                    </TabPane> 
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                        </ListGroup>
+                      ) : (
+                        <ListGroup flush>
+                          <Row>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Country
+                                    </h5>
+                                    <small>{data.contact_person_country}</small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person State
+                                    </h5>
+                                    <small>{data.contact_person_state}</small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person City
+                                    </h5>
+                                    <small>
+                                      +91 {data.contact_person_city}
+                                    </small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                          <Row className="mt-4">
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Name
+                                    </h5>
+                                    <small>{data.contact_person_name}</small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Phone
+                                    </h5>
+                                    <small>{data.contact_person_phone}</small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-info">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Pincode
+                                    </h5>
+                                    <small>{data.contact_person_pincode}</small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                          <Row className="mt-4">
+                            <Col>
+                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
+                                <div className="checklist-item checklist-item-success">
+                                  <div className="checklist-info">
+                                    <h5 className="checklist-title mb-0">
+                                      Contact Person Address
+                                    </h5>
+                                    <small>{data.contact_person_address}</small>
+                                  </div>
+                                </div>
+                              </ListGroupItem>
+                            </Col>
+                          </Row>
+                        </ListGroup>
+                      )}
+                    </TabPane>
                   </TabContent>
                 </CardBody>
               </Card>

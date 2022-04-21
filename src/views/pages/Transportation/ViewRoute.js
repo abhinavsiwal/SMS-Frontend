@@ -168,44 +168,7 @@ function ViewRoute() {
         return record.bus_no.toLowerCase().includes(value.toLowerCase());
       },
     },
-    {
-      title: "Staff Members",
-      dataIndex: "staff_members",
-      sorter: (a, b) => a.staff_members > b.staff_members,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.staff_members.toLowerCase().includes(value.toLowerCase());
-      },
-      // render: (staffs) => {
-      //   <>
-      //     {staffs.map((staff) => {
-      //       console.log(staff);
-      //       return <p key={staff._id}>{staff.firstname}</p>;
-      //     })}
-      //   </>;
-      // },
-    },
-
+   
     {
       title: "Start Time",
       dataIndex: "start_time",
@@ -265,6 +228,42 @@ function ViewRoute() {
         return record.end_time.toLowerCase().includes(value.toLowerCase());
       },
     },
+    {
+      title: "Staff Members",
+      dataIndex: "staff_members",
+      sorter: (a, b) => a.staff_members > b.staff_members,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.staff_members.toLowerCase().includes(value.toLowerCase());
+      },
+      render: (staffs) => {
+        <>
+          {staffs.map((staff) => (
+            <p key={staff._id}>{staff.firstname},</p>
+          ))}
+        </>;
+      },
+    },
 
     {
       title: "Action",
@@ -302,7 +301,7 @@ function ViewRoute() {
         s_no: i + 1,
         route_name: res[i].name,
         bus_no: res[i].bus_number,
-        // staff_members: res[i].staff && res[i].staff[0].firstname,
+        staff_members: res[i].staff && res[i].staff,
         start_time: res[i].start,
         end_time: res[i].end,
         action: (

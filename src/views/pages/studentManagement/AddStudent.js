@@ -557,11 +557,11 @@ function AddStudent() {
                       <Input
                         id="example4cols2Input"
                         placeholder="Aadhar Card Number"
-                        type="text"
-                        // pattern="[1-9]{1}[0-9]{9}"
+                        type="number"
                         onChange={handleChange("aadhar_number")}
-                        required
+                        pattern="[0-9]{1,12}"
                         value={studentData.aadhar_number}
+                        required
                       />
                     </Col>
                   </Row>
@@ -593,7 +593,7 @@ function AddStudent() {
                       <Input
                         id="example4cols2Input"
                         placeholder="Phone Number"
-                        type="text"
+                        type="number"
                         pattern="[1-9]{1}[0-9]{9}"
                         onChange={handleChange("phone")}
                         required
@@ -610,11 +610,11 @@ function AddStudent() {
                       <Input
                         id="example4cols2Input"
                         placeholder="Alternate Phone Number"
-                        type="text"
+                        type="number"
                         pattern="[1-9]{1}[0-9]{9}"
                         onChange={handleChange("alternate_phone")}
                         required
-                        value={studentData.alt_phone}
+                        value={studentData.alternate_phone}
                       />
                     </Col>
                   </Row>
@@ -1217,7 +1217,7 @@ function AddStudent() {
                             <Input
                               id="example4cols3Input"
                               placeholder="Phone Number"
-                              type="text"
+                              type="number"
                               pattern="[1-9]{1}[0-9]{9}"
                               onChange={handleChange("father_phone")}
                               required
@@ -1373,7 +1373,7 @@ function AddStudent() {
                             <Input
                               id="example4cols3Input"
                               placeholder="Phone Number"
-                              type="text"
+                              type="number"
                               pattern="[1-9]{1}[0-9]{9}"
                               onChange={handleChange("mother_phone")}
                               required
@@ -1654,7 +1654,7 @@ function AddStudent() {
                             <Input
                               id="example4cols3Input"
                               placeholder="Phone Number"
-                              type="text"
+                              type="number"
                               pattern="[1-9]{1}[0-9]{9}"
                               onChange={handleChange("guardian_phone")}
                               required

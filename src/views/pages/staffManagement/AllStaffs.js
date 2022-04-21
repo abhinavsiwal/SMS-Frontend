@@ -29,7 +29,7 @@ import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { deleteStaff } from "api/staff";
 import Loader from "components/Loader/Loader";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Popconfirm } from "antd";
 import UpdateStaff from "./UpdateStaff";
 import { useSelector, useDispatch } from "react-redux";
@@ -61,7 +61,7 @@ const AllStaffs = () => {
   const [stafId, setStaffId] = useState("");
   const [viewModal, setViewModal] = useState(false);
   const [studentDetails, setSudentDetails] = useState({});
-const [permissions, setPermissions] = useState([]);
+  const [permissions, setPermissions] = useState([]);
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % staffList.length;
     setItemOffset(newOffset);
@@ -75,7 +75,7 @@ const [permissions, setPermissions] = useState([]);
   const { staffEditing } = useSelector((state) => state.staffReducer);
   const userDetails = useSelector((state) => state.authReducer);
   // console.log(staffEditing);
-  let permission1=[];
+  let permission1 = [];
   useEffect(() => {
     // console.log(user);
     if (user.permissions["Staff Management"]) {
@@ -105,7 +105,7 @@ const [permissions, setPermissions] = useState([]);
         userDetails.userDetails.school,
         userDetails.userDetails._id
       );
-      // console.log(data);
+      console.log(data);
       const data1 = [];
       for (let i = 0; i < data.length; i++) {
         data1.push({
@@ -118,7 +118,7 @@ const [permissions, setPermissions] = useState([]);
           gender: data[i].gender,
           assign_role: data[i].assign_role && data[i].assign_role.name,
           job: data[i].job,
-          salary: data[i].salary,
+          job_description:data[i].job_description,
           department: data[i].department.name,
           joining_date: data[i].joining_date.split("T")[0].toString(),
           action: (
@@ -287,64 +287,6 @@ const [permissions, setPermissions] = useState([]);
       },
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      sorter: (a, b) => a.email > b.email,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.email.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      sorter: (a, b) => a.phone > b.phone,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.phone.toLowerCase().includes(value.toLowerCase());
-      },
-    },
-    {
       title: "Gender",
       dataIndex: "gender",
       sorter: (a, b) => a.gender > b.gender,
@@ -374,9 +316,9 @@ const [permissions, setPermissions] = useState([]);
       },
     },
     {
-      title: "Role",
-      dataIndex: "assign_role",
-      sorter: (a, b) => a.assign_role > b.assign_role,
+      title: "Department",
+      dataIndex: "department",
+      sorter: (a, b) => a.department > b.department,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -399,8 +341,9 @@ const [permissions, setPermissions] = useState([]);
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.assign_role.toLowerCase().includes(value.toLowerCase());
+        return record.department.toLowerCase().includes(value.toLowerCase());
       },
+
     },
     {
       title: "Job",
@@ -432,9 +375,9 @@ const [permissions, setPermissions] = useState([]);
       },
     },
     {
-      title: "Salary",
-      dataIndex: "salary",
-      sorter: (a, b) => a.salary > b.salary,
+      title: "Job Description",
+      dataIndex: "job_description",
+      sorter: (a, b) => a.job_description > b.job_description,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -457,13 +400,13 @@ const [permissions, setPermissions] = useState([]);
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.salary.toLowerCase().includes(value.toLowerCase());
+        return record.job.toLowerCase().includes(value.toLowerCase());
       },
     },
     {
-      title: "Department",
-      dataIndex: "department",
-      sorter: (a, b) => a.department > b.department,
+      title: "Phone",
+      dataIndex: "phone",
+      sorter: (a, b) => a.phone > b.phone,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
           <>
@@ -486,9 +429,72 @@ const [permissions, setPermissions] = useState([]);
         return <SearchOutlined />;
       },
       onFilter: (value, record) => {
-        return record.department.toLowerCase().includes(value.toLowerCase());
+        return record.phone.toLowerCase().includes(value.toLowerCase());
+      },
+    },  
+    {
+      title: "Email",
+      dataIndex: "email",
+      sorter: (a, b) => a.email > b.email,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.email.toLowerCase().includes(value.toLowerCase());
       },
     },
+   
+   
+    {
+      title: "Role",
+      dataIndex: "assign_role",
+      sorter: (a, b) => a.assign_role > b.assign_role,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.assign_role.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+   
+   
+   
     {
       title: "Joining Date",
       dataIndex: "joining_date",
@@ -526,13 +532,13 @@ const [permissions, setPermissions] = useState([]);
     },
   ];
 
-const backHandler = () => {
-  setComponent(false);
-}
+  const backHandler = () => {
+    setComponent(false);
+  };
 
   return (
     <React.Fragment>
-        <ToastContainer
+      <ToastContainer
         position="bottom-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -586,7 +592,6 @@ const backHandler = () => {
                     )}
                   </CardHeader>
                   <CardBody>
-                   
                     {!loading ? (
                       <Loader />
                     ) : (
@@ -594,7 +599,10 @@ const backHandler = () => {
                         {view === 0 ? (
                           <>
                             {permissions && permissions.includes("export") ? (
-                              <div ref={componentRef} style={{overflowX:"auto"}} >
+                              <div
+                                ref={componentRef}
+                                style={{ overflowX: "auto" }}
+                              >
                                 <AntTable
                                   columns={columns}
                                   data={staffList}
@@ -603,25 +611,24 @@ const backHandler = () => {
                                 />
                               </div>
                             ) : (
-                              <div  style={{overflowX:"auto"}} >
-
-                              <Table
-                                style={{ whiteSpace: "pre" }}
-                                columns={columns}
-                                dataSource={staffList}
-                                pagination={{
-                                  pageSizeOptions: [
-                                    "5",
-                                    "10",
-                                    "30",
-                                    "60",
-                                    "100",
-                                    "1000",
-                                  ],
-                                  showSizeChanger: true,
-                                }}
+                              <div style={{ overflowX: "auto" }}>
+                                <Table
+                                  style={{ whiteSpace: "pre" }}
+                                  columns={columns}
+                                  dataSource={staffList}
+                                  pagination={{
+                                    pageSizeOptions: [
+                                      "5",
+                                      "10",
+                                      "30",
+                                      "60",
+                                      "100",
+                                      "1000",
+                                    ],
+                                    showSizeChanger: true,
+                                  }}
                                 />
-                                </div>
+                              </div>
                             )}
                           </>
                         ) : (
@@ -666,17 +673,10 @@ const backHandler = () => {
                                               </DropdownMenu>
                                             </UncontrolledDropdown>
                                           </CardHeader>
-                                          {staff.photo ? (
+                                          {staff.photo && (
                                             <CardImg
                                               alt="..."
                                               src={staff.photo}
-                                              top
-                                              className="p-4"
-                                            />
-                                          ) : (
-                                            <CardImg
-                                              alt="..."
-                                              src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
                                               top
                                               className="p-4"
                                             />
@@ -734,7 +734,9 @@ const backHandler = () => {
                                               <Col align="center">
                                                 <Button
                                                   className="mt-3"
-                                                  onClick={() => handleStaffDetails(staff)}
+                                                  onClick={() =>
+                                                    handleStaffDetails(staff)
+                                                  }
                                                 >
                                                   Read More
                                                 </Button>
