@@ -54,6 +54,7 @@ import ViewRoute from "views/pages/Transportation/ViewRoute";
 import AddRoute from "views/pages/Transportation/AddRoute";
 import Viewproduct from "views/pages/Ecommerce/Viewproduct";
 import Addproduct from "views/pages/Ecommerce/Addproduct";
+import StudentCredentials from 'views/pages/credentials/StudentCredentials';
 
 export const adminRoutes = [
   {
@@ -892,7 +893,7 @@ const routes = [
         path: "/student-credentials",
         name: "Student",
         miniName: "A",
-        // component: AddRoute,
+        component: StudentCredentials,
         layout: "/admin",
       },
       {
