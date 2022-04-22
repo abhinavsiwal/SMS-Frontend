@@ -122,7 +122,7 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
                 className="close"
                 type="button"
                 onClick={closeSearch}
-              >
+              > 
                 <span aria-hidden={true}>×</span>
               </button>
             </Form>
@@ -150,19 +150,12 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
                 </NavLink>
               </NavItem>
               <UncontrolledDropdown nav>
-                <DropdownToggle className="nav-link" color="" tag="a">
-                  <i className="ni ni-bell-55" />
-                </DropdownToggle>
+               
                 <DropdownMenu
                   className="dropdown-menu-xl py-0 overflow-hidden"
                   right
                 >
-                  <div className="px-3 py-3">
-                    <h6 className="text-sm text-muted m-0">
-                      You have <strong className="text-info">13</strong>{" "}
-                      notifications.
-                    </h6>
-                  </div>
+                 
 
                   <ListGroup flush>
                     <ListGroupItem
@@ -322,9 +315,9 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
                 </DropdownMenu>
               </UncontrolledDropdown>
               <UncontrolledDropdown nav>
-                <DropdownToggle className="nav-link" color="" tag="a">
+                {/* <DropdownToggle className="nav-link" color="" tag="a">
                   <i className="ni ni-ungroup" />
-                </DropdownToggle>
+                </DropdownToggle> */}
                 <DropdownMenu
                   className="dropdown-menu-lg dropdown-menu-dark bg-default"
                   right
@@ -434,7 +427,7 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
                     <i className="ni ni-single-02" />
                     <span>My profile</span>
                   </DropdownItem>
-                  <DropdownItem
+                  {/* <DropdownItem
                     href="#pablo"
                     onClick={(e) => e.preventDefault()}
                   >
@@ -454,7 +447,7 @@ function AdminNavbar({ theme, sidenavOpen, toggleSidenav }) {
                   >
                     <i className="ni ni-support-16" />
                     <span>Support</span>
-                  </DropdownItem>
+                  </DropdownItem> */}
                   <DropdownItem divider />
                   <DropdownItem
                     href="#"

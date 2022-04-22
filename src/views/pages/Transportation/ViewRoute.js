@@ -168,7 +168,7 @@ function ViewRoute() {
         return record.bus_no.toLowerCase().includes(value.toLowerCase());
       },
     },
-   
+
     {
       title: "Start Time",
       dataIndex: "start_time",
@@ -258,9 +258,10 @@ function ViewRoute() {
       },
       render: (staffs) => {
         <>
-          {staffs.map((staff) => (
-            <p key={staff._id}>{staff.firstname},</p>
-          ))}
+          {staffs.map((staff,index) => {
+            console.log(staff,index);
+            return <p key={staff._id}>{staff.firstname.toString()},</p>;
+          })}
         </>;
       },
     },
@@ -362,11 +363,21 @@ function ViewRoute() {
 
     // console.log("clicked");
     // console.log(editingData);
+
+    let staff = [];
+    for (let i = 0; i < editingData.staff.length; i++) {
+      staff.push({
+        value: editingData.staff[i]._id,
+        label: editingData.staff[i].firstname,
+      });
+    }
+
     setEditingRouteData({
       ...editingRouteData,
       route_name: editingData.name,
       bus_no: editingData.bus_number,
       id: editingData._id,
+      staff,
     });
   };
 
@@ -470,6 +481,7 @@ function ViewRoute() {
                       className="basic-multi-select"
                       classNamePrefix="select"
                       required
+                      defaultValue={editingRouteData.staff}
                     />
                   </Col>
                 </Row>

@@ -80,7 +80,7 @@ const AddSubject = () => {
       setPermissions(permission1);
     }
   }, [checked]);
-
+ 
   useEffect(() => {
     getAllClasses();
     getSession();
@@ -336,7 +336,9 @@ const AddSubject = () => {
   ];
 
   const getAllClasses = () => {
-    allSubjects(user._id, user.school, token)
+
+    setLoading(true);
+     allSubjects(user._id, user.school, token)
       .then((res) => {
         // console.log(res);
         setLoading(true);
@@ -425,6 +427,7 @@ const AddSubject = () => {
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   };
 
