@@ -12,6 +12,9 @@ import {
   ModalFooter,
   ModalBody,
   CardHeader,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
@@ -80,7 +83,7 @@ const AddSubject = () => {
       setPermissions(permission1);
     }
   }, [checked]);
- 
+
   useEffect(() => {
     getAllClasses();
     getSession();
@@ -336,9 +339,8 @@ const AddSubject = () => {
   ];
 
   const getAllClasses = () => {
-
     setLoading(true);
-     allSubjects(user._id, user.school, token)
+    allSubjects(user._id, user.school, token)
       .then((res) => {
         // console.log(res);
         setLoading(true);
@@ -434,6 +436,12 @@ const AddSubject = () => {
   const handleAddFields = () => {
     setInputFields([...inputFields, { subjectName: "" }]);
   };
+
+  const handleRemoveFields=(index)=>{
+    const values = [...inputFields];
+    values.splice(index,1);
+    setInputFields(values)
+  }
 
   return (
     <>
@@ -587,17 +595,27 @@ const AddSubject = () => {
                                 {inputFields.map((inputField, index) => {
                                   return (
                                     <div key={index}>
-                                      <Input
-                                        name="subjectName"
-                                        id="example4cols2Input"
-                                        placeholder="Subject"
-                                        type="text"
-                                        value={inputField.subjectName}
-                                        onChange={(event) =>
-                                          handleChangeSubject(index, event)
-                                        }
-                                        className="mb-2"
-                                      />
+                                      <InputGroup className="mb-2" >
+                                        <Input
+                                          name="subjectName"
+                                          id="example4cols2Input"
+                                          placeholder="Subject"
+                                          type="text"
+                                          value={inputField.subjectName}
+                                          onChange={(event) =>
+                                            handleChangeSubject(index, event)
+                                          }
+                                          
+                                        />
+                                        <InputGroupAddon addonType="append"  >
+                                          <InputGroupText
+                                            style={{ cursor: "pointer",backgroundColor:"red" }}
+                                           onClick={()=>handleRemoveFields(index)}
+                                          >
+                                            <i className="ni ni-fat-remove" style={{color:"white",fontSize:"1.3rem"}} />
+                                          </InputGroupText>
+                                        </InputGroupAddon>
+                                      </InputGroup>
                                     </div>
                                   );
                                 })}
