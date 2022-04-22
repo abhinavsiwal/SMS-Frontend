@@ -7,6 +7,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interaction from "@fullcalendar/interaction";
 // react component used to create sweet alerts
 import { allSessions } from "api/session";
+import addDays from 'date-fns/addDays'  
 import ReactBSAlert from "react-bootstrap-sweetalert";
 // reactstrap components
 import {
@@ -49,7 +50,7 @@ import {
 } from "api/calender";
 
 import "./Calender.css";
-
+import moment from 'moment';
 //import Ant Table
 // import AntTable from "./tables/AntTable";
 import { Table } from "ant-table-extensions";
@@ -136,6 +137,7 @@ function CalendarView() {
       plugins: [interaction, dayGridPlugin],
       initialView: "dayGridMonth",
       selectable: true,
+
       // editable: true,
       // events: events,
       headerToolbar: {
@@ -170,10 +172,14 @@ function CalendarView() {
 
       // Add new event
       select: (info) => {
-        // console.log("info", info);
-
+        console.log("info", info);
+     
+        if (info.start < new Date()) {
+          console.log("here");
+          return;
+        } 
         setModalAdd(true);
-        setStartDate(startDate);
+        setStartDate(info.start);
         setEndDate(endDate);
         setRadios("bg-info");
       },
@@ -211,6 +217,7 @@ function CalendarView() {
     formData.set("event_type", radios);
     formData.set("school", user.school);
     formData.set("assignTeachers", JSON.stringify([staffId]));
+    formData.set("session", sessionID);
 
     // console.log("str", new Date(startDate));
     // console.log("end", new Date(endDate));
@@ -519,6 +526,10 @@ function CalendarView() {
     },
   ];
 
+  const disableSunday = (current) => {
+  return moment(current).day() !==0;
+  }
+
   return (
     <>
       {alert}
@@ -692,6 +703,30 @@ function CalendarView() {
                   <div className="modal-body">
                     <form className="new-event--form">
                       <FormGroup>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Session
+                        </label>
+
+                        <select
+                          className="form-control"
+                          required
+                          onChange={(e) => setSessionID(e.target.value)}
+                        >
+                          <option value="">Select Session</option>
+                          {sessions &&
+                            sessions.map((data) => {
+                              return (
+                                <option key={data._id} value={data._id}>
+                                  {data.name}
+                                </option>
+                              );
+                            })}
+                        </select>
+                      </FormGroup>
+                      <FormGroup>
                         <label className="form-control-label">
                           Event title
                         </label>
@@ -702,6 +737,8 @@ function CalendarView() {
                           onChange={(e) => setEventTitle(e.target.value)}
                           required
                         />
+                      </FormGroup>
+                      <FormGroup>
                         <Label
                           className="form-control-label"
                           htmlFor="example-date-input"
@@ -715,11 +752,17 @@ function CalendarView() {
                           selected={startDate}
                           selectsStart
                           startDate={startDate}
+                          minDate={new Date()}
                           onChange={(date) => setStartDate(date)}
                           strictParsing
-                          value={startDate}
+                          value={startDate} 
                           required
+                          // filterDate={disableSunday}
+                          
+                          // excludeDates={addDays(new Date(),6)}
                         />
+                      </FormGroup>
+                      <FormGroup>
                         <Label
                           className="form-control-label"
                           htmlFor="example-date-input"
@@ -730,9 +773,10 @@ function CalendarView() {
                           className="p-2 endDate"
                           showTimeSelect
                           dateFormat="yyyy MMMM, dd h:mm aa"
-                          selected={endDate}
+                          selected={startDate}
                           selectsStart
-                          startDate={endDate}
+                          minDate={new Date()}
+                          startDate={startDate}
                           onChange={(date) => setEndDate(date)}
                           strictParsing
                           value={endDate}
@@ -817,60 +861,16 @@ function CalendarView() {
                       type="button"
                       onClick={handleSubmitEvent}
                     >
-                      <option value={""}>{"Select Staff"}</option>
-                      {staff &&
-                        staff.map((staff, i) => (
-                          <option key={i} value={staff._id}>
-                            {staff.firstname} {staff.lastname}
-                          </option>
-                        ))}
+                      Add event
                     </Button>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Session
-                        </label>
-
-                        <select
-                          className="form-control"
-                          required
-                          onChange={(e) => setSessionID(e.target.value)}
-                        >
-                          <option value="">Select Session</option>
-                          {sessions &&
-                            sessions.map((data) => {
-                              return (
-                                <option key={data._id} value={data._id}>
-                                  {data.name}
-                                </option>
-                              );
-                            })}
-                        </select>
-                      </Col>
-                    </Row>
-                    <FormGroup>
-                      <textarea
-                        className="form-control-alternative new-event--title w-100 descrip"
-                        placeholder="Description"
-                        type="text"
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                      />
-                    </FormGroup>
-                    <FormGroup className="mb-0">
-                      <label className="form-control-label d-block mb-3">
-                        Status color
-                      </label>
-                      <ButtonGroup
-                        className="btn-group-toggle btn-group-colors event-tag"
-                        data-toggle="buttons"
-                      >
-                        Close
-                      </ButtonGroup>
-                    </FormGroup>
+                    <Button
+                      className="ml-auto"
+                      color="link"
+                      type="button"
+                      onClick={() => setModalAdd(false)}
+                    >
+                      Close
+                    </Button>
                   </div>
                 </>
               )}
