@@ -94,3 +94,12 @@
   border: 1px solid black;
   border-radius: 5px;
 }
+
+.search-container{
+  background: #11cdef;
+  padding: 1rem;
+  margin-top:-4rem;
+  justify-content: flex-end;
+  align-items: flex-end;
+  display: flex;
+}

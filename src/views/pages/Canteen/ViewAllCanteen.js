@@ -7,8 +7,16 @@ import {
   NavLink,
   Row,
   Col,
+  Form,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  
 } from "reactstrap";
-
+// nodejs library that concatenates classes
+import classnames from "classnames";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { isAuthenticated } from "api/auth";
@@ -30,7 +38,8 @@ function ViewAllCanteen() {
   const [checked, setChecked] = useState(false);
   const [selectedCanteen, setSelectedCanteen] = useState({});
   const { user, token } = isAuthenticated();
-
+  const [searchText, setSearchText] = useState("");
+const [canteenData, setCanteenData] = useState([]);
   const [count, setCount] = React.useState(0);
   // console.log("count", count);
 
@@ -59,21 +68,100 @@ function ViewAllCanteen() {
     setSelectedCanteen(canteen);
   };
 
+  const openSearch = () => {
+    document.body.classList.add("g-navbar-search-showing");
+    setTimeout(function () {
+      document.body.classList.remove("g-navbar-search-showing");
+      document.body.classList.add("g-navbar-search-show");
+    }, 150);
+    setTimeout(function () {
+      document.body.classList.add("g-navbar-search-shown");
+    }, 300);
+  };
+  // function that on mobile devices makes the search close
+  const closeSearch = () => {
+    document.body.classList.remove("g-navbar-search-shown");
+    setTimeout(function () {
+      document.body.classList.remove("g-navbar-search-show");
+      document.body.classList.add("g-navbar-search-hiding");
+    }, 150);
+    setTimeout(function () {
+      document.body.classList.remove("g-navbar-search-hiding");
+      document.body.classList.add("g-navbar-search-hidden");
+    }, 300);
+    setTimeout(function () {
+      document.body.classList.remove("g-navbar-search-hidden");
+    }, 500);
+  };
+
+ 
+
+useEffect(() => {
+  if(searchText ===""){
+    setCanteenData(allCanteen);
+    return;
+  }
+  const filteredData = allCanteen.filter((canteen) => {
+    if(searchText === ""){
+      return canteen;
+    }
+    else{
+      return canteen.name.toLowerCase().includes(searchText);
+    }
+  })
+
+setCanteenData(filteredData);
+}, [searchText])
+
+
+  let inputHandler = (e) => {
+    //convert input text to lower case
+    var lowerCase = e.target.value.toLowerCase();
+    setSearchText(lowerCase);
+  };
+
   const [check, setCheck] = React.useState(false);
   return (
     <>
+      <SimpleHeader name="Canteen" parentName="View All Canteen"  />
+
+      <div className="container-fluid search-container"  >
+        <Form
+          className={classnames(
+            "navbar-search form-inline mr-sm-3 navbar-search-light"
+          )}
+        >
+          <FormGroup className="mb-0">
+            <InputGroup className="input-group-alternative input-group-merge" onChange={inputHandler} >
+              <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <i className="fas fa-search" />
+                </InputGroupText>
+              </InputGroupAddon>
+              <Input placeholder="Search" type="text" />
+            </InputGroup>
+          </FormGroup>
+          <button
+            aria-label="Close"
+            className="close"
+            type="button"
+            onClick={closeSearch}
+          >
+            <span aria-hidden={true}>×</span>
+          </button>
+        </Form>
+      </div>
+
       {loading ? (
         <Loader />
       ) : (
         <>
-          <SimpleHeader name="Canteen" parentName="View All Canteen" />
-
           {check === false && (
             <div className="mt--6s items">
-              {allCanteen &&
-                allCanteen.map((canteen) => {
+              {canteenData &&
+                canteenData.map((canteen) => {
                   return (
-                    <NavLink fluid onClick={() => selectedStaff(canteen._id)}>
+                    <NavLink key={canteen._id} fluid onClick={() => selectedStaff(canteen._id)}>
                       <Card className="h-100 w-100">
                         <CardBody>
                           <p className="d-flex justify-content-around">
@@ -97,19 +185,18 @@ function ViewAllCanteen() {
           )}
           {check && (
             <>
-         
               <Card className="mt--6">
-              <Row style={{marginLeft:"2rem"}} >
-                <Col className="mt--3 ">
-                  <Button
-                    className="float-left mb-2"
-                    color="dark"
-                    onClick={() => setCheck(false)}
-                  >
-                    <i className="ni ni-bold-left"></i>
-                  </Button>
-                </Col>
-              </Row>
+                <Row style={{ marginLeft: "2rem" }}>
+                  <Col className="mt--3 ">
+                    <Button
+                      className="float-left mb-2"
+                      color="dark"
+                      onClick={() => setCheck(false)}
+                    >
+                      <i className="ni ni-bold-left"></i>
+                    </Button>
+                  </Col>
+                </Row>
                 <CardBody>
                   <img
                     className="Header-Image"
