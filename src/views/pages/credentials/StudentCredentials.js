@@ -16,6 +16,7 @@ import {
   CardHeader,
   Table,
 } from "reactstrap";
+import PasswordField from "./PasswordField";
 import Loader from "components/Loader/Loader";
 import { allStudents, filterStudent } from "api/student";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -84,7 +85,7 @@ const StudentCredentials = () => {
 
   const columns = [
     {
-      title: "SID",
+      title: "Student SID",
       dataIndex: "sid",
       sorter: (a, b) => a.sid > b.sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -113,7 +114,7 @@ const StudentCredentials = () => {
       },
     },
     {
-      title: "Password",
+      title: " Student Password",
       dataIndex: "password",
       sorter: (a, b) => a.password > b.password,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -141,44 +142,12 @@ const StudentCredentials = () => {
         return record.password.toLowerCase().includes(value.toLowerCase());
       },
       render: (value) => (
-        <>
-          {showStudentPassword ? (
-            <p>
-              {value}
-              <span className="ml-1">
-                {" "}
-                <i
-                  className="fa fa-eye-slash"
-                  style={{ cursor: "pointer", fontSize: "0.8rem" }}
-                  onClick={() => {
-                    console.log("show");
-                    setShowStudentPassword(true);
-                  }}
-                />{" "}
-              </span>
-            </p>
-          ) : (
-            <p>
-              *****{" "}
-              <span className="ml-1">
-                {" "}
-                <i
-                  className="fa fa-eye"
-                  style={{ cursor: "pointer", fontSize: "0.8rem" }}
-                  onClick={() => {
-                    console.log("hide");
-                    setShowStudentPassword(false);
-                  }}
-                />{" "}
-              </span>
-            </p>
-          )}
-        </>
+       <PasswordField value={value} />
       ),
     },
 
     {
-      title: "Parent Id",
+      title: "Parent SID",
       dataIndex: "parentId",
       sorter: (a, b) => a.parentId > b.parentId,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -236,6 +205,9 @@ const StudentCredentials = () => {
           .toLowerCase()
           .includes(value.toLowerCase());
       },
+      render: (value) => (
+        <PasswordField value={value} />
+       ),
     },
     {
       title: "Action",
