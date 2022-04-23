@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 import TextArea from "antd/lib/input/TextArea";
-
+import DatePicker from "react-datepicker";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -458,13 +458,17 @@ function AddStaff() {
                       >
                         Date of Joining
                       </Label>
-                      <Input
+                      {/* <Input
                         id="example-date-input"
                         type="date"
                         onChange={handleChange("joining_date")}
                         value={staffData.joining_date}
                         required
                         
+                      /> */}
+                      <DatePicker 
+                        dateFormat="dd-mm-yy"
+                        placeholderText="dd/mm/yy"
                       />
                     </Col>
                     <Col md="4">

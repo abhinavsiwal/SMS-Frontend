@@ -256,14 +256,7 @@ function ViewRoute() {
       onFilter: (value, record) => {
         return record.staff_members.toLowerCase().includes(value.toLowerCase());
       },
-      render: (staffs) => {
-        <>
-          {staffs.map((staff,index) => {
-            console.log(staff,index);
-            return <p key={staff._id}>{staff.firstname.toString()},</p>;
-          })}
-        </>;
-      },
+      render: (staffs) => staffs.map(staff => staff.firstname).join(),
     },
 
     {
