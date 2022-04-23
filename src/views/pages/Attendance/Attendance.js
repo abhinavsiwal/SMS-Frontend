@@ -42,6 +42,7 @@ import { fetchingAttendanceError } from "constants/errors";
 import { addAttendanceError } from "constants/errors";
 import { addAttendanceSuccess } from "constants/success";
 import { allSessions } from "api/session";
+import { updateAttendance } from "../../../api/attendance";
 
 function Attendance() {
   //start and end date of month
@@ -55,6 +56,7 @@ function Attendance() {
     dateTo: endOfMonth,
     name: "",
     studentId: "",
+    session: "",
     selectClass: "",
     selectSection: "",
   });
@@ -66,6 +68,7 @@ function Attendance() {
   const [sessions, setSessions] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState("");
   const [selectSessionId, setSelectSessionId] = useState("");
+  const [selectDate, setSelectDate] = useState("");
   // const [sections, setSections] = useState({})
   const [selectedClass, setSelectedClass] = useState({});
   // console.log("attendance", attendance);
@@ -79,8 +82,15 @@ function Attendance() {
   const [file, setFile] = useState();
   const fileReader = new FileReader();
   const [loading, setLoading] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
+  const [model2Loading, setModel2Loading] = useState(false);
+  const [editPart, setEditPart] = useState(false);
   const [permissions, setPermissions] = useState([]);
   const [addLoading, setAddLoading] = useState(false);
+  const [editAttedanceData, setEditAttedanceData] = useState([]);
+  const [editAttedance, setEditAttedance] = useState(false);
+  const [editAttedanceStudent, setEditAttedanceStudent] = useState("");
+
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -110,7 +120,7 @@ function Attendance() {
 
   // console.log("atd", atd);
   let permission1 = [];
-  useEffect(() => {
+  useEffect(async () => {
     setLoading(true);
     // console.log(user);
     if (user.permissions["Attendance"]) {
@@ -118,8 +128,8 @@ function Attendance() {
       // console.log(permissions);
       setPermissions(permission1);
     }
-    getSession();
-    setLoading(true);
+    await getSession();
+    setLoading(false);
   }, []);
 
   //Getting Session data
@@ -131,6 +141,7 @@ function Attendance() {
         return toast.error(session.err);
       } else {
         setSessions(session);
+        return;
       }
     } catch (err) {
       toast.error("Something Went Wrong!");
@@ -139,7 +150,13 @@ function Attendance() {
 
   //modal window for addAttendance
   const [modal, setModal] = React.useState(false);
-  const toggle = () => setModal(!modal);
+  const toggle = async () => {
+    setModal(!modal);
+    setModelLoading(true);
+    await getAllStudents(attendance.selectSection, attendance.selectClass);
+
+    setModelLoading(false);
+  };
 
   const handleChange = (name) => (event) => {
     // formData.set(name, event.target.value);
@@ -147,10 +164,7 @@ function Attendance() {
       ...attendance,
       [name]: event.target.value,
     });
-    // console.log(name);
     if (name === "selectClass") {
-      // console.log("@@@@@@@@=>", event.target.value);
-
       let selectedClass = classes.find(
         (item) => item._id.toString() === event.target.value.toString()
       );
@@ -198,9 +212,9 @@ function Attendance() {
   //   }
   // }, [attendanceData]);
 
-  useEffect(() => {
+  useEffect(async () => {
     setLoading(true);
-    getAllAttendance();
+    await getAllAttendance();
     setLoading(false);
   }, []);
 
@@ -209,7 +223,7 @@ function Attendance() {
       const data = await getAttendence(user.school, user._id);
       // console.log(data);
       // setAllAttendance(data);
-
+      console.log(data);
       const tableData = [];
       for (let i = 0; i < data.length; i++) {
         let date = data[i].date.slice(8, 10);
@@ -312,11 +326,19 @@ function Attendance() {
     try {
       setAddLoading(true);
       const data = await postAttendance(user._id, formData);
-      // console.log(data);
-      toast.success(addAttendanceSuccess);
-      searchHandler();
-      setModal(false);
-      setAddLoading(false);
+      console.log(data);
+      if (data && data.err) {
+        setModal(false);
+        setAddLoading(false);
+        toast.error(data.err);
+      } else {
+        toast.success(addAttendanceSuccess);
+        setModal(false);
+        setAddLoading(false);
+        setTimeout(() => {
+          window.location.reload(1);
+        }, 1000);
+      }
     } catch (err) {
       console.log(err);
       setAddLoading(false);
@@ -324,43 +346,137 @@ function Attendance() {
     }
   };
 
-  const searchHandler = async () => {
-    setLoading(true);
-    getAllStudents(attendance.selectSection, attendance.selectClass);
-    // console.log(attendance);
-    const formData = new FormData();
-    formData.set("classId", attendance.selectClass);
-    formData.set("sectionId", attendance.selectSection);
-    let data1 = {
-      class: attendance.selectClass,
-      section: attendance.selectSection,
-      start_date: attendance.dateFrom,
-      end_date: attendance.dateTo,
-    };
-    try {
-      const data = await searchAttendance(user._id, user.school, data1);
-      // console.log(data);
-      setattendanceData1(data);
-      // delete data.workingDay;
-      // delete data.classTeacher;
+  const searchHandler = async (e) => {
+    e.preventDefault();
+    if (
+      attendance.selectClass === "" &&
+      attendance.studentId === "" &&
+      attendance.selectSection === "" &&
+      attendance.name === ""
+    ) {
+      toast.error("Please Select Filter To Search");
+    } else if (
+      attendance.selectClass !== "" &&
+      attendance.selectSection === ""
+    ) {
+      toast.error("Please Select Section!");
+    } else {
+      setLoading(true);
+      if (attendance.name !== "") {
+        const formData = new FormData();
+        let data1 = {
+          name: attendance.name,
+          start_date: attendance.dateFrom,
+          end_date: attendance.dateTo,
+          session: attendance.session,
+        };
+        try {
+          const data = await searchAttendance(user._id, user.school, data1);
+          console.log(data);
+          setattendanceData1(data);
+          // delete data.workingDay;
+          // delete data.classTeacher;
 
-      setViewAttendance(true);
-      // console.log(data.studentDatas);
-      let students = [];
-      for (const key in data.studentDatas) {
-        // console.log(`${key}: ${data.studentDatas[key]}`);
-        // console.log(key);
-        let obj = {};
-        obj[key] = data.studentDatas[key];
-        // console.log(obj);
-        students.push(obj);
+          setViewAttendance(true);
+          // console.log(data.studentDatas);
+          let students = [];
+          for (const key in data.studentDatas) {
+            // console.log(`${key}: ${data.studentDatas[key]}`);
+            // console.log(key);
+            let obj = {};
+            obj[key] = data.studentDatas[key];
+            console.log(obj);
+            students.push(obj);
+          }
+          setStudents1(students);
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+          setLoading(false);
+        }
+      } else if (attendance.studentId !== "") {
+        // getAllStudents(attendance.selectSection, attendance.selectClass);
+        // console.log(attendance);
+        const formData = new FormData();
+        let data1 = {
+          studentID: attendance.studentId,
+          start_date: attendance.dateFrom,
+          end_date: attendance.dateTo,
+          session: attendance.session,
+        };
+        try {
+          const data = await searchAttendance(user._id, user.school, data1);
+          console.log(data);
+          setattendanceData1(data);
+          // delete data.workingDay;
+          // delete data.classTeacher;
+
+          setViewAttendance(true);
+          // console.log(data.studentDatas);
+          let students = [];
+          for (const key in data.studentDatas) {
+            // console.log(`${key}: ${data.studentDatas[key]}`);
+            // console.log(key);
+            let obj = {};
+            obj[key] = data.studentDatas[key];
+            console.log(obj);
+            students.push(obj);
+          }
+          setStudents1(students);
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+          setLoading(false);
+        }
+      } else {
+        // console.log(attendance);
+        const formData = new FormData();
+        formData.set("classId", attendance.selectClass);
+        formData.set("sectionId", attendance.selectSection);
+        var dt = new Date();
+        let year = dt.getFullYear();
+        let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+        let day = dt.getDate().toString().padStart(2, "0");
+        let data1 = {
+          class: attendance.selectClass,
+          section: attendance.selectSection,
+          start_date: attendance.dateFrom,
+          end_date: attendance.dateTo,
+          today_date: year + "-" + month + "-" + day,
+          session: attendance.session,
+        };
+        try {
+          const data = await searchAttendance(user._id, user.school, data1);
+          console.log(data);
+          setattendanceData1(data);
+          // delete data.workingDay;
+          // delete data.classTeacher;
+
+          setViewAttendance(true);
+          // console.log(data.studentDatas);
+          let students = [];
+          for (const key in data.studentDatas) {
+            // console.log(`${key}: ${data.studentDatas[key]}`);
+            // console.log(key);
+            let obj = {};
+            obj[key] = data.studentDatas[key];
+            console.log(obj);
+            students.push(obj);
+          }
+          console.log(students);
+          // var studentWithSID = [];
+          // for (const key2 in students) {
+          //   var temp = students[key2].split(",");
+          //   studentWithSID.push(temp);
+          // }
+
+          setStudents1(students);
+          setLoading(false);
+        } catch (err) {
+          console.log(err);
+          setLoading(false);
+        }
       }
-      // console.log(students);
-      setStudents1(students);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
     }
   };
 
@@ -369,22 +485,118 @@ function Attendance() {
       section,
       class: clas,
     };
-    // console.log(formData);
+
     const data = await filterStudent(user.school, user._id, formData);
-    // console.log(data);
-    //Data of ant Table
-    // console.log(res);
-
+    console.log(attendanceData1);
     for (let i = 0; i < data.length; i++) {
-      // console.log(res[i]._id);
-
-      tableData.push({
-        key: data[i]._id,
-        hash: `${i + 1}`,
-        name: data[i].firstname + data[i].lastname,
-      });
+      let check = false;
+      for (let j = 0; j < students1.length; j++) {
+        let temp = Object.keys(students1[j]).toString().split(",")[1];
+        if (
+          data[i].SID === temp &&
+          attendanceData1.studentDatas[Object.keys(students1[j])].length ===
+            attendanceData1.workingDay.length &&
+          attendanceData1.Today === true
+        ) {
+          check = true;
+        }
+      }
+      if (check === false) {
+        tableData.push({
+          key: data[i]._id,
+          SID: data[i].SID,
+          hash: `${i + 1}`,
+          name: data[i].firstname + " " + data[i].lastname,
+        });
+      }
     }
+
     setAttendanceData(tableData);
+  };
+
+  const toggleEdit = (e) => {
+    e.preventDefault();
+    setEditAttedance(false);
+    setEditPart(true);
+  };
+
+  const handleTimeChange = async (e) => {
+    e.preventDefault();
+    setModel2Loading(true);
+    var dt = new Date(e.target.value);
+    let year = dt.getFullYear();
+    let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+    let day = dt.getDate().toString().padStart(2, "0");
+    let day2 = (dt.getDate() + 1).toString().padStart(2, "0");
+    let data1 = {
+      class: attendance.selectClass,
+      section: attendance.selectSection,
+      start_date: year + "-" + month + "-" + day,
+      end_date: year + "-" + month + "-" + day,
+      session: attendance.session,
+    };
+    setSelectDate(year + "-" + month + "-" + day);
+    try {
+      const data = await searchAttendance(user._id, user.school, data1);
+      if (data && data.err) {
+        toast.error(data.err);
+      } else {
+        console.log(data);
+        let students = [];
+        for (const key in data.studentDatas) {
+          let obj = {};
+          obj[key] = data.studentDatas[key];
+          console.log(obj);
+          students.push(obj);
+        }
+        console.log(students);
+        setEditAttedanceStudent(students);
+        setEditAttedance(true);
+        setModel2Loading(false);
+      }
+    } catch (error) {
+      setModel2Loading(false);
+    }
+  };
+
+  const handleStatus = (studentID) => (e) => {
+    e.preventDefault();
+    let List = editAttedanceData;
+    let temp = { id: studentID, attendance_status: e.target.value };
+    List.push(temp);
+    setEditAttedanceData(List);
+    console.log(editAttedanceData);
+  };
+
+  const submitEditAttedance = async (e) => {
+    e.preventDefault();
+    if (editAttedanceData.length === 0) {
+      toast.error("First Change Status Before Submit");
+    } else {
+      setModel2Loading(true);
+      var formdata = new FormData();
+      formdata.set("class", attendance.selectClass);
+      formdata.set("section", attendance.selectSection);
+      formdata.set("date", selectDate);
+      formdata.set("editAttedance", JSON.stringify(editAttedanceData));
+      formdata.set("section", attendance.selectSection);
+
+      try {
+        const data = await updateAttendance(user._id, user.school, formdata);
+        if (data && data.err) {
+          toast.error(data.err);
+        } else {
+          setModel2Loading(false);
+
+          toast.success("Update Attendance is Done!");
+          setTimeout(() => {
+            window.location.reload(1);
+          }, 1000);
+        }
+      } catch (error) {
+        setModel2Loading(false);
+      }
+    }
   };
 
   return (
@@ -404,7 +616,7 @@ function Attendance() {
       />
       {/* {permissions && permissions.includes("add") && ( */}
       <Container className="mt--6 shadow-lg" fluid>
-        <Form>
+        <Form onSubmit={searchHandler}>
           <Card>
             <CardBody>
               <LoadingScreen
@@ -422,13 +634,15 @@ function Attendance() {
                   >
                     Session
                   </label>
-
                   <select
                     className="form-control"
                     required
-                    // onChange={handleChange("session")}
+                    onChange={handleChange("session")}
+                    value={attendance.session}
                   >
-                    <option value="">Select Session</option>
+                    <option value="" disabled>
+                      Select Session
+                    </option>
                     {sessions &&
                       sessions.map((data) => {
                         return (
@@ -441,42 +655,42 @@ function Attendance() {
                 </Col>
               </Row>
               <br />
-              <Row md="4" className="d-flex justify-content-center mb-4">
-                <Col md="6">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Name
-                  </Label>
-                  <Input
-                    className="form-control"
-                    id="example4cols2Input"
-                    placeholder="Name"
-                    onChange={handleChange("name")}
-                    value={attendance.name}
-                    type="text"
-                    required
-                  />
-                </Col>
-                <Col md="6">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    StudentID
-                  </Label>
-                  <Input
-                    className="form-control"
-                    id="example4cols2Input"
-                    placeholder="StudentID"
-                    type="text"
-                    onChange={handleChange("studentId")}
-                    value={attendance.studentId}
-                    required
-                  />
-                </Col>
-              </Row>
+              {attendance.selectClass === "" && (
+                <Row md="4" className="d-flex justify-content-center mb-4">
+                  <Col md="6">
+                    <Label
+                      className="form-control-label"
+                      htmlFor="xample-date-input"
+                    >
+                      Name
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="example4cols2Input"
+                      placeholder="Name"
+                      onChange={handleChange("name")}
+                      value={attendance.name}
+                      type="text"
+                    />
+                  </Col>
+                  <Col md="6">
+                    <Label
+                      className="form-control-label"
+                      htmlFor="xample-date-input"
+                    >
+                      StudentID
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="example4cols2Input"
+                      placeholder="StudentID"
+                      type="text"
+                      onChange={handleChange("studentId")}
+                      value={attendance.studentId}
+                    />
+                  </Col>
+                </Row>
+              )}
               <Row md="4" className="d-flex justify-content-center mb-4">
                 <Col md="6">
                   <Label
@@ -512,70 +726,76 @@ function Attendance() {
                 {/* </Row> */}
                 {/* <Row className="d-flex justify-content-center mb-4"> */}
               </Row>
-              <Row>
-                <Col md="6">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Class
-                  </Label>
-                  <Input
-                    className="form-control"
-                    id="exampleFormControlSelect3"
-                    type="select"
-                    onChange={handleChange("selectClass")}
-                    value={attendance.selectClass}
-                    required
-                  >
-                    <option value="">Select Class</option>
-                    {classes &&
-                      classes.map((clas, index) => {
-                        // setselectedClassIndex(index)
-                        // console.log(clas);
-                        return (
-                          <option value={clas._id} key={index}>
-                            {clas.name}
-                          </option>
-                        );
-                      })}
-                  </Input>
-                </Col>
-                <Col md="6">
-                  <Label
-                    className="form-control-label"
-                    htmlFor="xample-date-input"
-                  >
-                    Select Section
-                  </Label>
-                  <Input
-                    className="form-control"
-                    id="exampleFormControlSelect3"
-                    type="select"
-                    onChange={handleChange("selectSection")}
-                    value={attendance.selectSection}
-                    required
-                  >
-                    <option value="">Select Section</option>
-                    {selectedClass.section &&
-                      selectedClass.section.map((section) => {
-                        // console.log(section.name);
-                        return (
-                          <option
-                            value={section._id}
-                            key={section._id}
-                            selected
-                          >
-                            {section.name}
-                          </option>
-                        );
-                      })}
-                  </Input>
-                </Col>
-              </Row>
+              {attendance.studentId === "" && (
+                <Row>
+                  <Col md="6">
+                    <Label
+                      className="form-control-label"
+                      htmlFor="xample-date-input"
+                    >
+                      Select Class
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={handleChange("selectClass")}
+                      value={attendance.selectClass}
+                      // required
+                    >
+                      <option value="" disabled>
+                        Select Class
+                      </option>
+                      {classes &&
+                        classes.map((clas, index) => {
+                          // setselectedClassIndex(index)
+                          // console.log(clas);
+                          return (
+                            <option value={clas._id} key={index}>
+                              {clas.name}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                  <Col md="6">
+                    <Label
+                      className="form-control-label"
+                      htmlFor="xample-date-input"
+                    >
+                      Select Section
+                    </Label>
+                    <Input
+                      className="form-control"
+                      id="exampleFormControlSelect3"
+                      type="select"
+                      onChange={handleChange("selectSection")}
+                      value={attendance.selectSection}
+                      // required
+                    >
+                      <option value="" disabled>
+                        Select Section
+                      </option>
+                      {selectedClass.section &&
+                        selectedClass.section.map((section) => {
+                          // console.log(section.name);
+                          return (
+                            <option
+                              value={section._id}
+                              key={section._id}
+                              selected
+                            >
+                              {section.name}
+                            </option>
+                          );
+                        })}
+                    </Input>
+                  </Col>
+                </Row>
+              )}
               <Row>
                 <Col className="mt-4">
-                  <Button color="primary" onClick={searchHandler}>
+                  <Button type="submit" color="primary">
                     Search
                   </Button>
                 </Col>
@@ -590,66 +810,108 @@ function Attendance() {
             <Col>
               <Card>
                 <CardHeader>
-                  <div className="w-100">
-                    <div className="row">
+                  <Row className="header_main">
+                    <Col md={3}>
                       <div className="col-sm">
                         <h3 className="start-end">
                           {startOfMonth} - {endOfMonth}
                         </h3>
                       </div>
-                      <div className="col-sm Student-Attendance-Icons">
-                        <div style={{ display: "flex" }}>
+                    </Col>
+                    <Col md={6}>
+                      <div className="icons_list">
+                        <div className="icons_div">
                           <p
                             className="ni ni-single-02"
+                            id="attendance_icons"
                             style={{
                               background: "green",
                               color: "white",
+                              padding: "5px",
                               fontSize: "30px",
                               borderRadius: "50%",
                             }}
                           ></p>
-                          <span className="tags"> - Present</span>
+                          <span className="tags">Present</span>
                         </div>
-                        <div style={{ display: "flex", margin: "0 1rem" }}>
+                        <div className="icons_div">
                           <p
                             className="ni ni-single-02"
+                            id="attendance_icons"
                             style={{
                               background: "rgb(201, 3, 3)",
                               color: "white",
                               fontSize: "30px",
+                              padding: "5px",
                               borderRadius: "50%",
                             }}
                           ></p>
-                          <span> - Absent</span>
+                          <span className="tags">Absent</span>
                         </div>
-                        <div style={{ display: "flex" }}>
+                        <div className="icons_div">
                           <p
                             className="ni ni-single-02"
+                            id="attendance_icons"
                             style={{
                               background: "rgb(243, 243, 71)",
                               color: "white",
+                              padding: "5px",
                               fontSize: "30px",
                               borderRadius: "50%",
                             }}
                           ></p>
-                          <span> - Leave</span>
+                          <span className="tags">Leave</span>
+                        </div>
+                        <div className="icons_div">
+                          <p
+                            id="attendance_icons"
+                            className="ni ni-single-02"
+                            style={{
+                              background: "blue",
+                              color: "white",
+                              padding: "5px",
+                              fontSize: "30px",
+                              borderRadius: "50%",
+                            }}
+                          ></p>
+                          <span className="tags">Half Day</span>
                         </div>
                       </div>
-                      {/* {permissions && permissions.includes("edit") && ( */}
-                      {!attendanceData1.classTeacher && (
-                        <div className="col-sm">
-                          <Button
-                            className="attendance-button"
-                            onClick={toggle}
-                            color="primary"
-                          >
-                            Add Attendance
-                          </Button>
-                        </div>
+                    </Col>
+                    {attendance.class !== "" &&
+                      attendance.section !== "" &&
+                      attendance.name === "" &&
+                      attendance.studentId === "" && (
+                        <Col className="buttons" md={3}>
+                          {!attendanceData1.classTeacher && (
+                            <>
+                              <div className="col-sm">
+                                <Button
+                                  className="attendance-button"
+                                  onClick={toggle}
+                                  color="primary"
+                                  size="sm"
+                                >
+                                  Add Attendance
+                                </Button>
+                              </div>
+                              <div className="col-sm">
+                                <Button
+                                  className="attendance-button"
+                                  onClick={toggleEdit}
+                                  color="primary"
+                                  size="sm"
+                                >
+                                  Edit Attendance
+                                </Button>
+                              </div>
+                            </>
+                          )}
+                        </Col>
                       )}
-                      {/* )} */}
-                    </div>
-                  </div>
+
+                    {/* )} */}
+                  </Row>
                 </CardHeader>
                 <CardBody>
                   {/* <Table
@@ -657,33 +919,116 @@ function Attendance() {
                     dataSource={attendanceData}
                     scroll={{ x: 1300, y: 600 }}
                   /> */}
+                  {students1.length === 0 && (
+                    <h3 style={{ padding: "10px" }}>No Student Data Found</h3>
+                  )}
+                  <div className="attendance_main_div">
+                    <table>
+                      <thead>
+                        <th style={{ width: "50px" }}>#</th>
+                        <th>Student Name</th>
+                        <th style={{ width: "150px" }}>Student ID</th>
+                        {attendanceData1.workingDay.map((day) => {
+                          return <th key={day}>{day}</th>;
+                        })}
+                      </thead>
 
-                  <table>
-                    <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      {attendanceData1.workingDay.map((day) => {
-                        return <th key={day}>{day}</th>;
-                      })}
-                    </tr>
-                    {students1.map((student, index) => {
-                      // console.log(student);
-                      return (
-                        <>
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{Object.keys(student)}</td>
-                            {student[Object.keys(student)].map(
-                              (status, index) => {
-                                // console.log(status, index);
-                                return <td key={index}>{status}</td>;
-                              }
-                            )}
-                          </tr>
-                        </>
-                      );
-                    })}
-                  </table>
+                      <tbody>
+                        {students1.length > 0 &&
+                          students1.map((student, index) => {
+                            return (
+                              <>
+                                <tr key={index}>
+                                  <td>{index + 1}</td>
+                                  <td>
+                                    {Object.keys(student) &&
+                                      Object.keys(student)
+                                        .toString()
+                                        .split(",")[0]}
+                                  </td>
+                                  <td>
+                                    {Object.keys(student) &&
+                                      Object.keys(student)
+                                        .toString()
+                                        .split(",")[1]}
+                                  </td>
+                                  {student[Object.keys(student)].map(
+                                    (status, index) => {
+                                      // console.log(status, index);
+                                      if (status === "P") {
+                                        return (
+                                          <td key={index}>
+                                            <p
+                                              className="ni ni-single-02"
+                                              id="attendance_icons"
+                                              style={{
+                                                background: "green",
+                                                color: "white",
+                                                fontSize: "30px",
+                                                padding: "5px",
+                                                borderRadius: "50%",
+                                              }}
+                                            ></p>
+                                          </td>
+                                        );
+                                      } else if (status === "A") {
+                                        return (
+                                          <td key={index}>
+                                            <p
+                                              className="ni ni-single-02"
+                                              id="attendance_icons"
+                                              style={{
+                                                background: "rgb(201, 3, 3)",
+                                                color: "white",
+                                                fontSize: "30px",
+                                                padding: "5px",
+                                                borderRadius: "50%",
+                                              }}
+                                            ></p>
+                                          </td>
+                                        );
+                                      } else if (status === "L") {
+                                        return (
+                                          <td key={index}>
+                                            <p
+                                              className="ni ni-single-02"
+                                              id="attendance_icons"
+                                              style={{
+                                                background: "rgb(243, 243, 71)",
+                                                color: "white",
+                                                fontSize: "30px",
+                                                padding: "5px",
+                                                borderRadius: "50%",
+                                              }}
+                                            ></p>
+                                          </td>
+                                        );
+                                      } else if (status === "HF") {
+                                        return (
+                                          <td key={index}>
+                                            <p
+                                              className="ni ni-single-02"
+                                              id="attendance_icons"
+                                              style={{
+                                                background: "blue",
+                                                color: "white",
+                                                fontSize: "30px",
+                                                padding: "5px",
+                                                borderRadius: "50%",
+                                              }}
+                                            ></p>
+                                          </td>
+                                        );
+                                      }
+                                    }
+                                  )}
+                                </tr>
+                              </>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
                 </CardBody>
               </Card>
             </Col>
@@ -693,94 +1038,223 @@ function Attendance() {
             size="xl"
             scrollable
             isOpen={modal}
-            toggle={toggle}
+            toggle={() => {
+              setModal(false);
+            }}
             className="custom-modal-style"
           >
-            <ModalHeader isClose={modal} toggle={toggle}>
-              Add Attendance <br />
-              <span    >{today}</span>
+            <ModalHeader
+              isClose={modal}
+              toggle={() => {
+                setModal(false);
+              }}
+            >
+              Add Attendance
             </ModalHeader>
             {addLoading ? (
               <Loader />
             ) : (
               <ModalBody className="modal-body">
-                <div>
-                  <Table bordered>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Present</th>
-                        <th>Absent</th>
-                        <th>Half Day</th>
-                        <th>Leave</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {attendanceData &&
-                        attendanceData.map((student, index) => {
-                          return (
-                            <>
-                              <tr key={index}>
-                                <td style={{ fontWeight: "500" }}>
-                                  {student.name}
-                                </td>
-                                <td>
-                                  {" "}
-                                  <input
-                                    type="radio"
-                                    onChange={submitAttendance(student.key)}
-                                    value="P"
-                                    checked={atd.present}
-                                    name={index}
-                                  />
-                                  Present
-                                </td>
-                                <td>
-                                  <input
-                                    type="radio"
-                                    onChange={submitAttendance(student.key)}
-                                    value="A"
-                                    name={index}
-                                  />{" "}
-                                  Absent
-                                </td>
-                                <td>
-                                  <input
-                                    type="radio"
-                                    name={index}
-                                    value="HF"
-                                    onChange={submitAttendance(student.key)}
-                                  />{" "}
-                                  Half Day
-                                </td>
-                                <td>
-                                  <input
-                                    type="radio"
-                                    value="L"
-                                    name={index}
-                                    onChange={submitAttendance(student.key)}
-                                  />{" "}
-                                  Leave
-                                </td>
-                              </tr>
-                            </>
-                          );
-                        })}
-                    </tbody>
-                  </Table>
-
-                  <div className="col-sm">
-                    <Button
-                      className="attendance-button"
-                      onClick={submitHandler}
-                      color="primary"
-                    >
-                      Submit
-                    </Button>
-                  </div>
-                </div>
+                <LoadingScreen
+                  loading={modelLoading}
+                  bgColor="#f1f1f1"
+                  spinnerColor="#9ee5f8"
+                  textColor="#676767"
+                  text="Please Wait..."
+                ></LoadingScreen>
+                {attendanceData.length > 0 ? (
+                  <>
+                    <div className="model_table_main">
+                      <Table className="model_table" bordered>
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Half Day</th>
+                            <th>Leave</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {attendanceData &&
+                            attendanceData.map((student, index) => {
+                              return (
+                                <>
+                                  <tr key={index}>
+                                    <td style={{ fontWeight: "500" }}>
+                                      {student.name}
+                                    </td>
+                                    <td>
+                                      {" "}
+                                      <input
+                                        type="radio"
+                                        onChange={submitAttendance(student.key)}
+                                        value="P"
+                                        checked={atd.present}
+                                        name={index}
+                                      />
+                                      Present
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="radio"
+                                        onChange={submitAttendance(student.key)}
+                                        value="A"
+                                        name={index}
+                                      />{" "}
+                                      Absent
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="radio"
+                                        name={index}
+                                        value="HF"
+                                        onChange={submitAttendance(student.key)}
+                                      />{" "}
+                                      Half Day
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="radio"
+                                        value="L"
+                                        name={index}
+                                        onChange={submitAttendance(student.key)}
+                                      />{" "}
+                                      Leave
+                                    </td>
+                                  </tr>
+                                </>
+                              );
+                            })}
+                        </tbody>
+                      </Table>
+                    </div>
+                    <div className="col-sm">
+                      <Button
+                        className="attendance-button"
+                        onClick={submitHandler}
+                        color="primary"
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <h2>All Student Attendance is Done</h2>
+                )}
               </ModalBody>
             )}
+          </Modal>
+          <Modal
+            backdrop="static"
+            size="xl"
+            scrollable
+            isOpen={editPart}
+            className="custom-modal-style"
+          >
+            <ModalHeader isClose={editPart} toggle={() => setEditPart(false)}>
+              Edit Attendance
+            </ModalHeader>
+            <ModalBody className="modal-body">
+              <LoadingScreen
+                loading={model2Loading}
+                bgColor="#f1f1f1"
+                spinnerColor="#9ee5f8"
+                textColor="#676767"
+                text="Please Wait..."
+              ></LoadingScreen>
+              <Row>
+                <Col md="12">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Time
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="exampleFormControlSelect3"
+                    type="date"
+                    onChange={handleTimeChange}
+                    // required
+                  />
+                </Col>
+              </Row>
+              <br />
+              {editAttedance && (
+                <>
+                  <div className="model_table_main">
+                    <Table className="model_table" bordered>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {editAttedanceStudent &&
+                        editAttedanceStudent.length > 0 ? (
+                          editAttedanceStudent.map((student, index) => {
+                            console.log(student);
+                            return (
+                              <>
+                                <tr key={index}>
+                                  <td style={{ fontWeight: "500" }}>
+                                    {Object.keys(student) &&
+                                      Object.keys(student)
+                                        .toString()
+                                        .split(",")[0]}
+                                  </td>
+                                  <td>
+                                    <Input
+                                      className="form-control"
+                                      id="exampleFormControlSelect3"
+                                      type="select"
+                                      onChange={handleStatus(
+                                        Object.keys(student)
+                                          .toString()
+                                          .split(",")[2]
+                                      )}
+                                      // required
+                                    >
+                                      <option
+                                        selected
+                                        value={Object.values(student)[0]}
+                                        disabled
+                                      >
+                                        {Object.values(student)[0]}
+                                      </option>
+                                      <option value="P">Present</option>
+                                      <option value="A">Absent</option>
+                                      <option value="L">Leave</option>
+                                      <option value="HF">Half Day</option>
+                                    </Input>
+                                  </td>
+                                </tr>
+                              </>
+                            );
+                          })
+                        ) : (
+                          <h3>No Student Data is Found</h3>
+                        )}
+                      </tbody>
+                    </Table>
+                  </div>
+                  <br />
+                  {editAttedance && editAttedanceStudent.length > 0 && (
+                    <div className="col-sm">
+                      <Button
+                        className="attendance-button"
+                        onClick={submitEditAttedance}
+                        color="primary"
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+            </ModalBody>
           </Modal>
         </Container>
       )}
