@@ -113,25 +113,25 @@ const AddSession = () => {
               action: (
                 <h5 key={i + 1} className="mb-0">
                   {permission1 && permission1.includes("edit") && (
-                  <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() =>
-                    rowHandler(
-                      res[i]._id,
-                      res[i].name,
-                      res[i].start_date.split("T")[0],
-                      res[i].start_date.split("T")[0],
-                      res[i].working_days
-                    )
-                  }
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>   
+                    <Button
+                      className="btn-sm pull-right"
+                      color="primary"
+                      type="button"
+                      key={"edit" + i + 1}
+                      onClick={() =>
+                        rowHandler(
+                          res[i]._id,
+                          res[i].name,
+                          res[i].start_date.split("T")[0],
+                          res[i].start_date.split("T")[0],
+                          res[i].working_days
+                        )
+                      }
+                    >
+                      <i className="fas fa-user-edit" />
+                    </Button>
                   )}
-                
+
                   {/* {permissions && permissions.includes("delete") && (
                    
                   )} */}
@@ -478,119 +478,116 @@ const AddSession = () => {
           {/* {permissions && permissions.includes("add") && (
               
             )} */}
-
-          {check && (
-            <Col>
-              <div className="card-wrapper">
-                <Card>
-                  <Form onSubmit={handleFormChange} className="mb-4">
-                    <CardBody>
-                      <Row>
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Session
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Session"
-                            type="text"
-                            onChange={handleChange("name")}
-                            value={sessionData.name}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Starting Date
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            type="date"
-                            onChange={handleChange("start_date")}
-                            required
-                            value={sessionData.start_date}
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Ending Date
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            value={sessionData.end_date}
-                            type="date"
-                            onChange={handleChange("end_date")}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Working Days
-                          </label>
-                          <Input
-                            id="example-date-input"
-                            type="number"
-                            onChange={handleChange("working_days")}
-                            value={sessionData.working_days}
-                            placeholder="Working Days"
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col>
-                          <label
-                            className="form-control-label"
-                            htmlFor="example-date-input"
-                          >
-                            Working Time
-                          </label>
-                          <DatePicker
-                            id="exampleFormControlSelect3"
-                            className="Period-Time"
-                            selected={startTime}
-                            onChange={(date) => setStartTime(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Time"
-                            dateFormat="h:mm aa"
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4 float-right">
-                        <Col
-                          style={{ display: "flex", justifyContent: "center" }}
+          <Col>
+            <div className="card-wrapper">
+              <Card>
+                <Form onSubmit={handleFormChange} className="mb-4">
+                  <CardBody>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
                         >
-                          <Button color="primary" type="submit">
-                            Submit
-                          </Button>
-                        </Col>
-                      </Row>
-                    </CardBody>
-                  </Form>
-                </Card>
-              </div>
-            </Col>
-          )}
+                          Session
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Session"
+                          type="text"
+                          onChange={handleChange("name")}
+                          value={sessionData.name}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Starting Date
+                        </label>
+                        <Input
+                          id="example-date-input"
+                          type="date"
+                          onChange={handleChange("start_date")}
+                          required
+                          value={sessionData.start_date}
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Ending Date
+                        </label>
+                        <Input
+                          id="example-date-input"
+                          value={sessionData.end_date}
+                          type="date"
+                          onChange={handleChange("end_date")}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Working Days
+                        </label>
+                        <Input
+                          id="example-date-input"
+                          type="number"
+                          onChange={handleChange("working_days")}
+                          value={sessionData.working_days}
+                          placeholder="Working Days"
+                          required
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4">
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Working Time
+                        </label>
+                        <DatePicker
+                          id="exampleFormControlSelect3"
+                          className="Period-Time"
+                          selected={startTime}
+                          onChange={(date) => setStartTime(date)}
+                          showTimeSelect
+                          showTimeSelectOnly
+                          timeIntervals={15}
+                          timeCaption="Time"
+                          dateFormat="h:mm aa"
+                        />
+                      </Col>
+                    </Row>
+                    <Row className="mt-4 float-right">
+                      <Col
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <Button color="primary" type="submit">
+                          Submit
+                        </Button>
+                      </Col>
+                    </Row>
+                  </CardBody>
+                </Form>
+              </Card>
+            </div>
+          </Col>
 
           {/* <Col>
             <div className="card-wrapper">
@@ -634,30 +631,33 @@ const AddSession = () => {
                     Print
                   </Button>
                   {loading && sessionList ? (
-                     permission1 && permission1.includes("edit")? (
+                    permission1 && permission1.includes("edit") ? (
                       <div ref={componentRef}>
-                      <AntTable
-                        columns={columns}
-                        data={sessionList}
-                        pagination={true}
-                        exportFileName="SessionDetails"
-                      />
-                    </div>
-                     ):(
-                    
+                        <AntTable
+                          columns={columns}
+                          data={sessionList}
+                          pagination={true}
+                          exportFileName="SessionDetails"
+                        />
+                      </div>
+                    ) : (
                       <Table
-                      style={{ whiteSpace: "pre" }}
+                        style={{ whiteSpace: "pre" }}
                         columns={columns}
                         dataSource={sessionList}
-                        
                         pagination={{
-                          pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                          pageSizeOptions: [
+                            "5",
+                            "10",
+                            "30",
+                            "60",
+                            "100",
+                            "1000",
+                          ],
                           showSizeChanger: true,
                         }}
                       />
-              
-                     )
-                  
+                    )
                   ) : (
                     <Loader />
                   )}
