@@ -3,7 +3,7 @@ import { sendRequest } from "api/api";
 
 export const addStaff = (userId, token, data = {}) => {
   const url = `${process.env.REACT_APP_API_URL}/api/school/staff/create/${userId}`;
-   return fetch(url, {
+  return fetch(url, {
     method: "POST",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
     body: data,
@@ -61,31 +61,46 @@ export const deleteStaff = async (staffId, id) => {
   }
 };
 
-export const updateStaff= async(staffId,id,formData)=>{
+export const updateStaff = async (staffId, id, formData) => {
+  try {
+    const { data } = await sendRequestWithJson(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/edit/${staffId}/${id}`,
+      formData,
+      "PUT"
+    );
+    // console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export const updateStaff1 = async (staffId, id, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/edit/${staffId}/${id}`,
+      formData,
+      "PUT"
+    );
+    // console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getStaffByDepartment = async (schoolId, userId, formData) => {
   try {
     const {data} = await sendRequestWithJson(
-      `${process.env.REACT_APP_API_URL}/api/school/staff/edit/${staffId}/${id}`,
+      `${process.env.REACT_APP_API_URL}/api/school/staff/department/${schoolId}/${userId}`,
       formData,
-      "PUT"
+      "POST"
     );
-    // console.log(data);
+    console.log(data);
     return data;
   } catch (error) {
     console.log(error);
     throw error;
-  }  
-}
-export const updateStaff1= async(staffId,id,formData)=>{
-  try {
-    const {data} = await sendRequest(
-      `${process.env.REACT_APP_API_URL}/api/school/staff/edit/${staffId}/${id}`,
-      formData,
-      "PUT"
-    );
-    // console.log(data);
-    return data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }  
-}
+  }
+};

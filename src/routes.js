@@ -55,6 +55,7 @@ import AddRoute from "views/pages/Transportation/AddRoute";
 import Viewproduct from "views/pages/Ecommerce/Viewproduct";
 import Addproduct from "views/pages/Ecommerce/Addproduct";
 import StudentCredentials from 'views/pages/credentials/StudentCredentials';
+import StaffAttendance from 'views/pages/staffManagement/StaffAttendance'
 
 export const adminRoutes = [
   {
@@ -666,6 +667,13 @@ const routes = [
         name: "All Staffs",
         miniName: "A",
         component: AllStaffs,
+        layout: "/admin",
+      },
+      {
+        path: "/staff-attendance",
+        name: "Staff Attendance",
+        miniName: "S",
+        component: StaffAttendance,
         layout: "/admin",
       },
     ],
