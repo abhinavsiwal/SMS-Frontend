@@ -30,3 +30,19 @@ export const searchStaffAttendance= async(schoolId,userId,formData)=>{
         throw error;
     }
 }
+
+export const updateAttendance = async (id, schoolId, body) => {
+    try {
+      const { data } = await sendRequest(
+        `${process.env.REACT_APP_API_URL}/api/school/staffAttendance/date/edit/${schoolId}/${id}`,
+        body,
+        "PUT"
+      );
+      // console.log(data);
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+  

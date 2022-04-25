@@ -27,7 +27,7 @@ import { isAuthenticated } from "api/auth";
 import { toast, ToastContainer } from "react-toastify";
 import { allSessions } from "api/session";
 import { getStaffByDepartment } from "api/staff";
-import { addStaffAttendance, searchStaffAttendance } from "api/staffAttendance";
+import { addStaffAttendance, searchStaffAttendance,updateAttendance } from "api/staffAttendance";
 
 const StaffAttendance = () => {
   const { user, token } = isAuthenticated();
@@ -54,6 +54,12 @@ const StaffAttendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [students1, setStudents1] = useState([]);
   const [attendanceData1, setattendanceData1] = useState({});
+  const [model2Loading, setModel2Loading] = useState(false)
+  const [editAttendance, setEditAttendance] = useState(false);   
+  const [editAttendanceStaff, setEditAttendanceStaff] = useState(); 
+  const [editPart, setEditPart] = useState(false);
+  const [selectDate, setSelectDate] = useState("");
+  const [editAttendanceData, setEditAttendanceData] = useState([])
   useEffect(() => {
     let today1 = new Date();
     // console.log(today1);
@@ -268,6 +274,90 @@ const StaffAttendance = () => {
       console.log(err);
     }
   };
+  
+
+  const handleTimeChange = async (e) => {
+    e.preventDefault();
+    setModel2Loading(true);
+    var dt = new Date(e.target.value);
+    let year = dt.getFullYear();
+    let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+    let day = dt.getDate().toString().padStart(2, "0");
+    let day2 = (dt.getDate() + 1).toString().padStart(2, "0");
+    let data1 = {
+      department: attendance.selectDepartment,
+      start_date: year + "-" + month + "-" + day,
+      end_date: year + "-" + month + "-" + day,
+      session: attendance.session,
+    };
+    console.log(data1);
+    setSelectDate(year + "-" + month + "-" + day);
+    try {
+      const data = await searchStaffAttendance(user.school, user._id, data1);
+      if (data && data.err) {
+        toast.error(data.err);
+      } else {
+        console.log(data);
+        let staffs = [];
+        for (const key in data.staffDatas) {
+          let obj = {};
+          obj[key] = data.staffDatas[key];
+          console.log(obj);
+          staffs.push(obj);
+        }
+        console.log(staffs);
+        setEditAttendanceStaff(staffs);
+        setEditAttendance(true);
+        setModel2Loading(false);
+      }
+    } catch (error) {
+      setModel2Loading(false);
+    }
+  };
+  
+
+  const handleStatus = (studentID) => (e) => {
+    e.preventDefault();
+    let List = editAttendanceData;
+    let temp = { id: studentID, attendance_status: e.target.value };
+    List.push(temp);
+    setEditAttendanceData(List);
+    console.log(editAttendanceData);
+  };
+
+  const submitEditAttedance = async (e) => {
+    e.preventDefault();
+    if (editAttendanceData.length === 0) {
+      toast.error("First Change Status Before Submit");
+    } else {
+      setModel2Loading(true);
+      var formdata = new FormData();
+      formdata.set("department", attendance.selectDepartment);
+      formdata.set("date", selectDate);
+      formdata.set("editAttedance", JSON.stringify(editAttendanceData));
+      formdata.set("session", attendance.session);
+
+      try {
+        const data = await updateAttendance(user._id, user.school, formdata);
+        if (data && data.err) {
+          toast.error(data.err);
+        } else {
+          setModel2Loading(false);
+          setEditPart(false);
+          toast.success("Update Attendance is Done!");  
+         
+        }
+      } catch (error) {
+        setModel2Loading(false);
+      }
+    }
+  };
+    const toggleEdit = (e) => {
+      e.preventDefault();
+      setEditAttendance(false);
+      setEditPart(true);
+    };
+
 
   return (
     <div>
@@ -485,7 +575,7 @@ const StaffAttendance = () => {
                         <div className="col-sm">
                           <Button
                             className="attendance-button"
-                            // onClick={toggleEdit}
+                            onClick={toggleEdit}
                             color="primary"
                             size="sm"
                           >
@@ -729,6 +819,117 @@ const StaffAttendance = () => {
           )}
         </ModalBody>
       </Modal>
+      <Modal
+            backdrop="static"
+            size="xl"
+            scrollable
+            isOpen={editPart}
+            className="custom-modal-style"
+          >
+            <ModalHeader isClose={editPart} toggle={() => setEditPart(false)}>
+              Edit Attendance
+            </ModalHeader>
+            <ModalBody className="modal-body">
+              <LoadingScreen
+                loading={model2Loading}
+                bgColor="#f1f1f1"
+                spinnerColor="#9ee5f8"
+                textColor="#676767"
+                text="Please Wait..."
+              ></LoadingScreen>
+              <Row>
+                <Col md="12">
+                  <Label
+                    className="form-control-label"
+                    htmlFor="xample-date-input"
+                  >
+                    Select Time
+                  </Label>
+                  <Input
+                    className="form-control"
+                    id="exampleFormControlSelect3"
+                    type="date"
+                    onChange={handleTimeChange}
+                    // required
+                  />
+                </Col>
+              </Row>
+              <br />
+              {editAttendance && (
+                <>
+                  <div className="model_table_main">
+                    <Table className="model_table" bordered>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {editAttendanceStaff &&
+                        editAttendanceStaff.length > 0 ? (
+                          editAttendanceStaff.map((student, index) => {
+                            console.log(student);
+                            return (
+                              <>
+                                <tr key={index}>
+                                  <td style={{ fontWeight: "500" }}>
+                                    {Object.keys(student) &&
+                                      Object.keys(student)
+                                        .toString()
+                                        .split(",")[0]}
+                                  </td>
+                                  <td>
+                                    <Input
+                                      className="form-control"
+                                      id="exampleFormControlSelect3"
+                                      type="select"
+                                      onChange={handleStatus(
+                                        Object.keys(student)
+                                          .toString()
+                                          .split(",")[2]
+                                      )}
+                                      // required
+                                    >
+                                      <option
+                                        selected
+                                        value={Object.values(student)[0]}
+                                        disabled
+                                      >
+                                        {Object.values(student)[0]}
+                                      </option>
+                                      <option value="P">Present</option>
+                                      <option value="A">Absent</option>
+                                      <option value="L">Leave</option>
+                                      <option value="HF">Half Day</option>
+                                    </Input>
+                                  </td>
+                                </tr>
+                              </>
+                            );
+                          })
+                        ) : (
+                          <h3>No Student Data is Found</h3>
+                        )}
+                      </tbody>
+                    </Table>
+                  </div>
+                  <br />
+                  {editAttendance && editAttendanceStaff.length > 0 && (
+                    <div className="col-sm">
+                      <Button
+                        className="attendance-button"
+                        onClick={submitEditAttedance}
+                        color="primary"
+                      >
+                        Submit
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+            </ModalBody>
+          </Modal>
     </div>
   );
 };

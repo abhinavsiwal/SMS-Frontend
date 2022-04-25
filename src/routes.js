@@ -959,6 +959,28 @@ const routes = [
       },
     ],
   },
+  {
+    collapse: true,
+    name: "Library Management",
+    icon: "ni ni-bag-17 text-pink",
+    state: "libraryCollapse",
+    views: [
+      {
+        path: "/add-cart",
+        name: "Add Books",
+        miniName: "A",
+        component: Addproduct,
+        layout: "/admin",
+      },
+      {
+        path: "/viewCart",
+        name: "Book Allocation Manager",
+        miniName: "V",
+        component: Viewproduct,
+        layout: "/admin",
+      },
+    ],
+  },
 ];
 
 export default routes;
