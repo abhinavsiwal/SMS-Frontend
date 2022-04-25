@@ -261,7 +261,7 @@ function Attendance() {
       }
     });
 
-    let attendance1 = {};
+    let attendance1 = {}; 
 
     addAttendance &&
       addAttendance.forEach((element, index) => {
