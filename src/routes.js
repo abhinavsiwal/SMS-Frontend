@@ -31,7 +31,7 @@ import AddStudent from "views/pages/studentManagement/AddStudent";
 import SchoolProfile from "views/pages/schoolProfile/SchoolProfile";
 import StudentProfile from "views/pages/studentProfile/StudentProfile";
 import StaffProfile from "views/pages/Staff Profile/StaffProfile";
-import Profile from 'views/pages/Staff Profile/Profile';
+import Profile from "views/pages/Staff Profile/Profile";
 import Support from "views/pages/support/Support";
 import Session from "views/pages/session/AddSession";
 import AddSection from "./views/pages/section/AddSection";
@@ -54,6 +54,8 @@ import ViewRoute from "views/pages/Transportation/ViewRoute";
 import AddRoute from "views/pages/Transportation/AddRoute";
 import Viewproduct from "views/pages/Ecommerce/Viewproduct";
 import Addproduct from "views/pages/Ecommerce/Addproduct";
+import FeesMaster from "views/pages/FeesManagement/feesmaster";
+import PenaltyMaster from "views/pages/FeesManagement/penalty";
 
 export const adminRoutes = [
   {
@@ -77,7 +79,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddStaff,
         layout: "/admin",
-        permission:"add"
+        permission: "add",
       },
       {
         path: "/all-staffs",
@@ -85,7 +87,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AllStaffs,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
     ],
   },
@@ -151,7 +153,7 @@ export const adminRoutes = [
         miniName: "DL",
         component: DepartmentList,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
       {
         path: "/department-head",
@@ -159,8 +161,7 @@ export const adminRoutes = [
         miniName: "DH",
         component: DepartmentHead,
         layout: "/admin",
-        permission:"edit"
-
+        permission: "edit",
       },
     ],
   },
@@ -185,7 +186,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddStudent,
         layout: "/admin",
-        permission:"add"
+        permission: "add",
       },
       {
         path: "/all-students",
@@ -193,7 +194,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AllStudents,
         layout: "/admin",
-        permission:"view",
+        permission: "view",
       },
     ],
   },
@@ -258,7 +259,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddTimeTable,
         layout: "/admin",
-        permission:"add"
+        permission: "add",
       },
       {
         path: "/view_time_table",
@@ -266,7 +267,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewTimeTable,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
     ],
   },
@@ -326,7 +327,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddRoute,
         layout: "/admin",
-        permission:"add"
+        permission: "add",
       },
       {
         path: "/view-route",
@@ -334,7 +335,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewRoute,
         layout: "/admin",
-        permission:"view"
+        permission: "view",
       },
     ],
   },
@@ -352,7 +353,7 @@ export const adminRoutes = [
         miniName: "A",
         component: Addproduct,
         layout: "/admin",
-        permission:"add",
+        permission: "add",
       },
       {
         path: "/viewCart",
@@ -360,7 +361,7 @@ export const adminRoutes = [
         miniName: "V",
         component: Viewproduct,
         layout: "/admin",
-        permission:"view",
+        permission: "view",
       },
     ],
   },
@@ -491,6 +492,7 @@ export const editorRoutes = [
       },
     ],
   },
+
   {
     path: "/student-profile",
     name: "Student Profile",
@@ -859,6 +861,28 @@ const routes = [
   },
   {
     collapse: true,
+    name: "Fees Management",
+    icon: "ni ni-single-02 text-orange",
+    state: "feesCollapse",
+    views: [
+      {
+        path: "/feesmaster",
+        name: "Fees Master",
+        miniName: "FM",
+        component: FeesMaster,
+        layout: "/admin",
+      },
+      {
+        path: "/Penaltymaster",
+        name: "Penalty Master",
+        miniName: "PM",
+        component: PenaltyMaster,
+        layout: "/admin",
+      },
+    ],
+  },
+  {
+    collapse: true,
     name: "Staff Management",
     icon: "ni ni-single-02 text-orange",
     state: "examplesCollapse",
@@ -974,7 +998,7 @@ const routes = [
       },
     ],
   },
- 
+
   {
     path: "/session",
     name: "Session",

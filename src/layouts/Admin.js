@@ -119,7 +119,7 @@ let permittedViews2=[];
   return (
     <>
       <Sidebar
-        routes={permittedRoute}
+        routes={routes}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{
