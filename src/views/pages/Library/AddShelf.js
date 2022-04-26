@@ -17,11 +17,14 @@ import { isAuthenticated } from "api/auth";
 import "./style.css";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { toast, ToastContainer } from "react-toastify";
+import AntTable from "../tables/AntTable";
 import {
   addLibrarySection,
   getAllLibrarySection,
   addLibraryShelf,
+  getAllLibraryShelf,
 } from "../../../api/libraryManagement";
+import { Popconfirm } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 const AddShelf = () => {
   const [sectionName, setSectionName] = useState("");
@@ -32,15 +35,19 @@ const AddShelf = () => {
   const [shelfName, setShelfName] = useState("");
   const [shelfAbv, setShelfAbv] = useState("");
   const [sectionId, setSectionId] = useState("");
-  const [checked, setChecked] = useState(false)
-
-  const columns=[
+  const [checked, setChecked] = useState(false);
+  const [viewShelf, setViewShelf] = useState([]);
+  const [isData, setisData] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedSectionId, setSelectedSectionId] = useState("");
+  const [allShelf, setAllShelf] = useState([]);
+  const columns = [
     {
       title: "S No.",
       dataIndex: "s_no",
     },
     {
-      title: "Section Name",
+      title: "Shelf Name",
       dataIndex: "shelf_name",
       sorter: (a, b) => a.shelf_name > b.shelf_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -68,10 +75,46 @@ const AddShelf = () => {
         return record.shelf_name.toLowerCase().includes(value.toLowerCase());
       },
     },
-  ]
+    {
+      title: "Shelf Abbreviation ",
+      dataIndex: "shelf_abv",
+      sorter: (a, b) => a.shelf_abv > b.shelf_abv,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.shelf_abv.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Action",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
 
   useEffect(() => {
     getAllSection();
+    getAllShelf();
   }, [checked]);
 
   const getAllSection = async () => {
@@ -95,7 +138,7 @@ const AddShelf = () => {
       setAddLoading(true);
       const data = await addLibrarySection(user._id, formData);
       console.log(data);
-      if(data.err){
+      if (data.err) {
         toast.error(data.err);
         setAddLoading(false);
         return;
@@ -113,29 +156,38 @@ const AddShelf = () => {
   };
 
   const getAllShelf = async () => {
-    
-  }
+    try {
+      setLoading(true);
+      const data = await getAllLibraryShelf(user.school, user._id);
+      console.log(data);
+      setAllShelf(data);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
 
-  const addShelfHandler = async(e) => {
+  const addShelfHandler = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.set("name", shelfName);
     formData.set("abbreviation", shelfAbv);
     formData.set("section", sectionId);
-    formData.set("school",user.school);
+    formData.set("school", user.school);
 
     try {
       setAddLoading(true);
       const data = await addLibraryShelf(user._id, formData);
       console.log(data);
-      if(data.err){
+      if (data.err) {
         toast.error(data.err);
         setAddLoading(false);
         return;
       }
       toast.success("Shelf Added Successfully");
       setChecked(!checked);
-      setShelfName("")
+      setShelfName("");
       setShelfAbv("");
       setSectionId("");
       setAddLoading(false);
@@ -144,9 +196,74 @@ const AddShelf = () => {
       setAddLoading(false);
       toast.error("Shelf Added Failed");
     }
-
-
   };
+
+  const tableData = async () => {
+    if (selectedSectionId === undefined) {
+      return;
+    }
+    if (selectedSectionId === "empty") {
+      // console.log("empty");
+      setisData(false);
+      // setShowDeleteButton(false);
+      return;
+    }
+    let selectedSection = await allSection.find(
+      (section) => section._id === selectedSectionId
+    );
+    const data = [];
+    if (selectedSection.shelf.length === 0) {
+      setisData(false);
+      // setShowDeleteButton(true);
+      return;
+    }
+    setisData(true);
+    // setShowDeleteButton(true);
+    for (let i = 0; i < selectedSection.shelf.length; i++) {
+      data.push({
+        key: i,
+        s_no: [i + 1],
+        shelf_name: selectedSection.shelf[i].name,
+        shelf_abv: selectedSection.shelf[i].abbreviation,
+        action: (
+          <h5 key={i + 1} className="mb-0">
+            <Button
+              className="btn-sm pull-right"
+              color="primary"
+              type="button"
+              key={"edit" + i + 1}
+              // onClick={() => rowHandler(selectedCanteen.menu[i])}
+            >
+              <i className="fas fa-user-edit" />
+            </Button>
+            <Button
+              className="btn-sm pull-right"
+              color="danger"
+              type="button"
+              key={"delete" + i + 1}
+            >
+              <Popconfirm
+                title="Sure to delete?"
+                // onConfirm={() =>
+                //   deleteMenuItemHandler(selectedCanteen.menu[i]._id)
+                // }
+              >
+                <i className="fas fa-trash" />
+              </Popconfirm>
+            </Button>
+          </h5>
+        ),
+      });
+    }
+    setViewShelf(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (selectedSectionId) {
+      tableData();
+    }
+  }, [selectedSectionId]);
 
   return (
     <>
@@ -167,164 +284,236 @@ const AddShelf = () => {
         {addLoading ? (
           <Loader />
         ) : (
-          <Row>
-            <Col lg="4">
-              <div className="card-wrapper">
-                <Card>
-                  <CardHeader>
-                    <h3>Add Library Section</h3>
-                  </CardHeader>
-                  <CardBody>
-                    <Form className="mb-4" onSubmit={addSectionHandler}>
-                      <Row>
-                        <Col>
-                          <Label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
+          <>
+            <Row>
+              <Col lg="4">
+                <div className="card-wrapper">
+                  <Card>
+                    <CardHeader>
+                      <h3>Add Library Section</h3>
+                    </CardHeader>
+                    <CardBody>
+                      <Form className="mb-4" onSubmit={addSectionHandler}>
+                        <Row>
+                          <Col>
+                            <Label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Section Name
+                            </Label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Section Name"
+                              type="text"
+                              onChange={(e) => setSectionName(e.target.value)}
+                              value={sectionName}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <Label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Section Abbreviation
+                            </Label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Section Name"
+                              type="text"
+                              onChange={(e) => setSectionAbv(e.target.value)}
+                              value={sectionAbv}
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4">
+                          <Col
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              width: "100%",
+                            }}
                           >
-                            Section Name
-                          </Label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Section Name"
-                            type="text"
-                            onChange={(e) => setSectionName(e.target.value)}
-                            value={sectionName}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row>
-                        <Col>
-                          <Label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Section Abbreviation
-                          </Label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Section Name"
-                            type="text"
-                            onChange={(e) => setSectionAbv(e.target.value)}
-                            value={sectionAbv}
-                            required
-                          />
-                        </Col>
-                      </Row>
-                      <Row className="mt-4">
-                        <Col
-                          style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            width: "100%",
-                          }}
+                            <Button color="primary" type="submit">
+                              Add Section
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </CardBody>
+                  </Card>
+                </div>
+              </Col>
+              <Col lg="8">
+                <div className="card-wrapper">
+                  <Card>
+                    <CardHeader>
+                      <h3>Add Shelf</h3>
+                    </CardHeader>
+                    <CardBody>
+                      <Form className="mb-4" onSubmit={addShelfHandler}>
+                        <Row
+                          md="4"
+                          className="d-flex justify-content-center mb-4"
                         >
-                          <Button color="primary" type="submit">
-                            Add Section
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </CardBody>
-                </Card>
-              </div>
-            </Col>
-            <Col lg="8">
-              <div className="card-wrapper">
-                <Card>
-                  <CardHeader>
-                    <h3>Add Shelf</h3>
-                  </CardHeader>
-                  <CardBody>
-                    <Form className="mb-4" onSubmit={addShelfHandler} >
+                          <Col md="12">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Shelf Name
+                            </Label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Name"
+                              type="text"
+                              onChange={(e) => setShelfName(e.target.value)}
+                              value={shelfName}
+                              required
+                            />
+                          </Col>
+                          <Col md="12">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="exampleFormControlSelect3"
+                            >
+                              Section
+                            </Label>
+                            <Input
+                              id="exampleFormControlSelect3"
+                              type="select"
+                              onChange={(e) => setSectionId(e.target.value)}
+                              value={sectionId}
+                              required
+                            >
+                              <option value="" selected>
+                                Select Section
+                              </option>
+                              {allSection &&
+                                allSection.map((section) => {
+                                  return (
+                                    <option
+                                      key={section._id}
+                                      value={section._id}
+                                      selected
+                                    >
+                                      {section.name}
+                                    </option>
+                                  );
+                                })}
+                            </Input>
+                          </Col>
+                          <Col md="12">
+                            <Label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Shelf Abbreviation
+                            </Label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Name"
+                              type="text"
+                              onChange={(e) => setShelfAbv(e.target.value)}
+                              value={shelfAbv}
+                              required
+                            />
+                          </Col>
+                          <Col
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              width: "100%",
+                              marginTop: "2rem",
+                            }}
+                            md="12"
+                          >
+                            <Button color="primary" type="submit">
+                              Add Shelf
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Form>
+                    </CardBody>
+                  </Card>
+                </div>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Container className="mt--6 shadow-lg" fluid>
+                  <Card>
+                    <CardHeader>
+                      <h3>View Shelves</h3>
                       <Row
-                        md="4"
-                        className="d-flex justify-content-center mb-4"
+                        style={{
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
                       >
-                        <Col md="12">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Shelf Name
-                          </Label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Name"
-                            type="text"
-                            onChange={(e) => setShelfName(e.target.value)}
-                            value={shelfName}
-                            required
-                          />
-                        </Col>
-                        <Col md="12">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="exampleFormControlSelect3"
-                          >
-                            Section
-                          </Label>
+                        <Col>
                           <Input
                             id="exampleFormControlSelect3"
                             type="select"
-                            onChange={(e) => setSectionId(e.target.value)}
-                            value={sectionId}
+                            onChange={(e) =>
+                              setSelectedSectionId(e.target.value)
+                            }
+                            value={selectedSectionId}
                             required
+                            style={{ maxWidth: "10rem" }}
                           >
-                            <option value="" selected>
-                              Select Section
-                            </option>
-                            {allSection &&
-                              allSection.map((section) => {
-                                return (
-                                  <option
-                                    key={section._id}
-                                    value={section._id}
-                                    selected
-                                  >
-                                    {section.name}
-                                  </option>
-                                );
-                              })}
+                            <option value="empty">Select Section</option>
+                            {allSection.map((section) => {
+                              return (
+                                <option key={section._id} value={section._id}>
+                                  {section.name}
+                                </option>
+                              );
+                            })}
                           </Input>
-                        </Col>
-                        <Col md="12">
-                          <Label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Shelf Abbreviation
-                          </Label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Name"
-                            type="text"
-                            onChange={(e) => setShelfAbv(e.target.value)}
-                            value={shelfAbv}
-                            required
-                          />
                         </Col>
                         <Col
                           style={{
                             display: "flex",
-                            justifyContent: "center",
-                            width: "100%",
-                            marginTop:"2rem"
+                            justifyContent: "flex-end",
                           }}
-                          md="12"
                         >
-                          <Button color="primary" type="submit">
-                            Add Shelf
+                          <Button color="danger" className="mt-3">
+                            <Popconfirm
+                              title="Sure to delete?"
+                              // onConfirm={() => deleteCanteenHandler()}
+                            >
+                              DeleteSection <i className="fas fa-trash" />
+                            </Popconfirm>
                           </Button>
                         </Col>
                       </Row>
-                    </Form>
-                  </CardBody>
-                </Card>
-              </div>
-            </Col>
-          </Row>
+                    </CardHeader>
+                    <CardBody>
+                      {!loading && viewShelf ? (
+                        isData ? (
+                          <AntTable
+                            columns={columns}
+                            data={viewShelf}
+                            pagination={true}
+                            exportFileName="StudentDetails"
+                          />
+                        ) : (
+                          <h3>No Shelf Found</h3>
+                        )
+                      ) : (
+                        <Loader />
+                      )}
+                    </CardBody>
+                  </Card>
+                </Container>
+              </Col>
+            </Row>
+          </>
         )}
       </Container>
     </>
