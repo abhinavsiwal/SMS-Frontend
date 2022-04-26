@@ -59,6 +59,7 @@ import StaffAttendance from 'views/pages/staffManagement/StaffAttendance'
 import FeesMaster from "views/pages/FeesManagement/feesmaster";
 import PenaltyMaster from "views/pages/FeesManagement/penalty";
 import AddShelf from 'views/pages/Library/AddShelf';
+import AddBooks from 'views/pages/Library/AddBooks';
 
 export const adminRoutes = [
   {
@@ -968,16 +969,16 @@ const routes = [
     views: [
       {
         path: "/add-shelf",
-        name: "Add Books",
+        name: "Add Section and Shelf",
         miniName: "A",
         component: AddShelf,
         layout: "/admin",
       },
       {
-        path: "/viewCart",
-        name: "Book Allocation Manager",
+        path: "/add-books",
+        name: "Add Books",
         miniName: "V",
-        component: Viewproduct,
+        component: AddBooks,
         layout: "/admin",
       },
     ],
