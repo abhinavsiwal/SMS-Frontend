@@ -58,6 +58,7 @@ import StudentCredentials from 'views/pages/credentials/StudentCredentials';
 import StaffAttendance from 'views/pages/staffManagement/StaffAttendance'
 import FeesMaster from "views/pages/FeesManagement/feesmaster";
 import PenaltyMaster from "views/pages/FeesManagement/penalty";
+import AddShelf from 'views/pages/Library/AddShelf';
 
 export const adminRoutes = [
   {
@@ -966,10 +967,10 @@ const routes = [
     state: "libraryCollapse",
     views: [
       {
-        path: "/add-cart",
+        path: "/add-shelf",
         name: "Add Books",
         miniName: "A",
-        component: Addproduct,
+        component: AddShelf,
         layout: "/admin",
       },
       {
