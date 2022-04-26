@@ -59,3 +59,48 @@ export const getAllLibraryShelf=async(schoolId,userId)=>{
     throw new err();
   }
 }
+
+export const deleteLibrarySection = async (userId, sectionId) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/librarysection/delete/${sectionId}/${userId}`,
+      {},
+      "DELETE"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    return new err();
+  }
+}
+
+export const deleteLibraryShelf=async(userId,shelfId)=>{
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/libraryshelf/delete/${shelfId}/${userId}`,
+      {},
+      "DELETE"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    return new err();
+  }
+}
+
+export const editLibraryShelf=async(userId,shelfId,formData)=>{
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/libraryshelf/edit/${shelfId}/${userId}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    return new err();
+  }
+}

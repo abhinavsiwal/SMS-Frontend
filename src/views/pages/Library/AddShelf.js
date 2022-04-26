@@ -10,6 +10,8 @@ import {
   Input,
   Button,
   CardHeader,
+  Modal,
+  ModalBody,
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 import "react-datepicker/dist/react-datepicker.css";
@@ -23,6 +25,9 @@ import {
   getAllLibrarySection,
   addLibraryShelf,
   getAllLibraryShelf,
+  deleteLibrarySection,
+  deleteLibraryShelf,
+  editLibraryShelf,
 } from "../../../api/libraryManagement";
 import { Popconfirm } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -41,6 +46,11 @@ const AddShelf = () => {
   const [loading, setLoading] = useState(false);
   const [selectedSectionId, setSelectedSectionId] = useState("");
   const [allShelf, setAllShelf] = useState([]);
+  const [editing, setEditing] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editShelfName, setEditShelfName] = useState("");
+  const [editShelfAbv, setEditShelfAbv] = useState("");
+  const [editShelfId, setEditShelfId] = useState("");
   const columns = [
     {
       title: "S No.",
@@ -232,7 +242,12 @@ const AddShelf = () => {
               color="primary"
               type="button"
               key={"edit" + i + 1}
-              // onClick={() => rowHandler(selectedCanteen.menu[i])}
+              onClick={() =>{
+                setEditing(true);
+                setEditShelfName(selectedSection.shelf[i].name);
+                setEditShelfAbv(selectedSection.shelf[i].abbreviation);
+                setEditShelfId(selectedSection.shelf[i]._id);
+              }}
             >
               <i className="fas fa-user-edit" />
             </Button>
@@ -244,9 +259,9 @@ const AddShelf = () => {
             >
               <Popconfirm
                 title="Sure to delete?"
-                // onConfirm={() =>
-                //   deleteMenuItemHandler(selectedCanteen.menu[i]._id)
-                // }
+                onConfirm={() =>
+                  deleteShelfHandler(selectedSection.shelf[i]._id)
+                }
               >
                 <i className="fas fa-trash" />
               </Popconfirm>
@@ -259,11 +274,85 @@ const AddShelf = () => {
     setLoading(false);
   };
 
+  const deleteShelfHandler = async (shelfId) => {
+    try {
+      setLoading(true);
+      const data = await deleteLibraryShelf(user._id, shelfId);
+      console.log(data);
+      if (data.err) {
+        toast.error(data.err);
+        setLoading(false);
+        return;
+      }
+      toast.success("Shelf Deleted Successfully");
+      setChecked(!checked);
+      setSelectedSectionId("empty");
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      toast.error("Shelf Deleted Failed");
+    }
+  };
+
+  const editShelfHandler=async(e)=>{
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("name", editShelfName);
+    formData.set("abbreviation", editShelfAbv);
+    formData.set("section", selectedSectionId);
+    formData.set("school", user.school);
+    try {
+      setLoading(true);
+      setEditLoading(true);
+      const data = await editLibraryShelf(user._id, editShelfId, formData);
+      console.log(data);
+      if (data.err) {
+        toast.error(data.err);
+        setLoading(false);
+        setEditLoading(false);
+        return;
+      }
+      toast.success("Shelf Edited Successfully");
+      setChecked(!checked);
+      setSelectedSectionId("empty");
+      setEditing(false);
+      setLoading(false);
+      setEditLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      setEditLoading(false);
+      toast.error("Shelf Edited Failed");
+    }
+  
+  }
+
   useEffect(() => {
     if (selectedSectionId) {
       tableData();
     }
   }, [selectedSectionId]);
+
+  const deleteSectionHandler = async () => {
+    try {
+      setLoading(true);
+      const data = await deleteLibrarySection(user._id, selectedSectionId);
+      console.log(data);
+      if (data.err) {
+        toast.error(data.err);
+        setLoading(false);
+        return;
+      }
+      setChecked(!checked);
+      setSelectedSectionId("empty");
+      toast.success("Section Deleted Successfully");
+      setChecked(!checked);
+    } catch (err) {
+      console.log(err);
+      toast.error("Section Delete Failed");
+    }
+  };
 
   return (
     <>
@@ -485,7 +574,7 @@ const AddShelf = () => {
                           <Button color="danger" className="mt-3">
                             <Popconfirm
                               title="Sure to delete?"
-                              // onConfirm={() => deleteCanteenHandler()}
+                              onConfirm={() => deleteSectionHandler()}
                             >
                               DeleteSection <i className="fas fa-trash" />
                             </Popconfirm>
@@ -515,6 +604,76 @@ const AddShelf = () => {
             </Row>
           </>
         )}
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={editing}
+          toggle={() => setEditing(false)}
+          size="lg"
+        >
+            <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              Edit Shelf
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          {editLoading?(<Loader />):(
+            <ModalBody>
+              <Form className="mb-4" onSubmit={editShelfHandler} >  
+                <Row>
+                  <Col>
+                  <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Shelf Name
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={e=>setEditShelfName(e.target.value)}
+                        value={editShelfName}
+                        required
+                      />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                  <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Shelf Abbreviation
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={e=>setEditShelfAbv(e.target.value)}
+                        value={editShelfAbv}
+                        required
+                      />
+                  </Col>
+                </Row>
+                <Row className="mt-4 float-right">
+                    <Col>
+                      <Button color="primary" type="submit">
+                        Save Changes
+                      </Button>
+                    </Col>
+                  </Row>
+              </Form>
+            </ModalBody>
+          )}
+        </Modal>
       </Container>
     </>
   );
