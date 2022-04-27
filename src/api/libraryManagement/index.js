@@ -1,6 +1,6 @@
 import { sendRequestWithJson, sendRequest } from "api/api";
 
-export const addLibrarySection = async ( userId, formData) => {
+export const addLibrarySection = async (userId, formData) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/librarysection/create/${userId}`,
@@ -45,7 +45,7 @@ export const addLibraryShelf = async (userId, formData) => {
   }
 };
 
-export const getAllLibraryShelf=async(schoolId,userId)=>{
+export const getAllLibraryShelf = async (schoolId, userId) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/libraryshelf/all/${schoolId}/${userId}`,
@@ -58,7 +58,7 @@ export const getAllLibraryShelf=async(schoolId,userId)=>{
     console.log(err);
     throw new err();
   }
-}
+};
 
 export const deleteLibrarySection = async (userId, sectionId) => {
   try {
@@ -73,9 +73,9 @@ export const deleteLibrarySection = async (userId, sectionId) => {
     console.log(err);
     return new err();
   }
-}
+};
 
-export const deleteLibraryShelf=async(userId,shelfId)=>{
+export const deleteLibraryShelf = async (userId, shelfId) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/libraryshelf/delete/${shelfId}/${userId}`,
@@ -88,9 +88,9 @@ export const deleteLibraryShelf=async(userId,shelfId)=>{
     console.log(err);
     return new err();
   }
-}
+};
 
-export const editLibraryShelf=async(userId,shelfId,formData)=>{
+export const editLibraryShelf = async (userId, shelfId, formData) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/libraryshelf/edit/${shelfId}/${userId}`,
@@ -102,5 +102,65 @@ export const editLibraryShelf=async(userId,shelfId,formData)=>{
   } catch (err) {
     console.log(err);
     return new err();
+  }
+};
+
+export const addBook = async (userId, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/books/create/${userId}`,
+      formData,
+      "POST"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    return new err();
+  }
+};
+
+export const getAllBooks = async (schoolId, userId) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/books/all/${schoolId}/${userId}`,
+      {},
+      "GET"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};
+
+export const deleteBook = async (userId, bookId) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/books/delete/${bookId}/${userId}`,
+      {},
+      "DELETE"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};
+
+export const editBook = async (userId, bookId, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/books/edit/${bookId}/${userId}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  }catch(err){
+    console.log(err);
+    throw new err();
   }
 }
