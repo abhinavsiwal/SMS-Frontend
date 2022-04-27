@@ -60,6 +60,7 @@ import FeesMaster from "views/pages/FeesManagement/feesmaster";
 import PenaltyMaster from "views/pages/FeesManagement/penalty";
 import AddShelf from 'views/pages/Library/AddShelf';
 import AddBooks from 'views/pages/Library/AddBooks';
+import AllocationManager from 'views/pages/Library/AllocationManager';
 
 export const adminRoutes = [
   {
@@ -979,6 +980,13 @@ const routes = [
         name: "Add Books",
         miniName: "V",
         component: AddBooks,
+        layout: "/admin",
+      },
+      {
+        path: "/book-allocations",
+        name: "Allocations",
+        miniName: "V",
+        component: AllocationManager,
         layout: "/admin",
       },
     ],

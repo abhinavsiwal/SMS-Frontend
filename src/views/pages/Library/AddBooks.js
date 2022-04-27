@@ -43,6 +43,8 @@ const AddBooks = () => {
   const [bookName, setBookName] = useState("");
   const [bookSection, setBookSection] = useState("");
   const [bookQty, setBookQty] = useState("");
+  const [bookAuthor, setBookAuthor] = useState("");
+  const [editBookAuthor, setEditBookAuthor] = useState("");
   const [bookShelf, setBookShelf] = useState("");
   const [editBookName, setEditBookName] = useState("");
   const [editBookSection, setEditBookSection] = useState("");
@@ -65,35 +67,7 @@ const AddBooks = () => {
       title: "S No.",
       dataIndex: "s_no",
     },
-    {
-      title: "Book ID",
-      dataIndex: "book_id",
-      sorter: (a, b) => a.book_id > b.book_id,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.book_id.toLowerCase().includes(value.toLowerCase());
-      },
-    },
+  
     {
       title: "Book Name",
       dataIndex: "book_name",
@@ -123,6 +97,64 @@ const AddBooks = () => {
         return record.book_name.toLowerCase().includes(value.toLowerCase());
       },
     },
+    {
+      title: "Book Author",
+      dataIndex: "book_author",
+      sorter: (a, b) => a.book_author > b.book_author,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.book_author.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+        title: "Quantity",
+        dataIndex: "book_quantity",
+        sorter: (a, b) => a.book_quantity > b.book_quantity,
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+          return (
+            <>
+              <Input
+                autoFocus
+                placeholder="Type text here"
+                value={selectedKeys[0]}
+                onChange={(e) => {
+                  setSelectedKeys(e.target.value ? [e.target.value] : []);
+                  confirm({ closeDropdown: false });
+                }}
+                onBlur={() => {
+                  confirm();
+                }}
+              ></Input>
+            </>
+          );
+        },
+        filterIcon: () => {
+          return <SearchOutlined />;
+        },
+        onFilter: (value, record) => {
+          return record.book_quantity.toLowerCase().includes(value.toLowerCase());
+        },
+      },
     {
       title: "Section Name",
       dataIndex: "section_name",
@@ -224,7 +256,8 @@ const AddBooks = () => {
           key: i,
           s_no: i + 1,
           book_name: data[i].name,
-          book_id: data[i].bookID,
+          book_quantity: data[i].quantity,
+          book_author: data[i].author,
           section_name: data[i].section.name,
           shelf_name: data[i].shelf.name,
           action: (
@@ -240,6 +273,7 @@ const AddBooks = () => {
                   setEditBookSection(data[i].section._id);
                   setEditBookShelf(data[i].shelf._id);
                   setEditBookId(data[i]._id);
+                  setEditBookAuthor(data[i].author);
                 }}
               >
                 <i className="fas fa-user-edit" />
@@ -273,6 +307,7 @@ const AddBooks = () => {
     formData.set("name", editBookName);
     formData.set("section", editBookSection);
     formData.set("shelf", editBookShelf);
+    formData.set("author", editBookAuthor);
     try {
       setLoading(true);
       setEditLoading(true);
@@ -324,7 +359,7 @@ const AddBooks = () => {
     let selectedSection1 = allSection.find(
       (section) => section._id === bookSection
     );
-    console.log(selectedSection1);
+ 
     setSelectedSection(selectedSection1);
   }, [bookSection]);
 
@@ -347,6 +382,7 @@ const AddBooks = () => {
     formData.set("shelf", bookShelf);
     formData.set("school", user.school);
     formData.set("quantity", bookQty);
+    formData.set("author", bookAuthor);
     try {
       setAddLoading(true);
       const data = await addBook(user._id, formData);
@@ -363,6 +399,7 @@ const AddBooks = () => {
       setBookQty("");
       setBookSection("");
       setBookShelf("");
+      setBookAuthor("")
     } catch (err) {
       console.log(err);
       toast.error("Error in adding book");
@@ -411,6 +448,24 @@ const AddBooks = () => {
                               onChange={(e) => setBookName(e.target.value)}
                               value={bookName}
                               required
+                            />
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Book Author
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Book Author"
+                              type="text"
+                              onChange={(e) => setBookAuthor(e.target.value)}
+                              value={bookAuthor}
+                            
                             />
                           </Col>
                         </Row>
@@ -479,7 +534,7 @@ const AddBooks = () => {
                               <option value="">Select Shelf</option>
                               {selectedSection.shelf &&
                                 selectedSection.shelf.map((shelf) => {
-                                  console.log(shelf);
+                             
                                   return (
                                     <option key={shelf._id} value={shelf._id}>
                                       {shelf.name}
@@ -570,6 +625,24 @@ const AddBooks = () => {
                       onChange={(e) => setEditBookName(e.target.value)}
                       value={editBookName}
                       required
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Book Author
+                    </label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Name"
+                      type="text"
+                      onChange={(e) => setEditBookAuthor(e.target.value)}
+                      value={editBookAuthor}
+        
                     />
                   </Col>
                 </Row>
