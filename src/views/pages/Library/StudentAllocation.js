@@ -14,7 +14,7 @@ import {
 import Loader from "components/Loader/Loader";
 import { isAuthenticated } from "api/auth";
 import { allStudents, filterStudent } from "api/student";
-import { getAllBooks } from "../../../api/libraryManagement";
+import { getAllBooks, allocateBook } from "../../../api/libraryManagement";
 import { allStaffs } from "api/staff";
 //css
 import "./style.css";
@@ -40,6 +40,7 @@ const StudentAllocation = () => {
   const [allBooks, setAllBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState({});
   const [allStaff, setAllStaff] = useState([]);
+  const [checked, setChecked] = useState(false);
   const getAllClasses = async () => {
     try {
       setLoading(true);
@@ -88,7 +89,7 @@ const StudentAllocation = () => {
     getAllClasses();
     getAllBooksHandler();
     getAllStaffs();
-  }, []);
+  }, [checked]);
 
   const handleChange = (name) => async (event) => {
     setAllocationData({ ...allocationData, [name]: event.target.value });
@@ -103,7 +104,7 @@ const StudentAllocation = () => {
       setSelectedClass(selectedClass);
     }
     if (name === "section") {
-      filterStudentHandler();
+      filterStudentHandler(event.target.value);
     }
     if (name === "bookName") {
       let selectedBook = allBooks.find(
@@ -114,10 +115,10 @@ const StudentAllocation = () => {
     }
   };
 
-  const filterStudentHandler = async () => {
+  const filterStudentHandler = async (id) => {
     console.log(allocationData);
-    const formData = {
-      section: allocationData.section,
+    const formData = { 
+      section: id,
       class: allocationData.class,
     };
     try {
@@ -133,12 +134,62 @@ const StudentAllocation = () => {
     }
   };
 
+  const allocateBookHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("book", allocationData.bookName);
+    formData.set("bookID", allocationData.bookId);
+    formData.set("student", allocationData.student);
+    formData.set("allocationDate", allocationData.allocationDate);
+    formData.set("duration", allocationData.duration);
+    formData.set("school", user.school);
+
+    try {
+      setLoading(true);
+      const data = await allocateBook(user._id, formData);
+      console.log(data);
+      if (data.err) {
+        setLoading(false);
+        return toast.error(data.err);
+      }
+      setChecked(!checked);
+      
+      toast.success("Book Allocated Successfully");
+      setAllocationData({
+        class: "",
+        section: "",
+        student: "",
+        bookName: "",
+        bookId: "",
+        allocationDate: "",
+        allocatedBy: "",
+        duration: "",
+      })
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      toast.error("Allocation Failed");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       {loading ? (
         <Loader />
       ) : (
-        <Form className="mt-3">
+        <Form className="mt-3" onSubmit={allocateBookHandler}>
           <Row>
             <Col md="6">
               <Label

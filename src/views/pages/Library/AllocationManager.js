@@ -18,6 +18,7 @@ import "./style.css";
 import { toast, ToastContainer } from "react-toastify";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import StudentAllocation from "./StudentAllocation";
+import StaffAllocation from "./StaffAllocation";
 
 const AllocationManager = () => {
   const { user, token } = isAuthenticated();
@@ -33,16 +34,7 @@ const AllocationManager = () => {
     allocatedBy: "",
     duration: "",
   });
-  const [allocationStaffData, setAllocationStaffData] = useState({
-    staffRole: "",
-    staff: "",
-    bookName: "",
-    bookId: "",
-    allocationDate: "",
-    allocatedBy: "",
-    duration: "",
-  });
-
+ 
   useEffect(() => {
     if (allocateRole === "") {
       setAllocateState(0);
@@ -98,7 +90,7 @@ const AllocationManager = () => {
                   </Row>
                   <>
                     {allocateState === 1 && <StudentAllocation />}
-                    {allocateState === 2 && <Form className="mb-4"></Form>}
+                    {allocateState === 2 && <StaffAllocation />}
                   </>
                 </CardBody>
               </Card>
