@@ -19,11 +19,15 @@ import { toast, ToastContainer } from "react-toastify";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import StudentAllocation from "./StudentAllocation";
 import StaffAllocation from "./StaffAllocation";
+import StudentReturn from "./StudentReturn";
+import StaffReturn from "./StaffReturn";
 
 const AllocationManager = () => {
   const { user, token } = isAuthenticated();
   const [allocateRole, setAllocateRole] = useState("");
   const [allocateState, setAllocateState] = useState(0);
+  const [returnRole, setReturnRole] = useState("");
+  const [returnState, setReturnState] = useState(0);
   const [allocationStudentData, setAllocationStudentData] = useState({
     studentClass: "",
     studentSection: "",
@@ -34,7 +38,7 @@ const AllocationManager = () => {
     allocatedBy: "",
     duration: "",
   });
- 
+
   useEffect(() => {
     if (allocateRole === "") {
       setAllocateState(0);
@@ -48,8 +52,19 @@ const AllocationManager = () => {
       setAllocateState(2);
     }
   }, [allocateRole]);
-
-
+  useEffect(() => {
+    if (returnRole === "") {
+      setReturnState(0);
+      return;
+    } else if (returnRole === "student") {
+      setReturnState(1);
+      console.log("here1");
+      return;
+    } else if (returnRole === "staff") {
+      console.log("here2");
+      setReturnState(2);
+    }
+  }, [returnRole]);
 
   return (
     <>
@@ -91,6 +106,35 @@ const AllocationManager = () => {
                   <>
                     {allocateState === 1 && <StudentAllocation />}
                     {allocateState === 2 && <StaffAllocation />}
+                  </>
+                </CardBody>
+              </Card>
+            </div>
+          </Col>
+          <Col lg="6">
+            <div className="card-wrapper">
+              <Card>
+                <CardHeader>
+                  <h3>Return Book</h3>
+                </CardHeader>
+                <CardBody>
+                  <Row>
+                    <Col>
+                      <Input
+                        id="example4cols2Input"
+                        type="select"
+                        onChange={(e) => setReturnRole(e.target.value)}
+                        value={returnRole}
+                      >
+                        <option value="">Select Role</option>
+                        <option value="student">Student</option>
+                        <option value="staff">Staff</option>
+                      </Input>
+                    </Col>
+                  </Row>
+                  <>
+                    {returnState === 1 && <StudentReturn />}
+                    {returnState === 2 && <StaffReturn />}
                   </>
                 </CardBody>
               </Card>
