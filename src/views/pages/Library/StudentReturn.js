@@ -38,7 +38,7 @@ const StudentReturn = () => {
   const [allStaff, setAllStaff] = useState([]);
   const [allBooks, setAllBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState({});
-
+  const [selectedStudent, setSelectedStudent] = useState({});
   const getAllClasses = async () => {
     try {
       setLoading(true);
@@ -94,6 +94,9 @@ const StudentReturn = () => {
     if (name === "class") {
       // console.log("@@@@@@@@=>", event.target.value);
       // setSelectedClassId(event.target.value);
+      if(event.target.value===""){
+        return;
+      }
       let selectedClass = classList.find(
         (item) => item._id.toString() === event.target.value.toString()
       );
@@ -103,7 +106,21 @@ const StudentReturn = () => {
     if (name === "section") {
       filterStudentHandler(event.target.value);
     }
+    if (name === "student") {
+        console.log("student");
+        if(event.target.value===""){
+            return;
+          }
+      let selectedStudent1 = students.find(
+        (item) => item._id.toString() === event.target.value.toString()
+      );
+      console.log(selectedStudent1);
+      setSelectedStudent(selectedStudent1);
+    }
     if (name === "bookName") {
+        if(event.target.value===""){
+            return;
+          }
       let selectedBook = allBooks.find(
         (item) => item._id.toString() === event.target.value.toString()
       );
@@ -112,7 +129,6 @@ const StudentReturn = () => {
     }
   };
   const filterStudentHandler = async (id) => {
-    
     const formData = {
       section: id,
       class: returnData.class,
@@ -130,8 +146,180 @@ const StudentReturn = () => {
     }
   };
 
-  return <div>StudentReturn</div>;
-};
+  return (
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <Form className="mt-3">
+          <Row>
+            <Col md="6">
+              <Label
+                className="form-control-label"
+                htmlFor="example4cols2Input"
+              >
+                Class
+              </Label>
+              <Input
+                id="example4cols2Input"
+                placeholder="Canteen Name"
+                type="select"
+                name="class"
+                onChange={handleChange("class")}
+                value={returnData.class}
+                required
+              >
+                <option value="">Select Class</option>
+                {classList &&
+                  classList.map((classs) => (
+                    <option key={classs._id} value={classs._id}>
+                      {classs.name}
+                    </option>
+                  ))}
+              </Input>
+            </Col>
 
+            <Col md="6">
+              <label
+                className="form-control-label"
+                htmlFor="exampleFormControlSelect3"
+              >
+                Section
+              </label>
+              <Input
+                id="exampleFormControlSelect3"
+                type="select"
+                required
+                value={returnData.section}
+                onChange={handleChange("section")}
+                name="section"
+              >
+                <option value="">Select Section</option>
+                {selectedClass.section &&
+                  selectedClass.section.map((section) => {
+                    // console.log(section.name);
+                    return (
+                      <option value={section._id} key={section._id} selected>
+                        {section.name}
+                      </option>
+                    );
+                  })}
+              </Input>
+            </Col>
+          </Row>
+          <Row>
+            <Col md="6">
+              <Label
+                className="form-control-label"
+                htmlFor="example4cols2Input"
+              >
+                Student
+              </Label>
+              <Input
+                id="example4cols2Input"
+                placeholder="Student Name"
+                type="select"
+                name="class"
+                onChange={handleChange("student")}
+                value={returnData.student}
+                required
+              >
+                <option value="">Select Student</option>
+                {students &&
+                  students.map((student) => (
+                    <option key={student._id} value={student._id}>
+                      {student.firstname} {student.lastname}
+                    </option>
+                  ))}
+              </Input>
+            </Col>
+            <Col md="6">
+              <Label
+                className="form-control-label"
+                htmlFor="example4cols2Input"
+              >
+                Issued Book
+              </Label>
+              <Input
+                id="exampleFormControlSelect3"
+                type="select"
+                required
+                value={returnData.bookName}
+                onChange={handleChange("bookName")}
+                name="section"
+              >
+                <option value="">Select Book</option>
+                {selectedStudent.issuedBooks &&
+                  selectedStudent.issuedBooks.map((book) => {
+                    console.log(book);
+                    return (
+                      <option value={book._id} key={book._id}>
+                        {book.book.name} - {book.bookID}
+                      </option>
+                    );
+                  })}
+              </Input>
+            </Col>
+          </Row>
+          <Row>
+          <Col md="6">
+              <Label
+                className="form-control-label"
+                htmlFor="example-date-input"
+              >
+                Allocation Date
+              </Label>
+              <Input
+                id="example-date-input"
+                type="date"
+                onChange={handleChange("collectionDate")}
+                value={returnData.collectionDate}
+                required
+              />
+            </Col>
+            <Col md="6">
+              <Label
+                className="form-control-label"
+                htmlFor="example4cols2Input"
+              >
+                Collected By
+              </Label>
+              <Input
+                id="example4cols2Input"
+                placeholder="Student Name"
+                type="select"
+                name="allocatedBy"
+                onChange={handleChange("collectedBy")}
+                value={returnData.collectedBy}
+                required
+              >
+                <option value="">Select Staff</option>
+                {allStaff &&
+                  allStaff.map((staff) => (
+                    <option key={staff._id} value={staff._id}>
+                      {staff.firstname} {staff.lastname}
+                    </option>
+                  ))}
+              </Input>
+            </Col>
+          </Row>
+          <Row className="mt-4">
+            <Col
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                width: "100%",
+              }}
+            >
+              <Button color="primary" type="submit">
+                Allocate Book
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      )}
+    </>
+  );
+};
 
 export default StudentReturn;
