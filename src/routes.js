@@ -61,6 +61,7 @@ import PenaltyMaster from "views/pages/FeesManagement/penalty";
 import AddShelf from 'views/pages/Library/AddShelf';
 import AddBooks from 'views/pages/Library/AddBooks';
 import AllocationManager from 'views/pages/Library/AllocationManager';
+import ViewAllocations from 'views/pages/Library/ViewAllocations';
 
 export const adminRoutes = [
   {
@@ -987,6 +988,13 @@ const routes = [
         name: "Allocations",
         miniName: "V",
         component: AllocationManager,
+        layout: "/admin",
+      },
+      {
+        path: "/view-allocations",
+        name: "View Allocations",
+        miniName: "V",
+        component: ViewAllocations,
         layout: "/admin",
       },
     ],

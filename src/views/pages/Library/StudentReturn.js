@@ -14,7 +14,7 @@ import {
 import { allStudents, filterStudent } from "api/student";
 import Loader from "components/Loader/Loader";
 import { isAuthenticated } from "api/auth";
-import { getAllBooks } from "../../../api/libraryManagement";
+import { getAllBooks, returnBook } from "../../../api/libraryManagement";
 import { allStaffs } from "api/staff";
 import "./style.css";
 import { toast, ToastContainer } from "react-toastify";
@@ -94,7 +94,7 @@ const StudentReturn = () => {
     if (name === "class") {
       // console.log("@@@@@@@@=>", event.target.value);
       // setSelectedClassId(event.target.value);
-      if(event.target.value===""){
+      if (event.target.value === "") {
         return;
       }
       let selectedClass = classList.find(
@@ -107,25 +107,15 @@ const StudentReturn = () => {
       filterStudentHandler(event.target.value);
     }
     if (name === "student") {
-        console.log("student");
-        if(event.target.value===""){
-            return;
-          }
+      console.log("student");
+      if (event.target.value === "") {
+        return;
+      }
       let selectedStudent1 = students.find(
         (item) => item._id.toString() === event.target.value.toString()
       );
       console.log(selectedStudent1);
       setSelectedStudent(selectedStudent1);
-    }
-    if (name === "bookName") {
-        if(event.target.value===""){
-            return;
-          }
-      let selectedBook = allBooks.find(
-        (item) => item._id.toString() === event.target.value.toString()
-      );
-      console.log(selectedBook);
-      setSelectedBook(selectedBook);
     }
   };
   const filterStudentHandler = async (id) => {
@@ -146,12 +136,60 @@ const StudentReturn = () => {
     }
   };
 
+  const returnHandler = async (e) => {
+    console.log(returnData);
+    let bookId = returnData.bookName.slice(0, 8);
+    console.log(bookId);
+    let bookName = returnData.bookName.slice(9, 33);
+    let allocationId = returnData.bookName.slice(34, 59);
+
+    //   "027084ed-6269d0ab66c8f238188e8c91-626a7e94d594341358930860"
+    console.log(bookName);
+    console.log(allocationId);
+
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("status", "Return");
+    formData.set("book", bookName);
+    formData.set("bookID", bookId);
+    formData.set("student", returnData.student);
+    formData.set("school", user.school);
+    formData.set("returned", true);
+    formData.set("collectedBy", returnData.collectedBy);
+    formData.set("collectionDate", returnData.collectionDate);
+    formData.set("allocationId", allocationId);
+    try {
+      setLoading(true);
+      const data = await returnBook(user._id, formData);
+      console.log(data);
+      if (data.err) {
+        setLoading(false);
+        return toast.error(data.err);
+      }
+      setLoading(false);
+      toast.success("Book Returned Successfully");
+      setReturnData({
+        class: "",
+        section: "",
+        student: "",
+        bookName: "",
+        bookId: "",
+        collectionDate: "",
+        collectedBy: "",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Book Return Failed");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       {loading ? (
         <Loader />
       ) : (
-        <Form className="mt-3">
+        <Form className="mt-3 " onSubmit={returnHandler}>
           <Row>
             <Col md="6">
               <Label
@@ -251,9 +289,14 @@ const StudentReturn = () => {
                 <option value="">Select Book</option>
                 {selectedStudent.issuedBooks &&
                   selectedStudent.issuedBooks.map((book) => {
-                    console.log(book);
+                    // console.log(book);
                     return (
-                      <option value={book._id} key={book._id}>
+                      <option
+                        value={
+                          book.bookID + "-" + book.book._id + "-" + book._id
+                        }
+                        key={book._id}
+                      >
                         {book.book.name} - {book.bookID}
                       </option>
                     );
@@ -262,12 +305,12 @@ const StudentReturn = () => {
             </Col>
           </Row>
           <Row>
-          <Col md="6">
+            <Col md="6">
               <Label
                 className="form-control-label"
                 htmlFor="example-date-input"
               >
-                Allocation Date
+                Collection Date
               </Label>
               <Input
                 id="example-date-input"
