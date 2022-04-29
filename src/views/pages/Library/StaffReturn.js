@@ -16,7 +16,7 @@ import { isAuthenticated } from "api/auth";
 import { toast, ToastContainer } from "react-toastify";
 import { getStaffByDepartment, allStaffs } from "api/staff";
 import { getDepartment } from "api/department";
-
+import { getAllBooks, returnBook } from "../../../api/libraryManagement";
 const StaffReturn = () => {
   const { user, token } = isAuthenticated();
   const [loading, setLoading] = useState(false);
@@ -108,8 +108,54 @@ const StaffReturn = () => {
     }
   };
 
+  const returnHandler = async (e) => {
+    console.log(returnData);
+    let bookId = returnData.bookName.slice(0, 8);
+    console.log(bookId);
+    let bookName = returnData.bookName.slice(9, 33);
+    let allocationId = returnData.bookName.slice(34, 59);
 
-  
+    //   "027084ed-6269d0ab66c8f238188e8c91-626a7e94d594341358930860"
+    console.log(bookName);
+    console.log(allocationId);
+
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("status", "Return");
+    formData.set("book", bookName);
+    formData.set("bookID", bookId);
+    formData.set("staff", returnData.staff);
+    formData.set("school", user.school);
+    formData.set("returned", true);
+    formData.set("collectedBy", returnData.collectedBy);
+    formData.set("collectionDate", returnData.collectionDate);
+    formData.set("allocationId", allocationId);
+    try {
+      setLoading(true);
+      const data = await returnBook(user._id, formData);
+      console.log(data);
+      if (data.err) {
+        setLoading(false);
+        return toast.error(data.err);
+      }
+      setLoading(false);
+      toast.success("Book Returned Successfully");
+      setReturnData({
+        class: "",
+        section: "",
+        student: "",
+        bookName: "",
+        bookId: "",
+        collectionDate: "",
+        collectedBy: "",
+      });
+    } catch (err) {
+      console.log(err);
+      toast.error("Book Return Failed");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <ToastContainer

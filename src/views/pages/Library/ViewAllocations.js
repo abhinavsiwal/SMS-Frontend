@@ -1075,8 +1075,8 @@ const ViewAllocations = () => {
             student_name: data.student && data.student.firstname,
             student_sid: data.student && data.student.SID,
             student_roll: data.student && data.student.roll_number,
-            class: data.student && data.student.class,
-            section: data.student && data.student.section,
+            student_class: data.student && data.student.class.name,
+            student_section: data.student && data.student.section.name,
             book_name: data.book && data.book.name,
             book_id: data.book && data.bookID,
             allocation_date: data.allocationDate,
@@ -1089,8 +1089,8 @@ const ViewAllocations = () => {
             student_name: data.student && data.student.firstname,
             student_sid: data.student && data.student.SID,
             student_roll: data.student && data.student.roll_number,
-            class: data.student && data.student.class,
-            section: data.student && data.student.section,
+            student_class: data.student.class && data.student.class.name,
+            student_section: data.student.section && data.student.section.name,
             book_name: data.book && data.book.name,
             book_id: data.book && data.bookID,
             collection_date: data.collectionDate,
@@ -1104,23 +1104,23 @@ const ViewAllocations = () => {
       let tableData = [];
 
       typeFilter.forEach((data, index) => {
-        if (data.staff && data.status === "Return") {
+        if (data.staff && data.status === "Allocated") {
           tableData.push({
             key: index,
             staff_name: data.staff && data.staff.firstname,
             staff_sid: data.staff && data.staff.SID,
-            department: data.staff && data.staff.class,
+            department: data.staff && data.staff.department.name,
             book_name: data.book && data.book.name,
             book_id: data.book && data.bookID,
             allocation_date: data.allocationDate,
             allocated_by: data.allocatedBy,
-          });
-        } else if (data.staff && data.status === "Allocated") {
+          }); 
+        } else if (data.staff && data.status === "Return") {
           tableData.push({
             key: index,
             staff_name: data.staff && data.staff.firstname,
             staff_sid: data.staff && data.staff.SID,
-            department: data.staff && data.staff.class,
+            department: data.staff && data.staff.department.name,
             book_name: data.book && data.book.name,
             book_id: data.book && data.bookID,
             collection_date: data.collectionDate,

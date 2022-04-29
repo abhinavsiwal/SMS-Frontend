@@ -999,6 +999,22 @@ const routes = [
       },
     ],
   },
+  {
+    collapse: true,
+    name: "Leave Management",
+    icon: "ni ni-bag-17 text-pink",
+    state: "leaveCollapse",
+    views: [
+      {
+        path: "/add-cart",
+        name: "Add Product",
+        miniName: "A",
+        component: Addproduct,
+        layout: "/admin",
+      },
+    
+    ],
+  },
 ];
 
 export default routes;
