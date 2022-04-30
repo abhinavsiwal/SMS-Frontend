@@ -62,6 +62,8 @@ import AddShelf from 'views/pages/Library/AddShelf';
 import AddBooks from 'views/pages/Library/AddBooks';
 import AllocationManager from 'views/pages/Library/AllocationManager';
 import ViewAllocations from 'views/pages/Library/ViewAllocations';
+import ApplyLeave from "./views/pages/LeaveManagement/ApplyLeave";
+import ViewLeaves from "./views/pages/LeaveManagement/ViewLeaves";
 
 export const adminRoutes = [
   {
@@ -1006,10 +1008,17 @@ const routes = [
     state: "leaveCollapse",
     views: [
       {
-        path: "/add-cart",
-        name: "Add Product",
-        miniName: "A",
-        component: Addproduct,
+        path: "/apply-leave",
+        name: "Apply Leave",
+        miniName: "a",
+        component: ApplyLeave,
+        layout: "/admin",
+      },
+      {
+        path: "/view-leave",
+        name: "View Leave",
+        miniName: "a",
+        component: ViewLeaves,
         layout: "/admin",
       },
     
