@@ -23,14 +23,9 @@ import AntTable from "../tables/AntTable";
 import Loader from "components/Loader/Loader";
 import { Popconfirm } from "antd";
 import { toast, ToastContainer } from "react-toastify";
-import {
-  getAllLeaves,
-  getAllStaffLeaves,
-  getAllStudentLeaves,
-  editLeave
-} from "../../../api/leave";
+import { getAllLeavesByStaff,editLeave } from "../../../api/leave";
 
-const ViewAllLeaves = () => {
+const ViewLeaves = () => {
   const { user } = isAuthenticated();
   const [studentLeaveData, setStudentLeaveData] = useState([]);
   const [staffLeaveData, setStaffLeaveData] = useState([]);
@@ -41,10 +36,6 @@ const ViewAllLeaves = () => {
   const [editLeaveId, setEditLeaveId] = useState("");
   const [editLoading, setEditLoading] = useState(false);
   const [checked, setChecked] = useState(false);
-
-  useEffect(() => {
-    getAllLeavesHandler();
-  }, [checked]);
 
   const columns1 = [
     {
@@ -544,73 +535,26 @@ const ViewAllLeaves = () => {
     },
   ];
 
-  const getAllLeavesHandler = async () => {
+  useEffect(() => {
+    getLeavesHandler();
+  }, [checked]);
+
+  const getLeavesHandler = async () => {
     try {
       setLoading(true);
-      const data = await getAllLeaves(user._id, user.school);
+      const data = await getAllLeavesByStaff(user._id, user.SID);
       console.log(data);
+      if (data.err) {
+        toast.error(data.err);
+        setLoading(false);
+        return;
+      }
 
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
-  };
+      let studentTableData = [];
+      let staffTableData = [];
 
-  const getAllStaffLeavesHandler = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllStaffLeaves(user._id, user.school);
-      console.log(data);
-      let tableData = [];
-      data.forEach((leave, i) => {
-        // console.log(leave);
-        tableData.push({
-          key: i,
-          name:
-            leave.staff && leave.staff.firstname + " " + leave.staff.lastname,
-          department: leave.department && leave.department.name,
-          date_from: leave.dateFrom,
-          date_to: leave.dateTo,
-          no_of_days: leave.noOfDays,
-          leave_type: leave.leaveType,
-          reason: leave.reason,
-          status: leave.status,
-          action: (
-            <h5 key={i + 1} className="mb-0">
-              <Button
-                className="btn-sm pull-right"
-                color="primary"
-                type="button"
-                key={"edit" + i + 1}
-                onClick={() => {
-                  setEditStatus(leave.status);
-                  setEditing(true);
-                  setEditLeaveId(leave._id);
-                }}
-              >
-                <i className="fas fa-user-edit" />
-              </Button>
-            </h5>
-          ),
-        });
-      });
-      setStaffLeaveData(tableData);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
-  };
-
-  const getAllStudentLeavesHandler = async () => {
-    try {
-      setLoading(true);
-      const data = await getAllStudentLeaves(user._id, user.school);
-      console.log(data);
-      let tableData = [];
-      data.forEach((leave, i) => {
-        tableData.push({
+      data.studentLeave.forEach((leave, i) => {
+        studentTableData.push({
           key: i,
           name:
             leave.student &&
@@ -641,22 +585,47 @@ const ViewAllLeaves = () => {
           ),
         });
       });
-      setStudentLeaveData(tableData);
+      setStudentLeaveData(studentTableData);
+      data.staffLeave.forEach((leave, i) => {
+        // console.log(leave);
+        staffTableData.push({
+          key: i,
+          name:
+            leave.staff && leave.staff.firstname + " " + leave.staff.lastname,
+          department: leave.department && leave.department.name,
+          date_from: leave.dateFrom,
+          date_to: leave.dateTo,
+          no_of_days: leave.noOfDays,
+          leave_type: leave.leaveType,
+          reason: leave.reason,
+          status: leave.status,
+          action: (
+            <h5 key={i + 1} className="mb-0">
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+                onClick={() => {
+                  setEditStatus(leave.status);
+                  setEditing(true);
+                  setEditLeaveId(leave._id);
+                }}
+              >
+                <i className="fas fa-user-edit" />
+              </Button>
+            </h5>
+          ),
+        });
+      });
+      setStaffLeaveData(staffTableData);
       setLoading(false);
     } catch (err) {
       console.log(err);
+      toast.error("Error fetching Leaves");
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log(view);
-    if (view === 1) {
-      getAllStudentLeavesHandler();
-    } else if (view === 2) {
-      getAllStaffLeavesHandler();
-    }
-  }, [view,checked]);
 
   const handleEdit = async () => {
     const formData = new FormData();
@@ -697,30 +666,36 @@ const ViewAllLeaves = () => {
         pauseOnHover
         theme="colored"
       />
-      <SimpleHeader name="View All Leaves" />
+      <SimpleHeader name="View Leaves" />
       <Container className="mt--6" fluid>
         <div className="card-wrapper">
           <Card className="mb-4">
             <CardHeader className="buttons-head">
               <div>
-                <Button
-                  color={`${view === 1 ? "warning" : "primary"}`}
-                  type="button"
-                  onClick={() => {
-                    setView(1);
-                  }}
-                >
-                  Student
-                </Button>{" "}
-                <Button
-                  color={`${view === 2 ? "warning" : "primary"}`}
-                  type="button"
-                  onClick={() => {
-                    setView(2);
-                  }}
-                >
-                  Staff
-                </Button>
+                <>
+                  {user.isClassTeacher && (
+                    <Button
+                      color={`${view === 1 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(1);
+                      }}
+                    >
+                      Student
+                    </Button>
+                  )}
+                  {user.isHead && (
+                    <Button
+                      color={`${view === 2 ? "warning" : "primary"}`}
+                      type="button"
+                      onClick={() => {
+                        setView(2);
+                      }}
+                    >
+                      Staff
+                    </Button>
+                  )}
+                </>
               </div>
             </CardHeader>
             <CardBody>
@@ -815,4 +790,4 @@ const ViewAllLeaves = () => {
   );
 };
 
-export default ViewAllLeaves;
+export default ViewLeaves;

@@ -64,6 +64,7 @@ import AllocationManager from 'views/pages/Library/AllocationManager';
 import ViewAllocations from 'views/pages/Library/ViewAllocations';
 import ApplyLeave from "./views/pages/LeaveManagement/ApplyLeave";
 import ViewAllLeaves from "./views/pages/LeaveManagement/ViewAllLeaves";
+import ViewLeaves from "./views/pages/LeaveManagement/ViewLeaves";
 
 export const adminRoutes = [
   {
@@ -1015,7 +1016,14 @@ const routes = [
         layout: "/admin",
       },
       {
-        path: "/view-allleave",
+        path: "/view-leaves",
+        name: "View Leaves",
+        miniName: "a",
+        component: ViewLeaves,
+        layout: "/admin",
+      },
+      {
+        path: "/view-allleaves",
         name: "View All Leave",
         miniName: "a",
         component: ViewAllLeaves,
