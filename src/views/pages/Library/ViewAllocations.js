@@ -20,20 +20,20 @@ import { SearchOutlined } from "@ant-design/icons";
 import Loader from "components/Loader/Loader";
 import { Popconfirm } from "antd";
 import AntTable from "../tables/AntTable";
-import { getAllHistory } from "../../../api/libraryManagement";
+import {
+  getAllHistory,
+  getHistoryByType,
+} from "../../../api/libraryManagement";
 const ViewAllocations = () => {
   const { user } = isAuthenticated();
+  const [loading, setLoading] = useState(false);
   const [type, setType] = useState("empty");
   const [typeValue, setTypeValue] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [historyData, setHistoryData] = useState([]);
-  const [typeFilter, setTypeFilter] = useState([]);
   const [view, setView] = useState(1);
-  const [studentHistory, setStudentHistory] = useState([]);
-  const [staffHistory, setStaffHistory] = useState([]);
-  useEffect(() => {
-    getAllHistoryHandler();
-  }, []);
+  const [studentAllocations, setStudentAllocations] = useState([]);
+  const [staffAllocations, setStaffAllocations] = useState([]);
+  const [studentReturns, setStudentReturns] = useState([]);
+  const [staffReturns, setStaffReturns] = useState([]);
 
   let columns1 = [
     {
@@ -310,7 +310,6 @@ const ViewAllocations = () => {
         return record.allocated_by.toLowerCase().includes(value.toLowerCase());
       },
     },
-  
   ];
   let columns2 = [
     {
@@ -587,7 +586,6 @@ const ViewAllocations = () => {
         return record.collected_by.toLowerCase().includes(value.toLowerCase());
       },
     },
-  
   ];
   let columns3 = [
     {
@@ -803,7 +801,6 @@ const ViewAllocations = () => {
         return record.allocated_by.toLowerCase().includes(value.toLowerCase());
       },
     },
-  
   ];
   let columns4 = [
     {
@@ -1019,118 +1016,117 @@ const ViewAllocations = () => {
         return record.collected_by.toLowerCase().includes(value.toLowerCase());
       },
     },
-  
   ];
 
-  const getAllHistoryHandler = async () => {
+  useEffect(() => {
+    getHistoryByTypeHandler();
+  }, []);
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
+  const getHistoryByTypeHandler = async () => {
     try {
       setLoading(true);
-      const data = await getAllHistory(user.school, user._id);
+      const data = await getHistoryByType(user.school, user._id);
       console.log(data);
+      if (data.err) {
+        toast.error(data.err);
+        setLoading(false);
+        return;
+      }
+      let studentAllocationsData = [];
+      data.studentAllocations.forEach((data, index) => {
+        studentAllocationsData.push({
+          key: index,
+          student_name:
+            data.student &&
+            data.student.firstname + " " + data.student.lastname,
+          student_sid: data.student && data.student.SID,
+          student_roll: data.student && data.student.roll_number,
+          student_class: data.class && data.class.name,
+          student_section: data.section && data.section.name,
+          book_name: data.book && data.book.name,
+          book_id: data.book && data.bookID,
+          allocation_date: getFormattedDate(data.allocationDate),
+          allocated_by:
+            data.allocatedBy &&
+            data.allocatedBy.firstname + " " + data.allocatedBy.lastname,
+        });
+      });
+      setStudentAllocations(studentAllocationsData);
 
-      setHistoryData(data);
+      let staffAllocationData = [];
+      data.staffAllocations.forEach((data, index) => {
+        staffAllocationData.push({
+          key: index,
+          staff_name:
+            data.staff && data.staff.firstname + " " + data.staff.lastname,
+          staff_sid: data.staff && data.staff.SID,
+          department: data.department && data.department.name,
+          book_name: data.book && data.book.name,
+          book_id: data.book && data.bookID,
+          allocation_date:getFormattedDate(data.allocationDate),
+          allocated_by:
+            data.allocatedBy &&
+            data.allocatedBy.firstname + " " + data.allocatedBy.lastname,
+        });
+      });
+      setStaffAllocations(staffAllocationData);
 
+      let studentReturnsData = [];
+      data.studentReturns.forEach((data, index) => {
+        studentReturnsData.push({
+          key: index,
+          student_name:
+            data.student &&
+            data.student.firstname + " " + data.student.lastname,
+          student_sid: data.student && data.student.SID,
+          student_roll: data.student && data.student.roll_number,
+          student_class: data.class && data.class.name,
+          student_section: data.section && data.section.name,
+          book_name: data.book && data.book.name,
+          book_id: data.book && data.bookID,
+          collection_date: getFormattedDate(data.collectionDate),
+          collected_by:
+            data.collectedBy &&
+            data.collectedBy.firstname + " " + data.collectedBy.lastname,
+        });
+      });
+      setStudentReturns(studentReturnsData);
+
+      let staffReturnsData = [];
+      data.staffReturns.forEach((data, index) => {
+        staffReturnsData.push({
+          key: index,
+          staff_name:
+            data.staff && data.staff.firstname + " " + data.staff.lastname,
+          staff_sid: data.staff && data.staff.SID,
+          department: data.staff && data.staff.department.name,
+          book_name: data.book && data.book.name,
+          book_id: data.book && data.bookID,
+          collection_date: getFormattedDate(data.collectionDate),
+          collected_by:
+            data.collectedBy &&
+            data.collectedBy.firstname + " " + data.collectedBy.lastname,
+        });
+      });
+      setStaffReturns(staffReturnsData);
       setLoading(false);
     } catch (err) {
       console.log(err);
       setLoading(false);
-      toast.error("Error fetching Allocations");
+      toast.error("Error fetching data");
     }
   };
-
-  useEffect(() => {
-    console.log("here");
-    if (type === "empty") {
-      setTypeFilter([]);
-      return;
-    } else if (type === "allocation") {
-      setTypeValue(1);
-
-      let filteredData = historyData.filter(
-        (data) => data.status === "Allocated"
-      );
-      console.log(filteredData);
-      setTypeFilter(filteredData);
-    } else if (type === "return") {
-      setTypeValue(2);
-      let filteredData = historyData.filter((data) => data.status === "Return");
-      setTypeFilter(filteredData);
-      console.log(filteredData);
-    }
-  }, [type]);
-
-  useEffect(() => {
-    console.log("here");
-    if (view === 0) {
-      return;
-    } else if (view === 1) {
-      console.log("@@@@@");
-      let tableData = [];
-      console.log(typeFilter);
-      typeFilter.forEach((data, index) => {
-        console.log(data);
-        if (data.student && data.status === "Allocated") {
-          tableData.push({
-            key: index,
-            student_name: data.student && data.student.firstname,
-            student_sid: data.student && data.student.SID,
-            student_roll: data.student && data.student.roll_number,
-            student_class: data.student && data.student.class.name,
-            student_section: data.student && data.student.section.name,
-            book_name: data.book && data.book.name,
-            book_id: data.book && data.bookID,
-            allocation_date: data.allocationDate,
-            allocated_by: data.allocatedBy,
-      
-          });
-        } else if (data.student && data.status === "Return") {
-          tableData.push({
-            key: index,
-            student_name: data.student && data.student.firstname,
-            student_sid: data.student && data.student.SID,
-            student_roll: data.student && data.student.roll_number,
-            student_class: data.student.class && data.student.class.name,
-            student_section: data.student.section && data.student.section.name,
-            book_name: data.book && data.book.name,
-            book_id: data.book && data.bookID,
-            collection_date: data.collectionDate,
-            collected_by: data.collectedBy,
-          });
-        }
-      });
-      console.log(tableData);
-      setStudentHistory(tableData);
-    } else if (view === 2) {
-      let tableData = [];
-
-      typeFilter.forEach((data, index) => {
-        if (data.staff && data.status === "Allocated") {
-          tableData.push({
-            key: index,
-            staff_name: data.staff && data.staff.firstname,
-            staff_sid: data.staff && data.staff.SID,
-            department: data.staff && data.staff.department.name,
-            book_name: data.book && data.book.name,
-            book_id: data.book && data.bookID,
-            allocation_date: data.allocationDate,
-            allocated_by: data.allocatedBy,
-          }); 
-        } else if (data.staff && data.status === "Return") {
-          tableData.push({
-            key: index,
-            staff_name: data.staff && data.staff.firstname,
-            staff_sid: data.staff && data.staff.SID,
-            department: data.staff && data.staff.department.name,
-            book_name: data.book && data.book.name,
-            book_id: data.book && data.bookID,
-            collection_date: data.collectionDate,
-            collected_by: data.collectedBy,
-          });
-        }
-      });
-      setStaffHistory(tableData);
-    }
-  }, [view, type, typeValue]);
 
   return (
     <>
@@ -1196,13 +1192,13 @@ const ViewAllocations = () => {
                     <Loader />
                   ) : (
                     <>
-                      {typeValue === 1 && (
+                      {type === "allocation" && (
                         <>
                           {view === 1 && (
                             <div style={{ overflowX: "auto" }}>
                               <AntTable
                                 columns={columns1}
-                                data={studentHistory}
+                                data={studentAllocations}
                                 pagination={true}
                                 exportFileName="LibraryDetails"
                               />
@@ -1212,7 +1208,7 @@ const ViewAllocations = () => {
                             <div style={{ overflowX: "auto" }}>
                               <AntTable
                                 columns={columns3}
-                                data={staffHistory}
+                                data={staffAllocations}
                                 pagination={true}
                                 exportFileName="LibraryDetails"
                               />
@@ -1220,13 +1216,13 @@ const ViewAllocations = () => {
                           )}
                         </>
                       )}
-                      {typeValue === 2 && (
+                      {type === "return" && (
                         <>
                           {view === 1 && (
                             <div style={{ overflowX: "auto" }}>
                               <AntTable
                                 columns={columns2}
-                                data={studentHistory}
+                                data={studentReturns}
                                 pagination={true}
                                 exportFileName="LibraryDetails"
                               />
@@ -1236,7 +1232,7 @@ const ViewAllocations = () => {
                             <div style={{ overflowX: "auto" }}>
                               <AntTable
                                 columns={columns4}
-                                data={staffHistory}
+                                data={staffReturns}
                                 pagination={true}
                                 exportFileName="LibraryDetails"
                               />

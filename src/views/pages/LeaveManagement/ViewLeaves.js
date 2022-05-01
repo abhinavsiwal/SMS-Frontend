@@ -538,7 +538,18 @@ const ViewLeaves = () => {
   useEffect(() => {
     getLeavesHandler();
   }, [checked]);
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
 
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
   const getLeavesHandler = async () => {
     try {
       setLoading(true);
@@ -561,8 +572,8 @@ const ViewLeaves = () => {
             leave.student.firstname + " " + leave.student.lastname,
           class: leave.class && leave.class.name,
           section: leave.section && leave.section.name,
-          date_from: leave.dateFrom,
-          date_to: leave.dateTo,
+          date_from: getFormattedDate(leave.dateFrom),
+          date_to: getFormattedDate(leave.dateTo),
           no_of_days: leave.noOfDays,
           reason: leave.reason,
           status: leave.status,

@@ -125,7 +125,9 @@ const StaffAllocation = () => {
     formData.set("allocationDate", allocationData.allocationDate);
     formData.set("duration", allocationData.duration);
     formData.set("school", user.school);
-
+    formData.set("department", allocationData.department);
+    formData.set("allocatedBy", allocationData.allocatedBy);
+    formData.set("status","Allocated");
     try {
       setLoading(true);
       const data = await allocateBook(user._id, formData);

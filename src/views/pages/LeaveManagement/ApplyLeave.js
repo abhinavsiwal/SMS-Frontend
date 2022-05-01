@@ -41,7 +41,18 @@ const ApplyLeave = () => {
     priority: "",
     section: "",
   });
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
 
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
   const columns = [
     {
       title: "Date From",
@@ -253,8 +264,8 @@ const ApplyLeave = () => {
       for (let i = 0; i < data.length; i++) {
         tableData.push({
           key: i,
-          date_from: data[i].dateFrom,
-          date_to: data[i].dateTo,
+          date_from: getFormattedDate(data[i].dateFrom),
+          date_to: getFormattedDate(data[i].dateTo),
           no_of_days: data[i].noOfDays,
           leave_type: data[i].leaveType,
           reason: data[i].reason,
