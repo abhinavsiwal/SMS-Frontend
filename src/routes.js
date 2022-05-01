@@ -975,7 +975,7 @@ const routes = [
         path: "/add-shelf",
         name: "Add Section and Shelf",
         miniName: "A",
-        component: AddShelf,
+        component: AddShelf, 
         layout: "/admin",
       },
       {

@@ -37,7 +37,7 @@ import { useHistory, useParams } from "react-router-dom";
 function UpdateStudent({ studentDetails }) {
   // Stepper form steps
   const [classList, setClassList] = useState([]);
-  // console.log(studentDetails);
+  console.log(studentDetails);
   const history = useHistory();
   const params = useParams();
   const [step, setStep] = useState(0);

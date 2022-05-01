@@ -13,7 +13,6 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-  
 } from "reactstrap";
 // nodejs library that concatenates classes
 import classnames from "classnames";
@@ -39,7 +38,7 @@ function ViewAllCanteen() {
   const [selectedCanteen, setSelectedCanteen] = useState({});
   const { user, token } = isAuthenticated();
   const [searchText, setSearchText] = useState("");
-const [canteenData, setCanteenData] = useState([]);
+  const [canteenData, setCanteenData] = useState([]);
   const [count, setCount] = React.useState(0);
   // console.log("count", count);
 
@@ -54,6 +53,7 @@ const [canteenData, setCanteenData] = useState([]);
     setLoading(true);
     const res = await allCanteens(user._id, user.school); // Call your function here
     // console.log(res);
+   await setCanteenData(allCanteen);
     await setAllCanteen(res);
     await setSelectedCanteenId(res[0]._id);
     setLoading(false);
@@ -94,25 +94,27 @@ const [canteenData, setCanteenData] = useState([]);
     }, 500);
   };
 
- 
-
-useEffect(() => {
-  if(searchText ===""){
-    setCanteenData(allCanteen);
-    return;
-  }
-  const filteredData = allCanteen.filter((canteen) => {
-    if(searchText === ""){
-      return canteen;
+  useEffect(() => {
+    if (searchText === "") {
+      console.log("here");
+      setCanteenData(allCanteen);
+      return;
     }
-    else{
-      return canteen.name.toLowerCase().includes(searchText);
+    const filteredData = allCanteen.filter((canteen) => {
+      if (searchText === "") {
+        return canteen;
+      } else {
+        return canteen.name.toLowerCase().includes(searchText);
+      }
+    });
+
+    setCanteenData(filteredData);
+
+    return ()=>{
+      setCanteenData(allCanteen);
     }
-  })
 
-setCanteenData(filteredData);
-}, [searchText])
-
+  }, [searchText]);
 
   let inputHandler = (e) => {
     //convert input text to lower case
@@ -123,16 +125,19 @@ setCanteenData(filteredData);
   const [check, setCheck] = React.useState(false);
   return (
     <>
-      <SimpleHeader name="Canteen" parentName="View All Canteen"  />
+      <SimpleHeader name="Canteen" parentName="View All Canteen" />
 
-      <div className="container-fluid search-container"  >
+      <div className="container-fluid search-container">
         <Form
           className={classnames(
             "navbar-search form-inline mr-sm-3 navbar-search-light"
           )}
         >
           <FormGroup className="mb-0">
-            <InputGroup className="input-group-alternative input-group-merge" onChange={inputHandler} >
+            <InputGroup
+              className="input-group-alternative input-group-merge"
+              onChange={(e) => setSearchText(e.target.value.toLowerCase())}
+            >
               <InputGroupAddon addonType="prepend">
                 <InputGroupText>
                   <i className="fas fa-search" />
@@ -158,10 +163,14 @@ setCanteenData(filteredData);
         <>
           {check === false && (
             <div className="mt--6s items">
-              {canteenData &&
+              {canteenData ?(
                 canteenData.map((canteen) => {
                   return (
-                    <NavLink key={canteen._id} fluid onClick={() => selectedStaff(canteen._id)}>
+                    <NavLink
+                      key={canteen._id}
+                      fluid
+                      onClick={() => selectedStaff(canteen._id)}
+                    >
                       <Card className="h-100 w-100">
                         <CardBody>
                           <p className="d-flex justify-content-around">
@@ -180,7 +189,36 @@ setCanteenData(filteredData);
                       </div>
                     </NavLink>
                   );
-                })}
+                })):(
+                  <>
+                  {allCanteen.map((canteen) => {
+                      return (
+                        <NavLink
+                          key={canteen._id}
+                          fluid
+                          onClick={() => selectedStaff(canteen._id)}
+                        >
+                          <Card className="h-100 w-100">
+                            <CardBody>
+                              <p className="d-flex justify-content-around">
+                                {canteen.name}
+                              </p>
+                            </CardBody>
+                          </Card>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              fontSize: "1.2rem",
+                            }}
+                          >
+                            {canteen.name}
+                          </div>
+                        </NavLink>
+                      );
+                  })}
+                  </>
+                )}
             </div>
           )}
           {check && (

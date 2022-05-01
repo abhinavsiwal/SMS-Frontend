@@ -87,6 +87,13 @@ const AllStudents = () => {
     setStudentData(data);
     setComponent(true);
   };
+ 
+  useEffect(() => {
+    
+  dispatch(setStudentEditing(false));
+    
+  }, [])
+  
 
   const fetchStudents = async () => {
     const endOffset = itemOffset + itemsPerPage;
@@ -187,6 +194,7 @@ const AllStudents = () => {
     // console.log("Update Student");
     // console.log(studentData);
     dispatch(setStudentEditing(true));
+    setEditing(true);
     setEditingData(studentData);
     // return <UpdateStudent studentDetails={studentData} />;
   };
@@ -542,7 +550,7 @@ const AllStudents = () => {
         <StudentDetails data={studentData} backHandle={backHandler} />
       ) : (
         <>
-          {!studentEditing ? (
+          {!editing ? (
             <>
               <SimpleHeader name="All Students" />
               <Container className="mt--6" fluid>
