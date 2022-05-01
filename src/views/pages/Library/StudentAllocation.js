@@ -143,6 +143,9 @@ const StudentAllocation = () => {
     formData.set("allocationDate", allocationData.allocationDate);
     formData.set("duration", allocationData.duration);
     formData.set("school", user.school);
+    formData.set("class",allocationData.class);
+    formData.set("section",allocationData.section);
+    formData.set("status","Allocated");
 
     try {
       setLoading(true);
