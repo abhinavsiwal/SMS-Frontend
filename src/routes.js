@@ -63,7 +63,7 @@ import AddBooks from 'views/pages/Library/AddBooks';
 import AllocationManager from 'views/pages/Library/AllocationManager';
 import ViewAllocations from 'views/pages/Library/ViewAllocations';
 import ApplyLeave from "./views/pages/LeaveManagement/ApplyLeave";
-import ViewLeaves from "./views/pages/LeaveManagement/ViewLeaves";
+import ViewAllLeaves from "./views/pages/LeaveManagement/ViewAllLeaves";
 
 export const adminRoutes = [
   {
@@ -1015,10 +1015,10 @@ const routes = [
         layout: "/admin",
       },
       {
-        path: "/view-leave",
-        name: "View Leave",
+        path: "/view-allleave",
+        name: "View All Leave",
         miniName: "a",
-        component: ViewLeaves,
+        component: ViewAllLeaves,
         layout: "/admin",
       },
     

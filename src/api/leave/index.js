@@ -59,3 +59,32 @@ export const getAllLeaves = async (userId, schoolId) => {
     throw new err();
   }
 };
+
+export const getAllStaffLeaves = async(userId, schoolId) => {
+    try {
+        const { data } = await sendRequest(
+        `${process.env.REACT_APP_API_URL}/api/school/leave/staff/all/${schoolId}/${userId}`,
+        {},
+        "GET"
+        );
+        console.log(data);
+        return data;
+    } catch (err) {
+        console.log(err);
+        throw new err();
+    }
+}
+export const getAllStudentLeaves = async(userId, schoolId) => {
+    try {
+        const { data } = await sendRequest(
+        `${process.env.REACT_APP_API_URL}/api/school/leave/student/all/${schoolId}/${userId}`,
+        {},
+        "GET"
+        );
+        console.log(data);
+        return data;
+    } catch (err) {
+        console.log(err);
+        throw new err();
+    }
+}

@@ -18,7 +18,11 @@ import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
 import { ToastContainer, toast } from "react-toastify";
 import Loader from "components/Loader/Loader";
-import { createLeave, getLeaveBySID,deleteLeaveBySID } from "../../../api/leave";
+import {
+  createLeave,
+  getLeaveBySID,
+  deleteLeaveBySID,
+} from "../../../api/leave";
 import { Popconfirm } from "antd";
 
 const ApplyLeave = () => {
@@ -35,7 +39,7 @@ const ApplyLeave = () => {
     toType: "",
     reason: "",
     priority: "",
-    section:"",
+    section: "",
   });
 
   const columns = [
@@ -283,41 +287,41 @@ const ApplyLeave = () => {
     }
   };
 
-  const handleDelete=async(leaveId)=>{
+  const handleDelete = async (leaveId) => {
     try {
-        setLoading(true);
-        const data = await deleteLeaveBySID(user._id,user.SID,leaveId);
-        console.log(data);
-        if (data.err) {
-            toast.error(data.err);
-            setLoading(false);
-            return;
-        }
-        toast.success("Leave Deleted Successfully");
-        setChecked(!checked);
+      setLoading(true);
+      const data = await deleteLeaveBySID(user._id, user.SID, leaveId);
+      console.log(data);
+      if (data.err) {
+        toast.error(data.err);
         setLoading(false);
+        return;
+      }
+      toast.success("Leave Deleted Successfully");
+      setChecked(!checked);
+      setLoading(false);
     } catch (err) {
-        console.log(err);
-        toast.error("Deleting Leave Failed");
-        setLoading(false)
+      console.log(err);
+      toast.error("Deleting Leave Failed");
+      setLoading(false);
     }
-  }
+  };
 
   const handleLeaveSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.set("leaveType", leaveData.leaveType);
     formData.set("dateFrom", leaveData.from);
     formData.set("dateTo", leaveData.to);
     formData.set("reason", leaveData.reason);
     formData.set("userId", user._id);
     formData.set("user", user.user);
-    if(user.user==="student"){
-    formData.set("section", user.section);
-    }else if(user.user==="staff"){
+    if (user.user === "student") {
+      formData.set("section", user.section);
+      formData.set("class", user.class);
+    } else if (user.user === "staff") {
+      formData.set("leaveType", leaveData.leaveType);
       formData.set("department", user.department);
     }
-
 
     try {
       setAddLoading(true);
@@ -372,29 +376,34 @@ const ApplyLeave = () => {
               <Card>
                 <CardBody>
                   <Form className="mb-4" onSubmit={handleLeaveSubmit}>
-                    <Row>
-                      <Col>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Leave Type
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Leave Type"
-                          type="select"
-                          onChange={handleChange("leaveType")}
-                          value={leaveData.leaveType}
-                          required
-                        >
-                          <option value="">Select Leave Type</option>
-                          <option value="Earned Leave">Earned Leave</option>
-                          <option value="LOP Leave">LOP Leave</option>
-                          <option value="Comp Off Leave">Comp Off Leave</option>
-                        </Input>
-                      </Col>
-                    </Row>
+                    {user.user === "staff" && (
+                      <Row>
+                        <Col>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Leave Type
+                          </label>
+                          <Input
+                            id="example4cols2Input"
+                            placeholder="Leave Type"
+                            type="select"
+                            onChange={handleChange("leaveType")}
+                            value={leaveData.leaveType}
+                            required
+                          >
+                            <option value="">Select Leave Type</option>
+                            <option value="Earned Leave">Earned Leave</option>
+                            <option value="LOP Leave">LOP Leave</option>
+                            <option value="Comp Off Leave">
+                              Comp Off Leave
+                            </option>
+                          </Input>
+                        </Col>
+                      </Row>
+                    )}
+
                     <Row>
                       <Col md="8">
                         <label
