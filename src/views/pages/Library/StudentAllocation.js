@@ -31,6 +31,8 @@ const StudentAllocation = () => {
     allocationDate: "",
     allocatedBy: "",
     duration: "",
+    allocationType: "",
+    rent: "",
   });
   const [loading, setLoading] = useState(false);
   const [classList, setClassList] = useState([]);
@@ -41,6 +43,7 @@ const StudentAllocation = () => {
   const [selectedBook, setSelectedBook] = useState({});
   const [allStaff, setAllStaff] = useState([]);
   const [checked, setChecked] = useState(false);
+  const [typeView, setTypeView] = useState(0);
   const getAllClasses = async () => {
     try {
       setLoading(true);
@@ -113,11 +116,18 @@ const StudentAllocation = () => {
       console.log(selectedBook);
       setSelectedBook(selectedBook);
     }
+    if (name === "allocationType") {
+      if (event.target.value === "Read Here") {
+        setTypeView(1);
+      } else if (event.target.value === "Rent") {
+        setTypeView(2);
+      }
+    }
   };
 
   const filterStudentHandler = async (id) => {
     console.log(allocationData);
-    const formData = { 
+    const formData = {
       section: id,
       class: allocationData.class,
     };
@@ -143,11 +153,13 @@ const StudentAllocation = () => {
     formData.set("allocationDate", allocationData.allocationDate);
     formData.set("duration", allocationData.duration);
     formData.set("school", user.school);
-    formData.set("class",allocationData.class);
-    formData.set("section",allocationData.section);
-    formData.set("status","Allocated");
-    formData.set("allocatedBy",allocationData.allocatedBy);
-
+    formData.set("class", allocationData.class);
+    formData.set("section", allocationData.section);
+    formData.set("status", "Allocated");
+    formData.set("allocatedBy", allocationData.allocatedBy);
+    if (typeView === 2) {
+      formData.set("rent", allocationData.rent);
+    }
     try {
       setLoading(true);
       const data = await allocateBook(user._id, formData);
@@ -157,7 +169,7 @@ const StudentAllocation = () => {
         return toast.error(data.err);
       }
       setChecked(!checked);
-      
+
       toast.success("Book Allocated Successfully");
       setAllocationData({
         class: "",
@@ -168,7 +180,7 @@ const StudentAllocation = () => {
         allocationDate: "",
         allocatedBy: "",
         duration: "",
-      })
+      });
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -354,6 +366,7 @@ const StudentAllocation = () => {
               <Input
                 id="example-date-input"
                 type="number"
+                placeholder="Duration"
                 onChange={handleChange("duration")}
                 value={allocationData.duration}
                 required
@@ -384,6 +397,45 @@ const StudentAllocation = () => {
                   ))}
               </Input>
             </Col>
+          </Row>
+          <Row>
+            <Col md="6">
+              <Label
+                className="form-control-label"
+                htmlFor="example-date-input"
+              >
+                Allocation Type
+              </Label>
+              <Input
+                id="example-date-input"
+                type="select"
+                onChange={handleChange("allocationType")}
+                value={allocationData.allocationType}
+                required
+              >
+                <option value="">Select Type</option>
+                <option value="Read Here">Read Here</option>
+                <option value="Rent">Rent</option>
+              </Input>
+            </Col>
+            {typeView === 2 && (
+              <Col md="6">
+                <Label
+                  className="form-control-label"
+                  htmlFor="example-date-input"
+                >
+                  Rent
+                </Label>
+                <Input
+                  id="example-date-input"
+                  type="number"
+                  placeholder="Rent"
+                  onChange={handleChange("rent")}
+                  value={allocationData.rent}
+                  required
+                />
+              </Col>
+            )}
           </Row>
           <Row className="mt-4">
             <Col
