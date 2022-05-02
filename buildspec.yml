@@ -12,7 +12,7 @@ phases:
   post_build:
     commands:
       - echo "Updating files in s3 bucket.."
-      - aws s3 sync build/ s3://dev-frontend-codebuild --delete
+      - aws s3 sync build/ s3://dev-frontend-main --delete
 
 
 # artifacts:

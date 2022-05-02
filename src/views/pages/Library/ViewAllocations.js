@@ -1110,7 +1110,7 @@ const ViewAllocations = () => {
           staff_name:
             data.staff && data.staff.firstname + " " + data.staff.lastname,
           staff_sid: data.staff && data.staff.SID,
-          department: data.staff && data.staff.department.name,
+          department: data.department && data.department.name,
           book_name: data.book && data.book.name,
           book_id: data.book && data.bookID,
           collection_date: getFormattedDate(data.collectionDate),
@@ -1118,7 +1118,7 @@ const ViewAllocations = () => {
             data.collectedBy &&
             data.collectedBy.firstname + " " + data.collectedBy.lastname,
         });
-      });
+      }); 
       setStaffReturns(staffReturnsData);
       setLoading(false);
     } catch (err) {

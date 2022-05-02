@@ -83,7 +83,7 @@ const StaffReturn = () => {
       if (event.target.value === "") {
         return;
       }
-      let selectedStaff1 = allStaff.find(
+      let selectedStaff1 = filterStaff.find(
         (staff) => staff._id === event.target.value
       );
       console.log(selectedStaff1);
@@ -130,6 +130,7 @@ const StaffReturn = () => {
     formData.set("collectedBy", returnData.collectedBy);
     formData.set("collectionDate", returnData.collectionDate);
     formData.set("allocationId", allocationId);
+    formData.set("department", returnData.department);
     try {
       setLoading(true);
       const data = await returnBook(user._id, formData);
@@ -141,9 +142,8 @@ const StaffReturn = () => {
       setLoading(false);
       toast.success("Book Returned Successfully");
       setReturnData({
-        class: "",
-        section: "",
-        student: "",
+        department: "",
+        staff: "",
         bookName: "",
         bookId: "",
         collectionDate: "",
@@ -172,7 +172,7 @@ const StaffReturn = () => {
       {loading ? (
         <Loader />
       ) : (
-        <Form className="mt-3">
+        <Form className="mt-3" onSubmit={returnHandler}>
           <Row>
             <Col md="6">
               <Label
@@ -246,7 +246,12 @@ const StaffReturn = () => {
                   selectedStaff.issuedBooks.map((book) => {
                     console.log(book);
                     return (
-                      <option value={book._id} key={book._id}>
+                      <option
+                        value={
+                          book.bookID + "-" + book.book._id + "-" + book._id
+                        }
+                        key={book._id}
+                      >
                         {book.book.name} - {book.bookID}
                       </option>
                     );
@@ -305,7 +310,7 @@ const StaffReturn = () => {
               }}
             >
               <Button color="primary" type="submit">
-                Allocate Book
+                Return Book
               </Button>
             </Col>
           </Row>
