@@ -403,13 +403,13 @@ const ApplyLeave = () => {
           {addLoading ? (
             <Loader />
           ) : (
-            <Col lg="6">
+            <Col lg="12" >
               <Card>
                 <CardBody>
                   <Form className="mb-4" onSubmit={handleLeaveSubmit}>
                     {user.user === "staff" && (
                       <Row>
-                        <Col>
+                        <Col >
                           <label
                             className="form-control-label"
                             htmlFor="example4cols2Input"
@@ -436,7 +436,7 @@ const ApplyLeave = () => {
                     )}
 
                     <Row>
-                      <Col md="8">
+                      <Col >
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -452,7 +452,7 @@ const ApplyLeave = () => {
                           required
                         />
                       </Col>
-                      <Col md="4">
+                      <Col>
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -472,9 +472,8 @@ const ApplyLeave = () => {
                           <option value="Half">Half</option>
                         </Input>
                       </Col>
-                    </Row>
-                    <Row>
-                      <Col md="8">
+                  
+                      <Col>
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -490,7 +489,7 @@ const ApplyLeave = () => {
                           required
                         />
                       </Col>
-                      <Col md="4">
+                      <Col >
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -528,8 +527,7 @@ const ApplyLeave = () => {
                           required
                         />
                       </Col>
-                    </Row>
-                    <Row>
+                   
                       <Col>
                         <label
                           className="form-control-label"
