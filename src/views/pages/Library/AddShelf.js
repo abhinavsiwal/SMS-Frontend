@@ -55,9 +55,11 @@ const AddShelf = () => {
     {
       title: "S No.",
       dataIndex: "s_no",
+      align:"left",
     },
     {
       title: "Shelf Name",
+      align:"left",
       dataIndex: "shelf_name",
       sorter: (a, b) => a.shelf_name > b.shelf_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -88,6 +90,7 @@ const AddShelf = () => {
     {
       title: "Shelf Abbreviation ",
       dataIndex: "shelf_abv",
+      align:"left",
       sorter: (a, b) => a.shelf_abv > b.shelf_abv,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -116,6 +119,7 @@ const AddShelf = () => {
     },
     {
       title: "Action",
+      align:"left",
       key: "action",
       dataIndex: "action",
       fixed: "right",

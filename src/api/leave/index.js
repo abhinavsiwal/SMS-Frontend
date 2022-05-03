@@ -60,55 +60,61 @@ export const getAllLeaves = async (userId, schoolId) => {
   }
 };
 
-export const getAllStaffLeaves = async(userId, schoolId) => {
-    try {
-        const { data } = await sendRequest(
-        `${process.env.REACT_APP_API_URL}/api/school/leave/staff/all/${schoolId}/${userId}`,
-        {},
-        "GET"
-        );
-        console.log(data);
-        return data;
-    } catch (err) {
-        console.log(err);
-        throw new err();
-    }
-}
-export const getAllStudentLeaves = async(userId, schoolId) => {
-    try {
-        const { data } = await sendRequest(
-        `${process.env.REACT_APP_API_URL}/api/school/leave/student/all/${schoolId}/${userId}`,
-        {},
-        "GET"
-        );
-        console.log(data);
-        return data;
-    } catch (err) {
-        console.log(err);
-        throw new err();
-    }
-}
-
-
-export const getAllLeavesByStaff= async(userId,sId)=>{
-    try {
-        const {data} = await sendRequest(`${process.env.REACT_APP_API_URL}/api/school/leave/staff/${userId}/${sId}`,{}, "GET");
-        console.log(data);
-        return data;
-    } catch (err) {
-        console.log(err);
-        throw new err();
-    }
-}
-
-
-export const editLeave = async(userId,formData)=>{
+export const getAllStaffLeaves = async (userId, schoolId) => {
   try {
-    const {data} = await sendRequest(`${process.env.REACT_APP_API_URL}/api/school/leave/edit/${userId}`,formData, "PUT");
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/leave/staff/all/${schoolId}/${userId}`,
+      {},
+      "GET"
+    );
     console.log(data);
     return data;
   } catch (err) {
     console.log(err);
     throw new err();
   }
-}
+};
+export const getAllStudentLeaves = async (userId, schoolId) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/leave/student/all/${schoolId}/${userId}`,
+      {},
+      "GET"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};
+
+export const getAllLeavesByStaff = async (userId, sId) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/leave/staff/${userId}/${sId}`,
+      {},
+      "GET"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};
+
+export const editLeave = async (userId, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/leave/edit/${userId}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};

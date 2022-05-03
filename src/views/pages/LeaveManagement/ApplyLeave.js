@@ -22,6 +22,7 @@ import {
   createLeave,
   getLeaveBySID,
   deleteLeaveBySID,
+  editLeave
 } from "../../../api/leave";
 import { Popconfirm } from "antd";
 
@@ -57,7 +58,8 @@ const ApplyLeave = () => {
     {
       title: "Date From",
       dataIndex: "date_from",
-      width: "40%",
+      // width: "40%",
+      align:"left",
       sorter: (a, b) => a.date_from > b.date_from,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -87,7 +89,8 @@ const ApplyLeave = () => {
     {
       title: "Date To",
       dataIndex: "date_to",
-      width: "40%",
+      // width: "40%",
+      align:"left",
       sorter: (a, b) => a.date_to > b.date_to,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -117,7 +120,8 @@ const ApplyLeave = () => {
     {
       title: "No of Days",
       dataIndex: "no_of_days",
-      width: "40%",
+      // width: "40%",
+      align:"left",
       sorter: (a, b) => a.no_of_days > b.no_of_days,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -144,40 +148,41 @@ const ApplyLeave = () => {
         return record.no_of_days.toLowerCase().includes(value.toLowerCase());
       },
     },
-    {
-      title: "Leave Type",
-      dataIndex: "leave_type",
-      width: "40%",
-      sorter: (a, b) => a.leave_type > b.leave_type,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.leave_type.toLowerCase().includes(value.toLowerCase());
-      },
-    },
+    // {
+    //   title: "Leave Type",
+    //   dataIndex: "leave_type",
+    //   // width: "40%",
+    //   sorter: (a, b) => a.leave_type > b.leave_type,
+    //   filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+    //     return (
+    //       <>
+    //         <Input
+    //           autoFocus
+    //           placeholder="Type text here"
+    //           value={selectedKeys[0]}
+    //           onChange={(e) => {
+    //             setSelectedKeys(e.target.value ? [e.target.value] : []);
+    //             confirm({ closeDropdown: false });
+    //           }}
+    //           onBlur={() => {
+    //             confirm();
+    //           }}
+    //         ></Input>
+    //       </>
+    //     );
+    //   },
+    //   filterIcon: () => {
+    //     return <SearchOutlined />;
+    //   },
+    //   onFilter: (value, record) => {
+    //     return record.leave_type.toLowerCase().includes(value.toLowerCase());
+    //   },
+    // },
     {
       title: "Reason",
       dataIndex: "reason",
-      width: "40%",
+      // width: "40%",
+      align:"left",
       sorter: (a, b) => a.reason > b.reason,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -207,7 +212,8 @@ const ApplyLeave = () => {
     {
       title: "Status",
       dataIndex: "status",
-      width: "40%",
+      // width: "40%",
+      align:"left",
       sorter: (a, b) => a.status > b.status,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -239,6 +245,7 @@ const ApplyLeave = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
+      align:"left",
     },
   ];
 
@@ -279,10 +286,10 @@ const ApplyLeave = () => {
                 key={"delete" + i + 1}
               >
                 <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => handleDelete(data[i]._id)}
+                  title="Sure to Cancel?"
+                  onConfirm={() => handleDelete(data[i]._id,data[i].dateFrom)}
                 >
-                  <i className="fas fa-trash" />
+                  Cancel
                 </Popconfirm>
               </Button>
             </h5>
@@ -298,17 +305,30 @@ const ApplyLeave = () => {
     }
   };
 
-  const handleDelete = async (leaveId) => {
+  const handleDelete = async (leaveId,dateFrom) => {
+
+    let dateFrom1 = new Date(dateFrom);
+    let today = new Date();
+
+    if(today>dateFrom1){
+      toast.error("You can't cancel this leave");
+      return;
+    }
+
+
+    let formData = new FormData();
+    formData.set("status", "Cancelled");
+    formData.set("id", leaveId);
     try {
       setLoading(true);
-      const data = await deleteLeaveBySID(user._id, user.SID, leaveId);
+      const data = await editLeave(user._id,formData);
       console.log(data);
       if (data.err) {
         toast.error(data.err);
         setLoading(false);
         return;
       }
-      toast.success("Leave Deleted Successfully");
+      toast.success("Leave Cancelled Successfully");
       setChecked(!checked);
       setLoading(false);
     } catch (err) {

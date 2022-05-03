@@ -50,7 +50,7 @@ const ViewAllLeaves = () => {
     {
       title: "Name",
       dataIndex: "name",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -140,7 +140,7 @@ const ViewAllLeaves = () => {
     {
       title: "Date To",
       dataIndex: "date_to",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.date_to > b.date_to,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -170,7 +170,7 @@ const ViewAllLeaves = () => {
     {
       title: "No of Days",
       dataIndex: "no_of_days",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.no_of_days > b.no_of_days,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -200,7 +200,7 @@ const ViewAllLeaves = () => {
     {
       title: "Leave Type",
       dataIndex: "leave_type",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.leave_type > b.leave_type,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -230,7 +230,7 @@ const ViewAllLeaves = () => {
     {
       title: "Reason",
       dataIndex: "reason",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.reason > b.reason,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -260,7 +260,7 @@ const ViewAllLeaves = () => {
     {
       title: "Status",
       dataIndex: "status",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.status > b.status,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -292,13 +292,14 @@ const ViewAllLeaves = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
+      align:"left",
     },
   ];
   const columns2 = [
     {
       title: "Name",
       dataIndex: "name",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -328,7 +329,7 @@ const ViewAllLeaves = () => {
     {
       title: "Class",
       dataIndex: "class",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.class > b.class,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -358,7 +359,7 @@ const ViewAllLeaves = () => {
     {
       title: "Section",
       dataIndex: "section",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.section > b.section,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -388,7 +389,7 @@ const ViewAllLeaves = () => {
     {
       title: "Date From",
       dataIndex: "date_from",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.date_from > b.date_from,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -418,7 +419,7 @@ const ViewAllLeaves = () => {
     {
       title: "Date To",
       dataIndex: "date_to",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.date_to > b.date_to,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -479,7 +480,7 @@ const ViewAllLeaves = () => {
     {
       title: "Reason",
       dataIndex: "reason",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.reason > b.reason,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -509,7 +510,7 @@ const ViewAllLeaves = () => {
     {
       title: "Status",
       dataIndex: "status",
-      width: "40%",
+      align:"left",
       sorter: (a, b) => a.status > b.status,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -541,6 +542,7 @@ const ViewAllLeaves = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
+      align:"left",
     },
   ];
 

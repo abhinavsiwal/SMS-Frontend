@@ -66,11 +66,13 @@ const AddBooks = () => {
     {
       title: "S No.",
       dataIndex: "s_no",
+      align:"left",
     },
   
     {
       title: "Book Name",
       dataIndex: "book_name",
+      align:"left",
       sorter: (a, b) => a.book_name > b.book_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -99,6 +101,7 @@ const AddBooks = () => {
     },
     {
       title: "Book Author",
+      align:"left",
       dataIndex: "book_author",
       sorter: (a, b) => a.book_author > b.book_author,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -127,6 +130,7 @@ const AddBooks = () => {
       },
     },
     {
+      align:"left",
         title: "Quantity",
         dataIndex: "book_quantity",
         sorter: (a, b) => a.book_quantity > b.book_quantity,
@@ -186,6 +190,7 @@ const AddBooks = () => {
     },
     {
       title: "Shelf Name",
+      align:"left",
       dataIndex: "shelf_name",
       sorter: (a, b) => a.shelf_name > b.shelf_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -218,6 +223,7 @@ const AddBooks = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
+      align:"left",
     },
   ];
 

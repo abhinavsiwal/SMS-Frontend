@@ -28,6 +28,8 @@ const StaffAllocation = () => {
     allocationDate: "",
     allocatedBy: "",
     duration: "",
+    allocationType: "",
+    rent: "",
   });
   const [allDepartments, setAllDepartments] = useState([]);
   const [allStaff, setAllStaff] = useState([]);
@@ -35,6 +37,7 @@ const StaffAllocation = () => {
   const [checked, setChecked] = useState(false);
   const [selectedBook, setSelectedBook] = useState({});
   const [allBooks, setAllBooks] = useState([]);
+  const [typeView, setTypeView] = useState(0);
   const getAllDepartment = async () => {
     try {
       setLoading(true);
@@ -97,6 +100,13 @@ const StaffAllocation = () => {
       console.log(selectedBook);
       setSelectedBook(selectedBook);
     }
+    if (name === "allocationType") {
+      if (event.target.value === "Read Here") {
+        setTypeView(1);
+      } else if (event.target.value === "Rent") {
+        setTypeView(2);
+      }
+    }
   };
   const filterStaffHandler = async (id) => {
     const formData = {
@@ -128,6 +138,10 @@ const StaffAllocation = () => {
     formData.set("department", allocationData.department);
     formData.set("allocatedBy", allocationData.allocatedBy);
     formData.set("status","Allocated");
+    formData.set("allocatedBy", allocationData.allocatedBy);
+    if (typeView === 2) {
+      formData.set("rent", allocationData.rent);
+    }
     try {
       setLoading(true);
       const data = await allocateBook(user._id, formData);
@@ -335,6 +349,45 @@ const StaffAllocation = () => {
                   ))}
               </Input>
             </Col>
+            <Col md="6" >
+            <Label
+                className="form-control-label"
+                htmlFor="example-date-input"
+              >
+                Allocation Type
+              </Label>
+              <Input
+                id="example-date-input"
+                type="select"
+                onChange={handleChange("allocationType")}
+                value={allocationData.allocationType}
+                required
+              >
+                <option value="">Select Type</option>
+                <option value="Read Here">Read Here</option>
+                <option value="Rent">Rent</option>
+              </Input>
+            </Col>
+          </Row>
+          <Row>
+          {typeView === 2 && (
+              <Col md="6">
+                <Label
+                  className="form-control-label"
+                  htmlFor="example-date-input"
+                >
+                  Rent
+                </Label>
+                <Input
+                  id="example-date-input"
+                  type="number"
+                  placeholder="Rent"
+                  onChange={handleChange("rent")}
+                  value={allocationData.rent}
+                  required
+                />
+              </Col> 
+            )}
           </Row>
           <Row className="mt-4">
             <Col

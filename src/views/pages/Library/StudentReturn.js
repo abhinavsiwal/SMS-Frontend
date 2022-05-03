@@ -355,7 +355,7 @@ const StudentReturn = () => {
               }}
             >
               <Button color="primary" type="submit">
-                Allocate Book
+                Return Book
               </Button>
             </Col>
           </Row>

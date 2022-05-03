@@ -39,7 +39,7 @@ const ViewAllocations = () => {
     {
       title: "Student Name",
       dataIndex: "student_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_name > b.student_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -69,7 +69,7 @@ const ViewAllocations = () => {
     {
       title: "Student SID",
       dataIndex: "student_sid",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_sid > b.student_sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -99,7 +99,7 @@ const ViewAllocations = () => {
     {
       title: "Roll No",
       dataIndex: "student_roll",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_roll > b.student_roll,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -129,7 +129,7 @@ const ViewAllocations = () => {
     {
       title: "Class",
       dataIndex: "student_class",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_class > b.student_class,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -159,7 +159,7 @@ const ViewAllocations = () => {
     {
       title: "Section",
       dataIndex: "student_section",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_section > b.student_section,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -191,7 +191,7 @@ const ViewAllocations = () => {
     {
       title: "Book Name",
       dataIndex: "book_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_name > b.book_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -221,7 +221,7 @@ const ViewAllocations = () => {
     {
       title: "Book Id",
       dataIndex: "book_id",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_id > b.book_id,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -251,7 +251,7 @@ const ViewAllocations = () => {
     {
       title: "Allocation Date",
       dataIndex: "allocation_date",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.allocation_date > b.allocation_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -283,7 +283,7 @@ const ViewAllocations = () => {
     {
       title: "Allocated By",
       dataIndex: "allocated_by",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.allocated_by > b.allocated_by,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -315,7 +315,7 @@ const ViewAllocations = () => {
     {
       title: "Student Name",
       dataIndex: "student_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_name > b.student_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -345,7 +345,7 @@ const ViewAllocations = () => {
     {
       title: "Student SID",
       dataIndex: "student_sid",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_sid > b.student_sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -375,7 +375,7 @@ const ViewAllocations = () => {
     {
       title: "Roll No",
       dataIndex: "student_roll",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_roll > b.student_roll,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -405,7 +405,7 @@ const ViewAllocations = () => {
     {
       title: "Class",
       dataIndex: "student_class",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_class > b.student_class,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -435,7 +435,7 @@ const ViewAllocations = () => {
     {
       title: "Section",
       dataIndex: "student_section",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.student_section > b.student_section,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -467,7 +467,7 @@ const ViewAllocations = () => {
     {
       title: "Book Name",
       dataIndex: "book_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_name > b.book_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -497,7 +497,7 @@ const ViewAllocations = () => {
     {
       title: "Book Id",
       dataIndex: "book_id",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_id > b.book_id,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -527,7 +527,7 @@ const ViewAllocations = () => {
     {
       title: "Collection Date",
       dataIndex: "collection_date",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.collection_date > b.collection_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -559,7 +559,7 @@ const ViewAllocations = () => {
     {
       title: "Collected By",
       dataIndex: "collected_by",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.collected_by > b.collected_by,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -591,7 +591,7 @@ const ViewAllocations = () => {
     {
       title: "Staff Name",
       dataIndex: "staff_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.staff_name > b.staff_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -621,7 +621,7 @@ const ViewAllocations = () => {
     {
       title: "Staff SID",
       dataIndex: "staff_sid",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.staff_sid > b.staff_sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -652,7 +652,7 @@ const ViewAllocations = () => {
     {
       title: "Department",
       dataIndex: "department",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.department > b.department,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -682,7 +682,7 @@ const ViewAllocations = () => {
     {
       title: "Book Name",
       dataIndex: "book_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_name > b.book_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -712,7 +712,7 @@ const ViewAllocations = () => {
     {
       title: "Book Id",
       dataIndex: "book_id",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_id > b.book_id,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -742,7 +742,7 @@ const ViewAllocations = () => {
     {
       title: "Allocation Date",
       dataIndex: "allocation_date",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.allocation_date > b.allocation_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -774,7 +774,7 @@ const ViewAllocations = () => {
     {
       title: "Allocated By",
       dataIndex: "allocated_by",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.allocated_by > b.allocated_by,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -806,7 +806,7 @@ const ViewAllocations = () => {
     {
       title: "Staff Name",
       dataIndex: "staff_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.staff_name > b.staff_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -836,7 +836,7 @@ const ViewAllocations = () => {
     {
       title: "Staff SID",
       dataIndex: "staff_sid",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.staff_sid > b.staff_sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -867,7 +867,7 @@ const ViewAllocations = () => {
     {
       title: "Department",
       dataIndex: "department",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.department > b.department,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -897,7 +897,7 @@ const ViewAllocations = () => {
     {
       title: "Book Name",
       dataIndex: "book_name",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_name > b.book_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -927,7 +927,7 @@ const ViewAllocations = () => {
     {
       title: "Book Id",
       dataIndex: "book_id",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.book_id > b.book_id,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -957,7 +957,7 @@ const ViewAllocations = () => {
     {
       title: "Collection Date",
       dataIndex: "collection_date",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.allocation_date > b.allocation_date,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -989,7 +989,7 @@ const ViewAllocations = () => {
     {
       title: "Collected By",
       dataIndex: "collected_by",
-      width: 150,
+      align:"left",
       sorter: (a, b) => a.collected_by > b.collected_by,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
