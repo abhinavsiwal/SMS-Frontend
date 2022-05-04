@@ -279,6 +279,7 @@ function AddStudent() {
   //Final Form Submit
   const handleSubmitForm = async (e) => {
     e.preventDefault();
+    console.log(studentData);
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
 

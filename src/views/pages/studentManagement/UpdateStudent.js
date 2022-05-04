@@ -107,6 +107,10 @@ function UpdateStudent({ studentDetails }) {
   });
   const { user, token } = isAuthenticated();
 
+
+  
+
+
   const [selectedClass, setSelectedClass] = useState({});
   useEffect(() => {
     getAllClasses();
@@ -122,6 +126,10 @@ function UpdateStudent({ studentDetails }) {
         return toast.error(classess.err);
       }
       setClassList(classess);
+      let selectedClass1 = classess.find(
+        (item) => item._id.toString() === student.class.toString()
+      );
+      setSelectedClass(selectedClass1);
       // setLoading(true);
       // toast.success(fetchingClassSuccess)
       setLoading(false);
@@ -900,10 +908,48 @@ function UpdateStudent({ studentDetails }) {
             {step === 3 && (
               <>
                 <Form onSubmit={handleSubmitForm} className="mb-4">
-                  {(student.father_name.length ||
-                    student.mother_name.length) && (
+                  {( student.father_name && student.father_name ||
+                    student.mother_name) && (
                     <>
                       <CardBody>
+                        <Row>
+                          <Col md="6" >
+                          <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Parent Address
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="Parent Address"
+                                type="text"
+                                onChange={handleChange("parent_address")}
+                                required
+                                value={student.parent_address}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md="6" >
+                          <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Parent Email
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="Parent Email"
+                                type="text"
+                                onChange={handleChange("parent_email")}
+                                required
+                                value={student.parent_email}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
                         <Row className="mb-4">
                           <Col align="center">
                             <h2>Father Details</h2>
@@ -1004,48 +1050,7 @@ function UpdateStudent({ studentDetails }) {
                             />
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Present Address
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Present Address"
-                                type="text"
-                                onChange={handleChange("father_address")}
-                                required
-                                value={student.father_address}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Permanent Address
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Permanent Address"
-                                type="text"
-                                onChange={handleChange(
-                                  "father_permanent_address"
-                                )}
-                                required
-                                value={student.father_permanent_address}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
+                       
                         <Row className="mb-4">
                           <Col>
                             <label
@@ -1198,48 +1203,7 @@ function UpdateStudent({ studentDetails }) {
                             />
                           </Col>
                         </Row>
-                        <Row>
-                          <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Present Address
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Present Address"
-                                type="text"
-                                onChange={handleChange("mother_address")}
-                                required
-                                value={student.mother_address}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Permanent Address
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Permanent Address"
-                                type="text"
-                                onChange={handleChange(
-                                  "mother_permanent_address"
-                                )}
-                                required
-                                value={student.mother_permanent_address}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
+                     
                         <Row className="mb-4">
                           <Col>
                             <label
@@ -1324,13 +1288,51 @@ function UpdateStudent({ studentDetails }) {
                           </Col>
                         </Row>
                         <Row>
+                          <Col md="6" >
+                          <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Guardian Address
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="Parent Address"
+                                type="text"
+                                onChange={handleChange("guardian_address")}
+                                required
+                                value={student.guardian_address}
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md="6" >
+                          <FormGroup>
+                              <label
+                                className="form-control-label"
+                                htmlFor="example4cols3Input"
+                              >
+                                Guardian Email
+                              </label>
+                              <Input
+                                id="example4cols3Input"
+                                placeholder="Parent Email"
+                                type="text"
+                                onChange={handleChange("guardian_email")}
+                                required
+                                value={student.guardian_email}
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                        <Row>
                           <Col>
                             <FormGroup>
                               <label
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
                               >
-                                First Name
+                               Name
                               </label>
                               <Input
                                 id="example4cols3Input"
@@ -1342,24 +1344,7 @@ function UpdateStudent({ studentDetails }) {
                               />
                             </FormGroup>
                           </Col>
-                          <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Last Name
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Last Name"
-                                type="text"
-                                onChange={handleChange("guardian_last_name")}
-                                required
-                                value={student.guardian_last_name}
-                              />
-                            </FormGroup>
-                          </Col>
+                      
                         </Row>
                         <Row className="mb-4">
                           <Col>
@@ -1455,7 +1440,7 @@ function UpdateStudent({ studentDetails }) {
                                   "guardian_permanent_address"
                                 )}
                                 required
-                                value={student.guardian_permanent_address}
+                                value={student.permanent_address}
                               />
                             </FormGroup>
                           </Col>
