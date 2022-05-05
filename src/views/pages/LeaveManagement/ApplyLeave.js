@@ -17,12 +17,13 @@ import { SearchOutlined } from "@ant-design/icons";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import { isAuthenticated } from "api/auth";
 import { ToastContainer, toast } from "react-toastify";
+import { allSessions } from "api/session";
 import Loader from "components/Loader/Loader";
 import {
   createLeave,
   getLeaveBySID,
   deleteLeaveBySID,
-  editLeave
+  editLeave,
 } from "../../../api/leave";
 import { Popconfirm } from "antd";
 
@@ -31,6 +32,7 @@ const ApplyLeave = () => {
   const [addLoading, setAddLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [leave, setLeave] = useState([]);
+  const [sessions, setSessions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [leaveData, setLeaveData] = useState({
     leaveType: "",
@@ -41,6 +43,7 @@ const ApplyLeave = () => {
     reason: "",
     priority: "",
     section: "",
+    session: "",
   });
   function getFormattedDate(date1) {
     let date = new Date(date1);
@@ -59,7 +62,7 @@ const ApplyLeave = () => {
       title: "Date From",
       dataIndex: "date_from",
       // width: "40%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.date_from > b.date_from,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -90,7 +93,7 @@ const ApplyLeave = () => {
       title: "Date To",
       dataIndex: "date_to",
       // width: "40%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.date_to > b.date_to,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -121,7 +124,7 @@ const ApplyLeave = () => {
       title: "No of Days",
       dataIndex: "no_of_days",
       // width: "40%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.no_of_days > b.no_of_days,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -182,7 +185,7 @@ const ApplyLeave = () => {
       title: "Reason",
       dataIndex: "reason",
       // width: "40%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.reason > b.reason,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -213,7 +216,7 @@ const ApplyLeave = () => {
       title: "Status",
       dataIndex: "status",
       // width: "40%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.status > b.status,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -245,7 +248,7 @@ const ApplyLeave = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
-      align:"left",
+      align: "left",
     },
   ];
 
@@ -256,8 +259,22 @@ const ApplyLeave = () => {
 
   useEffect(() => {
     getLeave();
+    getSession();
   }, [checked]);
-
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+        return;
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
   const getLeave = async () => {
     try {
       setLoading(true);
@@ -287,7 +304,7 @@ const ApplyLeave = () => {
               >
                 <Popconfirm
                   title="Sure to Cancel?"
-                  onConfirm={() => handleDelete(data[i]._id,data[i].dateFrom)}
+                  onConfirm={() => handleDelete(data[i]._id, data[i].dateFrom)}
                 >
                   Cancel
                 </Popconfirm>
@@ -305,23 +322,21 @@ const ApplyLeave = () => {
     }
   };
 
-  const handleDelete = async (leaveId,dateFrom) => {
-
+  const handleDelete = async (leaveId, dateFrom) => {
     let dateFrom1 = new Date(dateFrom);
     let today = new Date();
 
-    if(today>dateFrom1){
+    if (today > dateFrom1) {
       toast.error("You can't cancel this leave");
       return;
     }
-
 
     let formData = new FormData();
     formData.set("status", "Cancelled");
     formData.set("id", leaveId);
     try {
       setLoading(true);
-      const data = await editLeave(user._id,formData);
+      const data = await editLeave(user._id, formData);
       console.log(data);
       if (data.err) {
         toast.error(data.err);
@@ -339,6 +354,7 @@ const ApplyLeave = () => {
   };
 
   const handleLeaveSubmit = async (e) => {
+    console.log(leaveData);
     e.preventDefault();
     const formData = new FormData();
     formData.set("dateFrom", leaveData.from);
@@ -346,6 +362,7 @@ const ApplyLeave = () => {
     formData.set("reason", leaveData.reason);
     formData.set("userId", user._id);
     formData.set("user", user.user);
+    formData.set("session", leaveData.session);
     if (user.user === "student") {
       formData.set("section", user.section);
       formData.set("class", user.class);
@@ -403,13 +420,41 @@ const ApplyLeave = () => {
           {addLoading ? (
             <Loader />
           ) : (
-            <Col lg="12" >
+            <Col lg="12">
               <Card>
                 <CardBody>
                   <Form className="mb-4" onSubmit={handleLeaveSubmit}>
+                    <Row>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Session
+                        </label>
+                        <select
+                          className="form-control"
+                          required
+                          onChange={handleChange("session")}
+                          value={leaveData.session}
+                        >
+                          <option value="" disabled>
+                            Select Session
+                          </option>
+                          {sessions &&
+                            sessions.map((data) => {
+                              return (
+                                <option key={data._id} value={data._id}>
+                                  {data.name}
+                                </option>
+                              );
+                            })}
+                        </select>
+                      </Col>
+                    </Row>
                     {user.user === "staff" && (
                       <Row>
-                        <Col >
+                        <Col>
                           <label
                             className="form-control-label"
                             htmlFor="example4cols2Input"
@@ -436,7 +481,7 @@ const ApplyLeave = () => {
                     )}
 
                     <Row>
-                      <Col >
+                      <Col>
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -472,7 +517,7 @@ const ApplyLeave = () => {
                           <option value="Half">Half</option>
                         </Input>
                       </Col>
-                  
+
                       <Col>
                         <label
                           className="form-control-label"
@@ -489,7 +534,7 @@ const ApplyLeave = () => {
                           required
                         />
                       </Col>
-                      <Col >
+                      <Col>
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -527,7 +572,7 @@ const ApplyLeave = () => {
                           required
                         />
                       </Col>
-                   
+
                       <Col>
                         <label
                           className="form-control-label"
