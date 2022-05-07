@@ -1,28 +1,33 @@
 import CryptoJS from "crypto-js";
 
-export const isAuthenticated = () => {
+export const isAuthenticated = async () => {
+  if (
+    JSON.parse(JSON.parse(localStorage.getItem("persist:root")).authReducer)
+      .token &&
+    JSON.parse(JSON.parse(localStorage.getItem("persist:root")).authReducer)
+      .token.length === 0
+  ) {
+    console.log("@@@@@@@");
 
-  if (!localStorage.getItem("persist:root")) {
-    // console.log("here");
-    
     return false;
   }
-
-  let encryptedToken = JSON.parse(
+  console.log("here");
+  let token = await JSON.parse(
     JSON.parse(localStorage.getItem("persist:root")).authReducer
   ).token;
-
-
-  let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
-  let token = encryption.toString(CryptoJS.enc.Utf8);
-
-  let user = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).authReducer).userDetails;
-
-  if (typeof window == 'undefined') {
+  console.log(token);
+  let user =await JSON.parse(
+    JSON.parse(localStorage.getItem("persist:root")).authReducer
+  ).userDetails;
+  console.log(user);
+  if (typeof window == "undefined") {
     return false;
   }
   if (token) {
-    return {token,user};
+    console.log("********");
+    console.log(token);
+    console.log("return");
+    return { token, user };
   } else {
     return false;
   }

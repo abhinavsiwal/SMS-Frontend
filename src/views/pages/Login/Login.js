@@ -32,6 +32,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import { loginSuccess } from "constants/success";
 import { loginError } from "constants/errors";
+import { signIn } from "api/login";
 // // core components
 // import AuthHeader from "components/Headers/AuthHeader.js";
 
@@ -49,8 +50,13 @@ function Login() {
   const { loading, error, token } = useSelector((state) => state.authReducer);
 
   useEffect(() => {
-    if (!localStorage.getItem("persist:root")) {
-      console.log("here");
+    if (
+      JSON.parse(JSON.parse(localStorage.getItem("persist:root")).authReducer)
+        .token &&
+      JSON.parse(JSON.parse(localStorage.getItem("persist:root")).authReducer)
+        .token.length === 0
+    ) {
+      console.log("#######");
       dispatch(setToken(""));
       dispatch(setExpiry(""));
       dispatch(setUserDetails({}));
@@ -59,18 +65,37 @@ function Login() {
 
     if (token) {
       // console.log(token);
-      // console.log("Login");
-      toast.success(loginSuccess); 
+      console.log("Login");
+      history.push("/admin/dashboard");
       // console.log("logged in");
       setRedirect(true);
     }
-  }, [token]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    // console.log(username, password);
-    await dispatch(login({ username, password }));
+    console.log(username,password);
+    console.log("inside");
+    try {
+      setIsLoading(true);
+      const data = await signIn(username, password);
+      console.log(data);
+      if (data && data.err) {
+        setIsLoading(false);
+        toast.error(data.err);
+        return;
+      }
+      dispatch(setToken(data.token));
+      dispatch(setExpiry(data.expiry));
+      dispatch(setUserDetails(data.user));
+      setRedirect(true);
+      setIsLoading(false);
+    } catch (err) {
+      console.log(err);
+      toast.error("Login failed");
+      setIsLoading(false);
+    }
+
     setIsLoading(false);
   };
 
@@ -88,7 +113,7 @@ function Login() {
         pauseOnHover
         theme="colored"
       />
-      {redirect ? <Redirect to="/admin/dashboard" /> : null}
+      {/* {redirect ? <Redirect to="/admin/dashboard" /> : null} */}
       <div className="login-container">
         <Row className="login-page-container">
           <Col lg="5" md="7" className="login-form-container">

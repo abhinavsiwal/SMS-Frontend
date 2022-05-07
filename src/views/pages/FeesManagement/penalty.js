@@ -3,7 +3,6 @@ import React, { useEffect, useState, useReducer } from "react";
 import {
   Container,
   Card,
-  Table,
   Input,
   CardHeader,
   CardBody,
@@ -12,10 +11,11 @@ import {
   Button,
   Form,
 } from "reactstrap";
+import { SearchOutlined } from "@ant-design/icons";
 import { Popconfirm } from "antd";
 import SimpleHeader from "components/Headers/SimpleHeader";
 import LoadingScreen from "react-loading-screen";
-
+import { Table } from "ant-table-extensions";
 import { isAuthenticated } from "api/auth";
 
 import "./fees_style.css";
@@ -46,6 +46,7 @@ const PenaltyMaster = () => {
   const [feesData, setFeesData] = useState([]);
   const [viewFeesData, setViewFeesData] = useState("");
   const [penaltydata, setPenaltydata] = useState("");
+  const [viewDataOnly, setViewDataOnly] = useState("");
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
@@ -90,6 +91,8 @@ const PenaltyMaster = () => {
     e.preventDefault();
     if (e.target.value === "") {
     } else {
+      setType(0);
+
       setSessionID(JSON.parse(e.target.value));
     }
   };
@@ -98,6 +101,8 @@ const PenaltyMaster = () => {
     e.preventDefault();
     if (e.target.value === "") {
     } else {
+      setType(0);
+
       setClassID(JSON.parse(e.target.value));
     }
   };
@@ -128,10 +133,18 @@ const PenaltyMaster = () => {
           token,
           JSON.stringify(temp)
         );
-        console.log(searchAPI2);
+        setPenaltydata(searchAPI);
         if (searchAPI2 && searchAPI2.penalty) {
           setType(2);
           setViewFeesData(searchAPI2);
+          var temp_data = searchAPI2.penalty.map((data, index) => {
+            return {
+              name: data["name"],
+              amount: data["amount"],
+              penalty_type: data["penalty_type"],
+            };
+          });
+          setViewDataOnly(temp_data);
           setFeesNumber(searchAPI2.penalty);
           setShowLoad(false);
         } else {
@@ -166,23 +179,27 @@ const PenaltyMaster = () => {
     }
   };
 
-  const handleChangeEdit = (name, index) => (e) => {
+  const handleChangeEdit = (name, data, index) => (e) => {
     let temp = feesNumber;
-    temp[index] = { ...feesNumber[index], [name]: e.target.value };
+    temp[index] = { ...feesNumber[index], name: data, [name]: e.target.value };
     setFeesNumber(temp);
     forceUpdate();
     console.log(feesNumber);
   };
 
-  const handleDateEdit = (name, index) => (e) => {
+  const handleDateEdit = (name, data, index) => (e) => {
     if (e.target.value === "") {
       let temp = feesNumber;
-      temp[index] = { ...feesNumber[index], [name]: "" };
+      temp[index] = { ...feesNumber[index], name: data, [name]: "" };
       setFeesNumber(temp);
       forceUpdate();
     } else {
       let temp = feesNumber;
-      temp[index] = { ...feesNumber[index], [name]: e.target.value };
+      temp[index] = {
+        ...feesNumber[index],
+        name: data,
+        [name]: e.target.value,
+      };
       setFeesNumber(temp);
       forceUpdate();
     }
@@ -271,6 +288,91 @@ const PenaltyMaster = () => {
     }
   };
 
+  const column = [
+    {
+      key: "name",
+      title: "Name",
+      dataIndex: "name",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.name > record2.name;
+      },
+    },
+    {
+      key: "amount",
+      title: "Amount",
+      dataIndex: "amount",
+      sorter: (record1, record2) => {
+        return record1.amount > record2.amount;
+      },
+    },
+    {
+      key: "penalty_type",
+      title: "Penalty Type",
+      dataIndex: "penalty_type",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.penalty_type.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.penalty_type > record2.penalty_type;
+      },
+    },
+  ];
+
   return (
     <>
       <SimpleHeader name="Penalty" parentName="Penalty Management" />
@@ -293,82 +395,80 @@ const PenaltyMaster = () => {
         textColor="#676767"
         text="Please Wait..."
       ></LoadingScreen>
-      {type === 0 && (
-        <Container fluid className="mt--6">
-          <Card>
-            <CardHeader>
-              <h2>Penalty</h2>
-            </CardHeader>
-            <CardBody>
-              <Form onSubmit={handleSearch}>
-                <Row className="feesMainRow" fluid>
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="exampleFormControlSelect3"
-                    >
+      <Container fluid className="mt--6">
+        <Card>
+          <CardHeader>
+            <h2>Penalty</h2>
+          </CardHeader>
+          <CardBody>
+            <Form onSubmit={handleSearch}>
+              <Row className="feesMainRow" fluid>
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="exampleFormControlSelect3"
+                  >
+                    Select Class
+                  </label>
+                  <Input
+                    id="example4cols3Input"
+                    type="select"
+                    onChange={handleClass}
+                    required
+                  >
+                    <option value="" disabled selected>
                       Select Class
-                    </label>
-                    <Input
-                      id="example4cols3Input"
-                      type="select"
-                      onChange={handleClass}
-                      required
-                    >
-                      <option value="" disabled selected>
-                        Select Class
-                      </option>
-                      {classs &&
-                        classs !== "" &&
-                        classs.map((clas) => {
-                          return (
-                            <option key={clas._id} value={JSON.stringify(clas)}>
-                              {clas.name}
-                            </option>
-                          );
-                        })}
-                    </Input>
-                  </Col>
-                  <Col>
-                    <label
-                      className="form-control-label"
-                      htmlFor="example4cols2Input"
-                    >
-                      Select Session
-                    </label>
+                    </option>
+                    {classs &&
+                      classs !== "" &&
+                      classs.map((clas) => {
+                        return (
+                          <option key={clas._id} value={JSON.stringify(clas)}>
+                            {clas.name}
+                          </option>
+                        );
+                      })}
+                  </Input>
+                </Col>
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Select Session
+                  </label>
 
-                    <select
-                      required
-                      className="form-control"
-                      onChange={handleSession}
-                    >
-                      <option value="">Select Session</option>
-                      {sessions &&
-                        sessions.map((data) => {
-                          return (
-                            <option key={data._id} value={JSON.stringify(data)}>
-                              {data.name}
-                            </option>
-                          );
-                        })}
-                    </select>
-                  </Col>
-                </Row>
-                <br />
-                <Row className="left_button">
-                  <Col>
-                    <Button color="primary" type="submit">
-                      Next
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </CardBody>
-          </Card>
-        </Container>
-      )}
+                  <select
+                    required
+                    className="form-control"
+                    onChange={handleSession}
+                  >
+                    <option value="">Select Session</option>
+                    {sessions &&
+                      sessions.map((data) => {
+                        return (
+                          <option key={data._id} value={JSON.stringify(data)}>
+                            {data.name}
+                          </option>
+                        );
+                      })}
+                  </select>
+                </Col>
+              </Row>
+              <br />
+              <Row className="left_button">
+                <Col>
+                  <Button color="primary" type="submit">
+                    Next
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </CardBody>
+        </Card>
+      </Container>
       {type === 1 && (
-        <Container fluid className="mt--6">
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>Set Penalty Fees</h2>
@@ -381,7 +481,6 @@ const PenaltyMaster = () => {
                   <table className="fees_table">
                     <thead>
                       <th>Name</th>
-                      <th>App Date</th>
                       <th>Amount</th>
                       <th>Penalty Type</th>
                     </thead>
@@ -390,14 +489,6 @@ const PenaltyMaster = () => {
                         return (
                           <tr>
                             <td>{data}</td>
-                            <td>
-                              <Input
-                                id="exampleFormControlTextarea1"
-                                type="date"
-                                required
-                                onChange={handleDate("app_date", data, index)}
-                              />
-                            </td>
                             <td>
                               <Input
                                 id="exampleFormControlTextarea1"
@@ -444,7 +535,7 @@ const PenaltyMaster = () => {
         </Container>
       )}
       {type === 2 && (
-        <Container fluid className="mt--6">
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>View Penalty Fees</h2>
@@ -473,10 +564,23 @@ const PenaltyMaster = () => {
             <form onSubmit={handleSubmitFees}>
               <CardBody>
                 <div className="table_div_fees">
-                  <table className="fees_table">
+                  <Table
+                    style={{ whiteSpace: "pre" }}
+                    loading={showLoad}
+                    exportableProps={{
+                      fileName: "Penalty Fees",
+                      showColumnPicker: true,
+                    }}
+                    pagination={{
+                      pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                      showSizeChanger: true,
+                    }}
+                    columns={column}
+                    dataSource={viewDataOnly}
+                  />
+                  {/* <table className="fees_table">
                     <thead>
                       <th>Name</th>
-                      <th>App Date</th>
                       <th>Amount</th>
                       <th>Penalty Type</th>
                     </thead>
@@ -485,14 +589,13 @@ const PenaltyMaster = () => {
                         return (
                           <tr>
                             <td>{data["name"]}</td>
-                            <td>{data["app_date"]}</td>
                             <td>{data["amount"]}</td>
                             <td>{data["penalty_type"]}</td>
                           </tr>
                         );
                       })}
                     </tbody>
-                  </table>
+                  </table> */}
                 </div>
                 <br />
               </CardBody>
@@ -501,7 +604,7 @@ const PenaltyMaster = () => {
         </Container>
       )}
       {type === 3 && (
-        <Container fluid className="mt--6">
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>Edit Penalty Fees</h2>
@@ -522,47 +625,46 @@ const PenaltyMaster = () => {
                   <table className="fees_table">
                     <thead>
                       <th>Name</th>
-                      <th>App Date</th>
                       <th>Amount</th>
                       <th>Penalty Type</th>
                     </thead>
                     <tbody>
-                      {feesNumber.map((data, index) => {
+                      {penaltydata.map((data, index) => {
                         return (
                           <tr>
-                            <td>{data["name"]}</td>
-                            <td>
-                              <Input
-                                id="exampleFormControlTextarea1"
-                                type="date"
-                                required
-                                value={data["app_date"]}
-                                onChange={handleDateEdit("app_date", index)}
-                              />
-                            </td>
+                            <td>{data}</td>
                             <td>
                               <Input
                                 id="exampleFormControlTextarea1"
                                 type="number"
                                 required
                                 placeholder="Amount"
-                                value={data["amount"]}
-                                onChange={handleChangeEdit("amount", index)}
+                                value={
+                                  feesNumber[index] &&
+                                  feesNumber[index]["amount"]
+                                }
+                                onChange={handleChangeEdit(
+                                  "amount",
+                                  data,
+                                  index
+                                )}
                               />
                             </td>
                             <td>
                               <select
                                 required
                                 className="form-control"
-                                value={data["penalty_type"]}
+                                value={
+                                  feesNumber[index] &&
+                                  feesNumber[index]["penalty_type"]
+                                }
                                 onChange={handleChangeEdit(
                                   "penalty_type",
+                                  data,
                                   index
                                 )}
                               >
-                                <option value="" disabled>
-                                  Select Penalty Type
-                                </option>
+                                <option value="">Select Penalty Type</option>
                                 <option value="flat">Flat</option>
                                 <option value="percentage">% Percentage</option>
                               </select>

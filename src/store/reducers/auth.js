@@ -12,31 +12,17 @@ const initialState = {
   error: {},
 };
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async ({ username, password }, { rejectWithValue }) => {
-    // console.log(username, password);
-    if (username && password) {
-      try {
-        const data = await signIn(username, password);
-        // console.log(data);
-        return data;
-      } catch (err) {
-        console.log(err); 
-        // return rejectWithValue(err.response.data);
-      }     
-    } else {
-      alert("Please fill all fields");
-    }
-  }
-);
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers:{
-    setToken:(state,action)=>{
-      state.token = action.payload;
+    setToken:(state,{payload})=>{
+      if(!payload){
+        return
+      }
+     console.log(payload);
+      state.token = payload;
     },
     setExpiry:(state,action)=>{
       state.expiry=action.payload;
@@ -45,29 +31,7 @@ export const authSlice = createSlice({
       state.userDetails=action.payload;
     }
   },
-  extraReducers: {
-    [login.pending]: (state) => {
-      state.loading = true;
-    },
-    [login.fulfilled]: (state, { payload }) => {
-      // console.log(payload);
-      if(!payload){
-        return;
-      }
-      let encryptedToken = CryptoJS.AES.encrypt(
-        payload.token,
-        process.env.REACT_APP_CRYPTO_SECRET
-      ).toString();
-      state.token = encryptedToken;
-      state.userDetails = payload.user;
-      state.expiry = payload.expiryTime;
-    },
-    [login.rejected]: (state, { payload }) => {
-      state.loading = false;
-      state.error = payload;
-    },
  
-  },
 });
 
 export const {setToken,setExpiry,setUserDetails} = authSlice.actions;
