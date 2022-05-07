@@ -3,7 +3,6 @@ import React, { useEffect, useState, useReducer } from "react";
 import {
   Container,
   Card,
-  Table,
   Input,
   CardHeader,
   CardBody,
@@ -13,6 +12,10 @@ import {
   Form,
 } from "reactstrap";
 import { Popconfirm } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+
+import { Table } from "ant-table-extensions";
+
 import SimpleHeader from "components/Headers/SimpleHeader";
 import LoadingScreen from "react-loading-screen";
 
@@ -39,6 +42,8 @@ const FeesMaster = () => {
   const [feesNumber, setFeesNumber] = useState([]);
   const [feesData, setFeesData] = useState([]);
   const [viewFeesData, setViewFeesData] = useState("");
+  const [viewOneTime, setViewOneTime] = useState("");
+  const [viewReccuring, setViewReccuring] = useState("");
 
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
 
@@ -83,6 +88,7 @@ const FeesMaster = () => {
     e.preventDefault();
     if (e.target.value === "") {
     } else {
+      setType(0);
       setSessionID(JSON.parse(e.target.value));
     }
   };
@@ -91,6 +97,7 @@ const FeesMaster = () => {
     e.preventDefault();
     if (e.target.value === "") {
     } else {
+      setType(0);
       setClassID(JSON.parse(e.target.value));
     }
   };
@@ -99,6 +106,7 @@ const FeesMaster = () => {
     e.preventDefault();
     if (e.target.value === "") {
     } else {
+      setType(0);
       setFees_type(e.target.value);
     }
   };
@@ -126,10 +134,29 @@ const FeesMaster = () => {
       if (searchAPI && searchAPI.fees) {
         if (searchAPI.fees_type === "OneTime") {
           setViewFeesData(searchAPI);
+          var temp_data = searchAPI.fees.map((data, index) => {
+            return {
+              name: data["name"],
+              total: data["total"],
+              start_date: data["start_date"],
+              end_date: data["end_date"],
+              option: data["option"],
+            };
+          });
+          setViewOneTime(temp_data);
           setFeesNumber(searchAPI.fees);
           setType(3);
         } else {
           setViewFeesData(searchAPI);
+          var temp_data = searchAPI.fees.map((data, index) => {
+            return {
+              name: data["name"],
+              total: data["total"],
+              start_date: data["start_date"],
+              end_date: data["end_date"],
+            };
+          });
+          setViewReccuring(temp_data);
           setFeesNumber(searchAPI.fees);
           setType(4);
         }
@@ -150,7 +177,7 @@ const FeesMaster = () => {
   const handleAddFees = (e) => {
     e.preventDefault();
     let temp = feesNumber;
-    temp.push({});
+    temp.push({ option: "" });
     setFeesNumber(temp);
     forceUpdate();
   };
@@ -309,6 +336,286 @@ const FeesMaster = () => {
     }
   };
 
+  const column = [
+    {
+      key: "name",
+      title: "Name",
+      dataIndex: "name",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.name > record2.name;
+      },
+    },
+    {
+      key: "total",
+      title: "Total",
+      dataIndex: "total",
+      sorter: (record1, record2) => {
+        return record1.total > record2.total;
+      },
+    },
+    {
+      key: "option",
+      title: "Option",
+      dataIndex: "option",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.option.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.option > record2.option;
+      },
+    },
+    {
+      key: "start_date",
+      title: "Start Date",
+      dataIndex: "start_date",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.start_date.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.start_date > record2.start_date;
+      },
+    },
+    {
+      key: "end_date",
+      title: "End Date",
+      dataIndex: "end_date",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.end_date.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.end_date > record2.end_date;
+      },
+    },
+  ];
+  const Reccuringcolumn = [
+    {
+      key: "name",
+      title: "Name",
+      dataIndex: "name",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.name.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.name > record2.name;
+      },
+    },
+    {
+      key: "total",
+      title: "Total",
+      dataIndex: "total",
+      sorter: (record1, record2) => {
+        return record1.total > record2.total;
+      },
+    },
+    {
+      key: "start_date",
+      title: "Start Date",
+      dataIndex: "start_date",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.start_date.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.start_date > record2.start_date;
+      },
+    },
+    {
+      key: "end_date",
+      title: "End Date",
+      dataIndex: "end_date",
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Row>
+              <Col>
+                <Input
+                  autoFocus
+                  id="search_bar_table"
+                  placeholder="Type text here"
+                  value={selectedKeys[0]}
+                  onChange={(e) => {
+                    setSelectedKeys(e.target.value ? [e.target.value] : []);
+                    confirm({ closeDropdown: false });
+                  }}
+                  onBlur={() => {
+                    confirm();
+                  }}
+                />
+              </Col>
+            </Row>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.end_date.toLowerCase().includes(value.toLowerCase());
+      },
+      sorter: (record1, record2) => {
+        return record1.end_date > record2.end_date;
+      },
+    },
+  ];
+
   return (
     <>
       <SimpleHeader name="Fees" parentName="Fees Management" />
@@ -332,7 +639,7 @@ const FeesMaster = () => {
         text="Please Wait..."
       ></LoadingScreen>
 
-      <Container fluid >
+      <Container fluid className="mt--6">
         <Card>
           <CardHeader>
             <h2>Fees</h2>
@@ -425,7 +732,7 @@ const FeesMaster = () => {
         </Card>
       </Container>
       {type === 1 && (
-        <Container fluid >
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>Set OneTime Fees</h2>
@@ -518,7 +825,7 @@ const FeesMaster = () => {
         </Container>
       )}
       {type === 2 && (
-        <Container fluid >
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>Set Recurring Fees</h2>
@@ -598,7 +905,7 @@ const FeesMaster = () => {
         </Container>
       )}
       {type === 3 && (
-        <Container fluid >
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>View OneTime Fees</h2>
@@ -631,7 +938,21 @@ const FeesMaster = () => {
             <form onSubmit={handleSubmitFees}>
               <CardBody>
                 <div className="table_div_fees">
-                  <table className="fees_table">
+                <Table
+                    style={{ whiteSpace: "pre" }}
+                    loading={showLoad}
+                    exportableProps={{
+                      fileName: "Penalty Fees",
+                      showColumnPicker: true,
+                    }}
+                    pagination={{
+                      pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                      showSizeChanger: true,
+                    }}
+                    columns={column}
+                    dataSource={viewOneTime}
+                  />
+                  {/* <table className="fees_table">
                     <thead>
                       <th>Name</th>
                       <th>Start Date</th>
@@ -652,7 +973,7 @@ const FeesMaster = () => {
                         );
                       })}
                     </tbody>
-                  </table>
+                  </table> */}
                 </div>
                 <br />
               </CardBody>
@@ -661,7 +982,7 @@ const FeesMaster = () => {
         </Container>
       )}
       {type === 4 && (
-        <Container fluid >
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>View Recurring Fees</h2>
@@ -694,7 +1015,21 @@ const FeesMaster = () => {
             <form onSubmit={handleSubmitFees}>
               <CardBody>
                 <div className="table_div_fees">
-                  <table className="fees_table">
+                <Table
+                    style={{ whiteSpace: "pre" }}
+                    loading={showLoad}
+                    exportableProps={{
+                      fileName: "Penalty Fees",
+                      showColumnPicker: true,
+                    }}
+                    pagination={{
+                      pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
+                      showSizeChanger: true,
+                    }}
+                    columns={Reccuringcolumn}
+                    dataSource={viewReccuring}
+                  />
+                  {/* <table className="fees_table">
                     <thead>
                       <th>Name</th>
                       <th>Start Date</th>
@@ -713,7 +1048,7 @@ const FeesMaster = () => {
                         );
                       })}
                     </tbody>
-                  </table>
+                  </table> */}
                 </div>
                 <br />
               </CardBody>
@@ -722,7 +1057,7 @@ const FeesMaster = () => {
         </Container>
       )}
       {type === 5 && (
-        <Container fluid >
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>Edit OneTime Fees</h2>
@@ -839,7 +1174,7 @@ const FeesMaster = () => {
         </Container>
       )}
       {type === 6 && (
-        <Container fluid >
+        <Container fluid>
           <Card>
             <CardHeader>
               <h2>Edit Recurring Fees</h2>

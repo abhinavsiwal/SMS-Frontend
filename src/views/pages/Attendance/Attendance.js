@@ -165,11 +165,15 @@ function Attendance() {
       [name]: event.target.value,
     });
     if (name === "selectClass") {
-      let selectedClass = classes.find(
-        (item) => item._id.toString() === event.target.value.toString()
-      );
-      // console.log(selectedClass);
-      setSelectedClass(selectedClass);
+      if (event.target.value === "") {
+        setSelectedClass("");
+      } else {
+        let selectedClass = classes.find(
+          (item) => item._id.toString() === event.target.value.toString()
+        );
+        // console.log(selectedClass);
+        setSelectedClass(selectedClass);
+      }
     }
   };
 
@@ -223,7 +227,6 @@ function Attendance() {
       const data = await getAttendence(user.school, user._id);
       // console.log(data);
       // setAllAttendance(data);
-      console.log(data);
       const tableData = [];
       for (let i = 0; i < data.length; i++) {
         let date = data[i].date.slice(8, 10);
@@ -261,7 +264,7 @@ function Attendance() {
       }
     });
 
-    let attendance1 = {}; 
+    let attendance1 = {};
 
     addAttendance &&
       addAttendance.forEach((element, index) => {
@@ -326,7 +329,6 @@ function Attendance() {
     try {
       setAddLoading(true);
       const data = await postAttendance(user._id, formData);
-      console.log(data);
       if (data && data.err) {
         setModal(false);
         setAddLoading(false);
@@ -372,7 +374,6 @@ function Attendance() {
         };
         try {
           const data = await searchAttendance(user._id, user.school, data1);
-          console.log(data);
           setattendanceData1(data);
           // delete data.workingDay;
           // delete data.classTeacher;
@@ -385,7 +386,6 @@ function Attendance() {
             // console.log(key);
             let obj = {};
             obj[key] = data.studentDatas[key];
-            console.log(obj);
             students.push(obj);
           }
           setStudents1(students);
@@ -406,7 +406,6 @@ function Attendance() {
         };
         try {
           const data = await searchAttendance(user._id, user.school, data1);
-          console.log(data);
           setattendanceData1(data);
           // delete data.workingDay;
           // delete data.classTeacher;
@@ -419,7 +418,6 @@ function Attendance() {
             // console.log(key);
             let obj = {};
             obj[key] = data.studentDatas[key];
-            console.log(obj);
             students.push(obj);
           }
           setStudents1(students);
@@ -447,7 +445,6 @@ function Attendance() {
         };
         try {
           const data = await searchAttendance(user._id, user.school, data1);
-          console.log(data);
           setattendanceData1(data);
           // delete data.workingDay;
           // delete data.classTeacher;
@@ -460,10 +457,8 @@ function Attendance() {
             // console.log(key);
             let obj = {};
             obj[key] = data.studentDatas[key];
-            console.log(obj);
             students.push(obj);
           }
-          console.log(students);
           // var studentWithSID = [];
           // for (const key2 in students) {
           //   var temp = students[key2].split(",");
@@ -487,7 +482,6 @@ function Attendance() {
     };
 
     const data = await filterStudent(user.school, user._id, formData);
-    console.log(attendanceData1);
     for (let i = 0; i < data.length; i++) {
       let check = false;
       for (let j = 0; j < students1.length; j++) {
@@ -523,33 +517,62 @@ function Attendance() {
   const handleTimeChange = async (e) => {
     e.preventDefault();
     setModel2Loading(true);
-    var dt = new Date(e.target.value);
-    let year = dt.getFullYear();
-    let month = (dt.getMonth() + 1).toString().padStart(2, "0");
-    let day = dt.getDate().toString().padStart(2, "0");
-    let day2 = (dt.getDate() + 1).toString().padStart(2, "0");
-    let data1 = {
-      class: attendance.selectClass,
-      section: attendance.selectSection,
-      start_date: year + "-" + month + "-" + day,
-      end_date: year + "-" + month + "-" + day,
-      session: attendance.session,
-    };
-    setSelectDate(year + "-" + month + "-" + day);
+    if (attendance.selectClass === "" && attendance.name !== "") {
+      var dt = new Date(e.target.value);
+      let year = dt.getFullYear();
+      let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+      let day = dt.getDate().toString().padStart(2, "0");
+      let day2 = (dt.getDate() + 1).toString().padStart(2, "0");
+      var data1 = {
+        name: attendance.name,
+        start_date: year + "-" + month + "-" + day,
+        end_date: year + "-" + month + "-" + day,
+        session: attendance.session,
+      };
+      setSelectDate(year + "-" + month + "-" + day);
+    } else if (
+      attendance.selectClass === "" &&
+      attendance.name === "" &&
+      attendance.studentId !== ""
+    ) {
+      var dt = new Date(e.target.value);
+      let year = dt.getFullYear();
+      let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+      let day = dt.getDate().toString().padStart(2, "0");
+      let day2 = (dt.getDate() + 1).toString().padStart(2, "0");
+      var data1 = {
+        studentID: attendance.studentId,
+        start_date: year + "-" + month + "-" + day,
+        end_date: year + "-" + month + "-" + day,
+        session: attendance.session,
+      };
+      setSelectDate(year + "-" + month + "-" + day);
+    } else {
+      var dt = new Date(e.target.value);
+      let year = dt.getFullYear();
+      let month = (dt.getMonth() + 1).toString().padStart(2, "0");
+      let day = dt.getDate().toString().padStart(2, "0");
+      let day2 = (dt.getDate() + 1).toString().padStart(2, "0");
+      var data1 = {
+        class: attendance.selectClass,
+        section: attendance.selectSection,
+        start_date: year + "-" + month + "-" + day,
+        end_date: year + "-" + month + "-" + day,
+        session: attendance.session,
+      };
+      setSelectDate(year + "-" + month + "-" + day);
+    }
     try {
       const data = await searchAttendance(user._id, user.school, data1);
       if (data && data.err) {
         toast.error(data.err);
       } else {
-        console.log(data);
         let students = [];
         for (const key in data.studentDatas) {
           let obj = {};
           obj[key] = data.studentDatas[key];
-          console.log(obj);
           students.push(obj);
         }
-        console.log(students);
         setEditAttedanceStudent(students);
         setEditAttedance(true);
         setModel2Loading(false);
@@ -565,7 +588,6 @@ function Attendance() {
     let temp = { id: studentID, attendance_status: e.target.value };
     List.push(temp);
     setEditAttedanceData(List);
-    console.log(editAttedanceData);
   };
 
   const submitEditAttedance = async (e) => {
@@ -574,12 +596,31 @@ function Attendance() {
       toast.error("First Change Status Before Submit");
     } else {
       setModel2Loading(true);
-      var formdata = new FormData();
-      formdata.set("class", attendance.selectClass);
-      formdata.set("section", attendance.selectSection);
-      formdata.set("date", selectDate);
-      formdata.set("editAttedance", JSON.stringify(editAttedanceData));
-      formdata.set("section", attendance.selectSection);
+      if (
+        attendance.selectClass === "" &&
+        attendance.studentId === "" &&
+        attendance.name !== ""
+      ) {
+        var formdata = new FormData();
+        formdata.set("ID", true);
+        formdata.set("date", selectDate);
+        formdata.set("editAttedance", JSON.stringify(editAttedanceData));
+      } else if (
+        attendance.selectClass === "" &&
+        attendance.name === "" &&
+        attendance.studentId !== ""
+      ) {
+        var formdata = new FormData();
+        formdata.set("ID", true);
+        formdata.set("date", selectDate);
+        formdata.set("editAttedance", JSON.stringify(editAttedanceData));
+      } else {
+        var formdata = new FormData();
+        formdata.set("class", attendance.selectClass);
+        formdata.set("section", attendance.selectSection);
+        formdata.set("date", selectDate);
+        formdata.set("editAttedance", JSON.stringify(editAttedanceData));
+      }
 
       try {
         const data = await updateAttendance(user._id, user.school, formdata);
@@ -726,7 +767,7 @@ function Attendance() {
                 {/* </Row> */}
                 {/* <Row className="d-flex justify-content-center mb-4"> */}
               </Row>
-              {attendance.studentId === "" && (
+              {attendance.studentId === "" && attendance.name === "" && (
                 <Row>
                   <Col md="6">
                     <Label
@@ -743,7 +784,7 @@ function Attendance() {
                       value={attendance.selectClass}
                       // required
                     >
-                      <option value="" disabled>
+                      <option value="" selected>
                         Select Class
                       </option>
                       {classes &&
@@ -776,7 +817,8 @@ function Attendance() {
                       <option value="" disabled>
                         Select Section
                       </option>
-                      {selectedClass.section &&
+                      {selectedClass !== "" &&
+                        selectedClass.section &&
                         selectedClass.section.map((section) => {
                           // console.log(section.name);
                           return (
@@ -878,8 +920,8 @@ function Attendance() {
                         </div>
                       </div>
                     </Col>
-                    {attendance.class !== "" &&
-                      attendance.section !== "" &&
+                    {attendance.selectClass !== "" &&
+                      attendance.selectSection !== "" &&
                       attendance.name === "" &&
                       attendance.studentId === "" && (
                         <Col className="buttons" md={3}>
@@ -909,8 +951,25 @@ function Attendance() {
                           )}
                         </Col>
                       )}
-
-                    {/* )} */}
+                    {attendance.selectClass === "" &&
+                      (attendance.name !== "" ||
+                        attendance.studentId !== "") && (
+                        <Col className="buttons" md={3}>
+                          {!attendanceData1.classTeacher && (
+                            <>
+                              <div className="col-sm">
+                                <Button
+                                  className="attendance-button"
+                                  onClick={toggleEdit}
+                                  color="primary"
+                                >
+                                  Edit Attendance
+                                </Button>
+                              </div>
+                            </>
+                          )}
+                        </Col>
+                      )}
                   </Row>
                 </CardHeader>
                 <CardBody>
@@ -926,8 +985,13 @@ function Attendance() {
                     <table>
                       <thead>
                         <th style={{ width: "50px" }}>#</th>
-                        <th>Student Name</th>
-                        <th style={{ width: "150px" }}>Student ID</th>
+                        <th className="table_fix first">Student Name</th>
+                        <th
+                          className="table_fix second"
+                          style={{ width: "150px" }}
+                        >
+                          Student ID
+                        </th>
                         {attendanceData1.workingDay.map((day) => {
                           return <th key={day}>{day}</th>;
                         })}
@@ -940,13 +1004,13 @@ function Attendance() {
                               <>
                                 <tr key={index}>
                                   <td>{index + 1}</td>
-                                  <td>
+                                  <td className="table_fix first tabledata">
                                     {Object.keys(student) &&
                                       Object.keys(student)
                                         .toString()
                                         .split(",")[0]}
                                   </td>
-                                  <td>
+                                  <td className="table_fix second tabledata">
                                     {Object.keys(student) &&
                                       Object.keys(student)
                                         .toString()
@@ -1195,7 +1259,6 @@ function Attendance() {
                         {editAttedanceStudent &&
                         editAttedanceStudent.length > 0 ? (
                           editAttedanceStudent.map((student, index) => {
-                            console.log(student);
                             return (
                               <>
                                 <tr key={index}>

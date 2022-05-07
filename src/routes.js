@@ -54,10 +54,13 @@ import ViewRoute from "views/pages/Transportation/ViewRoute";
 import AddRoute from "views/pages/Transportation/AddRoute";
 import Viewproduct from "views/pages/Ecommerce/Viewproduct";
 import Addproduct from "views/pages/Ecommerce/Addproduct";
-import StudentCredentials from 'views/pages/credentials/StudentCredentials';
-import StaffAttendance from 'views/pages/staffManagement/StaffAttendance'
+import StudentCredentials from "views/pages/credentials/StudentCredentials";
+import StaffAttendance from "views/pages/staffManagement/StaffAttendance";
 import FeesMaster from "views/pages/FeesManagement/feesmaster";
 import PenaltyMaster from "views/pages/FeesManagement/penalty";
+import SiblingMaster from "views/pages/FeesManagement/sibling";
+import ViewFees from "./views/pages/FeesManagement/view";
+import CollectionMaster from "./views/pages/CollectionMaster";
 
 export const adminRoutes = [
   {
@@ -652,6 +655,13 @@ const routes = [
     layout: "/admin",
   },
   {
+    path: "/collectionmaster",
+    name: "Collection Master",
+    icon: "ni ni-shop text-primary",
+    component: CollectionMaster,
+    layout: "/admin",
+  },
+  {
     collapse: true,
     name: "Fees Management",
     icon: "ni ni-single-02 text-orange",
@@ -665,10 +675,24 @@ const routes = [
         layout: "/admin",
       },
       {
+        path: "/viewfees",
+        name: "View Fees",
+        miniName: "VF",
+        component: ViewFees,
+        layout: "/admin",
+      },
+      {
         path: "/Penaltymaster",
         name: "Penalty Master",
         miniName: "PM",
         component: PenaltyMaster,
+        layout: "/admin",
+      },
+      {
+        path: "/siblingmaster",
+        name: "Sibling Master",
+        miniName: "SM",
+        component: SiblingMaster,
         layout: "/admin",
       },
     ],
