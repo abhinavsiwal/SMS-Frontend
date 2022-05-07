@@ -13,6 +13,7 @@ import {
   Col,
   Button,
   Form,
+  FormFeedback,
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 import TextArea from "antd/lib/input/TextArea";
@@ -46,6 +47,11 @@ import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
 
 import { useHistory } from "react-router-dom";
+import {
+  CountryDropdown,
+  RegionDropdown,
+  CountryRegionData,
+} from "react-country-region-selector";
 
 function AddStaff() {
   const [step, setStep] = useState(0);
@@ -89,7 +95,7 @@ function AddStaff() {
     qualification: "",
     department: "",
     subject: "",
-    job_description:"",
+    job_description: "",
   });
   const history = useHistory();
   const [allRoles, setAllRoles] = useState([]);
@@ -101,7 +107,16 @@ function AddStaff() {
   const [a, setA] = useState([]);
   const [file, setFile] = useState();
   const fileReader = new FileReader();
-
+  const [country, setCountry] = useState("India");
+  const [contactCountry, setContactCountry] = useState("India");
+  const [state, setState] = useState("");
+  const [contactState, setContactState] = useState("");
+  const [phoneError, setPhoneError] = useState(false);
+  const [altPhoneError, setAltPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [subjectData, setSubjectData] = useState();
+  const [contactPhoneError, setContactPhoneError] = useState(false);
+  const [image, setImage] = useState();
   useEffect(() => {
     getAllRolesHandler();
     getSession();
@@ -136,6 +151,7 @@ function AddStaff() {
     formData.set(name, event.target.files[0]);
     // console.log(event.target.files[0]);
     setStaffData({ ...staffData, [name]: event.target.files[0] });
+    setImage(event.target.files[0]);
   };
 
   //react-select
@@ -145,7 +161,8 @@ function AddStaff() {
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    formData.set("subject", JSON.stringify(value));
+    // formData.set("subject", JSON.stringify(value));
+    setSubjectData(value);
   };
 
   // handle Country state city data change
@@ -199,6 +216,11 @@ function AddStaff() {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    formData.set("country", country);
+    formData.set("state", state);
+    formData.set("contact_person_country", contactCountry);
+    formData.set("contact_person_state", contactState);
+    formData.set("subject", JSON.stringify(subjectData));
     try {
       setloading(true);
       const resp = await addStaff(user._id, token, formData);
@@ -325,14 +347,84 @@ function AddStaff() {
     }
   };
 
-  const Select = (props) => (
-    <FixRequiredSelect
-      {...props}
-      SelectComponent={BaseSelect}
-      options={props.options}
-    />
-  );
+  // const Select = (props) => (
+  //   <FixRequiredSelect
+  //     {...props}
+  //     SelectComponent={BaseSelect}
+  //     options={props.options}
+  //   />
+  // );
 
+  const cancelHandler = () => {
+    setStaffData({
+      photo: "",
+      firstname: "",
+      lastname: "",
+      email: "",
+      phone: "",
+      session: "",
+      alternate_phone: "",
+      date_of_birth: "",
+      gender: "",
+      birth_place: "",
+      caste: "",
+      religion: "",
+      mother_tongue: "",
+      session: "",
+      bloodgroup: "",
+      joining_date: "",
+      present_address: "",
+      permanent_address: "",
+      state: "",
+      city: "",
+      country: "",
+      pincode: "",
+      contact_person_name: "",
+      contact_person_relation: "",
+      contact_person_phone: "",
+      contact_person_address: "",
+      contact_person_state: "",
+      contact_person_city: "",
+      contact_person_country: "",
+      contact_person_pincode: "",
+      assign_role: "",
+      assign_role_name: "",
+      job: "",
+      salary: "",
+      qualification: "",
+      department: "",
+      subject: "",
+      job_description: "",
+    });
+    setStep(0);
+  };
+
+  const phoneBlurHandler = () => {
+    console.log("here");
+    console.log(staffData.phone);
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(staffData.phone)) {
+      setPhoneError(false);
+    } else {
+      setPhoneError(true);
+    }
+  };
+  const altPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(staffData.alternate_phone)) {
+      setAltPhoneError(false);
+    } else {
+      setAltPhoneError(true);
+    }
+  };
+  const emailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(staffData.email)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+  };
   return (
     <>
       <SimpleHeader name="Add Staff" parentName="Staff Management" />
@@ -413,6 +505,7 @@ function AddStaff() {
                           type="file"
                           onChange={handleFileChange("photo")}
                           accept="image/*"
+                          // value={staffData.photo.name}
                         />
                         <label
                           className="custom-file-label"
@@ -436,6 +529,7 @@ function AddStaff() {
                         className="form-control"
                         required
                         onChange={handleChange("session")}
+                        value={staffData.session}
                       >
                         <option value="">Select Session</option>
                         {sessions &&
@@ -458,18 +552,17 @@ function AddStaff() {
                       >
                         Date of Joining
                       </Label>
-                      {/* <Input
+                      <Input
                         id="example-date-input"
                         type="date"
                         onChange={handleChange("joining_date")}
                         value={staffData.joining_date}
                         required
-                        
-                      /> */}
-                      <DatePicker 
+                      />
+                      {/* <DatePicker 
                         dateFormat="dd-mm-yy"
                         placeholderText="dd/mm/yy"
-                      />
+                      /> */}
                     </Col>
                     <Col md="4">
                       <label
@@ -508,7 +601,8 @@ function AddStaff() {
                   <Row>
                     <Col md="4">
                       <Label
-                        cl ssName="form-control-label"
+                        cl
+                        ssName="form-control-label"
                         htmlFor="example-date-input"
                       >
                         DOB
@@ -557,9 +651,12 @@ function AddStaff() {
                         type="email"
                         required
                         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                        oninvalid="this.setCustomValidity('Witinnovation')"
-                        onvalid="this.setCustomValidity('')"
+                        onBlur={emailBlurHandler}
+                        invalid={emailError}
                       />
+                      {emailError && (
+                        <FormFeedback>Please Enter a valid Email</FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -578,9 +675,15 @@ function AddStaff() {
                         pattern="[1-9]{1}[0-9]{9}"
                         value={staffData.phone}
                         required
-                        oninvalid="this.setCustomValidity('Witinnovation')"
-                        onvalid="this.setCustomValidity('')"
+                        // valid={!phoneError}
+                        invalid={phoneError}
+                        onBlur={phoneBlurHandler}
                       />
+                      {phoneError && (
+                        <FormFeedback>
+                          Please Enter a valid phone no
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col md="4">
                       <label
@@ -597,7 +700,14 @@ function AddStaff() {
                         type="number"
                         pattern="[1-9]{1}[0-9]{9}"
                         required
+                        onBlur={altPhoneBlurHandler}
+                        invalid={altPhoneError}
                       />
+                      {altPhoneError && (
+                        <FormFeedback>
+                          Please Enter a valid phone no
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col md="4">
                       <label
@@ -694,6 +804,9 @@ function AddStaff() {
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
+                    <Button color="danger" onClick={cancelHandler}>
+                      Cancel
+                    </Button>
                     <Button color="primary" type="submit">
                       Next
                     </Button>
@@ -764,14 +877,10 @@ function AddStaff() {
                       >
                         Country
                       </label>
-                      <Select
-                        id="country"
-                        name="country"
-                        label="country"
-                        options={updatedCountries}
-                        required
-                        value={cscd.country}
-                        onChange={handleCSCChange("country")}
+                      <CountryDropdown
+                        value={country}
+                        onChange={(val) => setCountry(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -781,16 +890,11 @@ function AddStaff() {
                       >
                         State
                       </label>
-                      <Select
-                        id="state"
-                        name="state"
-                        label="state"
-                        options={updatedStates(
-                          cscd.country ? cscd.country.isoCode : null
-                        )}
-                        required
-                        value={cscd.state}
-                        onChange={handleCSCChange("state")}
+                      <RegionDropdown
+                        country={country}
+                        value={state}
+                        onChange={(val) => setState(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -800,21 +904,13 @@ function AddStaff() {
                       >
                         City
                       </label>
-                      <Select
-                        id="city"
-                        name="city"
-                        label="city"
-                        options={
-                          cscd.state
-                            ? updatedCities(
-                                cscd.country.value,
-                                cscd.state.value
-                              )
-                            : updatedCities(null, null)
-                        }
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="City"
+                        type="text"
+                        onChange={handleChange("city")}
+                        value={staffData.city}
                         required
-                        value={cscd.city}
-                        onChange={handleCSCChange("city")}
                       />
                     </Col>
                   </Row>
@@ -832,9 +928,14 @@ function AddStaff() {
                     >
                       Previous
                     </Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                    <div>
+                      <Button color="danger" onClick={cancelHandler}>
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -860,41 +961,37 @@ function AddStaff() {
                       />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Relation
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Relation"
-                          type="text"
-                          onChange={handleChange("contact_person_relation")}
-                          value={staffData.contact_person_relation}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Relation
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Relation"
+                        type="text"
+                        onChange={handleChange("contact_person_relation")}
+                        value={staffData.contact_person_relation}
+                        required
+                      />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Contact Number
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Contact Number"
-                          onChange={handleChange("contact_person_phone")}
-                          value={staffData.contact_person_phone}
-                          type="number"
-                          pattern="[1-9]{1}[0-9]{9}"
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Contact Number
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Contact Number"
+                        onChange={handleChange("contact_person_phone")}
+                        value={staffData.contact_person_phone}
+                        type="number"
+                        pattern="[1-9]{1}[0-9]{9}"
+                        required
+                      />
                     </Col>
                   </Row>
                   <Row>
@@ -940,14 +1037,10 @@ function AddStaff() {
                       >
                         Country
                       </label>
-                      <Select
-                        id="country"
-                        name="country"
-                        label="country"
-                        options={updatedCountries}
-                        required
-                        value={cpcscd.contact_person_country}
-                        onChange={handlecpCSCChange("contact_person_country")}
+                      <CountryDropdown
+                        value={contactCountry}
+                        onChange={(val) => setContactCountry(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="4">
@@ -957,18 +1050,11 @@ function AddStaff() {
                       >
                         State
                       </label>
-                      <Select
-                        id="state"
-                        name="state"
-                        label="state"
-                        options={updatedStates(
-                          cpcscd.contact_person_country
-                            ? cpcscd.contact_person_country.isoCode
-                            : null
-                        )}
-                        required
-                        value={cpcscd.contact_person_state}
-                        onChange={handlecpCSCChange("contact_person_state")}
+                      <RegionDropdown
+                        country={contactCountry}
+                        value={contactState}
+                        onChange={(val) => setContactState(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="4">
@@ -978,21 +1064,13 @@ function AddStaff() {
                       >
                         City
                       </label>
-                      <Select
-                        id="city"
-                        name="city"
-                        label="city"
-                        options={
-                          cpcscd.contact_person_state
-                            ? updatedCities(
-                                cpcscd.contact_person_country.value,
-                                cpcscd.contact_person_state.value
-                              )
-                            : updatedCities(null, null)
-                        }
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="City"
+                        type="text"
+                        onChange={handleChange("contact_person_city")}
+                        value={staffData.contact_person_city}
                         required
-                        value={cpcscd.contact_person_city}
-                        onChange={handlecpCSCChange("contact_person_city")}
                       />
                     </Col>
                   </Row>
@@ -1010,9 +1088,14 @@ function AddStaff() {
                     >
                       Previous
                     </Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                    <div>
+                      <Button color="danger" onClick={cancelHandler}>
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -1047,7 +1130,7 @@ function AddStaff() {
                     </Col>
                   </Row>
                   {staffData.department && (
-                    <Row className="mt-2 mb-2" >
+                    <Row className="mt-2 mb-2">
                       <Col md="6">
                         <>
                           <label
@@ -1129,6 +1212,7 @@ function AddStaff() {
                           className="basic-multi-select"
                           classNamePrefix="select"
                           required
+                          // value={subjectData}
                         />
                       </Col>
                       <Col md="6">
@@ -1152,7 +1236,7 @@ function AddStaff() {
                   {staffData.assign_role_name !== "" &&
                     staffData.assign_role_name !== "Teacher" && (
                       <Row>
-                          <Col md="12">
+                        <Col md="12">
                           <FormGroup>
                             <label
                               className="form-control-label"
@@ -1188,7 +1272,6 @@ function AddStaff() {
                             />
                           </FormGroup>
                         </Col>
-                      
                       </Row>
                     )}
                   <Row className="mt-4 d-flex justify-content-between">
@@ -1205,11 +1288,14 @@ function AddStaff() {
                     >
                       Previous
                     </Button>
-                    {staffData.department && staffData.assign_role_name && (
-                      <Button className="mr-4" color="success" type="submit">
-                        Submit
-                      </Button>
-                    )}
+                    <div>
+                      <Button color="danger" onClick={cancelHandler}></Button>
+                      {staffData.department && staffData.assign_role_name && (
+                        <Button className="mr-4" color="success" type="submit">
+                          Submit
+                        </Button>
+                      )}
+                    </div>
                   </Row>
                 </CardBody>
               </Form>

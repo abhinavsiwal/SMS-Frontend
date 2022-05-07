@@ -24,6 +24,11 @@ import { updateStaffSuccess } from "constants/success";
 import "./style.css";
 import Loader from "components/Loader/Loader";
 import { ToastContainer, toast } from "react-toastify";
+import {
+  CountryDropdown,
+  RegionDropdown,
+  CountryRegionData,
+} from "react-country-region-selector";
 
 import { updateStaff } from "api/staff";
 import { isAuthenticated } from "api/auth";
@@ -70,7 +75,10 @@ function UpdateStaff({ staffDetails }) {
     department: staffDetails.department,
     subject: staffDetails.subject,
   });
-
+  const [country, setCountry] = useState(staffDetails.country);
+  const [contactCountry, setContactCountry] = useState(staffDetails.contact_person_country);
+  const [state, setState] = useState(staffDetails.state);
+  const [contactState, setContactState] = useState(staffDetails.contact_person_state);
   // console.log("staff", staffData);
   const [formData] = useState(new FormData());
   const [loading, setLoading] = useState(false);
@@ -154,6 +162,10 @@ function UpdateStaff({ staffDetails }) {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    formData.set("country", country);
+    formData.set("state", state);
+    formData.set("contact_person_country", contactCountry);
+    formData.set("contact_person_state", contactState);
     try {
       setLoading(true);
       const resp = await updateStaff(staffData._id, user._id, formData);
@@ -253,6 +265,10 @@ function UpdateStaff({ staffDetails }) {
   //     toast.error("Something Went Wrong!");
   //   }
   // }
+  const cancelHandler = ()=>{
+    window.location.reload();
+  }
+  
 
   return (
     <>
@@ -558,6 +574,7 @@ function UpdateStaff({ staffDetails }) {
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
+                  <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button color="primary" type="submit">
                       Next
                     </Button>
@@ -628,15 +645,10 @@ function UpdateStaff({ staffDetails }) {
                       >
                         Country
                       </label>
-                      <Select
-                        id="country"
-                        name="country"
-                        label="country"
-                        options={updatedCountries}
-                        required
-                        value={cscd.country}
-                        onChange={handleCSCChange("country")}
-                        initialValue={staffData.country ? staffData.country : null}
+                      <CountryDropdown
+                        value={country}
+                        onChange={(val) => setCountry(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -646,17 +658,11 @@ function UpdateStaff({ staffDetails }) {
                       >
                         State
                       </label>
-                      <Select
-                        id="state"
-                        name="state"
-                        label="state"
-                        options={updatedStates(
-                          cscd.country ? cscd.country.isoCode : null
-                        )}
-                        required
-                        value={cscd.state}
-                        onChange={handleCSCChange("state")}
-                        initialValue={staffData.state  ? staffData.state : null}
+                      <RegionDropdown
+                        country={country}
+                        value={state}
+                        onChange={(val) => setState(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -666,22 +672,13 @@ function UpdateStaff({ staffDetails }) {
                       >
                         City
                       </label>
-                      <Select
-                        id="city"
-                        name="city"
-                        label="city"
-                        options={
-                          cscd.state
-                            ? updatedCities(
-                                cscd.country.value,
-                                cscd.state.value
-                              )
-                            : updatedCities(null, null)
-                        }
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="City"
+                        type="text"
+                        onChange={handleChange("city")}
+                        value={staffData.city}
                         required
-                        value={cscd.city}
-                        onChange={handleCSCChange("city")}
-                        initialValue={staffData.city?staffData.city:null}
                       />
                     </Col>
                   </Row>
@@ -699,9 +696,12 @@ function UpdateStaff({ staffDetails }) {
                     >
                       Previous
                     </Button>
+                    <div>
+                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button className="mr-4" color="primary" type="submit">
                       Next
                     </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -806,14 +806,10 @@ function UpdateStaff({ staffDetails }) {
                       >
                         Country
                       </label>
-                      <Select
-                        id="country"
-                        name="country"
-                        label="country"
-                        options={updatedCountries}
-                        required
-                        value={cpcscd.contact_person_country}
-                        onChange={handlecpCSCChange("contact_person_country")}
+                      <CountryDropdown
+                        value={contactCountry}
+                        onChange={(val) => setContactCountry(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="4">
@@ -823,20 +819,13 @@ function UpdateStaff({ staffDetails }) {
                       >
                         State
                       </label>
-                      <Select
-                        id="state"
-                        name="state"
-                        label="state"
-                        options={updatedStates(
-                          cpcscd.contact_person_country
-                            ? cpcscd.contact_person_country.isoCode
-                            : null
-                        )}
-                        required
-                        value={cpcscd.contact_person_state}
-                        onChange={handlecpCSCChange("contact_person_state")}
+                      <RegionDropdown
+                        country={contactCountry}
+                        value={contactState}
+                        onChange={(val) => setContactState(val)}
+                        classes="stateInput"
                       />
-                    </Col>
+                    </Col> 
                     <Col md="4">
                       <label
                         className="form-control-label"
@@ -844,21 +833,13 @@ function UpdateStaff({ staffDetails }) {
                       >
                         City
                       </label>
-                      <Select
-                        id="city"
-                        name="city"
-                        label="city"
-                        options={
-                          cpcscd.contact_person_state
-                            ? updatedCities(
-                                cpcscd.contact_person_country.value,
-                                cpcscd.contact_person_state.value
-                              )
-                            : updatedCities(null, null)
-                        }
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="City"
+                        type="text"
+                        onChange={handleChange("contact_person_city")}
+                        value={staffData.contact_person_city}
                         required
-                        value={cpcscd.contact_person_city}
-                        onChange={handlecpCSCChange("contact_person_city")}
                       />
                     </Col>
                   </Row>
@@ -876,9 +857,12 @@ function UpdateStaff({ staffDetails }) {
                     >
                       Previous
                     </Button>
+                    <div>
+                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button className="mr-4" color="primary" type="submit">
                       Next
                     </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -956,9 +940,12 @@ function UpdateStaff({ staffDetails }) {
                     >
                       Previous
                     </Button>
+                    <div>
+                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button className="mr-4" color="success" type="submit">
                       Submit
                     </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>

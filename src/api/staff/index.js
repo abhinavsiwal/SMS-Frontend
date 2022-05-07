@@ -92,7 +92,7 @@ export const updateStaff1 = async (staffId, id, formData) => {
 
 export const getStaffByDepartment = async (schoolId, userId, formData) => {
   try {
-    const {data} = await sendRequestWithJson(
+    const { data } = await sendRequestWithJson(
       `${process.env.REACT_APP_API_URL}/api/school/staff/department/${schoolId}/${userId}`,
       formData,
       "POST"
@@ -102,5 +102,19 @@ export const getStaffByDepartment = async (schoolId, userId, formData) => {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+};
+
+export const getStaffById = async (sId) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/staff/search/${sId}`,
+      {},
+      "GET"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
   }
 };

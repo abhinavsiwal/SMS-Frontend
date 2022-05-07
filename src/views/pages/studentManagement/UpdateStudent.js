@@ -33,6 +33,11 @@ import { isAuthenticated } from "api/auth";
 import { allClass } from "api/class";
 import { useHistory, useParams } from "react-router-dom";
 // import { allStudents } from "api/student";
+import {
+  CountryDropdown,
+  RegionDropdown,
+  CountryRegionData,
+} from "react-country-region-selector";
 
 function UpdateStudent({ studentDetails }) {
   // Stepper form steps
@@ -106,6 +111,8 @@ function UpdateStudent({ studentDetails }) {
     mother_mother_tongue: studentDetails.mother_mother_tongue,
   });
   const { user, token } = isAuthenticated();
+  const [country, setCountry] = useState(studentDetails.country);
+  const [state, setState] = useState(studentDetails.state);
 
 
   
@@ -235,6 +242,8 @@ function UpdateStudent({ studentDetails }) {
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     formData.set("school", user.school);
+    formData.set("country",country)
+    formData.set("state",state)
 
     try {
       setLoading(true);
@@ -285,6 +294,11 @@ function UpdateStudent({ studentDetails }) {
       value: city.stateCode,
       ...city,
     }));
+
+const cancelHandler = ()=>{
+  window.location.reload();
+}
+
 
   useEffect(() => {}, [cscd]);
   return (
@@ -582,6 +596,7 @@ function UpdateStudent({ studentDetails }) {
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
+                  <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button color="primary" onClick={handleFormChange}>
                       Next
                     </Button>
@@ -722,9 +737,12 @@ function UpdateStudent({ studentDetails }) {
                     >
                       Previous
                     </Button>
+                    <div>
+                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button className="mr-4" color="primary" type="submit">
                       Next
                     </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -796,14 +814,10 @@ function UpdateStudent({ studentDetails }) {
                       >
                         Country
                       </label>
-                      <Select
-                        id="country"
-                        name="country"
-                        label="country"
-                        options={updatedCountries}
-                        required
-                        value={cscd.country}
-                        onChange={handleCSCChange("country")}
+                      <CountryDropdown
+                        value={country}
+                        onChange={(val) => setCountry(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -813,16 +827,11 @@ function UpdateStudent({ studentDetails }) {
                       >
                         State
                       </label>
-                      <Select
-                        id="state"
-                        name="state"
-                        label="state"
-                        options={updatedStates(
-                          cscd.country ? cscd.country.isoCode : null
-                        )}
-                        required
-                        value={cscd.state}
-                        onChange={handleCSCChange("state")}
+                      <RegionDropdown
+                        country={country}
+                        value={state}
+                        onChange={(val) => setState(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -832,21 +841,13 @@ function UpdateStudent({ studentDetails }) {
                       >
                         City
                       </label>
-                      <Select
-                        id="city"
-                        name="city"
-                        label="city"
-                        options={
-                          cscd.state
-                            ? updatedCities(
-                                cscd.country.value,
-                                cscd.state.value
-                              )
-                            : updatedCities(null, null)
-                        }
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="City"
+                        type="text"
+                        onChange={handleChange("city")}
                         required
-                        value={cscd.city}
-                        onChange={handleCSCChange("city")}
+                        value={student.city}
                       />
                     </Col>
                   </Row>
@@ -898,9 +899,12 @@ function UpdateStudent({ studentDetails }) {
                     >
                       Previous
                     </Button>
+                    <div>
+                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button className="mr-4" color="primary" type="submit">
                       Next
                     </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -1320,7 +1324,7 @@ function UpdateStudent({ studentDetails }) {
                                 type="text"
                                 onChange={handleChange("guardian_email")}
                                 required
-                                value={student.guardian_email}
+                                value={student.parent_email}
                               />
                             </FormGroup>
                           </Col>
@@ -1509,13 +1513,16 @@ function UpdateStudent({ studentDetails }) {
                           >
                             Previous
                           </Button>
+                          <div>
+                            <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                           <Button
                             className="mr-4"
                             color="success"
                             type="submit"
-                          >
+                            >
                             Submit
                           </Button>
+                            </div>
                         </Row>
                       </CardBody>
                     </>

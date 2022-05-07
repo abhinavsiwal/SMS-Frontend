@@ -83,7 +83,7 @@ const AllStaffs = () => {
       setPermissions(permission1);
       // console.log(permissions);
     }
-  }, [staffEditing]);
+  }, [staffEditing,checked]);
 
   const handleStaffDetails = (data) => {
     // console.log("id", id);
@@ -94,7 +94,18 @@ const AllStaffs = () => {
   useEffect(() => {
     fetchStaffs();
   }, [itemOffset, itemsPerPage, checked, staffEditing]);
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
 
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
   const fetchStaffs = async () => {
     const endOffset = itemOffset + itemsPerPage;
     // console.log(userDetails.userDetails);
@@ -120,7 +131,7 @@ const AllStaffs = () => {
           job: data[i].job,
           job_description:data[i].job_description,
           department: data[i].department.name,
-          joining_date: data[i].joining_date.split("T")[0].toString(),
+          joining_date: getFormattedDate(data[i].joining_date),
           action: (
             <h5 key={i + 1} className="mb-0">
               {permission1 && permission1.includes("edit") && (

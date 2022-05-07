@@ -99,7 +99,10 @@ function Admin() {
             key={key}
           />
         );
-      } else {
+      }if (prop.visible===false){
+        return null
+      }
+      else {
         return null;
       }
     });

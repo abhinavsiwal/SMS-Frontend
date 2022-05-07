@@ -93,7 +93,18 @@ const AllStudents = () => {
   dispatch(setStudentEditing(false));
     
   }, [])
-  
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
 
   const fetchStudents = async () => {
     const endOffset = itemOffset + itemsPerPage;
@@ -122,7 +133,7 @@ const AllStudents = () => {
           class: res[i].class && res[i].class.name,
           section: res[i].section && res[i].section.name,
           roll: res[i].roll_number,
-          joining_date: res[i].joining_date.split("T")[0].toString(),
+          joining_date: getFormattedDate(res[i].joining_date),
           action: (
             <h5 key={i + 1} className="mb-0">
               {/* <Link to={`/admin/update-student/${res[i]._id}`}> */}

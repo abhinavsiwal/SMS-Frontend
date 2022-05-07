@@ -41,6 +41,7 @@ import AddSubject from "views/pages/subject/AddSubject";
 import AllStudents from "views/pages/studentManagement/AllStudents";
 // import UpdateStudent from "views/pages/studentManagementp/UpdateStudent";
 import AllStaffs from "views/pages/staffManagement/AllStaffs";
+import UpdateStaff from "views/pages/staffManagement/UpdateStaff";
 import Calendar from "views/pages/Calendar.js";
 import Attendance from "views/pages/Attendance/Attendance";
 // import TimeTable from "views/pages/Time Table/TimeTable";
@@ -706,6 +707,12 @@ const routes = [
         miniName: "S",
         component: StaffAttendance,
         layout: "/admin",
+      },
+      {
+        path: "/staff-update/:id",
+        component: UpdateStaff,
+        layout: "/admin",
+        visible:false,
       },
     ],
   },

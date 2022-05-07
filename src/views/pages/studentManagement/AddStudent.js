@@ -11,6 +11,7 @@ import {
   Col,
   Button,
   Form,
+  FormFeedback,
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -34,6 +35,12 @@ import { useSelector } from "react-redux";
 import { allSessions } from "api/session";
 
 import { useHistory } from "react-router-dom";
+
+import {
+  CountryDropdown,
+  RegionDropdown,
+  CountryRegionData,
+} from "react-country-region-selector";
 
 function AddStudent() {
   // Stepper form steps
@@ -111,8 +118,99 @@ function AddStudent() {
     mother_mother_tongue: "",
   });
   const [loading, setLoading] = useState(false);
+  
+  const [country, setCountry] = useState("India");
+  const [state, setState] = useState("");
   // console.log("studentData", studentData);
   const [selectedClass, setSelectedClass] = useState({});
+  const [phoneError, setPhoneError] = useState(false);
+  const [altPhoneError, setAltPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [parentEmailError, setParentEmailError] = useState(false);
+  const [guardianEmailError, setGuardianEmailError] = useState(false);
+  const [guardianPhoneError, setGuardianPhoneError] = useState(false);
+  const [fatherPhoneError, setFatherPhoneError] = useState(false);
+  const [motherPhoneError, setMotherPhoneError] = useState(false);
+  const [aadharError, setAadharError] = useState(false);
+
+  const phoneBlurHandler = () => {
+    console.log("here");
+    // console.log(studentData.phone);
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(studentData.phone)) {
+      setPhoneError(false);
+    } else {
+      setPhoneError(true);
+    }
+  };
+  const altPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(studentData.alternate_phone)) {
+      setAltPhoneError(false);
+    } else {
+      setAltPhoneError(true);
+    }
+  };
+  const emailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(studentData.email)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+  };
+  const parentEmailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(studentData.parent_email)) {
+      setParentEmailError(false);
+    } else {
+      setParentEmailError(true);
+    }
+  };
+  const guardianEmailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(studentData.parent_email)) {
+      setGuardianEmailError(false);
+    } else {
+      setGuardianEmailError(true);
+    }
+  };
+
+  const guardianPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(studentData.guardian_phone)) {
+      setGuardianPhoneError(false);
+    } else {
+      setGuardianPhoneError(true);
+    }
+  };
+
+  const fatherPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(studentData.father_phone_phone)) {
+      setFatherPhoneError(false);
+    } else {
+      setFatherPhoneError(true);
+    }
+  };
+
+  const motherPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(studentData.mother_phone)) {
+      setMotherPhoneError(false);
+    } else {
+      setMotherPhoneError(true);
+    }
+  };
+
+  const aadharBlurHandler = () => {
+    let regex = /^[0-9]{12}$/;
+    if (regex.test(studentData.aadhar_number)) {
+      setAadharError(false);
+    } else {
+      setAadharError(true);
+    }
+  };
 
   const [formData] = useState(new FormData());
 
@@ -282,6 +380,8 @@ function AddStudent() {
     console.log(studentData);
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    formData.set("country",country);
+    formData.set("state",state)
 
     try {
       setLoading(true);
@@ -339,6 +439,76 @@ function AddStudent() {
       value: city.stateCode,
       ...city,
     }));
+
+const cancelHandler = ()=>{
+  setStep(0);
+  setStudentData({
+    photo: "",
+    joining_date: "",
+    firstname: "",
+    lastname: "",
+    date_of_birth: "",
+    gender: "",
+    aadhar_number: "",
+    email: "",
+    phone: "",
+    alternate_phone: "",
+    birth_place: "",
+    caste: "",
+    religion: "",
+    bloodgroup: "",
+    class: "",
+    section: "",
+    session: "",
+    roll_number: "",
+    previous_school: "",
+    present_address: "",
+    permanent_address: "",
+    pincode: "",
+    parent_address: "",
+    parent_email: "",
+    connected: null,
+    connectedID: "",
+    country: "",
+    state: "",
+    city: "",
+    nationality: "",
+    mother_tongue: "",
+    contact_person_select: "",
+    guardian_name: "",
+    guardian_last_name: "",
+    guardian_dob: "",
+    guardian_email: "",
+    guardian_address: "",
+    guardian_blood_group: "",
+    guardian_phone: "",
+    // guardian_address: "",
+    // guardian_permanent_address: "",
+    guardian_pincode: "",
+    guardian_nationality: "",
+    guardian_mother_tongue: "",
+    father_name: "",
+    father_last_name: "",
+    father_dob: "",
+    father_blood_group: "",
+    father_phone: "",
+    // father_address: "",
+    // father_permanent_address: "",
+    father_pincode: "",
+    father_nationality: "",
+    father_mother_tongue: "",
+    mother_name: "",
+    mother_last_name: "",
+    mother_dob: "",
+    mother_blood_group: "",
+    mother_phone: "",
+    // mother_address: "",
+    // mother_permanent_address: "",
+    mother_pincode: "",
+    mother_nationality: "",
+    mother_mother_tongue: "",
+  })
+}
 
   useEffect(() => {}, [cscd]);
   return (
@@ -563,7 +733,14 @@ function AddStudent() {
                         pattern="[0-9]{1,12}"
                         value={studentData.aadhar_number}
                         required
+                        onBlur={aadharBlurHandler}
+                        invalid={aadharError}
                       />
+                      {aadharError && (
+                        <FormFeedback>
+                          Please Enter a valid Aadhar Card no
+                        </FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -582,7 +759,12 @@ function AddStudent() {
                         required
                         value={studentData.email}
                         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                        onBlur={emailBlurHandler}
+                        invalid={emailError}
                       />
+                      {emailError && (
+                        <FormFeedback>Please Enter a valid Email</FormFeedback>
+                      )}
                     </Col>
                     <Col>
                       <label
@@ -599,7 +781,14 @@ function AddStudent() {
                         onChange={handleChange("phone")}
                         required
                         value={studentData.phone}
+                        onBlur={phoneBlurHandler}
+                        invalid={phoneError}
                       />
+                      {phoneError && (
+                        <FormFeedback>
+                          Please Enter a valid Phone no
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col>
                       <label
@@ -616,7 +805,12 @@ function AddStudent() {
                         onChange={handleChange("alternate_phone")}
                         required
                         value={studentData.alternate_phone}
+                        onBlur={altPhoneBlurHandler}
+                        invalid={altPhoneError}
                       />
+                      {altPhoneError && (
+                        <FormFeedback>Please Enter a valid Phone</FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -697,6 +891,7 @@ function AddStudent() {
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
+                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
                     <Button color="primary" type="submit">
                       Next
                     </Button>
@@ -816,9 +1011,14 @@ function AddStudent() {
                     >
                       Previous
                     </Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                    <div>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -890,14 +1090,10 @@ function AddStudent() {
                       >
                         Country
                       </label>
-                      <Select
-                        id="country"
-                        name="country"
-                        label="country"
-                        options={updatedCountries}
-                        required
-                        value={cscd.country}
-                        onChange={handleCSCChange("country")}
+                      <CountryDropdown
+                        value={country}
+                        onChange={(val) => setCountry(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -907,16 +1103,11 @@ function AddStudent() {
                       >
                         State
                       </label>
-                      <Select
-                        id="state"
-                        name="state"
-                        label="state"
-                        options={updatedStates(
-                          cscd.country ? cscd.country.isoCode : null
-                        )}
-                        required
-                        value={cscd.state}
-                        onChange={handleCSCChange("state")}
+                      <RegionDropdown
+                        country={country}
+                        value={state}
+                        onChange={(val) => setState(val)}
+                        classes="stateInput"
                       />
                     </Col>
                     <Col md="3">
@@ -926,21 +1117,13 @@ function AddStudent() {
                       >
                         City
                       </label>
-                      <Select
-                        id="city"
-                        name="city"
-                        label="city"
-                        options={
-                          cscd.state
-                            ? updatedCities(
-                                cscd.country.value,
-                                cscd.state.value
-                              )
-                            : updatedCities(null, null)
-                        }
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="City"
+                        type="text"
+                        onChange={handleChange("city")}
                         required
-                        value={cscd.city}
-                        onChange={handleCSCChange("city")}
+                        value={studentData.city}
                       />
                     </Col>
                   </Row>
@@ -992,9 +1175,14 @@ function AddStudent() {
                     >
                       Previous
                     </Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                    <div>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
+                    </div>
                   </Row>
                 </CardBody>
               </Form>
@@ -1025,43 +1213,46 @@ function AddStudent() {
                       <CardBody>
                         <Row>
                           <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Parent Address
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Parent Address"
-                                type="text"
-                                onChange={handleChange("parent_address")}
-                                required
-                                value={studentData.parent_address}
-                              />
-                            </FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Parent Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Parent Address"
+                              type="text"
+                              onChange={handleChange("parent_address")}
+                              required
+                              value={studentData.parent_address}
+                            />
                           </Col>
                         </Row>
                         <Row>
                           <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Parent Email
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Parent Address"
-                                type="email"
-                                onChange={handleChange("parent_email")}
-                                required
-                                value={studentData.parent_email}
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                              />
-                            </FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Parent Email
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Parent Address"
+                              type="email"
+                              onChange={handleChange("parent_email")}
+                              required
+                              value={studentData.parent_email}
+                              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                              invalid={parentEmailError}
+                              onBlur={parentEmailBlurHandler}
+                            />
+                            {parentEmailError && (
+                              <FormFeedback>
+                                Please enter a valid email address.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
                         {connectFalse && (
@@ -1223,7 +1414,14 @@ function AddStudent() {
                               onChange={handleChange("father_phone")}
                               required
                               value={studentData.father_phone}
+                              onBlur={fatherPhoneBlurHandler}
+                              invalid={fatherPhoneError}
                             />
+                            {fatherPhoneError && (
+                              <FormFeedback>
+                                Please enter a valid phone no.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
                         <Row className="mb-4">
@@ -1379,7 +1577,14 @@ function AddStudent() {
                               onChange={handleChange("mother_phone")}
                               required
                               value={studentData.mother_phone}
+                              onBlur={motherPhoneBlurHandler}
+                              invalid={motherPhoneError}
                             />
+                            {motherPhoneError && (
+                              <FormFeedback>
+                                Please enter a valid phone no.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
                         <Row className="mb-4">
@@ -1462,43 +1667,46 @@ function AddStudent() {
                       <CardBody>
                         <Row>
                           <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Guardian Address
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Guardian Address"
-                                type="text"
-                                onChange={handleChange("guardian_address")}
-                                required
-                                value={studentData.guardian_address}
-                              />
-                            </FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Guardian Address
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Guardian Address"
+                              type="text"
+                              onChange={handleChange("guardian_address")}
+                              required
+                              value={studentData.guardian_address}
+                            />
                           </Col>
                         </Row>
                         <Row>
                           <Col>
-                            <FormGroup>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols3Input"
-                              >
-                                Guardian Email
-                              </label>
-                              <Input
-                                id="example4cols3Input"
-                                placeholder="Guardian Address"
-                                type="text"
-                                onChange={handleChange("guardian_email")}
-                                required
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-                                value={studentData.guardian_email}
-                              />
-                            </FormGroup>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols3Input"
+                            >
+                              Guardian Email
+                            </label>
+                            <Input
+                              id="example4cols3Input"
+                              placeholder="Guardian Address"
+                              type="text"
+                              onChange={handleChange("guardian_email")}
+                              required
+                              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                              value={studentData.guardian_email}
+                              onBlur={guardianEmailBlurHandler}
+                              invalid={guardianEmailError}
+                            />
+                            {guardianEmailError && (
+                              <FormFeedback>
+                                Please enter a valid email address
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
                         {connectFalse && (
@@ -1660,7 +1868,14 @@ function AddStudent() {
                               onChange={handleChange("guardian_phone")}
                               required
                               value={studentData.guardian_phone}
+                              invalid={guardianPhoneError}
+                              onBlur={guardianPhoneBlurHandler}
                             />
+                            {guardianPhoneError && (
+                              <FormFeedback>
+                                Please enter a valid phone no.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
                         <Row className="mb-4">
@@ -1727,13 +1942,18 @@ function AddStudent() {
                           >
                             Previous
                           </Button>
-                          <Button
-                            className="mr-4"
-                            color="success"
-                            type="submit"
-                          >
-                            Submit
-                          </Button>
+                          <div>
+                            <Button onClick={cancelHandler} color="danger">
+                              Cancel
+                            </Button>
+                            <Button
+                              className="mr-4"
+                              color="success"
+                              type="submit"
+                            >
+                              Submit
+                            </Button>
+                          </div>
                         </Row>
                       </CardBody>
                     </>
