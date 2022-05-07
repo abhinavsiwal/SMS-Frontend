@@ -51,10 +51,13 @@ const AddSession = () => {
   const [editWorkingTime, setEditWorkingTime] = useState(new Date());
   const editTimeDuration = moment(editWorkingTime).format("LT");
   const [editSessionId, setEditSessionId] = useState("");
+  const [feesmethod, setFeesmethod] = useState("");
+  const [dateExpire, setDateExpire] = useState(false);
   const [sessionData, setSessionData] = useState({
     name: "",
     start_date: "",
     end_date: "",
+    fees_method: "",
     working_days: "",
   });
   const { user, token } = isAuthenticated();
@@ -109,7 +112,7 @@ const AddSession = () => {
               working_days: res[i].working_days,
               working_time: res[i].working_time,
               year: res[i].year,
-              status: res[i].status,
+              fees_method: res[i].fees_method,
               action: (
                 <h5 key={i + 1} className="mb-0">
                   {permission1 && permission1.includes("edit") && (
@@ -122,6 +125,7 @@ const AddSession = () => {
                         rowHandler(
                           res[i]._id,
                           res[i].name,
+                          res[i].fees_method,
                           res[i].start_date.split("T")[0],
                           res[i].start_date.split("T")[0],
                           res[i].working_days
@@ -188,6 +192,7 @@ const AddSession = () => {
     formData.set("end_date", editEndDate);
     formData.set("working_days", editWorkingDay);
     formData.set("working_time", editTimeDuration);
+    formData.set("fees_method", feesmethod);
 
     try {
       const updateSession = await editSession(
@@ -209,10 +214,19 @@ const AddSession = () => {
   };
 
   //Getting values from fetch
-  function rowHandler(id, name, startDate, endDate, working_days) {
+  function rowHandler(id, name, fees_method, startDate, endDate, working_days) {
     // e.stopPropagation();
     setEditing(true);
+    let nowDate = new Date();
+    var startdate = new Date(startDate); // Now
+    startdate.setDate(startdate.getDate() + 30); // Set now + 30 days as the new date
+    if (startdate > nowDate) {
+      setDateExpire(true);
+    } else {
+      setDateExpire(false);
+    }
     setEditSessionName(name);
+    setFeesmethod(fees_method);
     setEditStartDate(startDate);
     setEditEndDate(endDate);
     setEditSessionId(id);
@@ -252,9 +266,34 @@ const AddSession = () => {
       },
     },
     {
-      title: "Status",
-      key: "status",
-      dataIndex: "status",
+      title: "Fees Method",
+      key: "fees_method",
+      dataIndex: "fees_method",
+      sorter: (a, b) => a.fees_method > b.fees_method,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.fees_method.toLowerCase().includes(value.toLowerCase());
+      },
     },
     {
       title: "Start Date",
@@ -444,6 +483,7 @@ const AddSession = () => {
         name: "",
         start_date: "",
         end_date: "",
+        fees_method: "",
         working_days: "",
       });
       if (resp.err) {
@@ -572,6 +612,25 @@ const AddSession = () => {
                           timeCaption="Time"
                           dateFormat="h:mm aa"
                         />
+                      </Col>
+                      <Col>
+                        <label
+                          className="form-control-label"
+                          htmlFor="example-date-input"
+                        >
+                          Fees Method
+                        </label>
+                        <select
+                          required
+                          className="form-control"
+                          onChange={handleChange("fees_method")}
+                        >
+                          <option value="">Select Fees Method</option>
+                          <option value="monthly">Monthly</option>
+                          <option value="quarterly">Quarterly</option>
+                          <option value="half_yearly">Half-Yearly</option>
+                          <option value="yearly">Yearly</option>
+                        </select>
                       </Col>
                     </Row>
                     <Row className="mt-4 float-right">
@@ -771,6 +830,28 @@ const AddSession = () => {
                   dateFormat="h:mm aa"
                 />
               </Col>
+              {dateExpire && (
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example-date-input"
+                  >
+                    Fees Method
+                  </label>
+                  <select
+                    required
+                    value={feesmethod}
+                    className="form-control"
+                    onChange={(e) => setFeesmethod(e.target.value)}
+                  >
+                    <option value="">Select Fees Method</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="quarterly">Quarterly</option>
+                    <option value="half_yearly">Half-Yearly</option>
+                    <option value="yearly">Yearly</option>
+                  </select>
+                </Col>
+              )}
             </Row>
           </ModalBody>
           <ModalFooter>

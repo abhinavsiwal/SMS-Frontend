@@ -111,6 +111,8 @@ table {
 table thead th {
   text-align: center;
   padding: 10px;
+  position: relative;
+  width: 150px;
   background-color: #11cdef;
 }
 
@@ -138,8 +140,40 @@ table tbody tr td {
 .attendance_main_div {
   width: 99%;
   overflow: scroll;
+  position: relative;
+  overflow: auto;
+  white-space: nowrap;
 }
 
 .buttons {
   display: flex;
+}
+
+
+.table_fix{
+  position: -webkit-sticky;
+  position: sticky;
+  
+  
+}
+
+.first {
+  width: 100px;
+  min-width: 100px;
+  max-width: 100px;
+  left: 0px;
+  z-index: 999;
+}
+
+.second {
+  width: 150px;
+  z-index: 999;
+  min-width: 150px;
+  max-width: 150px;
+  left: 100px;
+
+}
+
+.tabledata{
+  background-color: white;
 }

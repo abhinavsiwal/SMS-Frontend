@@ -30,7 +30,7 @@ export const deletePenalty = (PenaltyId, userId, token) => {
 };
 
 export const updatePenalty = (PenaltyId, userId, token, data) => {
-  const url = `${process.env.REACT_APP_API_URL}/api/school/penalty/${PenaltyId}/${userId}`;
+  const url = `${process.env.REACT_APP_API_URL}/api/school/penalty/edit/${PenaltyId}/${userId}`;
   return fetch(url, {
     method: "PUT",
     headers: { Authorization: "Bearer " + token, Accept: "application/json" },
