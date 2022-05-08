@@ -56,7 +56,9 @@ function Login() {
       dispatch(setUserDetails({}));
       return;
     }
-
+    if(error){
+      toast.error(error);
+    }
     if (token) {
       // console.log(token);
       // console.log("Login");
@@ -64,7 +66,7 @@ function Login() {
       // console.log("logged in");
       setRedirect(true);
     }
-  }, [token]);
+  }, [token,error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

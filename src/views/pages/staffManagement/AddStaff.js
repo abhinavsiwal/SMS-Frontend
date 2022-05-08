@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import Pincode from 'react-pincode';
 //import reactstrap
 import {
   Card,
@@ -116,6 +116,7 @@ function AddStaff() {
   const [emailError, setEmailError] = useState(false);
   const [subjectData, setSubjectData] = useState();
   const [contactPhoneError, setContactPhoneError] = useState(false);
+  const [pincode, setPincode] = useState("");
   const [image, setImage] = useState();
   useEffect(() => {
     getAllRolesHandler();

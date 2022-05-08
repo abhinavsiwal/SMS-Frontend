@@ -20,10 +20,13 @@ export const login = createAsyncThunk(
       try {
         const data = await signIn(username, password);
         // console.log(data);
+        if(data.err){
+         return rejectWithValue(data.err);
+        }
         return data;
       } catch (err) {
         console.log(err); 
-        // return rejectWithValue(err.response.data);
+        return rejectWithValue("Error in Logging In.");
       }     
     } else {
       alert("Please fill all fields");
