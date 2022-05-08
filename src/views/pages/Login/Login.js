@@ -28,6 +28,7 @@ import {
   setToken,
   setExpiry,
   setUserDetails,
+  setError
 } from "../../../store/reducers/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { loginSuccess } from "constants/success";
@@ -54,19 +55,35 @@ function Login() {
       dispatch(setToken(""));
       dispatch(setExpiry(""));
       dispatch(setUserDetails({}));
+      setError("");
       return;
     }
-    if(error){
-      toast.error(error);
-    }
+
     if (token) {
       // console.log(token);
       // console.log("Login");
-      toast.success(loginSuccess); 
+      toast.success(loginSuccess);
+      dispatch(setError(""));
       // console.log("logged in");
       setRedirect(true);
     }
-  }, [token,error]);
+  }, [token]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(setError(""));
+    }
+  }, [error]);
+
+  useEffect(() => {
+    
+  
+    return () => {
+      dispatch(setError(""))
+    }
+  }, [])
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

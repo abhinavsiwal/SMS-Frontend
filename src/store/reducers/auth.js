@@ -9,7 +9,7 @@ const initialState = {
   expiry: "",
   userDetails: {},
   loading: false,
-  error: {},
+  error: "",
 };
 
 export const login = createAsyncThunk( 
@@ -46,7 +46,12 @@ export const authSlice = createSlice({
     },
     setUserDetails:(state,action)=>{
       state.userDetails=action.payload;
-    }
+    },
+    
+    setError:(state,action)=>{
+      state.error=action.payload;
+    },
+    
   },
   extraReducers: {
     [login.pending]: (state) => {
@@ -73,5 +78,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const {setToken,setExpiry,setUserDetails} = authSlice.actions;
+export const {setToken,setExpiry,setUserDetails,setError} = authSlice.actions;
 export default authSlice.reducer;
