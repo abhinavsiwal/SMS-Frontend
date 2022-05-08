@@ -12,7 +12,7 @@ const initialState = {
   error: {},
 };
 
-export const login = createAsyncThunk(
+export const login = createAsyncThunk( 
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
     // console.log(username, password);
