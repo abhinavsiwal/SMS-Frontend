@@ -9,9 +9,30 @@ const initialState = {
   expiry: "",
   userDetails: {},
   loading: false,
-  error: {},
+  error: "",
 };
 
+export const login = createAsyncThunk( 
+  "auth/login",
+  async ({ username, password }, { rejectWithValue }) => {
+    // console.log(username, password);
+    if (username && password) {
+      try {
+        const data = await signIn(username, password);
+        // console.log(data);
+        if(data.err){
+         return rejectWithValue(data.err);
+        }
+        return data;
+      } catch (err) {
+        console.log(err); 
+        return rejectWithValue("Error in Logging In.");
+      }     
+    } else {
+      alert("Please fill all fields");
+    }
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -29,10 +50,15 @@ export const authSlice = createSlice({
     },
     setUserDetails:(state,action)=>{
       state.userDetails=action.payload;
-    }
+    },
+    
+    setError:(state,action)=>{
+      state.error=action.payload;
+    },
+    
   },
  
 });
 
-export const {setToken,setExpiry,setUserDetails} = authSlice.actions;
+export const {setToken,setExpiry,setUserDetails,setError} = authSlice.actions;
 export default authSlice.reducer;
