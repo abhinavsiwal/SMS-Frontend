@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Pincode from 'react-pincode';
+import Camera from "react-html5-camera-photo";
 //import reactstrap
 import {
   Card,
@@ -116,8 +116,9 @@ function AddStaff() {
   const [emailError, setEmailError] = useState(false);
   const [subjectData, setSubjectData] = useState();
   const [contactPhoneError, setContactPhoneError] = useState(false);
-  const [pincode, setPincode] = useState("");
+  const [camera, setCamera] = useState(false);
   const [image, setImage] = useState();
+  const [capturePhoto, setCapturePhoto] = useState(false);
   useEffect(() => {
     getAllRolesHandler();
     getSession();
@@ -221,7 +222,10 @@ function AddStaff() {
     formData.set("state", state);
     formData.set("contact_person_country", contactCountry);
     formData.set("contact_person_state", contactState);
-    formData.set("subject", JSON.stringify(subjectData));
+
+    if (subjectData) {
+      formData.set("subject", JSON.stringify(subjectData));
+    }
     try {
       setloading(true);
       const resp = await addStaff(user._id, token, formData);
@@ -426,6 +430,12 @@ function AddStaff() {
       setEmailError(true);
     }
   };
+
+  const handlecamera = (data) => {
+    setCapturePhoto(true);
+    formData.set("capture", data);
+    setCamera(false);
+  };
   return (
     <>
       <SimpleHeader name="Add Staff" parentName="Staff Management" />
@@ -487,11 +497,12 @@ function AddStaff() {
             {step === 0 && (
               <Form onSubmit={handleFormChange} className="mb-4">
                 <CardBody>
+                  {staffData.photo.name && (
+                    <h2>File {staffData.photo.name} is Selected</h2>
+                  )}
+                  {capturePhoto && <h2>Photo is Selected</h2>}
                   <Row md="4" className="d-flex justify-content-center mb-4">
                     <Col md="8">
-                      {staffData.photo.name && (
-                        <h2>File {staffData.photo.name} is Selected</h2>
-                      )}
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"
@@ -516,7 +527,35 @@ function AddStaff() {
                         </label>
                       </div>
                     </Col>
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example3cols2Input"
+                      >
+                        Capture Now
+                      </label>
+                      <div className="custom-file">
+                        <Button
+                          color="primary"
+                          className="custom-file-input"
+                          type="button"
+                          key={"edit" + 1}
+                          id="capture_div"
+                          onClick={() => setCamera(true)}
+                        >
+                          <i className="fas fa-camera" />
+                        </Button>
+                      </div>
+                    </Col>
                   </Row>
+                  {camera && (
+                    <Camera
+                      className="camera_div"
+                      onTakePhoto={(dataUri) => {
+                        handlecamera(dataUri);
+                      }}
+                    />
+                  )}
                   <Row>
                     <Col>
                       <label

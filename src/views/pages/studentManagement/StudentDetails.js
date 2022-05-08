@@ -46,7 +46,7 @@ function Staffdetails({ data, backHandle }) {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-                <CardImg alt="..." src={data.photo} top className="p-4" />
+                <CardImg alt="..." src={data.tempPhoto} top className="p-4" />
                 <CardBody>
                   <Row>
                     <Col align="center">

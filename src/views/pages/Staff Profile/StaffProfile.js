@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Card,
@@ -24,9 +23,8 @@ import { isAuthenticated } from "api/auth";
 function StaffProfile() {
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
-  const { user} = isAuthenticated();
+  const { user } = isAuthenticated();
   // console.log(user);
-  
 
   return (
     <>
@@ -36,17 +34,14 @@ function StaffProfile() {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-                <CardImg
-                  alt="..."
-                  src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                  top
-                  className="p-4"
-                />
+                <CardImg alt="..." src={user.tempPhoto} top className="p-4" />
                 <CardBody>
                   <Row>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Name</h4>
-                      <span className="text-md">{user.firstname+" "+user.lastname}</span>
+                      <span className="text-md">
+                        {user.firstname + " " + user.lastname}
+                      </span>
                     </Col>
                     {/* <Col align="center">
                       <h4 className="mt-3 mb-1">Class</h4>

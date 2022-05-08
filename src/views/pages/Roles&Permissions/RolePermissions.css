@@ -5,3 +5,8 @@
 .custom-modal-style {
   height: 600px;
 }
+
+#mainApplicationDiv{
+  height: 25rem;
+  overflow: scroll;
+}

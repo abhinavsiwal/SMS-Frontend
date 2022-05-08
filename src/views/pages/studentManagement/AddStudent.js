@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Camera from "react-html5-camera-photo";
 import {
   Card,
   CardHeader,
@@ -118,7 +119,7 @@ function AddStudent() {
     mother_mother_tongue: "",
   });
   const [loading, setLoading] = useState(false);
-  
+
   const [country, setCountry] = useState("India");
   const [state, setState] = useState("");
   // console.log("studentData", studentData);
@@ -132,6 +133,9 @@ function AddStudent() {
   const [fatherPhoneError, setFatherPhoneError] = useState(false);
   const [motherPhoneError, setMotherPhoneError] = useState(false);
   const [aadharError, setAadharError] = useState(false);
+  const [camera, setCamera] = useState(false);
+  const [image, setImage] = useState();
+  const [capturePhoto, setCapturePhoto] = useState(false);
 
   const phoneBlurHandler = () => {
     console.log("here");
@@ -380,8 +384,8 @@ function AddStudent() {
     console.log(studentData);
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    formData.set("country",country);
-    formData.set("state",state)
+    formData.set("country", country);
+    formData.set("state", state);
 
     try {
       setLoading(true);
@@ -440,75 +444,81 @@ function AddStudent() {
       ...city,
     }));
 
-const cancelHandler = ()=>{
-  setStep(0);
-  setStudentData({
-    photo: "",
-    joining_date: "",
-    firstname: "",
-    lastname: "",
-    date_of_birth: "",
-    gender: "",
-    aadhar_number: "",
-    email: "",
-    phone: "",
-    alternate_phone: "",
-    birth_place: "",
-    caste: "",
-    religion: "",
-    bloodgroup: "",
-    class: "",
-    section: "",
-    session: "",
-    roll_number: "",
-    previous_school: "",
-    present_address: "",
-    permanent_address: "",
-    pincode: "",
-    parent_address: "",
-    parent_email: "",
-    connected: null,
-    connectedID: "",
-    country: "",
-    state: "",
-    city: "",
-    nationality: "",
-    mother_tongue: "",
-    contact_person_select: "",
-    guardian_name: "",
-    guardian_last_name: "",
-    guardian_dob: "",
-    guardian_email: "",
-    guardian_address: "",
-    guardian_blood_group: "",
-    guardian_phone: "",
-    // guardian_address: "",
-    // guardian_permanent_address: "",
-    guardian_pincode: "",
-    guardian_nationality: "",
-    guardian_mother_tongue: "",
-    father_name: "",
-    father_last_name: "",
-    father_dob: "",
-    father_blood_group: "",
-    father_phone: "",
-    // father_address: "",
-    // father_permanent_address: "",
-    father_pincode: "",
-    father_nationality: "",
-    father_mother_tongue: "",
-    mother_name: "",
-    mother_last_name: "",
-    mother_dob: "",
-    mother_blood_group: "",
-    mother_phone: "",
-    // mother_address: "",
-    // mother_permanent_address: "",
-    mother_pincode: "",
-    mother_nationality: "",
-    mother_mother_tongue: "",
-  })
-}
+  const handlecamera = (data) => {
+    setCapturePhoto(true);
+    formData.set("capture", data);
+    setCamera(false);
+  };
+
+  const cancelHandler = () => {
+    setStep(0);
+    setStudentData({
+      photo: "",
+      joining_date: "",
+      firstname: "",
+      lastname: "",
+      date_of_birth: "",
+      gender: "",
+      aadhar_number: "",
+      email: "",
+      phone: "",
+      alternate_phone: "",
+      birth_place: "",
+      caste: "",
+      religion: "",
+      bloodgroup: "",
+      class: "",
+      section: "",
+      session: "",
+      roll_number: "",
+      previous_school: "",
+      present_address: "",
+      permanent_address: "",
+      pincode: "",
+      parent_address: "",
+      parent_email: "",
+      connected: null,
+      connectedID: "",
+      country: "",
+      state: "",
+      city: "",
+      nationality: "",
+      mother_tongue: "",
+      contact_person_select: "",
+      guardian_name: "",
+      guardian_last_name: "",
+      guardian_dob: "",
+      guardian_email: "",
+      guardian_address: "",
+      guardian_blood_group: "",
+      guardian_phone: "",
+      // guardian_address: "",
+      // guardian_permanent_address: "",
+      guardian_pincode: "",
+      guardian_nationality: "",
+      guardian_mother_tongue: "",
+      father_name: "",
+      father_last_name: "",
+      father_dob: "",
+      father_blood_group: "",
+      father_phone: "",
+      // father_address: "",
+      // father_permanent_address: "",
+      father_pincode: "",
+      father_nationality: "",
+      father_mother_tongue: "",
+      mother_name: "",
+      mother_last_name: "",
+      mother_dob: "",
+      mother_blood_group: "",
+      mother_phone: "",
+      // mother_address: "",
+      // mother_permanent_address: "",
+      mother_pincode: "",
+      mother_nationality: "",
+      mother_mother_tongue: "",
+    });
+  };
 
   useEffect(() => {}, [cscd]);
   return (
@@ -574,11 +584,12 @@ const cancelHandler = ()=>{
             {step === 0 && (
               <Form onSubmit={handleFormChange} className="mb-4">
                 <CardBody>
+                  {capturePhoto && <h2>Photo is Selected</h2>}
+                  {studentData.photo.name && (
+                    <h2>File {studentData.photo.name} is Selected</h2>
+                  )}
                   <Row md="4" className="d-flex justify-content-center mb-4">
                     <Col md="8">
-                      {studentData.photo.name && (
-                        <h2>File {studentData.photo.name} is Selected</h2>
-                      )}
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"
@@ -593,7 +604,6 @@ const cancelHandler = ()=>{
                           type="file"
                           accept="photo/*"
                           onChange={handleFileChange("photo")}
-                          required
                         />
                         <label
                           className="custom-file-label"
@@ -603,7 +613,35 @@ const cancelHandler = ()=>{
                         </label>
                       </div>
                     </Col>
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example3cols2Input"
+                      >
+                        Capture Now
+                      </label>
+                      <div className="custom-file">
+                        <Button
+                          color="primary"
+                          className="custom-file-input"
+                          type="button"
+                          key={"edit" + 1}
+                          id="capture_div"
+                          onClick={() => setCamera(true)}
+                        >
+                          <i className="fas fa-camera" />
+                        </Button>
+                      </div>
+                    </Col>
                   </Row>
+                  {camera && (
+                    <Camera
+                      className="camera_div"
+                      onTakePhoto={(dataUri) => {
+                        handlecamera(dataUri);
+                      }}
+                    />
+                  )}
                   <Row>
                     <Col>
                       <label
@@ -891,7 +929,9 @@ const cancelHandler = ()=>{
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
-                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
+                    <Button onClick={cancelHandler} color="danger">
+                      Cancel
+                    </Button>
                     <Button color="primary" type="submit">
                       Next
                     </Button>

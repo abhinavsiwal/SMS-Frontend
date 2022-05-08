@@ -231,16 +231,20 @@ function RolePermissions() {
       formData.set("permissions", JSON.stringify(mappingRoleMain.permissions));
       setMappingLoading(true);
       const data = await updateRole(user._id, mappingRoleId, formData);
-      // console.log(data);
-      setChecked(!checked);
-      setManageModal(false);
-      setMappingPermissions([]);
-      setMappingLoading(false);
-      toast.success("Permission Added successfully")
+      if (data.err) {
+        setMappingLoading(false);
+        toast.error(data.err);
+      } else {
+        setChecked(!checked);
+        setManageModal(false);
+        setMappingPermissions([]);
+        setMappingLoading(false);
+        toast.success("Permission Added successfully");
+      }
     } catch (err) {
       console.log(err);
       setMappingLoading(false);
-      toast.error("Permission not Added ")
+      toast.error("Permission not Added ");
     }
   };
 
@@ -277,6 +281,7 @@ function RolePermissions() {
       setMappingRoleMain("");
     } else {
       var data = JSON.parse(e.target.value);
+      setMappingRoleId(data._id)
       if (data.permissions) {
         for (const key in data.permissions) {
           var temp = data.permissions[key];
@@ -285,12 +290,15 @@ function RolePermissions() {
           data.permissions[key] = permissionData;
         }
         setMappingRoleMain(data);
+        
       } else {
         data["permissions"] = {};
         setMappingRoleMain(data);
       }
     }
   };
+
+  console.log(mappingRoleMain);
 
   return (
     <>
@@ -488,34 +496,36 @@ function RolePermissions() {
                     required
                   />
                 </Col>
-                <ListGroup className="m-1">
-                  {application.map((application) => {
-                    return (
-                      <>
-                        <ListGroupItem>
-                          <Col className="d-flex justify-content-between">
-                            <div>{application}</div>
-                            <div className="d-flex justify-content-between">
-                              <Button
-                                className="btn-sm pull-right"
-                                color="primary"
-                                type="button"
-                              >
-                                <i className="fas fa-user-edit" />
-                              </Button>
-                              <Button
-                                className="btn-sm pull-right"
-                                color="danger"
-                                type="button"
-                              >
-                                <i className="fas fa-trash" />
-                              </Button>
-                            </div>
-                          </Col>
-                        </ListGroupItem>
-                      </>
-                    );
-                  })}
+                <ListGroup id="mainApplicationDiv" className="m-1">
+                  {user &&
+                    user.module &&
+                    user.module.map((application) => {
+                      return (
+                        <>
+                          <ListGroupItem>
+                            <Col className="d-flex justify-content-between">
+                              <div>{application}</div>
+                              <div className="d-flex justify-content-between">
+                                <Button
+                                  className="btn-sm pull-right"
+                                  color="primary"
+                                  type="button"
+                                >
+                                  <i className="fas fa-user-edit" />
+                                </Button>
+                                <Button
+                                  className="btn-sm pull-right"
+                                  color="danger"
+                                  type="button"
+                                >
+                                  <i className="fas fa-trash" />
+                                </Button>
+                              </div>
+                            </Col>
+                          </ListGroupItem>
+                        </>
+                      );
+                    })}
                 </ListGroup>
               </CardBody>
             </Card>

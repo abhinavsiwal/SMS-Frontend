@@ -298,7 +298,7 @@ function ViewCanteen() {
         start_time: selectedCanteen.menu[i].start_time,
         end_time: selectedCanteen.menu[i].end_time,
         image: (
-          <img width={100} height={100} src={selectedCanteen.menu[i].image} />
+          <img width={100} height={100} src={selectedCanteen.menu[i].tempPhoto} />
         ),
         price: selectedCanteen.menu[i].price,
         publish: selectedCanteen.menu[i].publish,
