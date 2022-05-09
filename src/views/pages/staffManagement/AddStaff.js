@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Camera from "react-html5-camera-photo";
+import Pincode from "react-pincode";
 //import reactstrap
 import {
   Card,
@@ -18,6 +19,7 @@ import {
 import Loader from "components/Loader/Loader";
 import TextArea from "antd/lib/input/TextArea";
 import DatePicker from "react-datepicker";
+import axios from "axios";
 
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -111,12 +113,18 @@ function AddStaff() {
   const [contactCountry, setContactCountry] = useState("India");
   const [state, setState] = useState("");
   const [contactState, setContactState] = useState("");
+  const [city, setCity] = useState("");
+  const [contactCity, setContactCity] = useState("");
   const [phoneError, setPhoneError] = useState(false);
   const [altPhoneError, setAltPhoneError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [subjectData, setSubjectData] = useState();
   const [contactPhoneError, setContactPhoneError] = useState(false);
   const [camera, setCamera] = useState(false);
+  const [pincode, setPincode] = useState("");
+  const [pincodeError, setPincodeError] = useState(false);
+  const [contactPincode, setContactPincode] = useState("");
+  const [contactPincodeError, setContactPincodeError] = useState(false);
   const [image, setImage] = useState();
   const [capturePhoto, setCapturePhoto] = useState(false);
   useEffect(() => {
@@ -226,6 +234,10 @@ function AddStaff() {
     if (subjectData) {
       formData.set("subject", JSON.stringify(subjectData));
     }
+    formData.set("city",city);
+    formData.set("contact_person_city",contactCity);
+    formData.set("pincode",pincode);
+    formData.set("contact_person_pincode",contactPincode);
     try {
       setloading(true);
       const resp = await addStaff(user._id, token, formData);
@@ -430,15 +442,64 @@ function AddStaff() {
       setEmailError(true);
     }
   };
-
   const handlecamera = (data) => {
     setCapturePhoto(true);
     formData.set("capture", data);
     setCamera(false);
   };
+  const pincodeBlurHandler = ()=>{
+    let regex = /^[1-9][0-9]{5}$/;
+    if (regex.test(pincode)) {
+      setPincodeError(false);
+    } else {
+      setPincodeError(true);
+    }
+
+  }
+  const contactPincodeBlurHandler = ()=>{
+    let regex = /^[1-9][0-9]{5}$/;
+    if (regex.test(contactPincode)) {
+      setContactPincodeError(false);
+    } else {
+      setContactPincodeError(true);
+    }
+
+  }
+  const pincodeChangeHandler = async (e) => {
+    setPincode(e.target.value);
+    if (e.target.value.length === 6) {
+      try {
+        const { data } = await axios.get(
+          `https://api.postalpincode.in/pincode/${e.target.value}`
+        );
+        console.log(data);
+        setState(data[0].PostOffice[0].State);
+        setCity(data[0].PostOffice[0].District);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch pin code.");
+      }
+    }
+  };
+  const contactPincodeChangeHandler = async (e) => {
+    setContactPincode(e.target.value);
+    if (e.target.value.length === 6) {
+      try {
+        const { data } = await axios.get(
+          `https://api.postalpincode.in/pincode/${e.target.value}`
+        );
+        console.log(data);
+        setContactState(data[0].PostOffice[0].State);
+        setContactCity(data[0].PostOffice[0].District);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch pin code.");
+      }
+    }
+  };
+
   return (
     <>
-      <SimpleHeader name="Add Staff" parentName="Staff Management" />
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
@@ -899,16 +960,20 @@ function AddStaff() {
                         className="form-control-label"
                         htmlFor="example4cols2Input"
                       >
-                        Pin Code
+                        Pin Code 
                       </label>
                       <Input
                         id="example4cols2Input"
                         placeholder="Pin Code"
-                        onChange={handleChange("pincode")}
-                        value={staffData.pincode}
+                        onChange={(e) => pincodeChangeHandler(e)}
+                        value={pincode}
                         type="number"
                         required
+                        onBlur={pincodeBlurHandler}
                       />
+                        {pincodeError && (
+                        <FormFeedback>Please Enter a valid Pincode</FormFeedback>
+                      )}
                     </Col>
                     <Col md="3">
                       <label
@@ -917,10 +982,14 @@ function AddStaff() {
                       >
                         Country
                       </label>
-                      <CountryDropdown
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Country"
+                        type="text"
+                        onChange={e=>setCountry(e.target.value)}
                         value={country}
-                        onChange={(val) => setCountry(val)}
-                        classes="stateInput"
+                        required
+                      
                       />
                     </Col>
                     <Col md="3">
@@ -930,11 +999,14 @@ function AddStaff() {
                       >
                         State
                       </label>
-                      <RegionDropdown
-                        country={country}
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={e=>setState(e.target.value)}
                         value={state}
-                        onChange={(val) => setState(val)}
-                        classes="stateInput"
+                        required
+                    
                       />
                     </Col>
                     <Col md="3">
@@ -948,9 +1020,10 @@ function AddStaff() {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={handleChange("city")}
-                        value={staffData.city}
+                        onChange={e=>setCity(e.target.value)}
+                        value={city}
                         required
+                      
                       />
                     </Col>
                   </Row>
@@ -1062,10 +1135,14 @@ function AddStaff() {
                         id="example4cols2Input"
                         placeholder="Pin Number"
                         type="number"
-                        onChange={handleChange("contact_person_pincode")}
-                        value={staffData.contact_person_pincode}
+                        onChange={e=>contactPincodeChangeHandler(e)}
+                        value={contactPincode}
                         required
+                        onBlur={contactPincodeBlurHandler}
                       />
+                         {contactPincodeError && (
+                        <FormFeedback>Please Enter a valid Pincode</FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -1077,10 +1154,14 @@ function AddStaff() {
                       >
                         Country
                       </label>
-                      <CountryDropdown
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Country"
+                        type="text"
+                        onChange={e=>setContactCountry(e.target.value)}
                         value={contactCountry}
-                        onChange={(val) => setContactCountry(val)}
-                        classes="stateInput"
+                        required
+                      
                       />
                     </Col>
                     <Col md="4">
@@ -1090,11 +1171,14 @@ function AddStaff() {
                       >
                         State
                       </label>
-                      <RegionDropdown
-                        country={contactCountry}
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={e=>setContactState(e.target.value)}
                         value={contactState}
-                        onChange={(val) => setContactState(val)}
-                        classes="stateInput"
+                        required
+                    
                       />
                     </Col>
                     <Col md="4">
@@ -1108,9 +1192,10 @@ function AddStaff() {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={handleChange("contact_person_city")}
-                        value={staffData.contact_person_city}
+                        onChange={e=>setContactCity(e.target.value)}
+                        value={contactCity}
                         required
+                      
                       />
                     </Col>
                   </Row>
@@ -1329,7 +1414,7 @@ function AddStaff() {
                       Previous
                     </Button>
                     <div>
-                      <Button color="danger" onClick={cancelHandler}></Button>
+                      <Button color="danger" onClick={cancelHandler}>Cancel</Button>
                       {staffData.department && staffData.assign_role_name && (
                         <Button className="mr-4" color="success" type="submit">
                           Submit
