@@ -732,12 +732,7 @@ const routes = [
         component: StaffAttendance,
         layout: "/admin",
       },
-      {
-        path: "/staff-update/:id",
-        component: UpdateStaff,
-        layout: "/admin",
-        visible:false,
-      },
+    
     ],
   },
   {

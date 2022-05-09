@@ -68,7 +68,7 @@ function Login() {
       setRedirect(true);
     }
   }, [token]);
-
+ 
   useEffect(() => {
     if (error) {
       toast.error(error);
