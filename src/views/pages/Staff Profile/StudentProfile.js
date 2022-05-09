@@ -1,16 +1,29 @@
-
 // reactstrap components
-import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, Container, Row, Col, Button, CardImg, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
+import React, { useState } from "react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Container,
+  Row,
+  Col,
+  Button,
+  CardImg,
+  Nav,
+  NavItem,
+  NavLink,
+  TabContent,
+  TabPane,
+} from "reactstrap";
 // core components
-import SimpleHeader from 'components/Headers/SimpleHeader.js';
+import SimpleHeader from "components/Headers/SimpleHeader.js";
 
-import { FaEdit } from 'react-icons/fa';
+import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
 function StudentProfile() {
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
-  const [activeTab, setActiveTab] = useState('1');
-  const { user} = isAuthenticated();
+  const [activeTab, setActiveTab] = useState("1");
+  const { user } = isAuthenticated();
   // console.log(user);
   return (
     <>
@@ -20,17 +33,14 @@ function StudentProfile() {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-                <CardImg
-                  alt="..."
-                  src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                  top
-                  className="p-4"
-                />
+                <CardImg alt="..." src={user.tempPhoto} top className="p-4" />
                 <CardBody>
                   <Row>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Name</h4>
-                      <span className="text-md">{user.firstname+" "+user.lastname}</span>
+                      <span className="text-md">
+                        {user.firstname + " " + user.lastname}
+                      </span>
                     </Col>
                     {/* <Col align="center">
                       <h4 className="mt-3 mb-1">Class</h4>

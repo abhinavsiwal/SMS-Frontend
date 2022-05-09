@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   Card,
@@ -46,12 +45,7 @@ function Staffdetails({ data, backHandle }) {
           <Col lg="4">
             <div className="card-wrapper">
               <Card>
-                <CardImg
-                  alt="..."
-                  src="https://colorlib.com/polygon/kiaalap/img/profile/1.jpg"
-                  top
-                  className="p-4"
-                />
+                <CardImg alt="..." src={data.tempPhoto} top className="p-4" />
                 <CardBody>
                   <Row>
                     <Col align="center">
@@ -63,7 +57,9 @@ function Staffdetails({ data, backHandle }) {
 
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Department</h4>
-                      <span className="text-md">{data.department && data.department.name}</span>
+                      <span className="text-md">
+                        {data.department && data.department.name}
+                      </span>
                     </Col>
                   </Row>
                   <Row>
@@ -157,7 +153,9 @@ function Staffdetails({ data, backHandle }) {
                                   <h5 className="checklist-title mb-0">
                                     Joining Date
                                   </h5>
-                                  <small>{data.joining_date &&  data.joining_date}</small>
+                                  <small>
+                                    {data.joining_date && data.joining_date}
+                                  </small>
                                 </div>
                               </div>
                             </ListGroupItem>
@@ -174,9 +172,8 @@ function Staffdetails({ data, backHandle }) {
                               </div>
                             </ListGroupItem>
                           </Col>
-                          </Row>
-                          <Row className="mt-4" >
-                        
+                        </Row>
+                        <Row className="mt-4">
                           <Col md="4">
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
@@ -191,7 +188,9 @@ function Staffdetails({ data, backHandle }) {
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">Phone no</h5>
+                                  <h5 className="checklist-title mb-0">
+                                    Phone no
+                                  </h5>
                                   <small>{data.phone}</small>
                                 </div>
                               </div>
@@ -201,13 +200,15 @@ function Staffdetails({ data, backHandle }) {
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
                               <div className="checklist-item checklist-item-success">
                                 <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">Alternate Phone no</h5>
+                                  <h5 className="checklist-title mb-0">
+                                    Alternate Phone no
+                                  </h5>
                                   <small>{data.alternate_phone}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
                           </Col>
-                      </Row>
+                        </Row>
                         <Row className="mt-4">
                           <Col>
                             <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
@@ -247,9 +248,7 @@ function Staffdetails({ data, backHandle }) {
                       </ListGroup>
                     </TabPane>
                     <TabPane tabId="2">
-                      <ListGroup flush>
-                       
-                      </ListGroup>
+                      <ListGroup flush></ListGroup>
                     </TabPane>
                     <TabPane tabId="4">
                       <ListGroup flush>
@@ -368,4 +367,4 @@ function Staffdetails({ data, backHandle }) {
   );
 }
 
-export default Staffdetails; 
+export default Staffdetails;

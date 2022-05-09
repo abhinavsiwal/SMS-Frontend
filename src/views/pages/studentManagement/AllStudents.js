@@ -87,12 +87,10 @@ const AllStudents = () => {
     setStudentData(data);
     setComponent(true);
   };
- 
+
   useEffect(() => {
-    
-  dispatch(setStudentEditing(false));
-    
-  }, [])
+    dispatch(setStudentEditing(false));
+  }, []);
   function getFormattedDate(date1) {
     let date = new Date(date1);
     var year = date.getFullYear();
@@ -683,10 +681,10 @@ const AllStudents = () => {
                                           </DropdownMenu>
                                         </UncontrolledDropdown>
                                       </CardHeader>
-                                      {student.photo && (
+                                      {student.tempPhoto && (
                                         <CardImg
                                           alt="..."
-                                          src={student.photo}
+                                          src={student.tempPhoto}
                                           top
                                           className="p-4"
                                         />

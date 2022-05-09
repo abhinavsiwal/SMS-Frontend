@@ -30,6 +30,7 @@ import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
+import 'react-html5-camera-photo/build/css/index.css';
 import 'dotenv/config';
 let persistor = persistStore(store);
 ReactDOM.render(

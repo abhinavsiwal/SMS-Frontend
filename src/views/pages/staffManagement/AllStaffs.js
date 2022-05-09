@@ -547,6 +547,8 @@ const AllStaffs = () => {
     setComponent(false);
   };
 
+  console.log(currentItems)
+
   return (
     <React.Fragment>
       <ToastContainer
@@ -687,7 +689,7 @@ const AllStaffs = () => {
                                           {staff.photo && (
                                             <CardImg
                                               alt="..."
-                                              src={staff.photo}
+                                              src={staff.tempPhoto}
                                               top
                                               className="p-4"
                                             />
