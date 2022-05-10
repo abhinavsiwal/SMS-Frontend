@@ -127,6 +127,8 @@ function AddStaff() {
   const [contactPincodeError, setContactPincodeError] = useState(false);
   const [image, setImage] = useState();
   const [capturePhoto, setCapturePhoto] = useState(false);
+  const [dateOfJoining, setDateOfJoining] = useState();
+  const [dateOfBirth, setDateOfBirth] = useState();
   useEffect(() => {
     getAllRolesHandler();
     getSession();
@@ -230,14 +232,16 @@ function AddStaff() {
     formData.set("state", state);
     formData.set("contact_person_country", contactCountry);
     formData.set("contact_person_state", contactState);
+    formData.set("date_of_birth", dateOfBirth);
+    formData.set("joining_date", dateOfJoining);
 
     if (subjectData) {
       formData.set("subject", JSON.stringify(subjectData));
     }
-    formData.set("city",city);
-    formData.set("contact_person_city",contactCity);
-    formData.set("pincode",pincode);
-    formData.set("contact_person_pincode",contactPincode);
+    formData.set("city", city);
+    formData.set("contact_person_city", contactCity);
+    formData.set("pincode", pincode);
+    formData.set("contact_person_pincode", contactPincode);
     try {
       setloading(true);
       const resp = await addStaff(user._id, token, formData);
@@ -447,24 +451,22 @@ function AddStaff() {
     formData.set("capture", data);
     setCamera(false);
   };
-  const pincodeBlurHandler = ()=>{
+  const pincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
     if (regex.test(pincode)) {
       setPincodeError(false);
     } else {
       setPincodeError(true);
     }
-
-  }
-  const contactPincodeBlurHandler = ()=>{
+  };
+  const contactPincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
     if (regex.test(contactPincode)) {
       setContactPincodeError(false);
     } else {
       setContactPincodeError(true);
     }
-
-  }
+  };
   const pincodeChangeHandler = async (e) => {
     setPincode(e.target.value);
     if (e.target.value.length === 6) {
@@ -653,17 +655,22 @@ function AddStaff() {
                       >
                         Date of Joining
                       </Label>
-                      <Input
+                      {/* <Input
                         id="example-date-input"
                         type="date"
                         onChange={handleChange("joining_date")}
                         value={staffData.joining_date}
                         required
-                      />
-                      {/* <DatePicker 
-                        dateFormat="dd-mm-yy"
-                        placeholderText="dd/mm/yy"
                       /> */}
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="dd/mm/yyyy"
+                        onChange={(date) => setDateOfJoining(date)}
+                        //  value={dateOfBirth}
+                        selected={dateOfJoining}
+                        required
+                        className="datePicker"
+                      />
                     </Col>
                     <Col md="4">
                       <label
@@ -708,13 +715,23 @@ function AddStaff() {
                       >
                         DOB
                       </Label>
-                      <Input
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="dd/mm/yyyy"
+                        onChange={(date) => setDateOfBirth(date)}
+                        //  value={dateOfBirth}
+                        selected={dateOfBirth}
+                        required
+                        className="datePicker"
+                        // style={{width: "100%"}}
+                      />
+                      {/* <Input
                         id="example-date-input"
                         type="date"
                         onChange={handleChange("date_of_birth")}
                         value={staffData.date_of_birth}
                         required
-                      />
+                      /> */}
                     </Col>
                     <Col md="4">
                       <label
@@ -960,7 +977,7 @@ function AddStaff() {
                         className="form-control-label"
                         htmlFor="example4cols2Input"
                       >
-                        Pin Code 
+                        Pin Code
                       </label>
                       <Input
                         id="example4cols2Input"
@@ -971,8 +988,10 @@ function AddStaff() {
                         required
                         onBlur={pincodeBlurHandler}
                       />
-                        {pincodeError && (
-                        <FormFeedback>Please Enter a valid Pincode</FormFeedback>
+                      {pincodeError && (
+                        <FormFeedback>
+                          Please Enter a valid Pincode
+                        </FormFeedback>
                       )}
                     </Col>
                     <Col md="3">
@@ -986,10 +1005,9 @@ function AddStaff() {
                         id="example4cols1Input"
                         placeholder="Country"
                         type="text"
-                        onChange={e=>setCountry(e.target.value)}
+                        onChange={(e) => setCountry(e.target.value)}
                         value={country}
                         required
-                      
                       />
                     </Col>
                     <Col md="3">
@@ -1003,10 +1021,9 @@ function AddStaff() {
                         id="example4cols1Input"
                         placeholder="Name"
                         type="text"
-                        onChange={e=>setState(e.target.value)}
+                        onChange={(e) => setState(e.target.value)}
                         value={state}
                         required
-                    
                       />
                     </Col>
                     <Col md="3">
@@ -1020,10 +1037,9 @@ function AddStaff() {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={e=>setCity(e.target.value)}
+                        onChange={(e) => setCity(e.target.value)}
                         value={city}
                         required
-                      
                       />
                     </Col>
                   </Row>
@@ -1135,13 +1151,15 @@ function AddStaff() {
                         id="example4cols2Input"
                         placeholder="Pin Number"
                         type="number"
-                        onChange={e=>contactPincodeChangeHandler(e)}
+                        onChange={(e) => contactPincodeChangeHandler(e)}
                         value={contactPincode}
                         required
                         onBlur={contactPincodeBlurHandler}
                       />
-                         {contactPincodeError && (
-                        <FormFeedback>Please Enter a valid Pincode</FormFeedback>
+                      {contactPincodeError && (
+                        <FormFeedback>
+                          Please Enter a valid Pincode
+                        </FormFeedback>
                       )}
                     </Col>
                   </Row>
@@ -1158,10 +1176,9 @@ function AddStaff() {
                         id="example4cols1Input"
                         placeholder="Country"
                         type="text"
-                        onChange={e=>setContactCountry(e.target.value)}
+                        onChange={(e) => setContactCountry(e.target.value)}
                         value={contactCountry}
                         required
-                      
                       />
                     </Col>
                     <Col md="4">
@@ -1175,10 +1192,9 @@ function AddStaff() {
                         id="example4cols1Input"
                         placeholder="Name"
                         type="text"
-                        onChange={e=>setContactState(e.target.value)}
+                        onChange={(e) => setContactState(e.target.value)}
                         value={contactState}
                         required
-                    
                       />
                     </Col>
                     <Col md="4">
@@ -1192,10 +1208,9 @@ function AddStaff() {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={e=>setContactCity(e.target.value)}
+                        onChange={(e) => setContactCity(e.target.value)}
                         value={contactCity}
                         required
-                      
                       />
                     </Col>
                   </Row>
@@ -1414,7 +1429,9 @@ function AddStaff() {
                       Previous
                     </Button>
                     <div>
-                      <Button color="danger" onClick={cancelHandler}>Cancel</Button>
+                      <Button color="danger" onClick={cancelHandler}>
+                        Cancel
+                      </Button>
                       {staffData.department && staffData.assign_role_name && (
                         <Button className="mr-4" color="success" type="submit">
                           Submit

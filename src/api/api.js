@@ -10,13 +10,13 @@ export const sendRequest = (
 ) => {
   // e.preventDefault();
 
-  let token = JSON.parse(
+  let encryptedToken = JSON.parse(
     JSON.parse(localStorage.getItem("persist:root")).authReducer
   ).token;
 
 
-  // let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
-  // var token = encryption.toString(CryptoJS.enc.Utf8);
+  let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
+  var token = encryption.toString(CryptoJS.enc.Utf8);
   
   // console.log(token);
   const headers = {
@@ -64,13 +64,13 @@ export const sendRequestWithJson = (
   // console.log(body);
 
   // e.preventDefault();
-  let token = JSON.parse(
+  let encryptedToken = JSON.parse(
     JSON.parse(localStorage.getItem("persist:root")).authReducer
   ).token;
 
 
-  // let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
-  // var token = encryption.toString(CryptoJS.enc.Utf8);
+  let encryption = CryptoJS.AES.decrypt(encryptedToken,process.env.REACT_APP_CRYPTO_SECRET);
+  var token = encryption.toString(CryptoJS.enc.Utf8);
   
   // console.log(token);
   const headers = {

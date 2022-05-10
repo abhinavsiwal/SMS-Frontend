@@ -83,7 +83,7 @@ const AllStaffs = () => {
       setPermissions(permission1);
       // console.log(permissions);
     }
-  }, [staffEditing,checked]);
+  }, [staffEditing, checked]);
 
   const handleStaffDetails = (data) => {
     // console.log("id", id);
@@ -129,7 +129,7 @@ const AllStaffs = () => {
           gender: data[i].gender,
           assign_role: data[i].assign_role && data[i].assign_role.name,
           job: data[i].job,
-          job_description:data[i].job_description,
+          job_description: data[i].job_description,
           department: data[i].department.name,
           joining_date: getFormattedDate(data[i].joining_date),
           action: (
@@ -354,7 +354,6 @@ const AllStaffs = () => {
       onFilter: (value, record) => {
         return record.department.toLowerCase().includes(value.toLowerCase());
       },
-
     },
     {
       title: "Job",
@@ -442,7 +441,7 @@ const AllStaffs = () => {
       onFilter: (value, record) => {
         return record.phone.toLowerCase().includes(value.toLowerCase());
       },
-    },  
+    },
     {
       title: "Email",
       dataIndex: "email",
@@ -472,8 +471,7 @@ const AllStaffs = () => {
         return record.email.toLowerCase().includes(value.toLowerCase());
       },
     },
-   
-   
+
     {
       title: "Role",
       dataIndex: "assign_role",
@@ -503,9 +501,7 @@ const AllStaffs = () => {
         return record.assign_role.toLowerCase().includes(value.toLowerCase());
       },
     },
-   
-   
-   
+
     {
       title: "Joining Date",
       dataIndex: "joining_date",
@@ -547,7 +543,7 @@ const AllStaffs = () => {
     setComponent(false);
   };
 
-  console.log(currentItems)
+  console.log(currentItems);
 
   return (
     <React.Fragment>
@@ -687,15 +683,17 @@ const AllStaffs = () => {
                                             </UncontrolledDropdown>
                                           </CardHeader>
                                           {staff.photo && (
-                                            <CardImg
-                                              alt="..."
-                                              src={staff.tempPhoto}
-                                              top
-                                              className="p-4"
-                                            />
+                                            <div style={{height:"10rem"}} >
+                                              <CardImg
+                                                alt="..."
+                                                src={staff.tempPhoto}
+                                                top
+                                                className="p-4"
+                                              />
+                                            </div>
                                           )}
 
-                                          <CardBody className="mt-0">
+                                          <CardBody className="mt-0" style={{height:"22rem"}} >
                                             <Row>
                                               <Col align="center">
                                                 <h4 className="mt-3 mb-1">

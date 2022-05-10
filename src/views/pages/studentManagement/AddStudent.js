@@ -15,8 +15,9 @@ import {
   FormFeedback,
 } from "reactstrap";
 // core components
+import DatePicker from "react-datepicker";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-
+import axios from "axios";
 import Loader from "components/Loader/Loader";
 import { addStudent, isAuthenticateStudent } from "api/student";
 
@@ -122,6 +123,7 @@ function AddStudent() {
 
   const [country, setCountry] = useState("India");
   const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   // console.log("studentData", studentData);
   const [selectedClass, setSelectedClass] = useState({});
   const [phoneError, setPhoneError] = useState(false);
@@ -136,7 +138,13 @@ function AddStudent() {
   const [camera, setCamera] = useState(false);
   const [image, setImage] = useState();
   const [capturePhoto, setCapturePhoto] = useState(false);
-
+  const [dateOfJoining, setDateOfJoining] = useState();
+  const [dateOfBirth, setDateOfBirth] = useState();
+  const [guardianDOB, setGuardianDOB] = useState();
+  const [fatherDOB, setFatherDOB] = useState();
+  const [motherDOB, setMotherDOB] = useState();
+  const [pincode, setPincode] = useState("");
+  const [pincodeError, setPincodeError] = useState(false);
   const phoneBlurHandler = () => {
     console.log("here");
     // console.log(studentData.phone);
@@ -386,6 +394,13 @@ function AddStudent() {
     formData.set("school", user.school);
     formData.set("country", country);
     formData.set("state", state);
+    formData.set("pincode", pincode);
+    formData.set("city", city);
+    formData.set("date_of_birth", dateOfBirth);
+    formData.set("joining_date", dateOfJoining);
+    formData.set("guardian_dob", guardianDOB);
+    formData.set("father_dob", fatherDOB);
+    formData.set("mother_dob", motherDOB);
 
     try {
       setLoading(true);
@@ -520,6 +535,31 @@ function AddStudent() {
     });
   };
 
+  const pincodeChangeHandler = async (e) => {
+    setPincode(e.target.value);
+    if (e.target.value.length === 6) {
+      try {
+        const { data } = await axios.get(
+          `https://api.postalpincode.in/pincode/${e.target.value}`
+        );
+        console.log(data);
+        setState(data[0].PostOffice[0].State);
+        setCity(data[0].PostOffice[0].District);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch pin code.");
+      }
+    }
+  };
+
+  const pincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (regex.test(pincode)) {
+      setPincodeError(false);
+    } else {
+      setPincodeError(true);
+    }
+  };
   useEffect(() => {}, [cscd]);
   return (
     <>
@@ -677,12 +717,14 @@ function AddStudent() {
                       >
                         Date of Joining
                       </Label>
-                      <Input
-                        id="example-date-input"
-                        type="date"
-                        onChange={handleChange("joining_date")}
-                        value={studentData.joining_date}
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="dd/mm/yyyy"
+                        onChange={(date) => setDateOfJoining(date)}
+                        //  value={dateOfBirth}
+                        selected={dateOfJoining}
                         required
+                        className="datePicker"
                       />
                     </Col>
                     <Col md="4">
@@ -727,12 +769,15 @@ function AddStudent() {
                       >
                         DOB
                       </Label>
-                      <Input
-                        id="example-date-input"
-                        type="date"
-                        onChange={handleChange("date_of_birth")}
-                        value={studentData.date_of_birth}
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="dd/mm/yyyy"
+                        onChange={(date) => setDateOfBirth(date)}
+                        //  value={dateOfBirth}
+                        selected={dateOfBirth}
                         required
+                        className="datePicker"
+                        // style={{width: "100%"}}
                       />
                     </Col>
                     <Col md="4">
@@ -1068,42 +1113,38 @@ function AddStudent() {
                 <CardBody>
                   <Row>
                     <Col>
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Present Address
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Present Address"
-                          type="text"
-                          onChange={handleChange("present_address")}
-                          required
-                          value={studentData.present_address}
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Present Address
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Present Address"
+                        type="text"
+                        onChange={handleChange("present_address")}
+                        required
+                        value={studentData.present_address}
+                      />
                     </Col>
                   </Row>
                   <Row>
                     <Col>
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Permanent Address
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Permanent Address"
-                          type="text"
-                          onChange={handleChange("permanent_address")}
-                          required
-                          value={studentData.permanent_address}
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Permanent Address
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Permanent Address"
+                        type="text"
+                        onChange={handleChange("permanent_address")}
+                        required
+                        value={studentData.permanent_address}
+                      />
                     </Col>
                   </Row>
                   <Row className="mb-4">
@@ -1117,11 +1158,17 @@ function AddStudent() {
                       <Input
                         id="example4cols2Input"
                         placeholder="Pin Code"
+                        onChange={(e) => pincodeChangeHandler(e)}
+                        value={pincode}
                         type="number"
-                        onChange={handleChange("pincode")}
                         required
-                        value={studentData.pincode}
+                        onBlur={pincodeBlurHandler}
                       />
+                      {pincodeError && (
+                        <FormFeedback>
+                          Please Enter a valid Pincode
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col md="3">
                       <label
@@ -1130,10 +1177,13 @@ function AddStudent() {
                       >
                         Country
                       </label>
-                      <CountryDropdown
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Country"
+                        type="text"
+                        onChange={(e) => setCountry(e.target.value)}
                         value={country}
-                        onChange={(val) => setCountry(val)}
-                        classes="stateInput"
+                        required
                       />
                     </Col>
                     <Col md="3">
@@ -1143,11 +1193,13 @@ function AddStudent() {
                       >
                         State
                       </label>
-                      <RegionDropdown
-                        country={country}
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={(e) => setState(e.target.value)}
                         value={state}
-                        onChange={(val) => setState(val)}
-                        classes="stateInput"
+                        required
                       />
                     </Col>
                     <Col md="3">
@@ -1161,9 +1213,9 @@ function AddStudent() {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={handleChange("city")}
+                        onChange={(e) => setCity(e.target.value)}
+                        value={city}
                         required
-                        value={studentData.city}
                       />
                     </Col>
                   </Row>
@@ -1404,12 +1456,14 @@ function AddStudent() {
                             >
                               DOB
                             </Label>
-                            <Input
-                              id="example-date-input"
-                              type="date"
-                              onChange={handleChange("father_dob")}
+                            <DatePicker
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/mm/yyyy"
+                              onChange={(date) => setFatherDOB(date)}
+                              //  value={dateOfBirth}
+                              selected={fatherDOB}
                               required
-                              value={studentData.father_dob}
+                              className="datePicker"
                             />
                           </Col>
                           <Col>
@@ -1567,12 +1621,14 @@ function AddStudent() {
                             >
                               DOB
                             </Label>
-                            <Input
-                              id="example-date-input"
-                              type="date"
-                              onChange={handleChange("mother_dob")}
+                            <DatePicker
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/mm/yyyy"
+                              onChange={(date) => setMotherDOB(date)}
+                              //  value={dateOfBirth}
+                              selected={motherDOB}
                               required
-                              value={studentData.mother_dob}
+                              className="datePicker"
                             />
                           </Col>
                           <Col>
@@ -1858,12 +1914,14 @@ function AddStudent() {
                             >
                               DOB
                             </Label>
-                            <Input
-                              id="example-date-input"
-                              type="date"
-                              onChange={handleChange("guardian_dob")}
+                            <DatePicker
+                              dateFormat="dd/MM/yyyy"
+                              placeholderText="dd/mm/yyyy"
+                              onChange={(date) => setGuardianDOB(date)}
+                              //  value={dateOfBirth}
+                              selected={guardianDOB}
                               required
-                              value={studentData.guardian_dob}
+                              className="datePicker"
                             />
                           </Col>
                           <Col>

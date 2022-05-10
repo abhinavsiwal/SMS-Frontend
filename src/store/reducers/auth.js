@@ -17,7 +17,7 @@ export const login = createAsyncThunk(
   async ({ username, password }, { rejectWithValue }) => {
     // console.log(username, password);
     if (username && password) {
-      try {
+      try { 
         const data = await signIn(username, password);
         // console.log(data);
         if(data.err){

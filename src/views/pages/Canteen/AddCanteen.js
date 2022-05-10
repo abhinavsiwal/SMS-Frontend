@@ -78,8 +78,8 @@ function AddCanteen() {
 
   let permissions = [];
   useEffect(() => {
-    if (user.role["Canteen Management"]) {
-      permissions = user.role["Canteen Management"];
+    if (user.permissions["Canteen Management"]) {
+      permissions = user.permissions["Canteen Management"];
       // console.log(permissions);
     }
   }, []);

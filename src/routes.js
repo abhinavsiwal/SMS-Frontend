@@ -737,7 +737,7 @@ const routes = [
   },
   {
     path: "/profile",
-    name: "Profile",
+    name: "User Profile",
     icon: "ni ni-shop text-primary",
     component: Profile,
     layout: "/admin",

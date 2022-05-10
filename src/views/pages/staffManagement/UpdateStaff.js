@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import {
   Card,
   CardHeader,
@@ -11,6 +12,7 @@ import {
   Col,
   Button,
   Form,
+  FormFeedback,
 } from "reactstrap";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -24,6 +26,7 @@ import { updateStaffSuccess } from "constants/success";
 import "./style.css";
 import Loader from "components/Loader/Loader";
 import { ToastContainer, toast } from "react-toastify";
+import DatePicker from "react-datepicker";
 import {
   CountryDropdown,
   RegionDropdown,
@@ -34,6 +37,12 @@ import { updateStaff } from "api/staff";
 import { isAuthenticated } from "api/auth";
 import { getDepartment } from "api/department";
 import { allSubjects } from "api/subjects";
+import { getAllRoles } from "api/rolesAndPermission";
+import { addStudentError } from "constants/errors";
+import { fetchingSubjectError } from "constants/errors";
+import { fetchingDepartmentError } from "constants/errors";
+import { allSessions } from "api/session";
+import Staffdetails from "./Staffdetails";
 
 function UpdateStaff({ staffDetails }) {
   const [step, setStep] = useState(0);
@@ -72,26 +81,69 @@ function UpdateStaff({ staffDetails }) {
     job: staffDetails.job,
     salary: staffDetails.salary,
     qualification: staffDetails.qualification,
-    department: staffDetails.department,
+    department: staffDetails.department._id,
     subject: staffDetails.subject,
+    session: staffDetails.session._id,
   });
+  const [sessions, setSessions] = useState([]);
   const [country, setCountry] = useState(staffDetails.country);
-  const [contactCountry, setContactCountry] = useState(staffDetails.contact_person_country);
+  const [contactCountry, setContactCountry] = useState(
+    staffDetails.contact_person_country
+  );
   const [state, setState] = useState(staffDetails.state);
-  const [contactState, setContactState] = useState(staffDetails.contact_person_state);
+  const [contactState, setContactState] = useState(
+    staffDetails.contact_person_state
+  );
+  const [city, setCity] = useState(staffDetails.city);
+  const [contactCity, setContactCity] = useState(
+    staffDetails.contact_person_city
+  );
+  const [phoneError, setPhoneError] = useState(false);
+  const [altPhoneError, setAltPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [contactPhoneError, setContactPhoneError] = useState(false);
+  const [pincode, setPincode] = useState(staffDetails.pincode);
+  const [pincodeError, setPincodeError] = useState(false);
+  const [contactPincode, setContactPincode] = useState(
+    staffDetails.contact_person_pincode
+  );
+  const [contactPincodeError, setContactPincodeError] = useState(false);
+  const { user, token } = isAuthenticated();
   // console.log("staff", staffData);
   const [formData] = useState(new FormData());
   const [loading, setLoading] = useState(false);
   const [departments, setDeparments] = useState([]);
+  const [dateOfJoining, setDateOfJoining] = useState(new Date(staffData.joining_date));
+  const [dateOfBirth, setDateOfBirth] = useState(new Date(staffData.date_of_birth));
   // const [subject, setSubject] = useState([]);
   // console.log("sub", subject);
   const [a, setA] = useState([]);
+  const [assignRole, setAssignRole] = useState(staffData.assign_role);
+  const [assignRoleId, setAssignRoleId] = useState(staffData.assign_role._id);
+  const roleChangeHandler = (value) => {
+    setAssignRoleId(value);
+    console.log(value);
+    let role = allRoles.find((role) => role._id === value);
+    setAssignRole(role);
+    console.log(role);
+  };
   // console.log("a", a);
 
-  const roleOptions = [
-    // { value: "chemistry", label: "Chemistry" }
-  ];
-  // console.log("role", roleOptions);
+  const [allRoles, setAllRoles] = useState([]);
+  useEffect(() => {
+    getAllRolesHandler();
+  }, []);
+
+  const getAllRolesHandler = async () => {
+    // console.log(user);
+    try {
+      const data = await getAllRoles(user._id, user.school);
+      // console.log(data);
+      setAllRoles(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -166,6 +218,14 @@ function UpdateStaff({ staffDetails }) {
     formData.set("state", state);
     formData.set("contact_person_country", contactCountry);
     formData.set("contact_person_state", contactState);
+    formData.set("city", city);
+    formData.set("contact_person_city", contactCity);
+    formData.set("pincode", pincode);
+    formData.set("contact_person_pincode", contactPincode);
+    formData.set("assign_role",assignRoleId);
+    formData.set("date_of_birth", dateOfBirth);
+    formData.set("joining_date", dateOfJoining);
+   
     try {
       setLoading(true);
       const resp = await updateStaff(staffData._id, user._id, formData);
@@ -217,10 +277,26 @@ function UpdateStaff({ staffDetails }) {
       ...city,
     }));
 
-    console.log(staffData);
+  console.log(staffData);
+  useEffect(() => {}, [cscd, cpcscd]);
+  //Getting Session data
   useEffect(() => {
-  }, [cscd, cpcscd]);
+    getSession();
+  }, []);
 
+  const getSession = async () => {
+    const { user, token } = isAuthenticated();
+    try {
+      const session = await allSessions(user._id, user.school, token);
+      if (session.err) {
+        return toast.error(session.err);
+      } else {
+        setSessions(session);
+      }
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
+  };
   useEffect(async () => {
     if (step === 3) {
       await Departments();
@@ -243,7 +319,15 @@ function UpdateStaff({ staffDetails }) {
       }
     }
   }, [step]);
-
+  const handleChange2 = (name) => (event) => {
+    var data = JSON.parse(event.target.value);
+    formData.set(name, data._id);
+    setStaffData({
+      ...staffData,
+      [name]: data._id,
+      assign_role_name: data.name,
+    });
+  };
   async function Departments() {
     const { user, token } = isAuthenticated();
     try {
@@ -265,10 +349,85 @@ function UpdateStaff({ staffDetails }) {
   //     toast.error("Something Went Wrong!");
   //   }
   // }
-  const cancelHandler = ()=>{
+  const cancelHandler = () => {
     window.location.reload();
-  }
-  
+  };
+
+  const phoneBlurHandler = () => {
+    console.log("here");
+    console.log(staffData.phone);
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(staffData.phone)) {
+      setPhoneError(false);
+    } else {
+      setPhoneError(true);
+    }
+  };
+  const altPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(staffData.alternate_phone)) {
+      setAltPhoneError(false);
+    } else {
+      setAltPhoneError(true);
+    }
+  };
+  const emailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(staffData.email)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+  };
+
+  const pincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (regex.test(pincode)) {
+      setPincodeError(false);
+    } else {
+      setPincodeError(true);
+    }
+  };
+  const contactPincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (regex.test(contactPincode)) {
+      setContactPincodeError(false);
+    } else {
+      setContactPincodeError(true);
+    }
+  };
+  const pincodeChangeHandler = async (e) => {
+    setPincode(e.target.value);
+    if (e.target.value.length === 6) {
+      try {
+        const { data } = await axios.get(
+          `https://api.postalpincode.in/pincode/${e.target.value}`
+        );
+        console.log(data);
+        setState(data[0].PostOffice[0].State);
+        setCity(data[0].PostOffice[0].District);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch pin code.");
+      }
+    }
+  };
+  const contactPincodeChangeHandler = async (e) => {
+    setContactPincode(e.target.value);
+    if (e.target.value.length === 6) {
+      try {
+        const { data } = await axios.get(
+          `https://api.postalpincode.in/pincode/${e.target.value}`
+        );
+        console.log(data);
+        setContactState(data[0].PostOffice[0].State);
+        setContactCity(data[0].PostOffice[0].District);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch pin code.");
+      }
+    }
+  };
 
   return (
     <>
@@ -340,6 +499,34 @@ function UpdateStaff({ staffDetails }) {
                     </Col>
                   </Row>
                   <Row>
+                    <Col>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Session
+                      </label>
+
+                      <select
+                        className="form-control"
+                        required
+                        onChange={handleChange("session")}
+                        value={staffData.session}
+                      >
+                        <option value="">Select Session</option>
+                        {sessions &&
+                          sessions.map((data) => {
+                            return (
+                              <option key={data._id} value={data._id}>
+                                {data.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </Col>
+                  </Row>
+                  <br />
+                  <Row>
                     <Col md="4">
                       <Label
                         className="form-control-label"
@@ -347,49 +534,47 @@ function UpdateStaff({ staffDetails }) {
                       >
                         Date of Joining
                       </Label>
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="dd/mm/yyyy"
+                        onChange={(date) => setDateOfJoining(date)}
+                        //  value={dateOfBirth}
+                        selected={dateOfJoining}
+                        required
+                        className="datePicker"
+                      />
+                    </Col>
+                    <Col md="4">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        First Name
+                      </label>
                       <Input
-                        id="example-date-input"
-                        type="date"
-                        onChange={handleChange("joining_date")}
-                        value={staffData.joining_date.slice(0, 10)}
+                        id="example4cols2Input"
+                        placeholder="First Name"
+                        type="text"
+                        onChange={handleChange("firstname")}
+                        value={staffData.firstname}
                         required
                       />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          First Name
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="First Name"
-                          type="text"
-                          onChange={handleChange("firstname")}
-                          value={staffData.firstname}
-                          required
-                        />
-                      </FormGroup>
-                    </Col>
-                    <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Last Name
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Last Name"
-                          type="text"
-                          onChange={handleChange("lastname")}
-                          value={staffData.lastname}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Last Name
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Last Name"
+                        type="text"
+                        onChange={handleChange("lastname")}
+                        value={staffData.lastname}
+                        required
+                      />
                     </Col>
                   </Row>
                   <Row>
@@ -400,12 +585,15 @@ function UpdateStaff({ staffDetails }) {
                       >
                         DOB
                       </Label>
-                      <Input
-                        id="example-date-input"
-                        type="date"
-                        onChange={handleChange("date_of_birth")}
-                        value={staffData.date_of_birth.slice(0, 10)}
+                      <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        placeholderText="dd/mm/yyyy"
+                        onChange={(date) => setDateOfBirth(date)}
+                        //  value={dateOfBirth}
+                        selected={dateOfBirth}
                         required
+                        className="datePicker"
+                        // style={{width: "100%"}}
                       />
                     </Col>
                     <Col md="4">
@@ -443,7 +631,13 @@ function UpdateStaff({ staffDetails }) {
                         value={staffData.email}
                         type="email"
                         required
+                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                        onBlur={emailBlurHandler}
+                        invalid={emailError}
                       />
+                      {emailError && (
+                        <FormFeedback>Please Enter a valid Email</FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -461,7 +655,15 @@ function UpdateStaff({ staffDetails }) {
                         onChange={handleChange("phone")}
                         value={staffData.phone}
                         required
+                        pattern="[1-9]{1}[0-9]{9}"
+                        invalid={phoneError}
+                        onBlur={phoneBlurHandler}
                       />
+                      {phoneError && (
+                        <FormFeedback>
+                          Please Enter a valid phone no
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col md="4">
                       <label
@@ -476,8 +678,16 @@ function UpdateStaff({ staffDetails }) {
                         onChange={handleChange("alternate_phone")}
                         value={staffData.alternate_phone}
                         type="number"
+                        pattern="[1-9]{1}[0-9]{9}"
                         required
+                        onBlur={altPhoneBlurHandler}
+                        invalid={altPhoneError}
                       />
+                      {altPhoneError && (
+                        <FormFeedback>
+                          Please Enter a valid phone no
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col md="4">
                       <label
@@ -574,7 +784,9 @@ function UpdateStaff({ staffDetails }) {
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
-                  <Button onClick={cancelHandler} color="danger" >Cancel</Button>
+                    <Button onClick={cancelHandler} color="danger">
+                      Cancel
+                    </Button>
                     <Button color="primary" type="submit">
                       Next
                     </Button>
@@ -632,11 +844,18 @@ function UpdateStaff({ staffDetails }) {
                       <Input
                         id="example4cols2Input"
                         placeholder="Pin Code"
-                        onChange={handleChange("pincode")}
-                        value={staffData.pincode}
+                        onChange={pincodeChangeHandler}
+                        value={pincode}
                         type="number"
                         required
+                        onBlur={pincodeBlurHandler}
+                        invalid={pincodeError}
                       />
+                      {pincodeError && (
+                        <FormFeedback>
+                          Please Enter a valid Pincode
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col md="3">
                       <label
@@ -645,10 +864,13 @@ function UpdateStaff({ staffDetails }) {
                       >
                         Country
                       </label>
-                      <CountryDropdown
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Country"
+                        type="text"
+                        onChange={(e) => setCountry(e.target.value)}
                         value={country}
-                        onChange={(val) => setCountry(val)}
-                        classes="stateInput"
+                        required
                       />
                     </Col>
                     <Col md="3">
@@ -658,11 +880,13 @@ function UpdateStaff({ staffDetails }) {
                       >
                         State
                       </label>
-                      <RegionDropdown
-                        country={country}
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={(e) => setState(e.target.value)}
                         value={state}
-                        onChange={(val) => setState(val)}
-                        classes="stateInput"
+                        required
                       />
                     </Col>
                     <Col md="3">
@@ -676,8 +900,8 @@ function UpdateStaff({ staffDetails }) {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={handleChange("city")}
-                        value={staffData.city}
+                        onChange={(e) => setCity(e.target.value)}
+                        value={city}
                         required
                       />
                     </Col>
@@ -697,10 +921,12 @@ function UpdateStaff({ staffDetails }) {
                       Previous
                     </Button>
                     <div>
-                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
                     </div>
                   </Row>
                 </CardBody>
@@ -727,40 +953,37 @@ function UpdateStaff({ staffDetails }) {
                       />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols2Input"
-                        >
-                          Relation
-                        </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Relation"
-                          type="text"
-                          onChange={handleChange("contact_person_relation")}
-                          value={staffData.contact_person_relation}
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Relation
+                      </label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Relation"
+                        type="text"
+                        onChange={handleChange("contact_person_relation")}
+                        value={staffData.contact_person_relation}
+                        required
+                      />
                     </Col>
                     <Col md="4">
-                      <FormGroup>
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Contact Number
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Contact Number"
-                          onChange={handleChange("contact_person_phone")}
-                          value={staffData.contact_person_phone}
-                          type="number"
-                          required
-                        />
-                      </FormGroup>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Contact Number
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Contact Number"
+                        onChange={handleChange("contact_person_phone")}
+                        value={staffData.contact_person_phone}
+                        type="number"
+                        required
+                        pattern="[1-9]{1}[0-9]{9}"
+                      />
                     </Col>
                   </Row>
                   <Row>
@@ -791,10 +1014,16 @@ function UpdateStaff({ staffDetails }) {
                         id="example4cols2Input"
                         placeholder="Pin Number"
                         type="number"
-                        onChange={handleChange("contact_person_pincode")}
-                        value={staffData.contact_person_pincode}
+                        onChange={(e) => contactPincodeChangeHandler(e)}
+                        value={contactPincode}
                         required
+                        onBlur={contactPincodeBlurHandler}
                       />
+                      {contactPincodeError && (
+                        <FormFeedback>
+                          Please Enter a valid Pincode
+                        </FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -806,10 +1035,13 @@ function UpdateStaff({ staffDetails }) {
                       >
                         Country
                       </label>
-                      <CountryDropdown
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Country"
+                        type="text"
+                        onChange={(e) => setContactCountry(e.target.value)}
                         value={contactCountry}
-                        onChange={(val) => setContactCountry(val)}
-                        classes="stateInput"
+                        required
                       />
                     </Col>
                     <Col md="4">
@@ -819,13 +1051,15 @@ function UpdateStaff({ staffDetails }) {
                       >
                         State
                       </label>
-                      <RegionDropdown
-                        country={contactCountry}
+                      <Input
+                        id="example4cols1Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={(e) => setContactState(e.target.value)}
                         value={contactState}
-                        onChange={(val) => setContactState(val)}
-                        classes="stateInput"
+                        required
                       />
-                    </Col> 
+                    </Col>
                     <Col md="4">
                       <label
                         className="form-control-label"
@@ -837,8 +1071,8 @@ function UpdateStaff({ staffDetails }) {
                         id="example4cols2Input"
                         placeholder="City"
                         type="text"
-                        onChange={handleChange("contact_person_city")}
-                        value={staffData.contact_person_city}
+                        onChange={(e) => setContactCity(e.target.value)}
+                        value={contactCity}
                         required
                       />
                     </Col>
@@ -858,10 +1092,12 @@ function UpdateStaff({ staffDetails }) {
                       Previous
                     </Button>
                     <div>
-                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
                     </div>
                   </Row>
                 </CardBody>
@@ -871,8 +1107,60 @@ function UpdateStaff({ staffDetails }) {
               <Form onSubmit={handleSubmitForm} className="mb-4">
                 <CardBody>
                   <Row>
-                    {staffData.job === undefined ? (
-                      <Col md="12">
+                    <Col md="12">
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Department
+                      </label>
+                      <Input
+                        id="exampleFormControlSelect3"
+                        type="select"
+                        onChange={handleChange("department")}
+                        value={staffData.department}
+                        required
+                      >
+                        <option value="" disabled selected>
+                          Department
+                        </option>
+                        {departments.map((departments) => (
+                          <option value={departments._id}>
+                            {departments.name}
+                          </option>
+                        ))}
+                      </Input>
+                    </Col>
+                  </Row>
+                  {staffData.department && (
+                    <Row className="mt-2 mb-2">
+                      <Col md="6">
+                        <>
+                          <label
+                            className="form-control-label"
+                            htmlFor="example4cols2Input"
+                          >
+                            Role
+                          </label>
+                          <Input
+                            id="exampleFormControlSelect3"
+                            type="select"
+                            onChange={(e) => roleChangeHandler(e.target.value)}
+                            value={assignRoleId}
+                            required
+                          >
+                            {allRoles &&
+                              allRoles.map((role) => {
+                                return (
+                                  <option key={role._id} value={role._id}>
+                                    {role.name}
+                                  </option>
+                                );
+                              })}
+                          </Input>
+                        </>
+                      </Col>
+                      <Col md="6">
                         <label
                           className="form-control-label"
                           htmlFor="example4cols2Input"
@@ -888,44 +1176,83 @@ function UpdateStaff({ staffDetails }) {
                           required
                         />
                       </Col>
-                    ) : (
-                      <>
-                        <Col md="6">
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Job
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Salary"
-                            type="text"
-                            onChange={handleChange("job")}
-                            value={staffData.job}
-                            required
-                          />
-                        </Col>
-                        <Col md="6">
-                          <label
-                            className="form-control-label"
-                            htmlFor="example4cols2Input"
-                          >
-                            Salary
-                          </label>
-                          <Input
-                            id="example4cols2Input"
-                            placeholder="Salary"
-                            type="number"
-                            onChange={handleChange("salary")}
-                            value={staffData.salary}
-                            required
-                          />
-                        </Col>
-                      </>
-                    )}
-                  </Row>
+                    </Row>
+                  )}
+                  {assignRole && assignRole.name === "Teacher" ? (
+                    <Row>
+                      <Col md="6">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Subject
+                        </label>
 
+                        <Select
+                          isMulti
+                          name="colors"
+                          options={a}
+                          onChange={handleSubjectChange}
+                          className="basic-multi-select"
+                          classNamePrefix="select"
+                          required
+                          // value={subjectData}
+                        />
+                      </Col>
+                      <Col md="6">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols2Input"
+                        >
+                          Highest Qualification
+                        </label>
+                        <Input
+                          id="example4cols2Input"
+                          placeholder="Highest Qualification"
+                          onChange={handleChange("qualification")}
+                          value={staffData.qualification}
+                          type="text"
+                          required
+                        />
+                      </Col>
+                    </Row>
+                  ) : null}
+                  {assignRole.name !== "" && assignRole.name !== "Teacher" && (
+                    <Row>
+                      <Col md="12">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols3Input"
+                        >
+                          Job Name
+                        </label>
+                        <Input
+                          id="example4cols3Input"
+                          placeholder="Job Name"
+                          type="text"
+                          onChange={handleChange("job")}
+                          value={staffData.job}
+                          required
+                        />
+                      </Col>
+                      <Col md="12">
+                        <label
+                          className="form-control-label"
+                          htmlFor="example4cols3Input"
+                        >
+                          Job Description
+                        </label>
+                        <Input
+                          id="example4cols3Input"
+                          placeholder="Job Description"
+                          type="textarea"
+                          onChange={handleChange("job_description")}
+                          value={staffData.job_description}
+                          required
+                        />
+                      </Col>
+                    </Row>
+                  )}
                   <Row className="mt-4 d-flex justify-content-between">
                     <Button
                       className="ml-4"
@@ -941,10 +1268,12 @@ function UpdateStaff({ staffDetails }) {
                       Previous
                     </Button>
                     <div>
-                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
-                    <Button className="mr-4" color="success" type="submit">
-                      Submit
-                    </Button>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="success" type="submit">
+                        Submit
+                      </Button>
                     </div>
                   </Row>
                 </CardBody>
