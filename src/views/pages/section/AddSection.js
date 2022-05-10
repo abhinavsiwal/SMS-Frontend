@@ -62,6 +62,7 @@ const AddSection = () => {
   const [file, setFile] = useState();
   const [editing, setEditing] = useState(false);
   const fileReader = new FileReader();
+  const [clas, setClas] = useState("")
 const dispatch=useDispatch();
   const [editingSectionName, setEditingSectionName] = useState("");
   const [editingAbbv, setEditingAbbv] = useState("");
@@ -384,7 +385,7 @@ const dispatch=useDispatch();
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    const classID = formData.get("class");
+    const classID = clas;
     try {
       setAddLoading(true);
       const resp = await addSection(user._id, token, formData);
@@ -399,6 +400,7 @@ const dispatch=useDispatch();
         toast.success(addSectionSuccess);
         setChecked(!checked);
         setAddLoading(false)
+        setClas("");
       }
     } catch (err) {
       toast.error(addSectionError);
@@ -486,7 +488,7 @@ const dispatch=useDispatch();
       />
       <Container className="mt--6" fluid>
         <Row>
-               <Col>
+               <Col md="12" >
                {
                  addLoading ?(
                    <Loader />
@@ -528,8 +530,9 @@ const dispatch=useDispatch();
                               <Input
                                 id="example4cols2Input"
                                 type="select"
-                                onChange={handleChange("class")}
+                                onChange={e=>setClas(e.target.value)}
                                 required
+                                value={clas}
                               >
                                 <option value="" disabled selected>
                                   Select Class
@@ -541,8 +544,7 @@ const dispatch=useDispatch();
                                 ))}
                               </Input>
                             </Col>
-                          </Row>
-                          <Row className="mt-4">
+                         
                             <Col>
                               <label
                                 className="form-control-label"
@@ -576,8 +578,7 @@ const dispatch=useDispatch();
                                 required
                               />
                             </Col>
-                          </Row>
-                          <Row className="mt-4">
+                        
                             <Col>
                               <label
                                 className="form-control-label"

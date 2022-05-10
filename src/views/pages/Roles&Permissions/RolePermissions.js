@@ -240,6 +240,9 @@ function RolePermissions() {
         setMappingPermissions([]);
         setMappingLoading(false);
         toast.success("Permission Added successfully");
+        // window.location.reload(true)
+        setMappingRoleMain("");
+        // getAllRolesHandler();
       }
     } catch (err) {
       console.log(err);
@@ -412,13 +415,7 @@ function RolePermissions() {
               <CardHeader>
                 <div className="d-flex justify-content-between Role-Permissions">
                   <p>Manage Permissions</p>
-                  <Button
-                    color="primary"
-                    type="button"
-                    onClick={() => setModal3(true)}
-                  >
-                    Add Permissions
-                  </Button>
+                 
                 </div>
               </CardHeader>
               <CardBody>
@@ -442,22 +439,7 @@ function RolePermissions() {
                         <ListGroupItem>
                           <Col className="d-flex justify-content-between">
                             <div>{Permissions}</div>
-                            <div className="d-flex justify-content-between">
-                              <Button
-                                className="btn-sm pull-right"
-                                color="primary"
-                                type="button"
-                              >
-                                <i className="fas fa-user-edit" />
-                              </Button>
-                              <Button
-                                className="btn-sm pull-right"
-                                color="danger"
-                                type="button"
-                              >
-                                <i className="fas fa-trash" />
-                              </Button>
-                            </div>
+                    
                           </Col>
                         </ListGroupItem>
                       </>
@@ -473,13 +455,7 @@ function RolePermissions() {
               <CardHeader>
                 <div className="d-flex justify-content-between Role-Permissions">
                   <p>Manage Applications</p>
-                  <Button
-                    color="primary"
-                    type="button"
-                    onClick={() => setModal2(true)}
-                  >
-                    Add Applications
-                  </Button>
+
                 </div>
               </CardHeader>
               <CardBody>
@@ -505,22 +481,7 @@ function RolePermissions() {
                           <ListGroupItem>
                             <Col className="d-flex justify-content-between">
                               <div>{application}</div>
-                              <div className="d-flex justify-content-between">
-                                <Button
-                                  className="btn-sm pull-right"
-                                  color="primary"
-                                  type="button"
-                                >
-                                  <i className="fas fa-user-edit" />
-                                </Button>
-                                <Button
-                                  className="btn-sm pull-right"
-                                  color="danger"
-                                  type="button"
-                                >
-                                  <i className="fas fa-trash" />
-                                </Button>
-                              </div>
+                            
                             </Col>
                           </ListGroupItem>
                         </>

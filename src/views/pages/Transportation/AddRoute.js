@@ -12,7 +12,7 @@ import {
   Button,
   CardHeader,
   Table,
-  FormText
+  FormText,
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 //React Datepicker
@@ -28,6 +28,7 @@ import Select from "react-select";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import TextArea from "antd/lib/input/TextArea";
+import { Popconfirm } from "antd";
 
 import { routeAdd, routesAll } from "api/transportation";
 import { isAuthenticated } from "api/auth";
@@ -61,7 +62,7 @@ function AddRoute() {
   const [addStops, setAddStops] = React.useState([]);
   // console.log("addStops", addStops);
   const [allStaff, setAllStaff] = useState([]);
-const [disableButton, setDisableButton] = useState(true);
+  const [disableButton, setDisableButton] = useState(true);
   const [busNo, setBusNo] = React.useState("");
   const [sessions, setSessions] = React.useState([]);
   const [session, setSession] = React.useState("");
@@ -145,12 +146,13 @@ const [disableButton, setDisableButton] = useState(true);
     let arr = addStops;
     arr.push(obj);
     setAddStops(arr);
-    if (check === true) {
-      setCheck(false);
-    } else {
-      setCheck(true);
-    }
+    setCheck(!check);
   };
+
+  const deleteStopHandler = (name)=>{
+    let stops = addStops.filter(stop=>stop.stopName!==name);
+    setAddStops(stops);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -195,15 +197,14 @@ const [disableButton, setDisableButton] = useState(true);
     }
   };
 
-const placeBlurHandler=()=>{
-  console.log("here");
-  if(placeName.length>0){
-    setDisableButton(false);
-  }else{
-    setDisableButton(true);
-  }
-}
-
+  const placeBlurHandler = () => {
+    console.log("here");
+    if (placeName.length > 0) {
+      setDisableButton(false);
+    } else {
+      setDisableButton(true);
+    }
+  };
 
   return (
     <>
@@ -395,7 +396,6 @@ const placeBlurHandler=()=>{
                             onChange={(e) => setPlaceName(e.target.value)}
                             required
                             onBlur={placeBlurHandler}
-                            
                           />
                         </Col>
                       </Row>
@@ -438,6 +438,7 @@ const placeBlurHandler=()=>{
                             timeCaption="Time"
                             dateFormat="h:mm aa"
                             required
+                            startDate={startTimePickup}
                           />
                         </Col>
                       </Row>
@@ -445,7 +446,11 @@ const placeBlurHandler=()=>{
 
                     <Row>
                       <Col className="ml-3">
-                        <Button color="primary" onClick={addStop} disabled={disableButton} >
+                        <Button
+                          color="primary"
+                          onClick={addStop}
+                          disabled={disableButton}
+                        >
                           Add
                         </Button>
                       </Col>
@@ -473,18 +478,35 @@ const placeBlurHandler=()=>{
                         <th>Place Name</th>
                         <th>pickup Time</th>
                         <th>DropTime</th>
+                        <th>Action</th>
                       </tr>
                     </thead>
                     {addStops !== null ? (
                       <>
                         {addStops.map((stops, index) => {
                           return (
-                            <tbody>
+                            <tbody key={index} >
                               <tr>
                                 <td key={index}>{index + 1}</td>
                                 <td key={index}>{stops.stopName}</td>
                                 <td key={index}>{stops.pickupTime}</td>
                                 <td key={index}>{stops.dropTime}</td>
+                                <td key={index}>
+                                <Button
+                                      className="btn-sm pull-right"
+                                      color="danger"
+                                      type="button"
+                                    >
+                                      <Popconfirm
+                                        title="Sure to delete?"
+                                        onConfirm={() =>
+                                          deleteStopHandler(stops.stopName)
+                                        }
+                                      >
+                                        <i className="fas fa-trash" />
+                                      </Popconfirm>
+                                    </Button>
+                                </td>
                               </tr>
                             </tbody>
                           );
