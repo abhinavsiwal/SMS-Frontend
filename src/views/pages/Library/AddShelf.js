@@ -28,6 +28,7 @@ import {
   deleteLibrarySection,
   deleteLibraryShelf,
   editLibraryShelf,
+  editLibrarySection,
 } from "../../../api/libraryManagement";
 import { Popconfirm } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
@@ -44,22 +45,27 @@ const AddShelf = () => {
   const [viewShelf, setViewShelf] = useState([]);
   const [isData, setisData] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [selectedSectionId, setSelectedSectionId] = useState("");
+  const [selectedSectionId, setSelectedSectionId] = useState("empty");
   const [allShelf, setAllShelf] = useState([]);
   const [editing, setEditing] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editShelfName, setEditShelfName] = useState("");
   const [editShelfAbv, setEditShelfAbv] = useState("");
   const [editShelfId, setEditShelfId] = useState("");
+  const [sectionEditing, setSectionEditing] = useState(false);
+  const [sectionEditName, setSectionEditName] = useState("");
+  const [sectionEditAbbv, setSectionEditAbbv] = useState("");
+  const [sectionData, setSectionData] = useState([]);
+  const [editSectionLoading, setEditSectionLoading] = useState(false);
   const columns = [
     {
       title: "S No.",
       dataIndex: "s_no",
-      align:"left",
+      align: "left",
     },
     {
       title: "Shelf Name",
-      align:"left",
+      align: "left",
       dataIndex: "shelf_name",
       sorter: (a, b) => a.shelf_name > b.shelf_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -90,7 +96,7 @@ const AddShelf = () => {
     {
       title: "Shelf Abbreviation ",
       dataIndex: "shelf_abv",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.shelf_abv > b.shelf_abv,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -119,13 +125,87 @@ const AddShelf = () => {
     },
     {
       title: "Action",
-      align:"left",
+      align: "left",
       key: "action",
       dataIndex: "action",
       fixed: "right",
     },
   ];
+  const columns1 = [
+    {
+      title: "S No.",
+      dataIndex: "s_no",
+      align: "left",
+    },
+    {
+      title: "Section Name",
+      dataIndex: "section_name",
+      align: "left",
+      sorter: (a, b) => a.section_name > b.section_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.section_name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Abbreviation",
+      dataIndex: "abbreviation",
+      align: "left",
+      sorter: (a, b) => a.abbreviation > b.abbreviation,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.abbreviation.toLowerCase().includes(value.toLowerCase());
+      },
+    },
 
+    {
+      title: "Action",
+      align: "left",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
   useEffect(() => {
     getAllSection();
     getAllShelf();
@@ -212,6 +292,38 @@ const AddShelf = () => {
     }
   };
 
+  const editSectionHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("name", sectionEditName);
+    formData.set("abbreviation", sectionEditAbbv);
+    // formData.set("school", user.school);
+
+    try {
+      setEditSectionLoading(true);
+      const data = await editLibrarySection(
+        selectedSectionId,
+        user._id,
+        formData
+      );
+      console.log(data);
+      if (data.err) {
+        toast.error(data.err);
+        setEditSectionLoading(false);
+        return;
+      }
+      toast.success("Section Updated Successfully");
+      setSelectedSectionId("empty");
+      setChecked(!checked);
+      setSectionEditing(false);
+      setEditSectionLoading(false);
+    } catch (err) {
+      setEditSectionLoading(false);
+      console.log(err);
+      toast.error("Section Update Failed");
+    }
+  };
+
   const tableData = async () => {
     if (selectedSectionId === undefined) {
       return;
@@ -225,6 +337,49 @@ const AddShelf = () => {
     let selectedSection = await allSection.find(
       (section) => section._id === selectedSectionId
     );
+
+    let sectionData = [];
+    sectionData.push({
+      key: 1,
+      s_no: 1,
+      section_name: selectedSection.name,
+      abbreviation: selectedSection.abbreviation,
+      action: (
+        <h5 key={1} className="mb-0">
+          {/* {permission1 && permission1.includes("edit") && ( */}
+          <Button
+            className="btn-sm pull-right"
+            color="primary"
+            type="button"
+            key={"edit" + 1}
+            onClick={() => {
+              setSectionEditing(true);
+              setSectionEditName(selectedSection.name);
+              setSectionEditAbbv(selectedSection.abbreviation);
+            }}
+          >
+            <i className="fas fa-user-edit" />
+          </Button>
+          {/* )} */}
+          {/* {permission1 && permission1.includes("delete") && ( */}
+          <Button
+            className="btn-sm pull-right"
+            color="danger"
+            type="button"
+            key={"delete" + 1}
+          >
+            <Popconfirm
+              title="Sure to delete?"
+              onConfirm={() => deleteSectionHandler()}
+            >
+              <i className="fas fa-trash" />
+            </Popconfirm>
+          </Button>
+          {/* )} */}
+        </h5>
+      ),
+    });
+    setSectionData(sectionData);
     const data = [];
     if (selectedSection.shelf.length === 0) {
       setisData(false);
@@ -246,7 +401,7 @@ const AddShelf = () => {
               color="primary"
               type="button"
               key={"edit" + i + 1}
-              onClick={() =>{
+              onClick={() => {
                 setEditing(true);
                 setEditShelfName(selectedSection.shelf[i].name);
                 setEditShelfAbv(selectedSection.shelf[i].abbreviation);
@@ -299,7 +454,7 @@ const AddShelf = () => {
     }
   };
 
-  const editShelfHandler=async(e)=>{
+  const editShelfHandler = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.set("name", editShelfName);
@@ -329,8 +484,7 @@ const AddShelf = () => {
       setEditLoading(false);
       toast.error("Shelf Edited Failed");
     }
-  
-  }
+  };
 
   useEffect(() => {
     if (selectedSectionId) {
@@ -541,7 +695,7 @@ const AddShelf = () => {
                 <Container className="mt--6 shadow-lg" fluid>
                   <Card>
                     <CardHeader>
-                      <h3>View Shelves</h3>
+                      <h3>View Section</h3>
                       <Row
                         style={{
                           alignItems: "center",
@@ -569,32 +723,32 @@ const AddShelf = () => {
                             })}
                           </Input>
                         </Col>
-                        <Col
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                          }}
-                        >
-                          <Button color="danger" className="mt-3">
-                            <Popconfirm
-                              title="Sure to delete?"
-                              onConfirm={() => deleteSectionHandler()}
-                            >
-                              DeleteSection <i className="fas fa-trash" />
-                            </Popconfirm>
-                          </Button>
+                      </Row>
+                      <Row>
+                        <Col>
+                          {selectedSectionId !== "empty" && (
+                            <AntTable
+                              columns={columns1}
+                              data={sectionData}
+                              exportFileName="SectionDetails"
+                            />
+                          )}
                         </Col>
                       </Row>
                     </CardHeader>
                     <CardBody>
                       {!loading && viewShelf ? (
                         isData ? (
-                          <AntTable
-                            columns={columns}
-                            data={viewShelf}
-                            pagination={true}
-                            exportFileName="StudentDetails"
-                          />
+                          <>
+                            <h3>View Shelf</h3>
+
+                            <AntTable
+                              columns={columns}
+                              data={viewShelf}
+                              pagination={true}
+                              exportFileName="StudentDetails"
+                            />
+                          </>
                         ) : (
                           <h3>No Shelf Found</h3>
                         )
@@ -610,11 +764,83 @@ const AddShelf = () => {
         )}
         <Modal
           className="modal-dialog-centered"
+          isOpen={sectionEditing}
+          toggle={() => setSectionEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              Edit Section
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setSectionEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          {editSectionLoading ? (
+            <Loader />
+          ) : (
+            <ModalBody>
+              <Form className="mb-4" onSubmit={editSectionHandler}>
+                <Row>
+                  <Col>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Section Name
+                    </Label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Name"
+                      type="text"
+                      onChange={(e) => setSectionEditName(e.target.value)}
+                      value={sectionEditName}
+                      required
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Section Abbreviation
+                    </Label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Name"
+                      type="text"
+                      onChange={(e) => setSectionEditAbbv(e.target.value)}
+                      value={sectionEditAbbv}
+                      required
+                    />
+                  </Col>
+                </Row>
+                <Row className="mt-4 float-right">
+                  <Col>
+                    <Button color="primary" type="submit">
+                      Save Changes
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+            </ModalBody>
+          )}
+        </Modal>
+        <Modal
+          className="modal-dialog-centered"
           isOpen={editing}
           toggle={() => setEditing(false)}
           size="lg"
         >
-            <div className="modal-header">
+          <div className="modal-header">
             <h2 className="modal-title" id="modal-title-default">
               Edit Shelf
             </h2>
@@ -628,52 +854,54 @@ const AddShelf = () => {
               <span aria-hidden={true}>×</span>
             </button>
           </div>
-          {editLoading?(<Loader />):(
+          {editLoading ? (
+            <Loader />
+          ) : (
             <ModalBody>
-              <Form className="mb-4" onSubmit={editShelfHandler} >  
+              <Form className="mb-4" onSubmit={editShelfHandler}>
                 <Row>
                   <Col>
-                  <Label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Shelf Name
-                      </Label>
-                      <Input
-                        id="example4cols2Input"
-                        placeholder="Name"
-                        type="text"
-                        onChange={e=>setEditShelfName(e.target.value)}
-                        value={editShelfName}
-                        required
-                      />
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Shelf Name
+                    </Label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Name"
+                      type="text"
+                      onChange={(e) => setEditShelfName(e.target.value)}
+                      value={editShelfName}
+                      required
+                    />
                   </Col>
                 </Row>
                 <Row>
                   <Col>
-                  <Label
-                        className="form-control-label"
-                        htmlFor="example4cols2Input"
-                      >
-                        Shelf Abbreviation
-                      </Label>
-                      <Input
-                        id="example4cols2Input"
-                        placeholder="Name"
-                        type="text"
-                        onChange={e=>setEditShelfAbv(e.target.value)}
-                        value={editShelfAbv}
-                        required
-                      />
+                    <Label
+                      className="form-control-label"
+                      htmlFor="example4cols2Input"
+                    >
+                      Shelf Abbreviation
+                    </Label>
+                    <Input
+                      id="example4cols2Input"
+                      placeholder="Name"
+                      type="text"
+                      onChange={(e) => setEditShelfAbv(e.target.value)}
+                      value={editShelfAbv}
+                      required
+                    />
                   </Col>
                 </Row>
                 <Row className="mt-4 float-right">
-                    <Col>
-                      <Button color="primary" type="submit">
-                        Save Changes
-                      </Button>
-                    </Col>
-                  </Row>
+                  <Col>
+                    <Button color="primary" type="submit">
+                      Save Changes
+                    </Button>
+                  </Col>
+                </Row>
               </Form>
             </ModalBody>
           )}

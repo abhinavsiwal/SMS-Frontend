@@ -45,6 +45,21 @@ export const addLibraryShelf = async (userId, formData) => {
   }
 };
 
+export const editLibrarySection = async (sectionId, userId, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/librarysection/edit/${sectionId}/${userId}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};
+
 export const getAllLibraryShelf = async (schoolId, userId) => {
   try {
     const { data } = await sendRequest(
@@ -223,4 +238,4 @@ export const getHistoryByType = async (schoolId, userId) => {
     console.log(err);
     throw new err();
   }
-}
+};

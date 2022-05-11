@@ -53,15 +53,7 @@ function AdminProfile() {
 
   const [permissions, setPermissions] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
-  useEffect(() => {
-    // console.log(user);
-    if (user.permissions["School Profile Module"]) {
-      let permission1 = user.permissions["School Profile Module"];
-      setPermissions(permission1);
-      // console.log(permissions);
-    }
-  }, []);
-
+  
   useEffect(() => {
     getSchoolDetails();
   }, [checked]);
@@ -72,6 +64,7 @@ function AdminProfile() {
       const { data } = await schoolProfile(user.school, user._id);
       // console.log(user);
       // console.log(data);
+
       setSchoolDetails(data);
       setEditSchoolProfile({
         ...editSchoolProfile,
@@ -105,6 +98,10 @@ function AdminProfile() {
       setEditLoading(true);
       const data = await adminProfileEdit(user._id, formData);
       // console.log(data);
+      if(data.err){
+        setEditLoading(false);
+        return toast.error(data.err);
+      }
 
       setEditSchoolProfile({
         ...editSchoolProfile,
@@ -113,7 +110,7 @@ function AdminProfile() {
         email: data.email,
         phone: data.phone,
       });
-
+      setChecked(!checked);
       setEditing(false);
       setEditLoading(false);
       toast.success("Profile Updated Successfully");
@@ -126,7 +123,7 @@ function AdminProfile() {
 
   return (
     <>
-      <SimpleHeader name="School Profile" />
+      <SimpleHeader name="User Profile" />
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

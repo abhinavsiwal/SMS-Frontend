@@ -385,10 +385,12 @@ const dispatch=useDispatch();
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
+    formData.set("class",clas);
     const classID = clas;
     try {
       setAddLoading(true);
       const resp = await addSection(user._id, token, formData);
+      console.log(resp);
       sectionData.set("school", user.school);
       sectionData.set("section", resp._id);
       await addClassToSection(user._id, classID, token, sectionData);

@@ -27,6 +27,18 @@ function StaffProfile() {
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
   const {user} = isAuthenticated();
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
 
   return (
     <>
@@ -146,7 +158,7 @@ function StaffProfile() {
                                     Joining Date
                                   </h5>
                                   <small>
-                                    {user.Data.joining_date && user.Data.joining_date}
+                                    {user.Data.joining_date &&  getFormattedDate(user.Data.joining_date)}
                                   </small>
                                 </div>
                               </div>

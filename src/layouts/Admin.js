@@ -19,7 +19,7 @@ function Admin() {
     mainContentRef.current.scrollTop = 0;
   }, [location]);
 
-  console.log(user);
+  // console.log(user);
   // console.log(adminRoutes);
 
   useEffect(() => {

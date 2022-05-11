@@ -14,6 +14,8 @@ import {
   Label,
   Form,
 } from "reactstrap";
+import { allStaffs } from "api/staff";
+import Select from "react-select";
 import { useReactToPrint } from "react-to-print";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
@@ -28,6 +30,7 @@ import {
   canteenDelete,
   menuItemDelete,
   menuItemEdit,
+  canteenEdit
 } from "../../../api/canteen/index";
 //Loader
 import Loader from "components/Loader/Loader";
@@ -53,8 +56,14 @@ function ViewCanteen() {
   const [allCanteen, setAllCanteen] = useState([]);
   const [loading, setLoading] = React.useState(false);
   const [editing, setEditing] = useState(false);
-  const [selectedCanteenId, setSelectedCanteenId] = useState();
+  const [selectedCanteenId, setSelectedCanteenId] = useState("empty");
+  const [selectedCanteen, setSelectedCanteen] = useState([]);
   const [isData, setisData] = useState(false);
+  const [canteenEditing, setCanteenEditing] = useState(false);
+  const [editCanteenName, setEditCanteenName] = useState("");
+  const [editCanteenStaff, setEditCanteenStaff] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [staff, setStaff] = useState([]);
   const [addMenu, setAddMenu] = React.useState({
     image: "",
     item: "",
@@ -66,6 +75,7 @@ function ViewCanteen() {
   const [permissions, setPermissions] = useState([]);
   const [checked, setChecked] = useState(false);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [canteenEditLoading, setCanteenEditLoading] = useState(false);
   const columns = [
     {
       title: "S No.",
@@ -230,6 +240,89 @@ function ViewCanteen() {
     },
   ];
 
+  const columns1 = [
+    {
+      title: "S No.",
+      dataIndex: "s_no",
+      align:"left"
+    },
+    {
+      title: "Canteen Name",
+      dataIndex: "canteen_name",
+      align:"left",
+      sorter: (a, b) => a.canteen_name > b.canteen_name,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.canteen_name.toLowerCase().includes(value.toLowerCase());
+      },
+    },
+    {
+      title: "Staff",
+      dataIndex: "staff",
+      align:"left",
+      sorter: (a, b) => a.staff > b.staff,
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
+        return (
+          <>
+            <Input
+              autoFocus
+              placeholder="Type text here"
+              value={selectedKeys[0]}
+              onChange={(e) => {
+                setSelectedKeys(e.target.value ? [e.target.value] : []);
+                confirm({ closeDropdown: false });
+              }}
+              onBlur={() => {
+                confirm();
+              }}
+            ></Input>
+          </>
+        );
+      },
+      filterIcon: () => {
+        return <SearchOutlined />;
+      },
+      onFilter: (value, record) => {
+        return record.staff.toLowerCase().includes(value.toLowerCase());
+      },
+      render: (staffs) => staffs.map((staff) => staff.firstname).join(),
+    },
+    {
+      title: "Action",
+      align:"left",
+      key: "action",
+      dataIndex: "action",
+      fixed: "right",
+    },
+  ];
+  const handleSubjectChange = (e) => {
+    var value = [];
+    for (var i = 0, l = e.length; i < l; i++) {
+      value.push(e[i].value);
+    }
+    // console.log(value);
+    setStaff(value);
+  };
   const { user, token } = isAuthenticated();
   const [editLoading, setEditLoading] = useState(false);
   const componentRef = useRef();
@@ -249,15 +342,28 @@ function ViewCanteen() {
 
   React.useEffect(() => {
     fetchCanteen();
+    getAllStaffs();
   }, [checked]);
   const fetchCanteen = async () => {
     setLoading(true);
     const res = await allCanteens(user._id, user.school); // Call your function here
-    // console.log(res);
+    console.log(res);
     await setAllCanteen(res);
 
     setLoading(false);
   };
+
+  const getAllStaffs = async () => {
+    const { data } = await allStaffs(user.school, user._id);
+    // console.log(data);
+    let options = [];
+    for (let i = 0; i < data.length; i++) {
+      options.push({ value: data[i]._id, label: data[i].firstname });
+    }
+    // console.log(options);
+    setRoleOptions(options);
+  };
+
   useEffect(() => {
     if (selectedCanteenId) {
       tableData();
@@ -281,7 +387,44 @@ function ViewCanteen() {
     let selectedCanteen = await allCanteen.find(
       (canteen) => canteen._id === selectedCanteenId
     );
-    // console.log(selectedCanteen);
+    let canteenData = [];
+    canteenData.push({
+      key: 1,
+      s_no: 1,
+      canteen_name: selectedCanteen.name,
+      staff: selectedCanteen.staff,
+      action: (
+        <h5 key={1} className="mb-0">
+          {permission1 && permission1.includes("edit") && (
+            <Button
+              className="btn-sm pull-right"
+              color="primary"
+              type="button"
+              key={"edit" + 1}
+              onClick={() => rowHandler1(selectedCanteen)}
+            >
+              <i className="fas fa-user-edit" />
+            </Button>
+          )}
+          {permission1 && permission1.includes("delete") && (
+            <Button
+              className="btn-sm pull-right"
+              color="danger"
+              type="button"
+              key={"delete" + 1}
+            >
+              <Popconfirm
+                title="Sure to delete?"
+                onConfirm={() => deleteCanteenHandler()}
+              >
+                <i className="fas fa-trash" />
+              </Popconfirm>
+            </Button>
+          )}
+        </h5>
+      ),
+    });
+    setSelectedCanteen(canteenData); // console.log(selectedCanteen);
     const data = [];
     if (selectedCanteen.menu.length === 0) {
       setisData(false);
@@ -298,7 +441,11 @@ function ViewCanteen() {
         start_time: selectedCanteen.menu[i].start_time,
         end_time: selectedCanteen.menu[i].end_time,
         image: (
-          <img width={100} height={100} src={selectedCanteen.menu[i].tempPhoto} />
+          <img
+            width={100}
+            height={100}
+            src={selectedCanteen.menu[i].tempPhoto}
+          />
         ),
         price: selectedCanteen.menu[i].price,
         publish: selectedCanteen.menu[i].publish,
@@ -340,6 +487,44 @@ function ViewCanteen() {
     setLoading(false);
   };
 
+const rowHandler1 = (data)=>{
+  setCanteenEditing(true);
+  setEditCanteenName(data.name);
+  let staff = [];
+  for (let i = 0; i < data.staff.length; i++) {
+    staff.push({
+      value: data.staff[i]._id,
+      label: data.staff[i].firstname + " " + data.staff[i].lastname,
+    });
+  }
+  setEditCanteenStaff(staff);
+}
+const canteenEditHandler = async(e)=>{
+  e.preventDefault();
+  const formData = new FormData();
+  formData.set("name",editCanteenName);
+  formData.set("staff",JSON.stringify(staff));
+
+  try {
+    setCanteenEditLoading(true);
+    const data = await canteenEdit(selectedCanteenId,user._id,formData);
+    console.log(data);
+    if(data.err){
+      setCanteenEditLoading(false);
+      return toast.error(data.err);
+    }
+    setChecked(!checked);
+    setSelectedCanteenId("empty");
+    // setSelectedCanteen({})
+    setCanteenEditing(false)
+    setCanteenEditLoading(false);
+    toast.success("Canteen updated successfully");
+  } catch (err) {
+    console.log(err);
+    setCanteenEditLoading(false);
+    toast.error("Can't update canteen");
+  }
+}
   //values of addMenu
   const handleChangeMenu = (name) => (event) => {
     setAddMenu({ ...addMenu, [name]: event.target.value });
@@ -407,6 +592,7 @@ function ViewCanteen() {
       // console.log(data);
       setChecked(!checked);
       setLoading(false);
+      setSelectedCanteenId("empty");
       toast.success("Canteen Deleted Successfully");
     } catch (err) {
       console.log(err);
@@ -469,17 +655,15 @@ function ViewCanteen() {
                 );
               })}
             </Input>
-
-            {showDeleteButton && permissions && permissions.includes("delete") && (
-              <Button color="danger" className="mt-3">
-                <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() => deleteCanteenHandler()}
-                >
-                  DeleteCanteen <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
+            {selectedCanteenId !== "empty" && (
+              <AntTable
+                columns={columns1}
+                data={selectedCanteen}
+                pagination={true}
+                exportFileName="Canteen"
+              />
             )}
+        
           </CardHeader>
           <CardBody>
             <Button
@@ -492,14 +676,17 @@ function ViewCanteen() {
             </Button>
             {!loading && viewCanteen ? (
               isData ? (
-                <div ref={componentRef}>
-                  <AntTable
-                    columns={columns}
-                    data={viewCanteen}
-                    pagination={true}
-                    exportFileName="StudentDetails"
-                  />
-                </div>
+                <>
+                  <h3>Menu</h3>
+                  <div ref={componentRef}>
+                    <AntTable
+                      columns={columns}
+                      data={viewCanteen}
+                      pagination={true}
+                      exportFileName="StudentDetails"
+                    />
+                  </div>
+                </>
               ) : (
                 <h3>No Menu Found</h3>
               )
@@ -508,6 +695,81 @@ function ViewCanteen() {
             )}
           </CardBody>
         </Card>
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={canteenEditing}
+          toggle={() => setCanteenEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              Edit Canteen
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setCanteenEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          {canteenEditLoading ? (
+            <Loader />
+          ) : (
+            <ModalBody>
+              <Form className="mb-4" onSubmit={canteenEditHandler}>
+                <CardBody>
+                
+                  <Row>
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Canteen Name
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Name"
+                        type="text"
+                        onChange={e=>setEditCanteenName(e.target.value)}
+                        value={editCanteenName}
+                        required
+                      />
+                    </Col>
+                
+                    <Col md="6">
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Staff
+                      </Label>
+                      <Select
+                      isMulti
+                      name="colors"
+                      options={roleOptions}
+                      onChange={handleSubjectChange}
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      required
+                      defaultValue={editCanteenStaff}
+                    />
+                    </Col>
+                 
+                    <Col className="mt-4" >
+                      <Button color="primary" type="submit">
+                        Save Changes
+                      </Button>
+                    </Col>
+                  </Row>
+                </CardBody>
+              </Form>
+            </ModalBody>
+          )}
+        </Modal>
         <Modal
           className="modal-dialog-centered"
           isOpen={editing}

@@ -398,9 +398,12 @@ function AddStudent() {
     formData.set("city", city);
     formData.set("date_of_birth", dateOfBirth);
     formData.set("joining_date", dateOfJoining);
-    formData.set("guardian_dob", guardianDOB);
-    formData.set("father_dob", fatherDOB);
-    formData.set("mother_dob", motherDOB);
+    if (guardianDOB) {
+      formData.set("guardian_dob", guardianDOB);
+    }else  if (fatherDOB) {
+      formData.set("father_dob", fatherDOB);
+      formData.set("mother_dob", motherDOB);
+    }
 
     try {
       setLoading(true);
@@ -695,6 +698,7 @@ function AddStudent() {
                         className="form-control"
                         required
                         onChange={handleChange("session")}
+                        value={studentData.session}
                       >
                         <option value="">Select Session</option>
                         {sessions &&

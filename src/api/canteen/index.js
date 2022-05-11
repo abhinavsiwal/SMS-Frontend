@@ -15,7 +15,7 @@ export const canteenAdd = async (userId, formData) => {
   }
 };
 
-export const allCanteens = async (userId,schoolId) => {
+export const allCanteens = async (userId, schoolId) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/canteen/all/${schoolId}/${userId}`
@@ -23,8 +23,8 @@ export const allCanteens = async (userId,schoolId) => {
     // console.log(data);
     return data;
   } catch (err) {
-      console.log(err);
-      throw new err();
+    console.log(err);
+    throw new err();
   }
 };
 
@@ -43,8 +43,7 @@ export const menuAdd = async (userId, formData) => {
   }
 };
 
-
-export const canteenDelete= async(canteenId,userId)=>{
+export const canteenDelete = async (canteenId, userId) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/canteen/delete/${canteenId}/${userId}`,
@@ -57,9 +56,9 @@ export const canteenDelete= async(canteenId,userId)=>{
     console.log(err);
     throw err();
   }
-}
+};
 
-export const menuItemDelete=async(itemId,userId)=>{
+export const menuItemDelete = async (itemId, userId) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/canteen/menu/delete/${itemId}/${userId}`,
@@ -72,9 +71,9 @@ export const menuItemDelete=async(itemId,userId)=>{
     console.log(err);
     throw err();
   }
-}
+};
 
-export const menuItemEdit=async(itemId,userId,formData)=>{
+export const menuItemEdit = async (itemId, userId, formData) => {
   try {
     const { data } = await sendRequest(
       `${process.env.REACT_APP_API_URL}/api/school/canteen/menu/edit/${itemId}/${userId}`,
@@ -87,4 +86,19 @@ export const menuItemEdit=async(itemId,userId,formData)=>{
     console.log(err);
     throw err();
   }
-}
+};
+
+export const canteenEdit = async (canteenId, userId, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/canteen/edit/${canteenId}/${userId}`,
+      formData,
+      "PUT"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err();
+  }
+};

@@ -18,7 +18,8 @@ import {
 
 //React-Select
 import Select from "react-select";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 // core components
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import AntTable from "../tables/AntTable";
@@ -36,14 +37,14 @@ import {
   routesAll,
   deleteRoute,
   editRoute,
+  editStop,
 } from "api/transportation";
 import { useReactToPrint } from "react-to-print";
-//React Datepicker
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
 import { allStaffs } from "api/staff";
 // import moment Library
 import moment from "moment";
+import { toast, ToastContainer } from "react-toastify";
 
 function ViewRoute() {
   const [startDate, setStartDate] = React.useState(new Date());
@@ -52,6 +53,11 @@ function ViewRoute() {
   const [endDate, setEndDate] = React.useState(new Date());
   const endDuration = moment(endDate).format("LT");
   // console.log("end", endDuration);
+
+  const [startTimePickup, setStartTimePickup] = React.useState(new Date());
+  const startTime = moment(startTimePickup).format("LT");
+  const [endTimePickup, setEndTimePickup] = React.useState(new Date());
+  const endTime = moment(endTimePickup).format("LT");
   const [viewRoute, setViewRoute] = React.useState([]);
   const [modalState, setModalState] = React.useState(false);
   const [modalSupport, setModalSupport] = React.useState({});
@@ -62,13 +68,19 @@ function ViewRoute() {
   const [formData] = React.useState(new FormData());
   const { user } = isAuthenticated();
   const [roleOptions, setRoleOptions] = useState([]);
+  const [permissions1, setPermissions1] = useState([]);
+  const [editStopModal, seteditStopModal] = useState(false);
+  const [addStops, setAddStops] = useState([]);
+
   const [editingRouteData, setEditingRouteData] = React.useState({
     route_name: "",
     id: "",
     bus_no: "",
   });
   const [editLoading, setEditLoading] = useState(false);
+  const [stopLoading, setStopLoading] = useState(false);
   const [staff, setStaff] = useState([]);
+  const [placeName, setPlaceName] = useState("");
   // console.log("route", route);
   // const [loading, setLoading] = useState(second)
   const componentRef = useRef();
@@ -87,6 +99,7 @@ function ViewRoute() {
     // console.log(user);
     if (user.permissions["Transportation management"]) {
       permissions = user.permissions["Transportation management"];
+      setPermissions1(permissions);
       // console.log(permissions);
     }
   }, [checked]);
@@ -256,7 +269,7 @@ function ViewRoute() {
       onFilter: (value, record) => {
         return record.staff_members.toLowerCase().includes(value.toLowerCase());
       },
-      render: (staffs) => staffs.map(staff => staff.firstname).join(),
+      render: (staffs) => staffs.map((staff) => staff.firstname).join(),
     },
 
     {
@@ -411,36 +424,93 @@ function ViewRoute() {
     }
   };
 
+  const deleteStopHandler = async (route, stopName) => {
+    console.log(route);
+    console.log(stopName);
+    const filterStop = route.stops.filter((stop) => stopName !== stop.stopName);
+    console.log(filterStop);
+    const formData = new FormData();
+    formData.set("stops", JSON.stringify(filterStop));
+    formData.set("school", user.school);
+    formData.set("id", route._id);
+    try {
+      setStopLoading(true);
+      const data = await editStop(user._id, route._id, formData);
+      console.log(data);
+      if (data.err) {
+        setStopLoading(false);
+        toast.error(data.err);
+        return;
+      }
+      setChecked(!checked);
+      setModalState(false);
+      setStopLoading(false);
+      toast.success("Stop deleted successfully");
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+      setStopLoading(false);
+    }
+  };
+
+  const editStopData = async (route) => {
+    seteditStopModal(true);
+    console.log(route);
+    setAddStops(route.stops);
+  };
+
+  const addStop = () => {
+    let obj = {
+      stopName: placeName,
+      pickupTime: startTime,
+      dropTime: endTime,
+    };
+    let arr = addStops;
+    arr.push(obj);
+    setAddStops(arr);
+  };
+
   return (
     <>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <SimpleHeader name="Transport" parentName="View Route" />
       <Modal
-        style={{ height: "50vh" }}
-        isOpen={editing}
-        toggle={() => setEditing(false)}
+        className="modal-dialog-centered"
+        isOpen={editStopModal}
+        toggle={() => seteditStopModal(false)}
         size="lg"
-        scrollable
       >
         <div className="modal-header">
-          <h2 className="modal-title" id="modal-title-default">
-            {editing ? "Edit Form" : "Create Form"}
-          </h2>
+          <h6 className="modal-title" id="modal-title-default">
+            Route Details
+          </h6>
           <button
             aria-label="Close"
             className="close"
             data-dismiss="modal"
             type="button"
-            onClick={() => setEditing(false)}
+            onClick={() => editStopModal(false)}
           >
             <span aria-hidden={true}>×</span>
           </button>
         </div>
-        <ModalBody>
-          {editLoading ? (
-            <Loader />
-          ) : (
-            <Container>
-              <Form>
+        {stopLoading ? (
+          <Loader />
+        ) : (
+          <ModalBody>
+            <>
+              <Container>
                 <Row>
                   <Col>
                     {" "}
@@ -448,67 +518,29 @@ function ViewRoute() {
                       className="form-control-label"
                       htmlFor="example4cols2Input"
                     >
-                      Route Name
+                      Stop Name
                     </Label>
                     <Input
                       id="example4cols2Input"
-                      placeholder="Class"
+                      placeholder="Stop Name"
                       type="text"
-                      onChange={handleChange("route_name")}
-                      value={editingRouteData.route_name}
+                      // onChange={handleChange("route_name")}
+                      // value={editingRouteData.route_name}
                       required
                     />
                   </Col>
-                  <Col>
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      Select Staff Member
-                    </Label>
-                    <Select
-                      isMulti
-                      name="colors"
-                      options={roleOptions}
-                      onChange={handleSubjectChange}
-                      className="basic-multi-select"
-                      classNamePrefix="select"
-                      required
-                      defaultValue={editingRouteData.staff}
-                    />
-                  </Col>
-                </Row>
-                <Row>
                   <Col>
                     <Label
                       className="form-control-label"
                       htmlFor="example4cols2Input"
                     >
-                      Bus No.
-                    </Label>
-                    <Input
-                      id="example4cols2Input"
-                      placeholder="bus_no"
-                      type="text"
-                      onChange={handleChange("bus_no")}
-                      value={editingRouteData.bus_no}
-                      required
-                    />
-                  </Col>
-                </Row>
-                <Row>
-                  <Col>
-                    <Label
-                      className="form-control-label"
-                      htmlFor="xample-date-input"
-                    >
-                      From
+                      Pickup Time
                     </Label>
                     <DatePicker
                       id="exampleFormControlSelect3"
                       className="Period-Time"
-                      selected={startDate}
-                      onChange={(date) => setStartDate(date)}
+                      selected={startTimePickup}
+                      onChange={(date) => setStartTimePickup(date)}
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={15}
@@ -522,13 +554,13 @@ function ViewRoute() {
                       className="form-control-label"
                       htmlFor="example-date-input"
                     >
-                      To
+                      Drop Time
                     </Label>
                     <DatePicker
                       id="exampleFormControlSelect3"
                       className="Period-Time"
-                      selected={endDate}
-                      onChange={(date) => setEndDate(date)}
+                      selected={endTimePickup}
+                      onChange={(date) => setEndTimePickup(date)}
                       showTimeSelect
                       showTimeSelectOnly
                       timeIntervals={15}
@@ -539,20 +571,48 @@ function ViewRoute() {
                   </Col>
                 </Row>
                 <Row>
-                  <Col>
+                  <Col className="mt-4">
                     <Button
-                      className="primary mt-5"
                       color="primary"
-                      onClick={editRouteHandler}
+                      // onClick={addStop}
+                      // disabled={disableButton}
                     >
-                      Save Changes
+                      Add
                     </Button>
                   </Col>
                 </Row>
-              </Form>
-            </Container>
-          )}
-        </ModalBody>
+              </Container>
+              <Table bordered responsive>
+                <thead>
+                  <tr>
+                    <th>S No.</th>
+                    <th>Place Name</th>
+                    <th>pickup Time</th>
+                    <th>DropTime</th>
+                  </tr>
+                </thead>
+                {addStops !== null ? (
+                  <>
+                    {addStops.map((stops, index) => {
+                      return (
+                        <tbody>
+                          <tr>
+                            <td key={index}>{index + 1}</td>
+                            <td key={index}>{stops.stopName}</td>
+                            <td key={index}>{stops.pickupTime}</td>
+                            <td key={index}>{stops.dropTime}</td>
+                          </tr>
+                        </tbody>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <h3>No Data</h3>
+                )}
+              </Table>
+            </>
+          </ModalBody>
+        )}
       </Modal>
 
       <Container className="mt--6 shadow-lg" fluid>
@@ -583,11 +643,151 @@ function ViewRoute() {
             )}
           </CardBody>
         </Card>
-
+        <Modal
+          // style={{ height: "50vh" }}
+          isOpen={editing}
+          toggle={() => setEditing(false)}
+          size="lg"
+          scrollable
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              {editing ? "Edit Form" : "Create Form"}
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            {editLoading ? (
+              <Loader />
+            ) : (
+              <Container>
+                <Form>
+                  <Row>
+                    <Col>
+                      {" "}
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Route Name
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="Class"
+                        type="text"
+                        onChange={handleChange("route_name")}
+                        value={editingRouteData.route_name}
+                        required
+                      />
+                    </Col>
+                    <Col>
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        Select Staff Member
+                      </Label>
+                      <Select
+                        isMulti
+                        name="colors"
+                        options={roleOptions}
+                        onChange={handleSubjectChange}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        required
+                        defaultValue={editingRouteData.staff}
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example4cols2Input"
+                      >
+                        Bus No.
+                      </Label>
+                      <Input
+                        id="example4cols2Input"
+                        placeholder="bus_no"
+                        type="text"
+                        onChange={handleChange("bus_no")}
+                        value={editingRouteData.bus_no}
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Label
+                        className="form-control-label"
+                        htmlFor="xample-date-input"
+                      >
+                        From
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                        required
+                      />
+                    </Col>
+                    <Col>
+                      <Label
+                        className="form-control-label"
+                        htmlFor="example-date-input"
+                      >
+                        To
+                      </Label>
+                      <DatePicker
+                        id="exampleFormControlSelect3"
+                        className="Period-Time"
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        showTimeSelect
+                        showTimeSelectOnly
+                        timeIntervals={15}
+                        timeCaption="Time"
+                        dateFormat="h:mm aa"
+                        required
+                      />
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Button
+                        className="primary mt-5"
+                        color="primary"
+                        onClick={editRouteHandler}
+                      >
+                        Save Changes
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              </Container>
+            )}
+          </ModalBody>
+        </Modal>
         <Modal
           className="modal-dialog-centered"
           isOpen={modalState}
           toggle={() => setModalState(false)}
+          size="lg"
         >
           <div className="modal-header">
             <h6 className="modal-title" id="modal-title-default">
@@ -603,36 +803,56 @@ function ViewRoute() {
               <span aria-hidden={true}>×</span>
             </button>
           </div>
-          <ModalBody>
-            <Table bordered responsive>
-              <thead>
-                <tr>
-                  <th>S No.</th>
-                  <th>Place Name</th>
-                  <th>pickup Time</th>
-                  <th>DropTime</th>
-                </tr>
-              </thead>
-              {modalSupport.stops ? (
-                <>
-                  {modalSupport.stops.map((stop, index) => {
-                    return (
-                      <tbody>
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{stop.stopName}</td>
-                          <td>{stop.pickupTime}</td>
-                          <td>{stop.dropTime}</td>
-                        </tr>
-                      </tbody>
-                    );
-                  })}
-                </>
-              ) : (
-                <h3>No Data</h3>
-              )}
-            </Table>
-          </ModalBody>
+          {stopLoading ? (
+            <Loader />
+          ) : (
+            <ModalBody>
+              <Table bordered responsive>
+                <thead>
+                  <tr>
+                    <th>S No.</th>
+                    <th>Place Name</th>
+                    <th>pickup Time</th>
+                    <th>DropTime</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                {modalSupport.stops ? (
+                  <>
+                    {modalSupport.stops.map((stop, index) => {
+                      return (
+                        <tbody>
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>{stop.stopName}</td>
+                            <td>{stop.pickupTime}</td>
+                            <td>{stop.dropTime}</td>
+                            <td>
+                              {permissions1 && permissions1.includes("edit") && (
+                                <Button
+                                  className="btn-sm pull-right"
+                                  color="primary"
+                                  type="button"
+                                  key={"edit" + index + 1}
+                                  onClick={() => {
+                                    editStopData(modalSupport);
+                                  }}
+                                >
+                                  <i className="fas fa-user-edit" />
+                                </Button>
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <h3>No Data</h3>
+                )}
+              </Table>
+            </ModalBody>
+          )}
         </Modal>
       </Container>
     </>

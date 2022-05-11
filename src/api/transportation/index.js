@@ -49,3 +49,18 @@ export const editRoute = async (userId, routeId, formData) => {
     throw new err();
   }
 };
+
+export const editStop = async (userId, routeId, formData) => {
+  try {
+    const { data } = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/transportation/route/stop/${routeId}/${userId}`,
+      formData,
+      "POST"
+    );
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw new err();
+  }
+};

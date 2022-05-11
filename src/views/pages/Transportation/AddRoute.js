@@ -185,11 +185,12 @@ function AddRoute() {
         return toast.error(data.err);
       } else {
         toast.success("Route Added Successfully");
-        setAddRoute("");
         setPlaceName("");
         setSessionID("");
         setBusNo("");
         setLoading(false);
+        setAddRoute("");
+        setAddStops([]);
       }
     } catch (err) {
       setLoading(false);
