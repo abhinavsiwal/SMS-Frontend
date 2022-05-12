@@ -122,10 +122,12 @@ function ViewRoute() {
     {
       title: "S No.",
       dataIndex: "s_no",
+      align:"left",
     },
     {
       title: "Route Name",
       dataIndex: "route_name",
+      align:"left",
       sorter: (a, b) => a.route_name > b.route_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -155,6 +157,7 @@ function ViewRoute() {
     {
       title: "Bus No.",
       dataIndex: "bus_no",
+      align:"left",
       sorter: (a, b) => a.bus_no > b.bus_no,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -185,6 +188,7 @@ function ViewRoute() {
     {
       title: "Start Time",
       dataIndex: "start_time",
+      align:"left",
       sorter: (a, b) => a.start_time > b.start_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -215,6 +219,7 @@ function ViewRoute() {
     {
       title: "End Time",
       dataIndex: "end_time",
+      align:"left",
       sorter: (a, b) => a.end_time > b.end_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -244,6 +249,7 @@ function ViewRoute() {
     {
       title: "Staff Members",
       dataIndex: "staff_members",
+      align:"left",
       sorter: (a, b) => a.staff_members > b.staff_members,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -276,6 +282,7 @@ function ViewRoute() {
       title: "Action",
       key: "action",
       dataIndex: "action",
+      align:"left",
       fixed: "right",
     },
   ];
@@ -502,7 +509,7 @@ function ViewRoute() {
       >
         <div className="modal-header">
           <h6 className="modal-title" id="modal-title-default">
-            Route Details
+          Edit Stops
           </h6>
           <button
             aria-label="Close"
@@ -681,7 +688,7 @@ function ViewRoute() {
         >
           <div className="modal-header">
             <h2 className="modal-title" id="modal-title-default">
-              {editing ? "Edit Form" : "Create Form"}
+              Edit Route
             </h2>
             <button
               aria-label="Close"

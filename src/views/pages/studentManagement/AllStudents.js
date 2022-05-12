@@ -127,7 +127,7 @@ const AllStudents = () => {
           email: res[i].email,
           phone: res[i].phone,
           gender: res[i].gender,
-          dob: res[i].date_of_birth.split("T")[0].toString(),
+          dob: getFormattedDate(res[i].date_of_birth),
           class: res[i].class && res[i].class.name,
           section: res[i].section && res[i].section.name,
           roll: res[i].roll_number,

@@ -113,8 +113,12 @@ function UpdateStaff({ staffDetails }) {
   const [formData] = useState(new FormData());
   const [loading, setLoading] = useState(false);
   const [departments, setDeparments] = useState([]);
-  const [dateOfJoining, setDateOfJoining] = useState(new Date(staffData.joining_date));
-  const [dateOfBirth, setDateOfBirth] = useState(new Date(staffData.date_of_birth));
+  const [dateOfJoining, setDateOfJoining] = useState(
+    new Date(staffData.joining_date)
+  );
+  const [dateOfBirth, setDateOfBirth] = useState(
+    new Date(staffData.date_of_birth)
+  );
   // const [subject, setSubject] = useState([]);
   // console.log("sub", subject);
   const [a, setA] = useState([]);
@@ -222,10 +226,10 @@ function UpdateStaff({ staffDetails }) {
     formData.set("contact_person_city", contactCity);
     formData.set("pincode", pincode);
     formData.set("contact_person_pincode", contactPincode);
-    formData.set("assign_role",assignRoleId);
+    formData.set("assign_role", assignRoleId);
     formData.set("date_of_birth", dateOfBirth);
     formData.set("joining_date", dateOfJoining);
-   
+
     try {
       setLoading(true);
       const resp = await updateStaff(staffData._id, user._id, formData);
@@ -496,6 +500,13 @@ function UpdateStaff({ staffDetails }) {
                           Select file
                         </label>
                       </div>
+                    </Col>
+                    <Col>
+                      <img
+                        src={staffData.image}
+                        placeholder={staffData.firstname}
+                        style={{ height: "100px", width: "100px" }}
+                      />
                     </Col>
                   </Row>
                   <Row>

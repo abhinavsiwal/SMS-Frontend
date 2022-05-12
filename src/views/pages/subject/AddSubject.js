@@ -222,6 +222,7 @@ const AddSubject = () => {
       title: "Subject",
       dataIndex: "name",
       key: "subjects",
+      align:"left",
       // width: "90%",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -252,6 +253,7 @@ const AddSubject = () => {
     {
       title: "Action",
       key: "action",
+      align:"left",
       dataIndex: "action",
       fixed: "right",
     },
@@ -262,6 +264,7 @@ const AddSubject = () => {
       title: "Group Name",
       dataIndex: "groupName",
       key: "groupName",
+      align:"left",
       // width: "90%",
       sorter: (a, b) => a.groupName > b.groupName,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -293,6 +296,7 @@ const AddSubject = () => {
       title: "Subjects",
       dataIndex: "subjects",
       key: "subjects",
+      align:"left",
       // width: "90%",
       sorter: (a, b) => a.subjects > b.subjects,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -333,6 +337,7 @@ const AddSubject = () => {
     {
       title: "Action",
       key: "action",
+      align:"left",
       dataIndex: "action",
       fixed: "right",
     },

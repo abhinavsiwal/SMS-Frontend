@@ -407,6 +407,13 @@ const pincodeBlurHandler = () => {
                         </label>
                       </div>
                     </Col>
+                    <Col>
+                      <img
+                        src={studentDetails.image}
+                        placeholder={studentDetails.firstname}
+                        style={{ height: "100px", width: "100px" }}
+                      />
+                    </Col>
                   </Row>
                   <Row>
                     <Col md="4">

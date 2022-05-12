@@ -107,6 +107,7 @@ const dispatch=useDispatch();
     {
       title: "Section",
       dataIndex: "name",
+      align:"left",
       width: 150,
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -137,6 +138,7 @@ const dispatch=useDispatch();
     {
       title: "Section Abbreviation",
       dataIndex: "abbreviation",
+      align:"left",
       width: 150,
       sorter: (a, b) => a.abbreviation > b.abbreviation,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -167,6 +169,7 @@ const dispatch=useDispatch();
     {
       title: "Subject",
       dataIndex: "subject",
+      align:"left",
       width: 150,
       sorter: (a, b) => a.subject > b.subject,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -197,6 +200,7 @@ const dispatch=useDispatch();
     {
       title: "Class Teacher",
       dataIndex: "class_teacher",
+      align:"left",
       width: 150,
       sorter: (a, b) => a.class_teacher > b.class_teacher,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -228,6 +232,7 @@ const dispatch=useDispatch();
       title: "Action",
       key: "action",
       dataIndex: "action",
+      align:"left",
       fixed: "right",
     },
   ];

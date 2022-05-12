@@ -116,6 +116,7 @@ const DepartmentList = () => {
       title: "Name",
       dataIndex: "name",
       width: "30%",
+      align:"left",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -146,6 +147,7 @@ const DepartmentList = () => {
     {
       title: "Action",
       key: "action",
+      align:"left",
       dataIndex: "action",
       width: "10%",
       fixed: "right",

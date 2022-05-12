@@ -46,7 +46,7 @@ import {
 
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(3);
   const { classes } = useSelector((state) => state.classReducer);
   const history = useHistory();
   const [sessions, setSessions] = useState([]);
@@ -189,7 +189,7 @@ function AddStudent() {
   };
 
   const guardianPhoneBlurHandler = () => {
-    let regex = /^[5-9]{2}[0-9]{8}$/;
+    let regex = /^[5-9]{1}[0-9]{9}$/;
     if (regex.test(studentData.guardian_phone)) {
       setGuardianPhoneError(false);
     } else {
@@ -198,8 +198,8 @@ function AddStudent() {
   };
 
   const fatherPhoneBlurHandler = () => {
-    let regex = /^[5-9]{2}[0-9]{8}$/;
-    if (regex.test(studentData.father_phone_phone)) {
+    let regex = /^[5-9]{1}[0-9]{9}$/;
+    if (regex.test(studentData.father_phone)) {
       setFatherPhoneError(false);
     } else {
       setFatherPhoneError(true);

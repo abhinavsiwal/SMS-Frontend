@@ -80,10 +80,12 @@ function ViewCanteen() {
     {
       title: "S No.",
       dataIndex: "s_no",
+      align:"left",
     },
     {
       title: "Item Name",
       dataIndex: "item_name",
+      align:"left",
       sorter: (a, b) => a.item_name > b.item_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -114,6 +116,7 @@ function ViewCanteen() {
     {
       title: "Start Time",
       dataIndex: "start_time",
+      align:"left",
       sorter: (a, b) => a.start_time > b.start_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -143,6 +146,7 @@ function ViewCanteen() {
     {
       title: "End Time",
       dataIndex: "end_time",
+      align:"left",
       sorter: (a, b) => a.end_time > b.end_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -172,10 +176,12 @@ function ViewCanteen() {
     {
       title: "Image",
       dataIndex: "image",
+
     },
     {
       title: "Price",
       dataIndex: "price",
+      align:"left",
       sorter: (a, b) => a.price > b.price,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -205,6 +211,7 @@ function ViewCanteen() {
     {
       title: "Publish",
       dataIndex: "publish",
+      align:"left",
       sorter: (a, b) => a.publish > b.publish,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -237,6 +244,7 @@ function ViewCanteen() {
       key: "action",
       dataIndex: "action",
       fixed: "right",
+      align:"left",
     },
   ];
 
@@ -820,6 +828,9 @@ const canteenEditHandler = async(e)=>{
                           Select file
                         </label>
                       </div>
+                    </Col>
+                    <Col>
+                    <img src={addMenu.image} placeholder={addMenu.id} style={{height:"100px",width:"100px"}} />
                     </Col>
                   </Row>
                   <Row>

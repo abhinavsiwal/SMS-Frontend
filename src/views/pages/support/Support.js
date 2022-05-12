@@ -122,6 +122,7 @@ function Support() {
       title: "SID",
       dataIndex: "sid",
       width: "30%",
+      align:"left",
       sorter: (a, b) => a.sid > b.sid,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -152,6 +153,7 @@ function Support() {
       title: "Status",
       dataIndex: "status",
       width: "30%",
+      align:"left",
       sorter: (a, b) => a.status > b.status,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -181,6 +183,7 @@ function Support() {
     {
       title: "Root Caused",
       dataIndex: "root_caused",
+      align:"left",
       width: "30%",
       sorter: (a, b) => a.root_caused > b.root_caused,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -210,6 +213,7 @@ function Support() {
     },
     {
       title: "Action",
+      align:"left",
       key: "action",
       dataIndex: "action",
       fixed: "right",

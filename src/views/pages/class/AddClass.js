@@ -228,6 +228,7 @@ const AddClass = () => {
       title: "Class",
       dataIndex: "name",
       width: "40%",
+      align:"left",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -258,6 +259,7 @@ const AddClass = () => {
       title: "Abbreviation",
       dataIndex: "abbreviation",
       width: "50%",
+      align:"left",
       sorter: (a, b) => a.abbreviation > b.abbreviation,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -287,6 +289,7 @@ const AddClass = () => {
     {
       title: "Action",
       key: "action",
+      align:"left",
       dataIndex: "action",
       fixed: "right",
     },

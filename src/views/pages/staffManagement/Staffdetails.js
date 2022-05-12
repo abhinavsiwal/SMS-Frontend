@@ -25,6 +25,18 @@ function Staffdetails({ data, backHandle }) {
   // console.log(data);
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
+
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+
+    return day + "/" + month + "/" + year;
+  }
 
   return (
     <>
@@ -154,7 +166,7 @@ function Staffdetails({ data, backHandle }) {
                                     Joining Date
                                   </h5>
                                   <small>
-                                    {data.joining_date && data.joining_date}
+                                    {data.joining_date && getFormattedDate(data.joining_date)}
                                   </small>
                                 </div>
                               </div>
@@ -328,32 +340,7 @@ function Staffdetails({ data, backHandle }) {
                             </ListGroupItem>
                           </Col>
                         </Row>
-                        <Row className="mt-4">
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-info">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Contact Person Relation
-                                  </h5>
-                                  <small>{data.contact_person_relation}</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                          <Col>
-                            <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                              <div className="checklist-item checklist-item-success">
-                                <div className="checklist-info">
-                                  <h5 className="checklist-title mb-0">
-                                    Contact Person Address
-                                  </h5>
-                                  <small>{data.contact_person_address}</small>
-                                </div>
-                              </div>
-                            </ListGroupItem>
-                          </Col>
-                        </Row>
+                    
                       </ListGroup>
                     </TabPane>
                   </TabContent>

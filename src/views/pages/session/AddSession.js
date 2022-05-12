@@ -237,6 +237,7 @@ const AddSession = () => {
     {
       title: "Session",
       dataIndex: "session",
+      align:"left",
       // width: 150,
       width: "20%",
       sorter: (a, b) => a.session > b.session,
@@ -268,6 +269,7 @@ const AddSession = () => {
     {
       title: "Fees Method",
       key: "fees_method",
+      align:"left",
       dataIndex: "fees_method",
       sorter: (a, b) => a.fees_method > b.fees_method,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -298,6 +300,7 @@ const AddSession = () => {
     {
       title: "Start Date",
       dataIndex: "start_date",
+      align:"left",
       // width: 150,
       width: "20%",
       sorter: (a, b) => a.start_date > b.start_date,
@@ -329,6 +332,7 @@ const AddSession = () => {
     {
       title: "End Date",
       dataIndex: "end_date",
+      align:"left",
       width: "20%",
       // width: 150,
       sorter: (a, b) => a.end_date > b.end_date,
@@ -360,6 +364,7 @@ const AddSession = () => {
     {
       title: "Working Days",
       dataIndex: "working_days",
+      align:"left",
       // width: 150,
       sorter: (a, b) => a.working_days > b.working_days,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -389,6 +394,7 @@ const AddSession = () => {
     },
     {
       title: "Working Time",
+      align:"left",
       dataIndex: "working_time",
       // width: 150,
       width: "10%",
@@ -421,6 +427,7 @@ const AddSession = () => {
     {
       title: "Year",
       dataIndex: "year",
+      align:"left",
       width: "20%",
       // width: 150,
       sorter: (a, b) => a.year > b.year,
@@ -455,6 +462,7 @@ const AddSession = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
+      align:"left",
     },
   ];
 
