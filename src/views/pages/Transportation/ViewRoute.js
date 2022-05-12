@@ -71,7 +71,7 @@ function ViewRoute() {
   const [permissions1, setPermissions1] = useState([]);
   const [editStopModal, seteditStopModal] = useState(false);
   const [addStops, setAddStops] = useState([]);
-
+  const [disableButton, setDisableButton] = useState(true);
   const [editingRouteData, setEditingRouteData] = React.useState({
     route_name: "",
     id: "",
@@ -424,18 +424,16 @@ function ViewRoute() {
     }
   };
 
-  const deleteStopHandler = async (route, stopName) => {
-    console.log(route);
-    console.log(stopName);
-    const filterStop = route.stops.filter((stop) => stopName !== stop.stopName);
-    console.log(filterStop);
+  const editStopHandler = async () => {
+    console.log(modalSupport);
+
     const formData = new FormData();
-    formData.set("stops", JSON.stringify(filterStop));
+    formData.set("stops", JSON.stringify(addStops));
     formData.set("school", user.school);
-    formData.set("id", route._id);
+    formData.set("id", modalSupport._id);
     try {
       setStopLoading(true);
-      const data = await editStop(user._id, route._id, formData);
+      const data = await editStop(user._id, modalSupport._id, formData);
       console.log(data);
       if (data.err) {
         setStopLoading(false);
@@ -460,14 +458,25 @@ function ViewRoute() {
   };
 
   const addStop = () => {
-    let obj = {
-      stopName: placeName,
-      pickupTime: startTime,
-      dropTime: endTime,
-    };
-    let arr = addStops;
-    arr.push(obj);
-    setAddStops(arr);
+    setAddStops([
+      ...addStops,
+      { stopName: placeName, pickupTime: startTime, dropTime: endTime },
+    ]);
+    setDisableButton(true);
+    setPlaceName("");
+  };
+  const deleteStopHandler = (name) => {
+    let stops = addStops.filter((stop) => stop.stopName !== name);
+    setAddStops(stops);
+  };
+
+  const placeBlurHandler = () => {
+    console.log("here");
+    if (placeName.length > 0) {
+      setDisableButton(false);
+    } else {
+      setDisableButton(true);
+    }
   };
 
   return (
@@ -500,7 +509,7 @@ function ViewRoute() {
             className="close"
             data-dismiss="modal"
             type="button"
-            onClick={() => editStopModal(false)}
+            onClick={() => seteditStopModal(false)}
           >
             <span aria-hidden={true}>×</span>
           </button>
@@ -524,9 +533,10 @@ function ViewRoute() {
                       id="example4cols2Input"
                       placeholder="Stop Name"
                       type="text"
-                      // onChange={handleChange("route_name")}
-                      // value={editingRouteData.route_name}
+                      onChange={(e) => setPlaceName(e.target.value)}
                       required
+                      value={placeName}
+                      onBlur={placeBlurHandler}
                     />
                   </Col>
                   <Col>
@@ -574,8 +584,8 @@ function ViewRoute() {
                   <Col className="mt-4">
                     <Button
                       color="primary"
-                      // onClick={addStop}
-                      // disabled={disableButton}
+                      onClick={addStop}
+                      disabled={disableButton}
                     >
                       Add
                     </Button>
@@ -589,18 +599,33 @@ function ViewRoute() {
                     <th>Place Name</th>
                     <th>pickup Time</th>
                     <th>DropTime</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 {addStops !== null ? (
                   <>
                     {addStops.map((stops, index) => {
                       return (
-                        <tbody>
+                        <tbody key={index}>
                           <tr>
-                            <td key={index}>{index + 1}</td>
-                            <td key={index}>{stops.stopName}</td>
-                            <td key={index}>{stops.pickupTime}</td>
-                            <td key={index}>{stops.dropTime}</td>
+                            <td>{index + 1}</td>
+                            <td>{stops.stopName}</td>
+                            <td>{stops.pickupTime}</td>
+                            <td>{stops.dropTime}</td>
+                            <Button
+                              className="btn-sm pull-right"
+                              color="danger"
+                              type="button"
+                            >
+                              <Popconfirm
+                                title="Sure to delete?"
+                                onConfirm={() =>
+                                  deleteStopHandler(stops.stopName)
+                                }
+                              >
+                                <i className="fas fa-trash" />
+                              </Popconfirm>
+                            </Button>
                           </tr>
                         </tbody>
                       );
@@ -611,6 +636,9 @@ function ViewRoute() {
                 )}
               </Table>
             </>
+            <Button color="primary" onClick={editStopHandler}>
+              Submit
+            </Button>
           </ModalBody>
         )}
       </Modal>
@@ -619,8 +647,6 @@ function ViewRoute() {
         <Card>
           <CardHeader>
             <h3>View Route</h3>
-          </CardHeader>
-          <CardBody>
             <Button
               color="primary"
               className="mb-2"
@@ -629,6 +655,9 @@ function ViewRoute() {
             >
               Print
             </Button>
+          </CardHeader>
+          <CardBody>
+          
             {!loading && viewRoute ? (
               <div ref={componentRef} style={{ overflowX: "auto" }}>
                 <AntTable
@@ -641,7 +670,7 @@ function ViewRoute() {
             ) : (
               <Loader />
             )}
-          </CardBody>
+          </CardBody> 
         </Card>
         <Modal
           // style={{ height: "50vh" }}
@@ -791,7 +820,7 @@ function ViewRoute() {
         >
           <div className="modal-header">
             <h6 className="modal-title" id="modal-title-default">
-              Route Details
+              Stop Details
             </h6>
             <button
               aria-label="Close"
@@ -807,6 +836,25 @@ function ViewRoute() {
             <Loader />
           ) : (
             <ModalBody>
+              <Row
+                style={{
+                  display: "flex",
+                  alignItems: "flex-end",
+                  width: "100%",
+                }}
+              >
+                <Col md="12">
+                  <Button
+                    color="primary"
+                    onClick={() => {
+                      editStopData(modalSupport);
+                    }}
+                    style={{ float: "right",marginBottom:'1rem' }}
+                  >
+                    Edit
+                  </Button>
+                </Col>
+              </Row>
               <Table bordered responsive>
                 <thead>
                   <tr>
@@ -814,7 +862,6 @@ function ViewRoute() {
                     <th>Place Name</th>
                     <th>pickup Time</th>
                     <th>DropTime</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 {modalSupport.stops ? (
@@ -827,21 +874,7 @@ function ViewRoute() {
                             <td>{stop.stopName}</td>
                             <td>{stop.pickupTime}</td>
                             <td>{stop.dropTime}</td>
-                            <td>
-                              {permissions1 && permissions1.includes("edit") && (
-                                <Button
-                                  className="btn-sm pull-right"
-                                  color="primary"
-                                  type="button"
-                                  key={"edit" + index + 1}
-                                  onClick={() => {
-                                    editStopData(modalSupport);
-                                  }}
-                                >
-                                  <i className="fas fa-user-edit" />
-                                </Button>
-                              )}
-                            </td>
+                         
                           </tr>
                         </tbody>
                       );

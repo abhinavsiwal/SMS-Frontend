@@ -157,6 +157,7 @@ const StudentAllocation = () => {
     formData.set("section", allocationData.section);
     formData.set("status", "Allocated");
     formData.set("allocatedBy", allocationData.allocatedBy);
+    formData.set("allocationType", allocationData.allocationType);
     if (typeView === 2) {
       formData.set("rent", allocationData.rent);
     }
@@ -180,6 +181,7 @@ const StudentAllocation = () => {
         allocationDate: "",
         allocatedBy: "",
         duration: "",
+        allocationType: "",
       });
       setLoading(false);
     } catch (err) {
