@@ -46,7 +46,7 @@ import {
 
 function AddStudent() {
   // Stepper form steps
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(0);
   const { classes } = useSelector((state) => state.classReducer);
   const history = useHistory();
   const [sessions, setSessions] = useState([]);

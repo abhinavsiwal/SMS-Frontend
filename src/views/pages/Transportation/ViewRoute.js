@@ -505,7 +505,7 @@ function ViewRoute() {
         className="modal-dialog-centered"
         isOpen={editStopModal}
         toggle={() => seteditStopModal(false)}
-        size="lg"
+        size="lg" 
       >
         <div className="modal-header">
           <h6 className="modal-title" id="modal-title-default">

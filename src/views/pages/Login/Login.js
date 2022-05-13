@@ -19,6 +19,7 @@ import {
   Row,
   Col,
   CardTitle,
+  Label,
 } from "reactstrap";
 import { adminLogin, staffLogin, studentLogin } from "api/login";
 import validator from "validator";
@@ -28,7 +29,7 @@ import {
   setToken,
   setExpiry,
   setUserDetails,
-  setError
+  setError,
 } from "../../../store/reducers/auth";
 import { ToastContainer, toast } from "react-toastify";
 import { loginSuccess } from "constants/success";
@@ -77,13 +78,10 @@ function Login() {
   }, [error]);
 
   useEffect(() => {
-    
-  
     return () => {
-      dispatch(setError(""))
-    }
-  }, [])
-  
+      dispatch(setError(""));
+    };
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,16 +108,31 @@ function Login() {
       {redirect ? <Redirect to="/admin/dashboard" /> : null}
       <div className="login-container">
         <Row className="login-page-container">
+          <Col className="login-pic-container">
+            <div className="pic-card">
+              <img
+                className="login-picture"
+                src={require("../../../assets/img/theme/login-pic.jpg").default}
+                alt=""
+              />
+            </div>
+          </Col>
           <Col lg="5" md="7" className="login-form-container">
             <Card
-              className="border-0 mb-0"
-              style={{ backgroundColor: "transparent", color: "black" }}
+              className="border-0 mb-0 login-card "
+              style={{ color: "black" }}
             >
               <CardTitle className="d-flex justify-content-center h1">
                 Log In
               </CardTitle>
               <CardBody className="">
                 <Form role="form" onSubmit={handleSubmit}>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Email
+                  </label>
                   <FormGroup
                     className={classnames("mb-3", {
                       focused: focusedEmail,
@@ -142,6 +155,12 @@ function Login() {
                       />
                     </InputGroup>
                   </FormGroup>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example4cols2Input"
+                  >
+                    Password
+                  </label>
                   <FormGroup
                     className={classnames("mb-3", {
                       focused: focusedPassword,
@@ -195,7 +214,12 @@ function Login() {
                     </label>
                   </div>
                   <div className="text-center">
-                    <Button className="my-4" color="info" type="submit">
+                    <Button
+                      className="my-4"
+                      color="info"
+                      type="submit"
+                      style={{ padding: "0.5rem 3.5rem", borderRadius: "10px" }}
+                    >
                       {isLoading ? (
                         <React.Fragment>
                           <span
@@ -217,7 +241,7 @@ function Login() {
               </CardBody>
             </Card>
             <Row>
-              <Col
+              {/* <Col
                 style={{
                   display: "flex",
                   justifyContent: "center",
@@ -231,7 +255,7 @@ function Login() {
                 >
                   <small style={{ color: "white" }}>Forgot password?</small>
                 </a>
-              </Col>
+              </Col> */}
               {/* <Col className="text-right" xs="6">
                 <a
                   className="text-light"
@@ -242,15 +266,6 @@ function Login() {
                 </a>
               </Col> */}
             </Row>
-          </Col>
-          <Col className="login-pic-container">
-            <div className="pic-card">
-              <img
-                className="login-picture"
-                src={require("../../../assets/img/theme/login-pic.jpg").default}
-                alt=""
-              />
-            </div>
           </Col>
         </Row>
       </div>
