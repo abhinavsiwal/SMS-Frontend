@@ -69,6 +69,7 @@ import ViewLeaves from "./views/pages/LeaveManagement/ViewLeaves";
 import SiblingMaster from "views/pages/FeesManagement/sibling";
 import ViewFees from "./views/pages/FeesManagement/view";
 import CollectionMaster from "./views/pages/CollectionMaster";
+import AllProducts from "./views/pages/Ecommerce/AllProducts";
 
 export const adminRoutes = [
   {
@@ -977,10 +978,17 @@ const routes = [
     state: "ecommerceCollapse",
     views: [
       {
-        path: "/add-cart",
+        path: "/add-products",
         name: "Add Product",
         miniName: "A",
         component: Addproduct,
+        layout: "/admin",
+      },
+      {
+        path: "/view-all-products",
+        name: "View Products",
+        miniName: "A",
+        component: AllProducts,
         layout: "/admin",
       },
       {

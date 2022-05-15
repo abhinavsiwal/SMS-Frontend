@@ -54,6 +54,7 @@ function Addproduct() {
     discountValue: "",
     offerPrice: "",
     image: "",
+    publish:"",
   });
   const handleFileChange = (name) => (event) => {
     // formData.set(name, event.target.files[0]);
@@ -307,6 +308,7 @@ function Addproduct() {
     formData.set("discountValue", addProduct.discountValue);
     formData.set("school", user.school);
     formData.set("quantity", addProduct.quantity);
+    formData.set("publish", addProduct.publish);
 try {
   setAddProductLoading(true);
   const data = await createProduct(user._id, formData);
@@ -327,6 +329,7 @@ try {
     discountType: "",
     discountValue: "",
     quantity: "",
+    publish:"",
 
   })
 } catch (err) {
@@ -629,7 +632,29 @@ try {
                 />
               </Col>
             </Row>
-
+            <Row className="mt-4">
+            <Col md="3" >
+                <Label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Publish
+                </Label>
+                <Input
+                  id="example4cols2Input"
+                  placeholder="Class"
+                  type="select"
+                  onChange={handleChange("publish")}
+                  value={addProduct.publish}
+                  required
+            
+                >
+                  <option value="">Publish</option>
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </Input>
+              </Col>
+            </Row>
             <Row className="mt-4 float-right">
               <Col>
                 <Button color="primary" type="submit">

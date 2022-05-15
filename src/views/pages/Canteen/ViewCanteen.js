@@ -786,7 +786,7 @@ const canteenEditHandler = async(e)=>{
         >
           <div className="modal-header">
             <h2 className="modal-title" id="modal-title-default">
-              {editing ? "Edit Form" : "Create Form"}
+              Edit Menu Item
             </h2>
             <button
               aria-label="Close"
