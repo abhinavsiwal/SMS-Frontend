@@ -986,7 +986,7 @@ const routes = [
       },
       {
         path: "/view-all-products",
-        name: "View Products",
+        name: "View All Products",
         miniName: "A",
         component: AllProducts,
         layout: "/admin",

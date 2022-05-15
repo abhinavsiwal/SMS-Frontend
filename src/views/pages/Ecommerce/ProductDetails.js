@@ -1,12 +1,28 @@
 import React from "react";
 import "./Ecommerce.css";
 import { useDispatch, useSelector } from "react-redux";
+import {Row,Col,Button} from 'reactstrap';
 import { addItemsToCart } from "../../../store/reducers/cart";
 import ovaltick from "./assets/oval_tick.png";
 import { toast, ToastContainer } from "react-toastify";
 import discountBadge from "./assets/discount_badge_icon.png";
-const ProductDetails = ({ product }) => {
+const ProductDetails = ({ product,backHandle }) => {
   const dispatch = useDispatch();
+  const addToCart = () => {
+    let item = {
+      id: product._id,
+      name: product.name,
+      price: product.offerPrice,
+      image: product.image,
+      quantity: 1,
+      stock: product.quantity,
+      product:product._id,
+    };
+    console.log(product);
+    console.log(item);
+    dispatch(addItemsToCart(item));
+    toast.success(`${product.name} added to Cart`)
+  };
   return (
     <>
       <ToastContainer
@@ -21,6 +37,17 @@ const ProductDetails = ({ product }) => {
         pauseOnHover
         theme="colored"
       />
+        <Row>
+          <Col className="mt--3 ">
+            <Button
+              className="float-left mb-2"
+              color="dark"
+              onClick={backHandle}
+            >
+              <i className="ni ni-bold-left"></i>
+            </Button>
+          </Col>
+        </Row>
       <section className="container mt-6">
         <div className="row container-fluid justify-content-center">
           <div className="col-12 col-md-6 container flex-column">
@@ -71,7 +98,7 @@ const ProductDetails = ({ product }) => {
                 </div>
               </div>
               <div className="detais-buttons-container container-fluid">
-                <button className="btn btn-primary ">Add to Cart</button>
+                <button className="btn btn-primary " onClick={addToCart} >Add to Cart</button>
               </div>
             </div>
           </div>
