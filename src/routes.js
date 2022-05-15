@@ -992,8 +992,8 @@ const routes = [
         layout: "/admin",
       },
       {
-        path: "/viewCart",
-        name: "View Product",
+        path: "/view-products",
+        name: "View Products",
         miniName: "V",
         component: Viewproduct,
         layout: "/admin",
