@@ -482,6 +482,7 @@ function Attendance() {
     };
 
     const data = await filterStudent(user.school, user._id, formData);
+    console.log(data)
     for (let i = 0; i < data.length; i++) {
       let check = false;
       for (let j = 0; j < students1.length; j++) {
@@ -504,7 +505,7 @@ function Attendance() {
         });
       }
     }
-
+    console.log(tableData)
     setAttendanceData(tableData);
   };
 
@@ -1204,7 +1205,7 @@ function Attendance() {
                     </div>
                   </>
                 ) : (
-                  <h2>All Student Attendance is Done</h2>
+                  <h2>No Student Data is Found</h2>
                 )}
               </ModalBody>
             )}
