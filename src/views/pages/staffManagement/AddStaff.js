@@ -307,7 +307,7 @@ function AddStaff() {
         // console.log("subject", Subjects);
         Subjects.map(async (sub) => {
           list.push({
-            value: sub.name,
+            value: sub._id,
             label: sub.name,
           });
         });
@@ -1008,6 +1008,7 @@ function AddStaff() {
                         onChange={(e) => setCountry(e.target.value)}
                         value={country}
                         required
+                        disabled
                       />
                     </Col>
                     <Col md="3">
@@ -1024,6 +1025,7 @@ function AddStaff() {
                         onChange={(e) => setState(e.target.value)}
                         value={state}
                         required
+                        disabled
                       />
                     </Col>
                     <Col md="3">
@@ -1040,6 +1042,7 @@ function AddStaff() {
                         onChange={(e) => setCity(e.target.value)}
                         value={city}
                         required
+                        disabled
                       />
                     </Col>
                   </Row>
@@ -1179,6 +1182,7 @@ function AddStaff() {
                         onChange={(e) => setContactCountry(e.target.value)}
                         value={contactCountry}
                         required
+                        disabled
                       />
                     </Col>
                     <Col md="4">
@@ -1195,6 +1199,7 @@ function AddStaff() {
                         onChange={(e) => setContactState(e.target.value)}
                         value={contactState}
                         required
+                        disabled
                       />
                     </Col>
                     <Col md="4">
@@ -1210,6 +1215,7 @@ function AddStaff() {
                         type="text"
                         onChange={(e) => setContactCity(e.target.value)}
                         value={contactCity}
+                        disabled
                         required
                       />
                     </Col>
