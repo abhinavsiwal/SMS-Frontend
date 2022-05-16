@@ -76,6 +76,15 @@ function UpdateStudent({ studentDetails }) {
   const [pincode, setPincode] = useState(studentDetails.pincode);
   const [pincodeError, setPincodeError] = useState(false);
   const [city, setCity] = useState(studentDetails.city);
+  const [phoneError, setPhoneError] = useState(false);
+  const [altPhoneError, setAltPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [parentEmailError, setParentEmailError] = useState(false);
+  const [guardianEmailError, setGuardianEmailError] = useState(false);
+  const [guardianPhoneError, setGuardianPhoneError] = useState(false);
+  const [fatherPhoneError, setFatherPhoneError] = useState(false);
+  const [motherPhoneError, setMotherPhoneError] = useState(false);
+  const [aadharError, setAadharError] = useState(false);
   const [student, setStudent] = useState({
     _id: studentDetails._id,
     image: studentDetails.image,
@@ -106,6 +115,7 @@ function UpdateStudent({ studentDetails }) {
     nationality: studentDetails.nationality,
     mother_tongue: studentDetails.mother_tongue,
     guardian_name: studentDetails.guardian_name,
+    guardian_email:studentDetails.guardian_email,
     guardian_last_name: studentDetails.guardian_last_name,
     guardian_dob: studentDetails.guardian_dob,
     guardian_blood_group: studentDetails.guardian_blood_group,
@@ -138,6 +148,85 @@ function UpdateStudent({ studentDetails }) {
     parent_email: studentDetails.parent_email,
     parent_address: studentDetails.parent_address,
   });
+
+  const phoneBlurHandler = () => {
+    console.log("here");
+    // console.log(studentData.phone);
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(student.phone)) {
+      setPhoneError(false);
+    } else {
+      setPhoneError(true);
+    }
+  };
+  const altPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(student.alternate_phone)) {
+      setAltPhoneError(false);
+    } else {
+      setAltPhoneError(true);
+    }
+  };
+  const emailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(student.email)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+  };
+  const parentEmailBlurHandler = async () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(student.parent_email)) {
+      setParentEmailError(false);
+    } else {
+      return setParentEmailError(true);
+    }
+  };
+  const guardianEmailBlurHandler = async () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(student.guardian_email)) {
+      setGuardianEmailError(false);
+    } else {
+      setGuardianEmailError(true);
+    }
+  };
+
+  const guardianPhoneBlurHandler = () => {
+    let regex = /^[5-9]{1}[0-9]{9}$/;
+    if (regex.test(student.guardian_phone)) {
+      setGuardianPhoneError(false);
+    } else {
+      setGuardianPhoneError(true);
+    }
+  };
+
+  const fatherPhoneBlurHandler = () => {
+    let regex = /^[5-9]{1}[0-9]{9}$/;
+    if (regex.test(student.father_phone)) {
+      setFatherPhoneError(false);
+    } else {
+      setFatherPhoneError(true);
+    }
+  };
+
+  const motherPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(student.mother_phone)) {
+      setMotherPhoneError(false);
+    } else {
+      setMotherPhoneError(true);
+    }
+  };
+
+  const aadharBlurHandler = () => {
+    let regex = /^[0-9]{12}$/;
+    if (regex.test(student.aadhar_number)) {
+      setAadharError(false);
+    } else {
+      setAadharError(true);
+    }
+  };
   const handleSubmitForm = async (e) => {
     e.preventDefault();
     formData.set("school", user.school);
@@ -149,13 +238,13 @@ function UpdateStudent({ studentDetails }) {
     formData.set("pincode", pincode);
     formData.set("city", city);
     console.log(guardianDOB);
-     if(guardianDOB==="Invalid Date"){
-       console.log("here");
+    if (guardianDOB === "Invalid Date") {
+      console.log("here");
       formData.set("guardian_dob", guardianDOB);
-     } else if(fatherDOB || motherDOB !== "Invalid Date"){
+    } else if (fatherDOB || motherDOB !== "Invalid Date") {
       formData.set("father_dob", fatherDOB);
       formData.set("mother_dob", motherDOB);
-     }
+    }
 
     try {
       setLoading(true);
@@ -328,9 +417,6 @@ function UpdateStudent({ studentDetails }) {
       ...city,
     }));
 
-  const cancelHandler = () => {
-    window.location.reload();
-  };
   const pincodeChangeHandler = async (e) => {
     setPincode(e.target.value);
     if (e.target.value.length === 6) {
@@ -356,7 +442,9 @@ function UpdateStudent({ studentDetails }) {
       setPincodeError(true);
     }
   };
-
+  const cancelHandler = () => {
+    window.location.reload();
+  };
   useEffect(() => {}, [cscd]);
   return (
     <>
@@ -539,7 +627,14 @@ function UpdateStudent({ studentDetails }) {
                         onChange={handleChange("aadhar_number")}
                         required
                         value={student.aadhar_number}
+                        onBlur={aadharBlurHandler}
+                        invalid={aadharError}
                       />
+                      {aadharError && (
+                        <FormFeedback>
+                          Please Enter a valid Aadhar Card no
+                        </FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -557,7 +652,12 @@ function UpdateStudent({ studentDetails }) {
                         onChange={handleChange("email")}
                         required
                         value={student.email}
+                        onBlur={emailBlurHandler}
+                        invalid={emailError}
                       />
+                      {emailError && (
+                        <FormFeedback>Please Enter a valid Email</FormFeedback>
+                      )}
                     </Col>
                     <Col>
                       <label
@@ -573,7 +673,14 @@ function UpdateStudent({ studentDetails }) {
                         onChange={handleChange("phone")}
                         required
                         value={student.phone}
+                        onBlur={phoneBlurHandler}
+                        invalid={phoneError}
                       />
+                      {phoneError && (
+                        <FormFeedback>
+                          Please Enter a valid Phone no
+                        </FormFeedback>
+                      )}
                     </Col>
                     <Col>
                       <label
@@ -588,7 +695,12 @@ function UpdateStudent({ studentDetails }) {
                         type="number"
                         onChange={handleChange("alternate_phone")}
                         value={student.alternate_phone}
+                        onBlur={altPhoneBlurHandler}
+                        invalid={altPhoneError}
                       />
+                      {altPhoneError && (
+                        <FormFeedback>Please Enter a valid Phone</FormFeedback>
+                      )}
                     </Col>
                   </Row>
                   <Row className="mt-4">
@@ -1032,7 +1144,14 @@ function UpdateStudent({ studentDetails }) {
                                 onChange={handleChange("parent_email")}
                                 required
                                 value={student.parent_email}
+                                invalid={parentEmailError}
+                                onBlur={parentEmailBlurHandler}
                               />
+                              {parentEmailError && (
+                                <FormFeedback>
+                                  Please enter a valid email address.
+                                </FormFeedback>
+                              )}
                             </FormGroup>
                           </Col>
                         </Row>
@@ -1135,7 +1254,14 @@ function UpdateStudent({ studentDetails }) {
                               onChange={handleChange("father_phone")}
                               required
                               value={student.father_phone}
+                              onBlur={fatherPhoneBlurHandler}
+                              invalid={fatherPhoneError}
                             />
+                            {fatherPhoneError && (
+                              <FormFeedback>
+                                Please enter a valid phone no.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
 
@@ -1290,7 +1416,14 @@ function UpdateStudent({ studentDetails }) {
                               onChange={handleChange("mother_phone")}
                               required
                               value={student.mother_phone}
+                              onBlur={motherPhoneBlurHandler}
+                              invalid={motherPhoneError}
                             />
+                            {motherPhoneError && (
+                              <FormFeedback>
+                                Please enter a valid phone no.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
 
@@ -1410,8 +1543,15 @@ function UpdateStudent({ studentDetails }) {
                                 type="text"
                                 onChange={handleChange("guardian_email")}
                                 required
-                                value={student.parent_email}
+                                value={student.guardian_email}
+                                onBlur={guardianEmailBlurHandler}
+                                invalid={guardianEmailError}
                               />
+                              {guardianEmailError && (
+                                <FormFeedback>
+                                  Please enter a valid email address
+                                </FormFeedback>
+                              )}
                             </FormGroup>
                           </Col>
                         </Row>
@@ -1491,7 +1631,14 @@ function UpdateStudent({ studentDetails }) {
                               onChange={handleChange("guardian_phone")}
                               required
                               value={student.guardian_phone}
+                              invalid={guardianPhoneError}
+                              onBlur={guardianPhoneBlurHandler}
                             />
+                            {guardianPhoneError && (
+                              <FormFeedback>
+                                Please enter a valid phone no.
+                              </FormFeedback>
+                            )}
                           </Col>
                         </Row>
                         <Row>

@@ -264,35 +264,6 @@ function AddStudent() {
     }
   };
 
-  //Checking Parent or Gaurdian Email is Exist or Not
-  const checkEmail = async () => {
-
-
-    const data = {
-      type: multivalues,
-      email:
-        multivalues === "parent"
-          ? studentData.parent_email
-          : studentData.guardian_email,
-    };
-    try {
-      const authenticate = await isAuthenticateStudent(user._id, token, data);
-      // console.log("auth", authenticate);
-      if (authenticate.err) {
-        toast.error(authenticate.err);
-      }
-      if (authenticate.status === false) {
-        toast.sucess("Email verified");
-      } else {
-        setConnectFalse(true);
-        studentData.connectedID = authenticate.id;
-        toast.success("You Can Connect the Student ");
-      }
-    } catch (err) {
-      toast.error(err);
-    }
-  };
-
 
   const guardianPhoneBlurHandler = () => {
     let regex = /^[5-9]{1}[0-9]{9}$/;
@@ -329,6 +300,35 @@ function AddStudent() {
       setAadharError(true);
     }
   };
+  //Checking Parent or Gaurdian Email is Exist or Not
+  const checkEmail = async () => {
+
+
+    const data = {
+      type: multivalues,
+      email:
+        multivalues === "parent"
+          ? studentData.parent_email
+          : studentData.guardian_email,
+    };
+    try {
+      const authenticate = await isAuthenticateStudent(user._id, token, data);
+      // console.log("auth", authenticate);
+      if (authenticate.err) {
+        toast.error(authenticate.err);
+      }
+      if (authenticate.status === false) {
+        toast.sucess("Email verified");
+      } else {
+        setConnectFalse(true);
+        studentData.connectedID = authenticate.id;
+        toast.success("You Can Connect the Student ");
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+
 
   const [formData] = useState(new FormData());
 

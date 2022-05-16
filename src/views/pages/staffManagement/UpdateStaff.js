@@ -122,13 +122,16 @@ function UpdateStaff({ staffDetails }) {
     new Date(staffData.date_of_birth)
   );
   useEffect(() => {
-    let subjects=[];
-  for(let i=0;i<staffData.subject.length;i++){
-    subjects.push({value:staffData.subject[i]._id,label:staffData.subject[i].name})
-  }
+    let subjects = [];
+    for (let i = 0; i < staffData.subject.length; i++) {
+      subjects.push({
+        value: staffData.subject[i]._id,
+        label: staffData.subject[i].name,
+      });
+    }
     setSubjectData(subjects);
-  }, [])
-  
+  }, []);
+
   // const [subject, setSubject] = useState([]);
   // console.log("sub", subject);
   const [a, setA] = useState([]);
@@ -175,7 +178,7 @@ function UpdateStaff({ staffDetails }) {
     for (var i = 0, l = e.length; i < l; i++) {
       value.push(e[i].value);
     }
-    
+
     formData.set("subject", JSON.stringify(value));
   };
 
@@ -240,7 +243,6 @@ function UpdateStaff({ staffDetails }) {
     formData.set("assign_role", assignRoleId);
     formData.set("date_of_birth", dateOfBirth);
     formData.set("joining_date", dateOfJoining);
-    
 
     try {
       setLoading(true);
@@ -314,27 +316,25 @@ function UpdateStaff({ staffDetails }) {
     }
   };
   useEffect(async () => {
-  
-      await Departments();
-      // await Subjects();
-      const { user, token } = isAuthenticated();
-      try {
-        const Subjects = await allSubjects(user._id, user.school, token);
-        console.log(Subjects);
-        var list = [];
-        // console.log("subject", Subjects);
-        Subjects.map(async (sub) => {
-          list.push({
-            value: sub._id,
-            label: sub.name,
-          });
+    await Departments();
+    // await Subjects();
+    const { user, token } = isAuthenticated();
+    try {
+      const Subjects = await allSubjects(user._id, user.school, token);
+      console.log(Subjects);
+      var list = [];
+      // console.log("subject", Subjects);
+      Subjects.map(async (sub) => {
+        list.push({
+          value: sub._id,
+          label: sub.name,
         });
-        setA(list);
-        // console.log("list", list);
-      } catch (err) {
-        toast.error("Something Went Wrong!");
-      }
- 
+      });
+      setA(list);
+      // console.log("list", list);
+    } catch (err) {
+      toast.error("Something Went Wrong!");
+    }
   }, [step]);
   const handleChange2 = (name) => (event) => {
     var data = JSON.parse(event.target.value);
@@ -1220,7 +1220,7 @@ function UpdateStaff({ staffDetails }) {
                           className="basic-multi-select"
                           classNamePrefix="select"
                           required
-                          value={subjectData}
+                          defaultValue={subjectData}
                         />
                       </Col>
                       <Col md="6">
