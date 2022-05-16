@@ -683,12 +683,13 @@ const AllStaffs = () => {
                                             </UncontrolledDropdown>
                                           </CardHeader>
                                           {staff.photo && (
-                                            <div style={{height:"10rem"}} >
+                                            <div  >
                                               <CardImg
                                                 alt="..."
                                                 src={staff.tempPhoto}
                                                 top
                                                 className="p-4"
+                                                style={{height:"13rem"}}
                                               />
                                             </div>
                                           )}

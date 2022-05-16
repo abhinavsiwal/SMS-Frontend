@@ -12,7 +12,7 @@ import {
   Col,
   Button,
   Form,
-  FormFeedback
+  FormFeedback,
 } from "reactstrap";
 import axios from "axios";
 // core components
@@ -49,9 +49,33 @@ function UpdateStudent({ studentDetails }) {
   const params = useParams();
   const [step, setStep] = useState(0);
   const dispatch = useDispatch();
+  const [formData] = useState(new FormData());
   //   const [student, setStudent] = useState({});
   const { studentEditing } = useSelector((state) => state.studentReducer);
   const [students, setStudents] = useState([]);
+
+  const { user, token } = isAuthenticated();
+  const [country, setCountry] = useState(studentDetails.country);
+  const [state, setState] = useState(studentDetails.state);
+  const [dateOfJoining, setDateOfJoining] = useState(
+    new Date(studentDetails.joining_date)
+  );
+  const [dateOfBirth, setDateOfBirth] = useState(
+    new Date(studentDetails.date_of_birth)
+  );
+  const [guardianDOB, setGuardianDOB] = useState(
+    studentDetails.guardian_dob && new Date(studentDetails.guardian_dob)
+  );
+  const [fatherDOB, setFatherDOB] = useState(
+    studentDetails.father_dob && new Date(studentDetails.father_dob)
+  );
+  const [motherDOB, setMotherDOB] = useState(
+    studentDetails.mother_dob && new Date(studentDetails.mother_dob)
+  );
+
+  const [pincode, setPincode] = useState(studentDetails.pincode);
+  const [pincodeError, setPincodeError] = useState(false);
+  const [city, setCity] = useState(studentDetails.city);
   const [student, setStudent] = useState({
     _id: studentDetails._id,
     image: studentDetails.image,
@@ -111,20 +135,40 @@ function UpdateStudent({ studentDetails }) {
     mother_pincode: studentDetails.mother_pincode,
     mother_nationality: studentDetails.mother_nationality,
     mother_mother_tongue: studentDetails.mother_mother_tongue,
+    parent_email: studentDetails.parent_email,
+    parent_address: studentDetails.parent_address,
   });
-  const { user, token } = isAuthenticated();
-  const [country, setCountry] = useState(studentDetails.country);
-  const [state, setState] = useState(studentDetails.state);
-  const [dateOfJoining, setDateOfJoining] = useState(new Date(studentDetails.joining_date));
-  const [dateOfBirth, setDateOfBirth] = useState(new Date(studentDetails.date_of_birth));
-  const [guardianDOB, setGuardianDOB] = useState(new Date(studentDetails.guardian_dob));
-  const [fatherDOB, setFatherDOB] = useState(new Date(studentDetails.father_dob));
-  const [motherDOB, setMotherDOB] = useState(new Date(studentDetails.mother_dob));
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+    formData.set("school", user.school);
+    formData.set("country", country);
+    formData.set("state", state);
+    formData.set("date_of_birth", dateOfBirth);
+    formData.set("joining_date", dateOfJoining);
 
-  const [pincode, setPincode] = useState("");
-  const [pincodeError, setPincodeError] = useState(false);
-  const [city, setCity] = useState(studentDetails.city);
+    formData.set("pincode", pincode);
+    formData.set("city", city);
+    console.log(guardianDOB);
+     if(guardianDOB==="Invalid Date"){
+       console.log("here");
+      formData.set("guardian_dob", guardianDOB);
+     } else if(fatherDOB || motherDOB !== "Invalid Date"){
+      formData.set("father_dob", fatherDOB);
+      formData.set("mother_dob", motherDOB);
+     }
 
+    try {
+      setLoading(true);
+      await updateStudent(student._id, user._id, formData);
+      toast.success("Student updated successfully");
+      dispatch(setStudentEditing(false));
+      setLoading(false);
+      history.push("/admin/all-students");
+    } catch (err) {
+      toast.error("Something Went Wrong");
+      setLoading(false);
+    }
+  };
 
   const [selectedClass, setSelectedClass] = useState({});
   useEffect(() => {
@@ -154,8 +198,8 @@ function UpdateStudent({ studentDetails }) {
   };
 
   // const [formData] = useState(new FormData());
+
   const [loading, setLoading] = useState(false);
-  const formData = new FormData();
 
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
@@ -247,32 +291,6 @@ function UpdateStudent({ studentDetails }) {
 
   //   const handleFormChange =
 
-  const handleSubmitForm = async (e) => {
-    e.preventDefault();
-    formData.set("school", user.school);
-    formData.set("country",country)
-    formData.set("state",state)
-    formData.set("date_of_birth", dateOfBirth);
-    formData.set("joining_date", dateOfJoining);
-    formData.set("guardian_dob", guardianDOB);
-    formData.set("father_dob", fatherDOB);
-    formData.set("mother_dob", motherDOB);
-    formData.set("pincode", pincode);
-    formData.set("city", city);
-
-    try {
-      setLoading(true);
-      await updateStudent(student._id, user._id, formData);
-      toast.success("Student updated successfully");
-      dispatch(setStudentEditing(false));
-      setLoading(false);
-      history.push("/admin/all-students");
-    } catch (err) {
-      toast.error("Something Went Wrong");
-      setLoading(false);
-    }
-  };
-
   const contactPersonsSelect = [
     {
       label: "Guardian",
@@ -310,34 +328,34 @@ function UpdateStudent({ studentDetails }) {
       ...city,
     }));
 
-const cancelHandler = ()=>{
-  window.location.reload();
-}
-const pincodeChangeHandler = async (e) => {
-  setPincode(e.target.value);
-  if (e.target.value.length === 6) {
-    try {
-      const { data } = await axios.get(
-        `https://api.postalpincode.in/pincode/${e.target.value}`
-      );
-      console.log(data);
-      setState(data[0].PostOffice[0].State);
-      setCity(data[0].PostOffice[0].District);
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed to fetch pin code.");
+  const cancelHandler = () => {
+    window.location.reload();
+  };
+  const pincodeChangeHandler = async (e) => {
+    setPincode(e.target.value);
+    if (e.target.value.length === 6) {
+      try {
+        const { data } = await axios.get(
+          `https://api.postalpincode.in/pincode/${e.target.value}`
+        );
+        console.log(data);
+        setState(data[0].PostOffice[0].State);
+        setCity(data[0].PostOffice[0].District);
+      } catch (err) {
+        console.log(err);
+        toast.error("Failed to fetch pin code.");
+      }
     }
-  }
-};
+  };
 
-const pincodeBlurHandler = () => {
-  let regex = /^[1-9][0-9]{5}$/;
-  if (regex.test(pincode)) {
-    setPincodeError(false);
-  } else {
-    setPincodeError(true);
-  }
-};
+  const pincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (regex.test(pincode)) {
+      setPincodeError(false);
+    } else {
+      setPincodeError(true);
+    }
+  };
 
   useEffect(() => {}, [cscd]);
   return (
@@ -647,7 +665,9 @@ const pincodeBlurHandler = () => {
                     </Col>
                   </Row>
                   <Row className="mt-4 float-right mr-4">
-                  <Button onClick={cancelHandler} color="danger" >Cancel</Button>
+                    <Button onClick={cancelHandler} color="danger">
+                      Cancel
+                    </Button>
                     <Button color="primary" onClick={handleFormChange}>
                       Next
                     </Button>
@@ -789,10 +809,12 @@ const pincodeBlurHandler = () => {
                       Previous
                     </Button>
                     <div>
-                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
                     </div>
                   </Row>
                 </CardBody>
@@ -803,42 +825,38 @@ const pincodeBlurHandler = () => {
                 <CardBody>
                   <Row>
                     <Col>
-                   
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Present Address
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Present Address"
-                          type="text"
-                          onChange={handleChange("present_address")}
-                          required
-                          value={student.present_address}
-                        />
-           
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Present Address
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Present Address"
+                        type="text"
+                        onChange={handleChange("present_address")}
+                        required
+                        value={student.present_address}
+                      />
                     </Col>
                   </Row>
                   <Row>
                     <Col>
-                      
-                        <label
-                          className="form-control-label"
-                          htmlFor="example4cols3Input"
-                        >
-                          Permanent Address
-                        </label>
-                        <Input
-                          id="example4cols3Input"
-                          placeholder="Permanent Address"
-                          type="text"
-                          onChange={handleChange("permanent_address")}
-                          required
-                          value={student.permanent_address}
-                        />
-                  
+                      <label
+                        className="form-control-label"
+                        htmlFor="example4cols3Input"
+                      >
+                        Permanent Address
+                      </label>
+                      <Input
+                        id="example4cols3Input"
+                        placeholder="Permanent Address"
+                        type="text"
+                        onChange={handleChange("permanent_address")}
+                        required
+                        value={student.permanent_address}
+                      />
                     </Col>
                   </Row>
                   <Row className="mb-4">
@@ -962,10 +980,12 @@ const pincodeBlurHandler = () => {
                       Previous
                     </Button>
                     <div>
-                    <Button onClick={cancelHandler} color="danger" >Cancel</Button>
-                    <Button className="mr-4" color="primary" type="submit">
-                      Next
-                    </Button>
+                      <Button onClick={cancelHandler} color="danger">
+                        Cancel
+                      </Button>
+                      <Button className="mr-4" color="primary" type="submit">
+                        Next
+                      </Button>
                     </div>
                   </Row>
                 </CardBody>
@@ -974,13 +994,13 @@ const pincodeBlurHandler = () => {
             {step === 3 && (
               <>
                 <Form onSubmit={handleSubmitForm} className="mb-4">
-                  {( student.father_name && student.father_name ||
+                  {((student.father_name && student.father_name) ||
                     student.mother_name) && (
                     <>
                       <CardBody>
                         <Row>
-                          <Col md="6" >
-                          <FormGroup>
+                          <Col md="6">
+                            <FormGroup>
                               <label
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
@@ -997,8 +1017,8 @@ const pincodeBlurHandler = () => {
                               />
                             </FormGroup>
                           </Col>
-                          <Col md="6" >
-                          <FormGroup>
+                          <Col md="6">
+                            <FormGroup>
                               <label
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
@@ -1118,7 +1138,7 @@ const pincodeBlurHandler = () => {
                             />
                           </Col>
                         </Row>
-                       
+
                         <Row className="mb-4">
                           <Col>
                             <label
@@ -1273,7 +1293,7 @@ const pincodeBlurHandler = () => {
                             />
                           </Col>
                         </Row>
-                     
+
                         <Row className="mb-4">
                           <Col>
                             <label
@@ -1358,8 +1378,8 @@ const pincodeBlurHandler = () => {
                           </Col>
                         </Row>
                         <Row>
-                          <Col md="6" >
-                          <FormGroup>
+                          <Col md="6">
+                            <FormGroup>
                               <label
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
@@ -1376,8 +1396,8 @@ const pincodeBlurHandler = () => {
                               />
                             </FormGroup>
                           </Col>
-                          <Col md="6" >
-                          <FormGroup>
+                          <Col md="6">
+                            <FormGroup>
                               <label
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
@@ -1402,7 +1422,7 @@ const pincodeBlurHandler = () => {
                                 className="form-control-label"
                                 htmlFor="example4cols3Input"
                               >
-                               Name
+                                Name
                               </label>
                               <Input
                                 id="example4cols3Input"
@@ -1414,7 +1434,6 @@ const pincodeBlurHandler = () => {
                               />
                             </FormGroup>
                           </Col>
-                      
                         </Row>
                         <Row className="mb-4">
                           <Col>
@@ -1427,9 +1446,9 @@ const pincodeBlurHandler = () => {
                             <DatePicker
                               dateFormat="dd/MM/yyyy"
                               placeholderText="dd/mm/yyyy"
-                              onChange={(date) => setFatherDOB(date)}
+                              onChange={(date) => setGuardianDOB(date)}
                               //  value={dateOfBirth}
-                              selected={fatherDOB}
+                              selected={guardianDOB}
                               required
                               className="datePicker"
                             />
@@ -1582,15 +1601,17 @@ const pincodeBlurHandler = () => {
                             Previous
                           </Button>
                           <div>
-                            <Button onClick={cancelHandler} color="danger" >Cancel</Button>
-                          <Button
-                            className="mr-4"
-                            color="success"
-                            type="submit"
+                            <Button onClick={cancelHandler} color="danger">
+                              Cancel
+                            </Button>
+                            <Button
+                              className="mr-4"
+                              color="success"
+                              type="submit"
                             >
-                            Submit
-                          </Button>
-                            </div>
+                              Submit
+                            </Button>
+                          </div>
                         </Row>
                       </CardBody>
                     </>

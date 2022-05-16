@@ -687,6 +687,7 @@ const AllStudents = () => {
                                           src={student.tempPhoto}
                                           top
                                           className="p-4"
+                                          style={{height:"13rem"}}
                                         />
                                       )}
                                       <CardBody className="mt-0">

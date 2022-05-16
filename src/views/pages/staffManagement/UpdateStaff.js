@@ -229,6 +229,7 @@ function UpdateStaff({ staffDetails }) {
     formData.set("assign_role", assignRoleId);
     formData.set("date_of_birth", dateOfBirth);
     formData.set("joining_date", dateOfJoining);
+    
 
     try {
       setLoading(true);

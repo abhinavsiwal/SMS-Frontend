@@ -37,14 +37,16 @@ import { useSelector } from "react-redux";
 import { allSessions } from "api/session";
 
 import { useHistory } from "react-router-dom";
-
+import { allClass } from "api/class";
+import { setClass } from "store/reducers/class";
 import {
   CountryDropdown,
   RegionDropdown,
   CountryRegionData,
-} from "react-country-region-selector";
-
+} from "react-country-region-selector"; 
+import { useDispatch } from "react-redux";
 function AddStudent() {
+  const dispatch = useDispatch();
   // Stepper form steps
   const [step, setStep] = useState(0);
   const { classes } = useSelector((state) => state.classReducer);
@@ -145,6 +147,32 @@ function AddStudent() {
   const [motherDOB, setMotherDOB] = useState();
   const [pincode, setPincode] = useState("");
   const [pincodeError, setPincodeError] = useState(false);
+  const { user, token } = isAuthenticated();
+
+  useEffect(() => {
+    getAllClasses();
+  
+    
+  }, [])
+  
+
+  const getAllClasses = async () => {
+    try {
+      const res = await allClass(user._id, user.school, token);
+
+      // console.log("allClass", res);
+      dispatch(setClass(res));
+     
+      // setClassList(data);
+      
+    } catch (err) {
+      console.log(err);
+      toast.error("Fetching Classes failed");
+    
+    }
+  };
+
+
   const phoneBlurHandler = () => {
     console.log("here");
     // console.log(studentData.phone);
@@ -171,22 +199,100 @@ function AddStudent() {
       setEmailError(true);
     }
   };
-  const parentEmailBlurHandler = () => {
+  const parentEmailBlurHandler = async() => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (regex.test(studentData.parent_email)) {
-      setParentEmailError(false);
+        setParentEmailError(false);
     } else {
-      setParentEmailError(true);
+     return setParentEmailError(true);
     }
+ 
+    const data = {
+      type: multivalues,
+      email:
+        multivalues === "parent"
+          ? studentData.parent_email
+          : studentData.guardian_email,
+    };
+    try {
+      const authenticate = await isAuthenticateStudent(user._id, token, data);
+      // console.log("auth", authenticate);
+      if (authenticate.err) {
+        toast.error(authenticate.err);
+      }
+      if (authenticate.status === false) {
+        toast.success("Email verified");
+      } else {
+        setConnectFalse(true);
+        studentData.connectedID = authenticate.id;
+        toast.success("You Can Connect the Student ");
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+
   };
-  const guardianEmailBlurHandler = () => {
+  const guardianEmailBlurHandler =async () => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if (regex.test(studentData.parent_email)) {
+    if (regex.test(studentData.guardian_email)) {
       setGuardianEmailError(false);
     } else {
-      setGuardianEmailError(true);
+     return setGuardianEmailError(true);
+    }
+    const data = {
+      type: multivalues,
+      email:
+        multivalues === "parent"
+          ? studentData.parent_email
+          : studentData.guardian_email,
+    };
+    try {
+      const authenticate = await isAuthenticateStudent(user._id, token, data);
+      // console.log("auth", authenticate);
+      if (authenticate.err) {
+        toast.error(authenticate.err);
+      }
+      if (authenticate.status === false) {
+        toast.success("Email verified");
+      } else {
+        setConnectFalse(true);
+        studentData.connectedID = authenticate.id;
+        toast.success("You Can Connect the Student ");
+      }
+    } catch (err) {
+      toast.error(err);
     }
   };
+
+  //Checking Parent or Gaurdian Email is Exist or Not
+  const checkEmail = async () => {
+
+
+    const data = {
+      type: multivalues,
+      email:
+        multivalues === "parent"
+          ? studentData.parent_email
+          : studentData.guardian_email,
+    };
+    try {
+      const authenticate = await isAuthenticateStudent(user._id, token, data);
+      // console.log("auth", authenticate);
+      if (authenticate.err) {
+        toast.error(authenticate.err);
+      }
+      if (authenticate.status === false) {
+        toast.sucess("Email verified");
+      } else {
+        setConnectFalse(true);
+        studentData.connectedID = authenticate.id;
+        toast.success("You Can Connect the Student ");
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+
 
   const guardianPhoneBlurHandler = () => {
     let regex = /^[5-9]{1}[0-9]{9}$/;
@@ -357,34 +463,6 @@ function AddStudent() {
     window.scrollTo(0, 0);
   };
 
-  //Checking Parent or Gaurdian Email is Exist or Not
-  const checkEmail = async () => {
-    const { user, token } = isAuthenticated();
-
-    const data = {
-      type: multivalues,
-      email:
-        multivalues === "parent"
-          ? studentData.parent_email
-          : studentData.guardian_email,
-    };
-    try {
-      const authenticate = await isAuthenticateStudent(user._id, token, data);
-      // console.log("auth", authenticate);
-      if (authenticate.err) {
-        toast.error(authenticate.err);
-      }
-      if (authenticate.status === false) {
-        toast.sucess("Email verified");
-      } else {
-        setConnectFalse(true);
-        studentData.connectedID = authenticate.id;
-        toast.success("You Can Connect the Student ");
-      }
-    } catch (err) {
-      toast.error(err);
-    }
-  };
 
   //Final Form Submit
   const handleSubmitForm = async (e) => {
@@ -1401,13 +1479,7 @@ function AddStudent() {
                             </Col>
                           </Row>
                         )}
-                        <Row>
-                          <Col>
-                            <Button color="danger" onClick={checkEmail}>
-                              Check
-                            </Button>
-                          </Col>
-                        </Row>
+                      
 
                         <Row className="mb-4">
                           <Col align="center">
@@ -1793,7 +1865,7 @@ function AddStudent() {
                             </label>
                             <Input
                               id="example4cols3Input"
-                              placeholder="Guardian Address"
+                              placeholder="Guardian Email"
                               type="text"
                               onChange={handleChange("guardian_email")}
                               required
@@ -1859,13 +1931,7 @@ function AddStudent() {
                             </Col>
                           </Row>
                         )}
-                        <Row>
-                          <Col>
-                            <Button color="danger" onClick={checkEmail}>
-                              Check
-                            </Button>
-                          </Col>
-                        </Row>
+                      
 
                         <Row className="mb-4">
                           <Col align="center">
