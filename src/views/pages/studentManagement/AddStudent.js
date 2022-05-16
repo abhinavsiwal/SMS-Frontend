@@ -806,6 +806,7 @@ function AddStudent() {
                         //  value={dateOfBirth}
                         selected={dateOfJoining}
                         required
+                        showYearDropdown
                         className="datePicker"
                       />
                     </Col>
@@ -823,6 +824,7 @@ function AddStudent() {
                         onChange={handleChange("firstname")}
                         value={studentData.firstname}
                         required
+                     
                       />
                     </Col>
                     <Col md="4">
@@ -859,6 +861,7 @@ function AddStudent() {
                         selected={dateOfBirth}
                         required
                         className="datePicker"
+                        showYearDropdown
                         // style={{width: "100%"}}
                       />
                     </Col>
@@ -1539,6 +1542,7 @@ function AddStudent() {
                               //  value={dateOfBirth}
                               selected={fatherDOB}
                               required
+                              showYearDropdown
                               className="datePicker"
                             />
                           </Col>
@@ -1705,6 +1709,7 @@ function AddStudent() {
                               selected={motherDOB}
                               required
                               className="datePicker"
+                              showYearDropdown
                             />
                           </Col>
                           <Col>
@@ -1992,6 +1997,7 @@ function AddStudent() {
                               selected={guardianDOB}
                               required
                               className="datePicker"
+                              showYearDropdown
                             />
                           </Col>
                           <Col>
