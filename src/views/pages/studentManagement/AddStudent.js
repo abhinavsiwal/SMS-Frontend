@@ -43,7 +43,7 @@ import {
   CountryDropdown,
   RegionDropdown,
   CountryRegionData,
-} from "react-country-region-selector"; 
+} from "react-country-region-selector";
 import { useDispatch } from "react-redux";
 function AddStudent() {
   const dispatch = useDispatch();
@@ -151,10 +151,7 @@ function AddStudent() {
 
   useEffect(() => {
     getAllClasses();
-  
-    
-  }, [])
-  
+  }, []);
 
   const getAllClasses = async () => {
     try {
@@ -162,16 +159,13 @@ function AddStudent() {
 
       // console.log("allClass", res);
       dispatch(setClass(res));
-     
+
       // setClassList(data);
-      
     } catch (err) {
       console.log(err);
       toast.error("Fetching Classes failed");
-    
     }
   };
-
 
   const phoneBlurHandler = () => {
     console.log("here");
@@ -199,14 +193,14 @@ function AddStudent() {
       setEmailError(true);
     }
   };
-  const parentEmailBlurHandler = async() => {
+  const parentEmailBlurHandler = async () => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (regex.test(studentData.parent_email)) {
-        setParentEmailError(false);
+      setParentEmailError(false);
     } else {
-     return setParentEmailError(true);
+      return setParentEmailError(true);
     }
- 
+
     const data = {
       type: multivalues,
       email:
@@ -230,14 +224,13 @@ function AddStudent() {
     } catch (err) {
       toast.error(err);
     }
-
   };
-  const guardianEmailBlurHandler =async () => {
+  const guardianEmailBlurHandler = async () => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (regex.test(studentData.guardian_email)) {
       setGuardianEmailError(false);
     } else {
-     return setGuardianEmailError(true);
+      return setGuardianEmailError(true);
     }
     const data = {
       type: multivalues,
@@ -263,7 +256,6 @@ function AddStudent() {
       toast.error(err);
     }
   };
-
 
   const guardianPhoneBlurHandler = () => {
     let regex = /^[5-9]{1}[0-9]{9}$/;
@@ -302,8 +294,6 @@ function AddStudent() {
   };
   //Checking Parent or Gaurdian Email is Exist or Not
   const checkEmail = async () => {
-
-
     const data = {
       type: multivalues,
       email:
@@ -328,7 +318,6 @@ function AddStudent() {
       toast.error(err);
     }
   };
-
 
   const [formData] = useState(new FormData());
 
@@ -463,7 +452,6 @@ function AddStudent() {
     window.scrollTo(0, 0);
   };
 
-
   //Final Form Submit
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -478,7 +466,7 @@ function AddStudent() {
     formData.set("joining_date", dateOfJoining);
     if (guardianDOB) {
       formData.set("guardian_dob", guardianDOB);
-    }else  if (fatherDOB) {
+    } else if (fatherDOB) {
       formData.set("father_dob", fatherDOB);
       formData.set("mother_dob", motherDOB);
     }
@@ -806,7 +794,9 @@ function AddStudent() {
                         //  value={dateOfBirth}
                         selected={dateOfJoining}
                         required
+                        showMonthDropdown
                         showYearDropdown
+                        dropdownMode="select"
                         className="datePicker"
                       />
                     </Col>
@@ -824,7 +814,6 @@ function AddStudent() {
                         onChange={handleChange("firstname")}
                         value={studentData.firstname}
                         required
-                     
                       />
                     </Col>
                     <Col md="4">
@@ -861,7 +850,9 @@ function AddStudent() {
                         selected={dateOfBirth}
                         required
                         className="datePicker"
+                        showMonthDropdown
                         showYearDropdown
+                        dropdownMode="select"
                         // style={{width: "100%"}}
                       />
                     </Col>
@@ -1482,7 +1473,6 @@ function AddStudent() {
                             </Col>
                           </Row>
                         )}
-                      
 
                         <Row className="mb-4">
                           <Col align="center">
@@ -1542,7 +1532,9 @@ function AddStudent() {
                               //  value={dateOfBirth}
                               selected={fatherDOB}
                               required
+                              showMonthDropdown
                               showYearDropdown
+                              dropdownMode="select"
                               className="datePicker"
                             />
                           </Col>
@@ -1709,7 +1701,9 @@ function AddStudent() {
                               selected={motherDOB}
                               required
                               className="datePicker"
+                              showMonthDropdown
                               showYearDropdown
+                              dropdownMode="select"
                             />
                           </Col>
                           <Col>
@@ -1936,7 +1930,6 @@ function AddStudent() {
                             </Col>
                           </Row>
                         )}
-                      
 
                         <Row className="mb-4">
                           <Col align="center">
@@ -1997,7 +1990,9 @@ function AddStudent() {
                               selected={guardianDOB}
                               required
                               className="datePicker"
+                              showMonthDropdown
                               showYearDropdown
+                              dropdownMode="select"
                             />
                           </Col>
                           <Col>

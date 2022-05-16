@@ -670,7 +670,9 @@ function AddStaff() {
                         selected={dateOfJoining}
                         required
                         className="datePicker"
+                        showMonthDropdown
                         showYearDropdown
+                        dropdownMode="select"
                       />
                     </Col>
                     <Col md="4">
@@ -724,7 +726,10 @@ function AddStaff() {
                         selected={dateOfBirth}
                         required
                         className="datePicker"
+                        peekNextMonth
+                        showMonthDropdown
                         showYearDropdown
+                        dropdownMode="select"
                         // style={{width: "100%"}}
                       />
                       {/* <Input
