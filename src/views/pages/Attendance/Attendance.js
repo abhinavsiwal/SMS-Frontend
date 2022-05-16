@@ -29,6 +29,7 @@ import "./Attendance.css";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { useSelector } from "react-redux";
 import LoadingScreen from "react-loading-screen";
+import { allClass } from "api/class";
 
 //import moment from moment for Date
 import moment from "moment";
@@ -39,6 +40,8 @@ import { isAuthenticated } from "api/auth";
 import { sendRequestWithJson, sendRequest } from "api/api";
 import { toast, ToastContainer } from "react-toastify";
 import { fetchingAttendanceError } from "constants/errors";
+import { fetchingClassError } from "constants/errors";
+
 import { addAttendanceError } from "constants/errors";
 import { addAttendanceSuccess } from "constants/success";
 import { allSessions } from "api/session";
@@ -60,7 +63,7 @@ function Attendance() {
     selectClass: "",
     selectSection: "",
   });
-  const { classes } = useSelector((state) => state.classReducer);
+  const [classes, setClasses] = useState("");
   const [attendanceData, setAttendanceData] = useState([]);
   const [attendanceData1, setattendanceData1] = useState({});
   const [viewAttendance, setViewAttendance] = useState(false);
@@ -107,6 +110,17 @@ function Attendance() {
     }
   };
 
+  const getAllClass = async () => {
+    const { user, token } = isAuthenticated();
+    const classes = await allClass(user._id, user.school, token);
+    if (classes.err) {
+      return toast.error(fetchingClassError);
+    } else {
+      setClasses(classes);
+      return;
+    }
+  };
+
   useEffect(() => {
     let today1 = new Date();
     // console.log(today1);
@@ -128,6 +142,7 @@ function Attendance() {
       // console.log(permissions);
       setPermissions(permission1);
     }
+    await getAllClass();
     await getSession();
     setLoading(false);
   }, []);
@@ -482,7 +497,7 @@ function Attendance() {
     };
 
     const data = await filterStudent(user.school, user._id, formData);
-    console.log(data)
+    console.log(data);
     for (let i = 0; i < data.length; i++) {
       let check = false;
       for (let j = 0; j < students1.length; j++) {
@@ -505,7 +520,7 @@ function Attendance() {
         });
       }
     }
-    console.log(tableData)
+    console.log(tableData);
     setAttendanceData(tableData);
   };
 

@@ -25,8 +25,10 @@ import { getDepartment } from "api/department";
 import moment from "moment";
 import { isAuthenticated } from "api/auth";
 import { toast, ToastContainer } from "react-toastify";
+import { fetchingClassError } from "constants/errors";
 import { allSessions } from "api/session";
 import { getStaffByDepartment } from "api/staff";
+import { allClass } from "api/class";
 import {
   addStaffAttendance,
   searchStaffAttendance,
@@ -35,6 +37,7 @@ import {
 
 const StaffAttendance = () => {
   const { user, token } = isAuthenticated();
+  const [classes, setClasses] = useState("");
   const startOfMonth = moment().startOf("month").format("YYYY-MM-DD");
   const endOfMonth = moment().endOf("month").format("YYYY-MM-DD");
   const endOfDayOfMonths = moment().endOf("month").format("DD");
@@ -79,6 +82,17 @@ const StaffAttendance = () => {
     getSession();
     getAllDepartment();
   }, []);
+
+  const getAllClass = async () => {
+    const { user, token } = isAuthenticated();
+    const classes = await allClass(user._id, user.school, token);
+    if (classes.err) {
+      return toast.error(fetchingClassError);
+    } else {
+      setClasses(classes);
+      return;
+    }
+  };
 
   const getAllDepartment = async () => {
     try {
