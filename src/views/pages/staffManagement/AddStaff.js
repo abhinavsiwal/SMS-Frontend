@@ -565,7 +565,7 @@ function AddStaff() {
                   )}
                   {capturePhoto && <h2>Photo is Selected</h2>}
                   <Row md="4" className="d-flex justify-content-center mb-4">
-                    <Col md="8">
+                    <Col md="8" style={{zIndex:"-1"}}  >
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"

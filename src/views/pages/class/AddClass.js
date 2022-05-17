@@ -51,9 +51,11 @@ const AddClass = () => {
   // console.log("editClassAdv", editClassAbv);
   const [sessions, setSessions] = useState([]);
   const [checked, setChecked] = useState(false);
+  const [tableData, setTableData] = useState(false);
   const dispatch = useDispatch();
   const { user, token } = isAuthenticated();
-
+  const [selectedSessionId, setSelectedSessionId] = useState("empty");
+  const [isEmpty, setIsEmpty] = useState(true);
   const [permissions, setPermissions] = useState([]);
 
   const [classData, setClassData] = useState({
@@ -97,50 +99,10 @@ const AddClass = () => {
     try {
       const res = await allClass(user._id, user.school, token);
 
-      // console.log("allClass", res);
+      console.log("allClass", res);
       dispatch(setClass(res));
-      const data = [];
-      for (let i = 0; i < res.length; i++) {
-        await data.push({
-          key: i,
-          name: res[i].name,
-          abbreviation: res[i].abbreviation,
-          action: (
-            <h5 key={i + 1} className="mb-0">
-              {permission1 && permission1.includes("edit".trim()) && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="primary"
-                  type="button"
-                  key={"edit" + i + 1}
-                  onClick={() =>
-                    rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
-                  }
-                >
-                  <i className="fas fa-user-edit" />
-                </Button>
-              )}
+      setClassList(res);
 
-              {permission1 && permission1.includes("delete".trim()) && (
-                <Button
-                  className="btn-sm pull-right"
-                  color="danger"
-                  type="button"
-                  key={"delete" + i + 1}
-                >
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete(res[i]._id)}
-                  >
-                    <i className="fas fa-trash" />
-                  </Popconfirm>
-                </Button>
-              )}
-            </h5>
-          ),
-        });
-      }
-      setClassList(data);
       setLoading(true);
     } catch (err) {
       console.log(err);
@@ -228,7 +190,7 @@ const AddClass = () => {
       title: "Class",
       dataIndex: "name",
       width: "40%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -259,7 +221,7 @@ const AddClass = () => {
       title: "Abbreviation",
       dataIndex: "abbreviation",
       width: "50%",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.abbreviation > b.abbreviation,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -289,7 +251,7 @@ const AddClass = () => {
     {
       title: "Action",
       key: "action",
-      align:"left",
+      align: "left",
       dataIndex: "action",
       fixed: "right",
     },
@@ -307,7 +269,11 @@ const AddClass = () => {
     formData.set("school", user.school);
     try {
       setAddLoading(true);
-      await addClass(user._id, token, formData);
+    const data =  await addClass(user._id, token, formData);
+    if(data.err){
+      setAddLoading(false);
+      return toast.error(data.err);
+    }
       setClassData({
         name: "",
         session: "",
@@ -315,7 +281,7 @@ const AddClass = () => {
       });
       toast.success(addClassSuccess);
       setAddLoading(false);
-      setReload(true);
+      setReload(!reload);
     } catch (err) {
       toast.error(addClassError);
       setAddLoading(false);
@@ -337,6 +303,60 @@ const AddClass = () => {
       fileReader.readAsText(file);
     }
   };
+
+  useEffect(() => {
+    if (selectedSessionId === "empty") {
+      setIsEmpty(true);
+      return;
+    }
+    let res = classList.filter((item) => {
+      return item.session._id === selectedSessionId;
+    });
+    const data = [];
+    for (let i = 0; i < res.length; i++) {
+      data.push({
+        key: i,
+        name: res[i].name,
+        abbreviation: res[i].abbreviation,
+        action: (
+          <h5 key={i + 1} className="mb-0">
+            {permission1 && permission1.includes("edit".trim()) && (
+              <Button
+                className="btn-sm pull-right"
+                color="primary"
+                type="button"
+                key={"edit" + i + 1}
+                onClick={() =>
+                  rowHandler(res[i]._id, res[i].name, res[i].abbreviation)
+                }
+              >
+                <i className="fas fa-user-edit" />
+              </Button>
+            )}
+
+            {permission1 && permission1.includes("delete".trim()) && (
+              <Button
+                className="btn-sm pull-right"
+                color="danger"
+                type="button"
+                key={"delete" + i + 1}
+              >
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => handleDelete(res[i]._id)}
+                >
+                  <i className="fas fa-trash" />
+                </Popconfirm>
+              </Button>
+            )}
+          </h5>
+        ),
+      });
+    }
+    setIsEmpty(false);
+    setTableData(data);
+  }, [classList, selectedSessionId]);
+
   return (
     <>
       <SimpleHeader name="Add Class" parentName="Class Management" />
@@ -474,39 +494,70 @@ const AddClass = () => {
             <div className="card-wrapper">
               <Card>
                 <CardBody>
-                  {permissions && permissions.includes("export") ? (
+                  <Input
+                    id="example4cols2Input"
+                    type="select"
+                    onChange={(e) => setSelectedSessionId(e.target.value)}
+                    required
+                    className="mb-2"
+                    value={selectedSessionId}
+                  >
+                    <option value="empty">Select Session</option>
+                    {sessions &&
+                      sessions.map((data, index) => {
+                        return (
+                          <option key={index} value={data._id}>
+                            {data.name}
+                          </option>
+                        );
+                      })}
+                  </Input>
+                  {isEmpty ? (
+                    <h4>Please Select a session</h4>
+                  ) : (
                     <>
-                      <Button
-                        color="primary"
-                        className="mb-2"
-                        onClick={handlePrint}
-                        style={{ float: "right" }}
-                      >
-                        Print
-                      </Button>
-                      {loading && classList ? (
-                        <div ref={componentRef}>
-                          <AntTable
-                            columns={columns}
-                            data={classList}
-                            pagination={true}
-                            exportFileName="ClassDetails"
-                          />
-                        </div>
+                      {permissions && permissions.includes("export") ? (
+                        <>
+                          <Button
+                            color="primary"
+                            className="mb-2"
+                            onClick={handlePrint}
+                            style={{ float: "right" }}
+                          >
+                            Print
+                          </Button>
+                          {loading && classList ? (
+                            <div ref={componentRef}>
+                              <AntTable
+                                columns={columns}
+                                data={tableData}
+                                pagination={true}
+                                exportFileName="ClassDetails"
+                              />
+                            </div>
+                          ) : (
+                            <Loader />
+                          )}
+                        </>
                       ) : (
-                        <Loader />
+                        <Table
+                          style={{ whiteSpace: "pre" }}
+                          columns={columns}
+                          dataSource={tableData}
+                          pagination={{
+                            pageSizeOptions: [
+                              "5",
+                              "10",
+                              "30",
+                              "60",
+                              "100",
+                              "1000",
+                            ],
+                            showSizeChanger: true,
+                          }}
+                        />
                       )}
                     </>
-                  ) : (
-                    <Table
-                      style={{ whiteSpace: "pre" }}
-                      columns={columns}
-                      dataSource={classList}
-                      pagination={{
-                        pageSizeOptions: ["5", "10", "30", "60", "100", "1000"],
-                        showSizeChanger: true,
-                      }}
-                    />
                   )}
                 </CardBody>
               </Card>
