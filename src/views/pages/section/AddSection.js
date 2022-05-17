@@ -13,7 +13,7 @@ import {
   ModalBody,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
-import { useReducer, useSelector } from "react";
+
 import { isAuthenticated } from "api/auth";
 import { allClass } from "api/class";
 import {
@@ -45,8 +45,6 @@ import { deleteSectionSuccess, addSectionSuccess } from "constants/success";
 
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
-import { useDispatch } from "react-redux";
-import { setClass } from "store/reducers/class";
 
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
@@ -62,8 +60,7 @@ const AddSection = () => {
   const [file, setFile] = useState();
   const [editing, setEditing] = useState(false);
   const fileReader = new FileReader();
-  const [clas, setClas] = useState("")
-const dispatch=useDispatch();
+
   const [editingSectionName, setEditingSectionName] = useState("");
   const [editingAbbv, setEditingAbbv] = useState("");
   const [editingClassId, setEditingClassId] = useState("");
@@ -107,7 +104,6 @@ const dispatch=useDispatch();
     {
       title: "Section",
       dataIndex: "name",
-      align:"left",
       width: 150,
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -138,7 +134,6 @@ const dispatch=useDispatch();
     {
       title: "Section Abbreviation",
       dataIndex: "abbreviation",
-      align:"left",
       width: 150,
       sorter: (a, b) => a.abbreviation > b.abbreviation,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -169,7 +164,6 @@ const dispatch=useDispatch();
     {
       title: "Subject",
       dataIndex: "subject",
-      align:"left",
       width: 150,
       sorter: (a, b) => a.subject > b.subject,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -200,7 +194,6 @@ const dispatch=useDispatch();
     {
       title: "Class Teacher",
       dataIndex: "class_teacher",
-      align:"left",
       width: 150,
       sorter: (a, b) => a.class_teacher > b.class_teacher,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -232,7 +225,6 @@ const dispatch=useDispatch();
       title: "Action",
       key: "action",
       dataIndex: "action",
-      align:"left",
       fixed: "right",
     },
   ];
@@ -260,7 +252,6 @@ const dispatch=useDispatch();
       await setClassList(res);
       // console.log(res);
       await setTableClassSelectId(res[0]._id);
-      dispatch(setClass(res));
       // setLoading(true);
     } catch (err) {
       console.log(err);
@@ -390,12 +381,10 @@ const dispatch=useDispatch();
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    formData.set("class",clas);
-    const classID = clas;
+    const classID = formData.get("class");
     try {
       setAddLoading(true);
       const resp = await addSection(user._id, token, formData);
-      console.log(resp);
       sectionData.set("school", user.school);
       sectionData.set("section", resp._id);
       await addClassToSection(user._id, classID, token, sectionData);
@@ -407,7 +396,6 @@ const dispatch=useDispatch();
         toast.success(addSectionSuccess);
         setChecked(!checked);
         setAddLoading(false)
-        setClas("");
       }
     } catch (err) {
       toast.error(addSectionError);
@@ -537,9 +525,8 @@ const dispatch=useDispatch();
                               <Input
                                 id="example4cols2Input"
                                 type="select"
-                                onChange={e=>setClas(e.target.value)}
+                                onChange={handleChange("class")}
                                 required
-                                value={clas}
                               >
                                 <option value="" disabled selected>
                                   Select Class
@@ -551,7 +538,7 @@ const dispatch=useDispatch();
                                 ))}
                               </Input>
                             </Col>
-                         
+                        
                             <Col>
                               <label
                                 className="form-control-label"
@@ -585,7 +572,7 @@ const dispatch=useDispatch();
                                 required
                               />
                             </Col>
-                        
+                   
                             <Col>
                               <label
                                 className="form-control-label"
