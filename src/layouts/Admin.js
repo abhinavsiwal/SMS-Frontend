@@ -21,8 +21,8 @@ function Admin() {
 
   // console.log(adminRoutes);
   
+  console.log(user);
   useEffect(() => {
-    console.log(user);
     if(!user){
       return;
     }
@@ -135,7 +135,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={routes}
+        routes={permittedRoute}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

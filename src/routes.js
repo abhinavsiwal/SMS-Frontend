@@ -106,12 +106,12 @@ export const adminRoutes = [
     ],
   },
   {
-    path: "/staff-profile",
+    path: "/profile",
     name: "Profile",
     icon: "ni ni-shop text-primary",
     component: StaffProfile,
     layout: "/admin",
-    module: "Staff Profile Module",
+    module: "Staff Management",
   },
   {
     collapse: true,
@@ -159,7 +159,7 @@ export const adminRoutes = [
     name: "Department",
     icon: "fa fa-users",
     state: "departmentsCollapse",
-    module: "Staff Management",
+    module: "Department",
     views: [
       {
         path: "/department-list",
@@ -250,7 +250,7 @@ export const adminRoutes = [
     icon: "ni ni-badge",
     component: Attendance,
     layout: "/admin",
-    module: "Attendance",
+    module: "Student Management",
   },
   // {
   //   path: "/timeTable",
@@ -359,7 +359,7 @@ export const adminRoutes = [
     name: "Ecommerce",
     icon: "ni ni-bag-17 text-pink",
     state: "ecommerceCollapse",
-    module: "Edu Commerce Store",
+    module: "Ecommerce",
     views: [
       {
         path: "/add-cart",
@@ -377,6 +377,81 @@ export const adminRoutes = [
         layout: "/admin",
         permission: "view",
       },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Library Management",
+    icon: "ni ni-bag-17 text-pink",
+    state: "libraryCollapse",
+    module: "Library Management",
+    views: [
+      {
+        path: "/add-shelf",
+        name: "Add Section and Shelf",
+        miniName: "A",
+        component: AddShelf, 
+        layout: "/admin",
+        permission: "add",
+      },
+      {
+        path: "/add-books",
+        name: "Add Books",
+        miniName: "V",
+        component: AddBooks,
+        layout: "/admin",
+        permission: "add",
+      },
+      {
+        path: "/book-allocations",
+        name: "Allocations",
+        miniName: "V",
+        component: AllocationManager,
+        layout: "/admin",
+        permission: "add",
+      },
+      {
+        path: "/view-allocations",
+        name: "View Allocations",
+        miniName: "V",
+        component: ViewAllocations,
+        layout: "/admin",
+        permission: "view",
+      },
+    ],
+  },
+  {
+    collapse: true,
+    name: "Leave Management",
+    icon: "ni ni-bag-17 text-pink",
+    state: "leaveCollapse",
+    module: "Leave Management",
+    views: [
+      {
+        path: "/apply-leave ",
+        name: "Apply Leave",
+        miniName: "a",
+        component: ApplyLeave,
+        layout: "/admin",
+        permission: "add",
+      },
+      {
+        path: "/view-leaves",
+        name: "View Leaves",
+        miniName: "a",
+        component: ViewLeaves,
+        layout: "/admin",
+        permission: "view",
+      },
+      {
+        path: "/view-allleaves",
+        name: "View All Leave",
+        miniName: "a",
+        component: ViewAllLeaves,
+        layout: "/admin",
+        permission: "view",
+      },
+    
     ],
   },
 ];

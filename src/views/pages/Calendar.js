@@ -186,7 +186,7 @@ function CalendarView() {
 
       // Edit calendar event action
       eventClick: ({ event }) => {
-        // console.log("event", event);
+        console.log("event", event);
         setEventId(event.id);
         setEventTitle(event.title);
         setDescription(event.extendedProps.description);
@@ -773,7 +773,7 @@ function CalendarView() {
                           className="p-2 endDate"
                           showTimeSelect
                           dateFormat="yyyy MMMM, dd h:mm aa"
-                          selected={startDate}
+                          selected={endDate}
                           selectsStart
                           minDate={new Date()}
                           startDate={startDate}
