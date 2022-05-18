@@ -159,7 +159,7 @@ export const adminRoutes = [
     name: "Department",
     icon: "fa fa-users",
     state: "departmentsCollapse",
-    module: "Department",
+    module: "Staff Management",
     views: [
       {
         path: "/department-list",
@@ -175,7 +175,7 @@ export const adminRoutes = [
         miniName: "DH",
         component: DepartmentHead,
         layout: "/admin",
-        permission: "edit",
+        permission: "add",
       },
     ],
   },

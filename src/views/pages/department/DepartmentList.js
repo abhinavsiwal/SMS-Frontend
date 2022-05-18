@@ -74,8 +74,8 @@ const DepartmentList = () => {
 
   useEffect(() => {
     // console.log(user);
-    if (user.permissions["Department"]) {
-      let permission1 = user.permissions["Department"];
+    if (user.permissions["Staff Management"]) {
+      let permission1 = user.permissions["Staff Management"];
       // console.log(permission1);
       setPermissions(permission1);
     }
