@@ -1099,6 +1099,22 @@ function Attendance() {
                                             ></p>
                                           </td>
                                         );
+                                      } else if (status === "N") {
+                                        return (
+                                          <td key={index}>
+                                            <p
+                                              className="ni ni-single-02"
+                                              id="attendance_icons"
+                                              style={{
+                                                background: "black",
+                                                color: "white",
+                                                fontSize: "30px",
+                                                padding: "5px",
+                                                borderRadius: "50%",
+                                              }}
+                                            ></p>
+                                          </td>
+                                        );
                                       }
                                     }
                                   )}
