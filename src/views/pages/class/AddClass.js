@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef,useCallback } from "react";
 import {
   Container,
   Row,
@@ -68,21 +68,17 @@ const AddClass = () => {
 
   const fileReader = new FileReader();
 
-  useEffect(() => {
-    permissionHandler();
-  }, [checked, reload]);
-
   let permission1 = [];
-  const permissionHandler = async () => {
-    // console.log(user);
+  useEffect(() => {
     if (user.permissions["Class, section and subject master"]) {
       permission1 = user.permissions["Class, section and subject master"];
-      // console.log(permission);
+      console.log(permission1);
       setPermissions(permission1);
       // console.log(permissions);
     }
-  };
+  }, [checked, reload]);
 
+  
   useEffect(() => {
     getSession();
   }, []);
@@ -320,7 +316,7 @@ const AddClass = () => {
         abbreviation: res[i].abbreviation,
         action: (
           <h5 key={i + 1} className="mb-0">
-            {permission1 && permission1.includes("edit".trim()) && (
+            {permission1 && permission1.includes("edit") && (
               <Button
                 className="btn-sm pull-right"
                 color="primary"
@@ -334,7 +330,7 @@ const AddClass = () => {
               </Button>
             )}
 
-            {permission1 && permission1.includes("delete".trim()) && (
+            {permission1 && permission1.includes("delete") && (
               <Button
                 className="btn-sm pull-right"
                 color="danger"

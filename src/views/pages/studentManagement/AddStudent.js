@@ -698,7 +698,7 @@ function AddStudent() {
                     <h2>File {studentData.photo.name} is Selected</h2>
                   )}
                   <Row md="4" className="d-flex justify-content-center mb-4">
-                    <Col md="8" style={{zIndex:"-1"}} >
+                    <Col md="8" style={{zIndex:"1"}} >
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"
@@ -711,7 +711,7 @@ function AddStudent() {
                           id="customFileLang"
                           lang="en"
                           type="file"
-                          accept="photo/*"
+                          accept="image/*"
                           onChange={handleFileChange("photo")}
                         />
                         <label
