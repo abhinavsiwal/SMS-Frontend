@@ -47,6 +47,7 @@ const AddSubject = () => {
   const [sessions, setSessions] = useState([]);
   const [type, setType] = useState("");
   const [inputFields, setInputFields] = useState([{ subjectName: "" }]);
+  const [editInputFields, setEditInputFields] = useState([]);
   const { user, token } = isAuthenticated();
   const [groupName, setGroupName] = useState("");
   const [file, setFile] = useState();
@@ -54,23 +55,16 @@ const AddSubject = () => {
   const [addLoading, setAddLoading] = useState(false);
   const [permissions, setPermissions] = useState([]);
   const fileReader = new FileReader();
+  const [groupEditing, setGroupEditing] = useState(false);
+  const [editGroupName, setEditGroupName] = useState("");
+  const [editGroupId, setEditGroupId] = useState("");
+  const [editGroupSubjects, setEditGroupSubjects] = useState([]);
 
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
 
-  const handleOnSubmit = (e) => {
-    e.preventDefault();
-
-    if (file) {
-      fileReader.onload = function (event) {
-        const csvOutput = event.target.result;
-      };
-
-      fileReader.readAsText(file);
-    }
-  };
-
+ 
   const componentRef = React.useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -82,7 +76,7 @@ const AddSubject = () => {
       permission1 = user.permissions["Class, section and subject master"];
       setPermissions(permission1);
     }
-  }, [checked]);
+  }, [checked,reload]);
 
   useEffect(() => {
     getAllClasses();
@@ -138,11 +132,16 @@ const AddSubject = () => {
     values[index][event.target.name] = event.target.value;
     setInputFields(values);
   };
-
+  const handleChangeEditSubject = (index, event) => {
+    console.log(index, event.target.value);
+    const values = [...editInputFields];
+    values[index][event.target.name] = event.target.value;
+    setEditInputFields(values);
+  }
   //Edit Subject
   const handleEdit = async () => {
     try {
-      const { user, token } = isAuthenticated();
+     
       formData.set("name", editSubjectName);
       setLoading(true);
       const updatedSubject = await updateSubject(
@@ -165,6 +164,43 @@ const AddSubject = () => {
       setLoading(false);
     }
   };
+
+  const handleEditGroupSubmit =async ()=>{
+    const formData = new FormData();
+    formData.set("name",editGroupName);
+    let list = [];
+    for (const key in editInputFields) {
+      // console.log(inputFields[key].subjectName);
+      list.push(editInputFields[key].subjectName);
+    }
+    console.log(list);
+    formData.set("list", JSON.stringify(list));
+
+    try {
+     
+    
+      setLoading(true);
+      const updatedSubject = await updateSubject(
+        editGroupId,
+        user._id,
+        token,
+        formData
+      );
+      // console.log("updateSubject", updatedSubject);
+      if (updatedSubject.err) {
+        setLoading(false);
+        return toast.error(updatedSubject.err);
+      } else {
+        setGroupEditing(false);
+        setChecked(!checked);
+        setLoading(false);
+      }
+    } catch (err) {
+      toast.error(err);
+      setLoading(false);
+    }
+    
+  }
 
   const [formData] = useState(new FormData());
   const handleChange = (name) => (event) => {
@@ -216,13 +252,24 @@ const AddSubject = () => {
       setLoading(false);
     }
   };
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+
+    if (file) {
+      fileReader.onload = function (event) {
+        const csvOutput = event.target.result;
+      };
+
+      fileReader.readAsText(file);
+    }
+  };
 
   const columns = [
     {
       title: "Subject",
       dataIndex: "name",
       key: "subjects",
-      align:"left",
+      align: "left",
       // width: "90%",
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -253,7 +300,7 @@ const AddSubject = () => {
     {
       title: "Action",
       key: "action",
-      align:"left",
+      align: "left",
       dataIndex: "action",
       fixed: "right",
     },
@@ -264,7 +311,7 @@ const AddSubject = () => {
       title: "Group Name",
       dataIndex: "groupName",
       key: "groupName",
-      align:"left",
+      align: "left",
       // width: "90%",
       sorter: (a, b) => a.groupName > b.groupName,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -296,7 +343,7 @@ const AddSubject = () => {
       title: "Subjects",
       dataIndex: "subjects",
       key: "subjects",
-      align:"left",
+      align: "left",
       // width: "90%",
       sorter: (a, b) => a.subjects > b.subjects,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -326,10 +373,10 @@ const AddSubject = () => {
       render: (subjects) => (
         <>
           {subjects.map((subject) => {
-            // console.log(subject);
-            let subject1 = JSON.parse(subject);
-            // console.log(subject1);
-            return <p>{subject1.toString()}</p>;
+      
+            let subject1 = JSON.stringify(subject);
+           
+            return <p>{subject}</p>;
           })}
         </>
       ),
@@ -337,7 +384,7 @@ const AddSubject = () => {
     {
       title: "Action",
       key: "action",
-      align:"left",
+      align: "left",
       dataIndex: "action",
       fixed: "right",
     },
@@ -347,7 +394,7 @@ const AddSubject = () => {
     setLoading(true);
     allSubjects(user._id, user.school, token)
       .then((res) => {
-        // console.log(res);
+        console.log(res); 
         setLoading(true);
         // console.log("res", res);
         let data = [];
@@ -368,7 +415,7 @@ const AddSubject = () => {
                       color="primary"
                       type="button"
                       key={"edit" + i + 1}
-                      onClick={() => rowHandler(res[i]._id, res[i].name)}
+                      onClick={() => groupRowHandler(res[i])}
                     >
                       <i className="fas fa-user-edit" />
                     </Button>
@@ -438,15 +485,36 @@ const AddSubject = () => {
       });
   };
 
+  const groupRowHandler = (data) => {
+    setGroupEditing(true);
+    setEditGroupName(data.name);
+    setEditGroupId(data._id);
+    let subjects = data.list;
+    let subjects1 = [];
+    for (let i = 0; i < subjects.length; i++) {
+      subjects1.push({ subjectName: subjects[i] });
+    }
+    setEditInputFields(subjects1);
+  };
+
   const handleAddFields = () => {
     setInputFields([...inputFields, { subjectName: "" }]);
   };
-
-  const handleRemoveFields=(index)=>{
-    const values = [...inputFields];
-    values.splice(index,1);
-    setInputFields(values)
+  const handleEditAddFields = () => {
+    setEditInputFields([...editInputFields, { subjectName: "" }]);
   }
+  const handleRemoveFields = (index) => {
+    const values = [...inputFields];
+    values.splice(index, 1);
+    setInputFields(values);
+  };
+  const handleEditRemoveFields = (index) => {
+    const values = [...editInputFields];
+    values.splice(index, 1);
+    setEditInputFields(values);
+  }
+
+
 
   return (
     <>
@@ -600,7 +668,7 @@ const AddSubject = () => {
                                 {inputFields.map((inputField, index) => {
                                   return (
                                     <div key={index}>
-                                      <InputGroup className="mb-2" >
+                                      <InputGroup className="mb-2">
                                         <Input
                                           name="subjectName"
                                           id="example4cols2Input"
@@ -610,14 +678,24 @@ const AddSubject = () => {
                                           onChange={(event) =>
                                             handleChangeSubject(index, event)
                                           }
-                                          
                                         />
-                                        <InputGroupAddon addonType="append"  >
+                                        <InputGroupAddon addonType="append">
                                           <InputGroupText
-                                            style={{ cursor: "pointer",backgroundColor:"red" }}
-                                           onClick={()=>handleRemoveFields(index)}
+                                            style={{
+                                              cursor: "pointer",
+                                              backgroundColor: "red",
+                                            }}
+                                            onClick={() =>
+                                              handleRemoveFields(index)
+                                            }
                                           >
-                                            <i className="ni ni-fat-remove" style={{color:"white",fontSize:"1.3rem"}} />
+                                            <i
+                                              className="ni ni-fat-remove"
+                                              style={{
+                                                color: "white",
+                                                fontSize: "1.3rem",
+                                              }}
+                                            />
                                           </InputGroupText>
                                         </InputGroupAddon>
                                       </InputGroup>
@@ -753,12 +831,12 @@ const AddSubject = () => {
           <ModalBody>
             <Row>
               <Col>
-                <label className="form-control-label">Class Name</label>
+                <label className="form-control-label">Subject Name</label>
                 <Input
                   id="form-class-name"
                   value={editSubjectName}
                   onChange={(e) => setEditSubjectName(e.target.value)}
-                  placeholder="Class Name"
+                  placeholder="Subject Name"
                   type="text"
                 />
               </Col>
@@ -766,6 +844,106 @@ const AddSubject = () => {
           </ModalBody>
           <ModalFooter>
             <Button color="success" type="button" onClick={handleEdit}>
+              Save changes
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Modal
+          className="modal-dialog-centered"
+          isOpen={groupEditing}
+          toggle={() => setGroupEditing(false)}
+          size="lg"
+        >
+          <div className="modal-header">
+            <h2 className="modal-title" id="modal-title-default">
+              Edit Subject
+            </h2>
+            <button
+              aria-label="Close"
+              className="close"
+              data-dismiss="modal"
+              type="button"
+              onClick={() => setGroupEditing(false)}
+            >
+              <span aria-hidden={true}>×</span>
+            </button>
+          </div>
+          <ModalBody>
+            <Row>
+              <Col>
+                <label className="form-control-label">Group Name</label>
+                <Input
+                  id="form-class-name"
+                  value={editGroupName}
+                  onChange={(e) => setEditGroupName(e.target.value)}
+                  placeholder="Subject Name"
+                  type="text"
+                />
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <label
+                  className="form-control-label"
+                  htmlFor="example4cols2Input"
+                >
+                  Subject
+                </label>
+                {editInputFields.map((inputField, index) => {
+                  return (
+                    <div key={index}>
+                      <InputGroup className="mb-2">
+                        <Input
+                          name="subjectName"
+                          id="example4cols2Input"
+                          placeholder="Subject"
+                          type="text"
+                          value={inputField.subjectName}
+                          onChange={(event) =>
+                            handleChangeEditSubject(index, event)
+                          }
+                        />
+                        <InputGroupAddon addonType="append">
+                          <InputGroupText
+                            style={{
+                              cursor: "pointer",
+                              backgroundColor: "red",
+                            }}
+                            onClick={() => handleEditRemoveFields(index)}
+                          >
+                            <i
+                              className="ni ni-fat-remove"
+                              style={{
+                                color: "white",
+                                fontSize: "1.3rem",
+                              }}
+                            />
+                          </InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    </div>
+                  );
+                })}
+                <Button
+                  color="primary"
+                  style={{
+                    height: "1rem",
+                    width: "4rem",
+                    fontSize: "0.5rem",
+                    display: "flex",
+                    alignItems: "center",
+                    marginTop: "0.7rem",
+                    marginBottom: "0.7rem",
+                  }}
+                  onClick={handleEditAddFields}
+                >
+                  Add
+                </Button>
+              </Col>
+            </Row>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="success" type="button" onClick={handleEditGroupSubmit}>
               Save changes
             </Button>
           </ModalFooter>

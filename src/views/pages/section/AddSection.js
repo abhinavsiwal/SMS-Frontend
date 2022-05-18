@@ -13,7 +13,7 @@ import {
   ModalBody,
 } from "reactstrap";
 import SimpleHeader from "components/Headers/SimpleHeader";
-
+import { useReducer, useSelector } from "react";
 import { isAuthenticated } from "api/auth";
 import { allClass } from "api/class";
 import {
@@ -45,6 +45,8 @@ import { deleteSectionSuccess, addSectionSuccess } from "constants/success";
 
 import FixRequiredSelect from "../../../components/FixRequiredSelect";
 import BaseSelect from "react-select";
+import { useDispatch } from "react-redux";
+import { setClass } from "store/reducers/class";
 
 const AddSection = () => {
   const [sectionList, setSectionList] = useState([]);
@@ -60,22 +62,25 @@ const AddSection = () => {
   const [file, setFile] = useState();
   const [editing, setEditing] = useState(false);
   const fileReader = new FileReader();
-
+  const [clas, setClas] = useState("");
+  const dispatch = useDispatch();
   const [editingSectionName, setEditingSectionName] = useState("");
   const [editingAbbv, setEditingAbbv] = useState("");
   const [editingClassId, setEditingClassId] = useState("");
   const [editingSectionId, setEditingSectionId] = useState("");
   const [editingSubjectList, setEditingSubjectList] = useState([]);
+  const [initialSubject, setInitialSubject] = useState([]);
   const [permissions, setPermissions] = useState([]);
   const [addLoading, setAddLoading] = useState(false);
+  const [classId, seClassId] = useState("");
   const [isData, setisData] = useState(false);
   useEffect(() => {
     if (user.permissions["Class, section and subject master"]) {
-     let permissions1 = user.permissions["Class, section and subject master"];
+      let permissions1 = user.permissions["Class, section and subject master"];
       // console.log(permissions);
       setPermissions(permissions1);
     }
-  }, [checked,tableClassSelectId]);
+  }, [checked, tableClassSelectId]);
 
   useEffect(() => {
     getSession();
@@ -104,6 +109,7 @@ const AddSection = () => {
     {
       title: "Section",
       dataIndex: "name",
+      align: "left",
       width: 150,
       sorter: (a, b) => a.name > b.name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -134,6 +140,7 @@ const AddSection = () => {
     {
       title: "Section Abbreviation",
       dataIndex: "abbreviation",
+      align: "left",
       width: 150,
       sorter: (a, b) => a.abbreviation > b.abbreviation,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -164,6 +171,7 @@ const AddSection = () => {
     {
       title: "Subject",
       dataIndex: "subject",
+      align: "left",
       width: 150,
       sorter: (a, b) => a.subject > b.subject,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -190,10 +198,12 @@ const AddSection = () => {
       onFilter: (value, record) => {
         return record.subject.toLowerCase().includes(value.toLowerCase());
       },
+      render: (subject) => subject.map((sub) => sub.name).join(),
     },
     {
       title: "Class Teacher",
       dataIndex: "class_teacher",
+      align: "left",
       width: 150,
       sorter: (a, b) => a.class_teacher > b.class_teacher,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -225,6 +235,7 @@ const AddSection = () => {
       title: "Action",
       key: "action",
       dataIndex: "action",
+      align: "left",
       fixed: "right",
     },
   ];
@@ -250,8 +261,9 @@ const AddSection = () => {
     try {
       let res = await allClass(user._id, user.school, token);
       await setClassList(res);
-      // console.log(res);
+      console.log(res);
       await setTableClassSelectId(res[0]._id);
+      dispatch(setClass(res));
       // setLoading(true);
     } catch (err) {
       console.log(err);
@@ -267,7 +279,7 @@ const AddSection = () => {
           options.push({
             // value: res[0].list[i],
             // label: res[0].list[i],
-            value: res[i].name,
+            value: res[i]._id,
             label: res[i].name,
           });
         }
@@ -299,17 +311,19 @@ const AddSection = () => {
     }
     setisData(true);
     for (let i = 0; i < selectedClass.section.length; i++) {
-     data.push({
+      data.push({
         key: i,
         s_no: [i + 1],
         name: selectedClass.section[i].name,
         abbreviation: selectedClass.section[i].abbreviation,
-        subject: selectedClass.section[i].subject.toString(),
-        class_teacher: selectedClass.section[i].classTeacher && selectedClass.section[i].classTeacher.firstname,
+        subject: selectedClass.section[i].subject,
+        class_teacher:
+          selectedClass.section[i].classTeacher &&
+          selectedClass.section[i].classTeacher.firstname,
         action: (
           <h5 key={i + 1} className="mb-0">
             {permissions && permissions.includes("edit".trim()) && (
-              <Button 
+              <Button
                 className="btn-sm pull-right"
                 color="primary"
                 type="button"
@@ -326,7 +340,7 @@ const AddSection = () => {
                 type="button"
                 key={"delete" + i + 1}
               >
-                 <Popconfirm
+                <Popconfirm
                   title="Sure to delete?"
                   onConfirm={() =>
                     deleteSectionHandler(selectedClass.section[i]._id)
@@ -345,12 +359,20 @@ const AddSection = () => {
 
   const editData = (section) => {
     setEditing(true);
-    // console.log(section);
+    console.log(section);
 
     setEditingSectionName(section.name);
     setEditingAbbv(section.abbreviation);
     setEditingSectionId(section._id);
     setEditingClassId(section.class);
+    let data = [];
+    for (let i = 0; i < section.subject.length; i++) {
+      data.push({
+        label: section.subject[i].name,
+        value: section.subject[i]._id,
+      });
+    }
+    setInitialSubject(data);
   };
 
   const deleteSectionHandler = async (sectionId) => {
@@ -381,21 +403,31 @@ const AddSection = () => {
     e.preventDefault();
     const { user, token } = isAuthenticated();
     formData.set("school", user.school);
-    const classID = formData.get("class");
+    formData.set("class", clas);
+    console.log(clas);
     try {
       setAddLoading(true);
       const resp = await addSection(user._id, token, formData);
+      console.log(resp);
       sectionData.set("school", user.school);
       sectionData.set("section", resp._id);
-      await addClassToSection(user._id, classID, token, sectionData);
+      sectionData.set("id", clas);
+      const data = await addClassToSection(
+        user._id,
+        resp.class,
+        token,
+        sectionData
+      );
+      console.log(data);
       setReload(!reload);
       if (resp.err) {
-        setAddLoading(false); 
+        setAddLoading(false);
         return toast.error(resp.err);
       } else {
         toast.success(addSectionSuccess);
         setChecked(!checked);
-        setAddLoading(false)
+        setAddLoading(false);
+        setClas("");
       }
     } catch (err) {
       toast.error(addSectionError);
@@ -435,14 +467,7 @@ const AddSection = () => {
     }
   };
 
-  const Select = (props) => (
-    <FixRequiredSelect
-      {...props}
-      SelectComponent={BaseSelect}
-      options={props.options}
-    />
-  );
-
+  
   const handleEditSubmit = async () => {
     const formData = new FormData();
     formData.set("school", user.school);
@@ -462,7 +487,7 @@ const AddSection = () => {
     } catch (err) {
       console.log(err);
       toast.error("Edit Section Failed");
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -483,130 +508,130 @@ const AddSection = () => {
       />
       <Container className="mt--6" fluid>
         <Row>
-               <Col md="12" >
-               {
-                 addLoading ?(
-                   <Loader />
-                 ):(    permissions && permissions.includes("add") && (
-                  <div className="card-wrapper">
-                    <Card>
-                      <Row>
-                        <Col className="d-flex justify-content-center mt-2 ml-4">
-                          <form>
-                            <input
-                              type={"file"}
-                              id={"csvFileInput"}
-                              accept={".csv"}
-                              onChange={handleOnChange}
-                            />
-      
-                            <Button
-                              onClick={(e) => {
-                                handleOnSubmit(e);
-                              }}
-                              color="primary"
-                              className="mt-3"
+          <Col md="12">
+            {addLoading ? (
+              <Loader />
+            ) : (
+              permissions &&
+              permissions.includes("add") && (
+                <div className="card-wrapper">
+                  <Card>
+                    <Row>
+                      <Col className="d-flex justify-content-center mt-2 ml-4">
+                        <form>
+                          <input
+                            type={"file"}
+                            id={"csvFileInput"}
+                            accept={".csv"}
+                            onChange={handleOnChange}
+                          />
+
+                          <Button
+                            onClick={(e) => {
+                              handleOnSubmit(e);
+                            }}
+                            color="primary"
+                            className="mt-3"
+                          >
+                            IMPORT CSV
+                          </Button>
+                        </form>
+                      </Col>
+                    </Row>
+                    <Form onSubmit={handleFormChange} className="mb-4">
+                      <CardBody>
+                        <Row>
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
                             >
-                              IMPORT CSV
-                            </Button>
-                          </form>
-                        </Col>
-                      </Row>
-                      <Form onSubmit={handleFormChange} className="mb-4">
-                        <CardBody>
-                          <Row>
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Class
-                              </label>
-                              <Input
-                                id="example4cols2Input"
-                                type="select"
-                                onChange={handleChange("class")}
-                                required
-                              >
-                                <option value="" disabled selected>
-                                  Select Class
+                              Class
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              type="select"
+                              onChange={(e) => setClas(e.target.value)}
+                              required
+                              value={clas}
+                            >
+                              <option value="" disabled selected>
+                                Select Class
+                              </option>
+                              {classList?.map((clas, index) => (
+                                <option key={index} value={clas._id}>
+                                  {clas.name}
                                 </option>
-                                {classList?.map((clas, index) => (
-                                  <option key={index} value={clas._id}>
-                                    {clas.name}
-                                  </option>
-                                ))}
-                              </Input>
-                            </Col>
-                        
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Section
-                              </label>
-                              <Input
-                                id="example4cols2Input"
-                                placeholder="Section"
-                                type="text"
-                                onChange={handleChange("name")}
-                                required
-                              />
-                            </Col>
-                          </Row>
-      
-                          <Row className="mt-4">
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Section Abbreviation
-                              </label>
-                              <Input
-                                id="example4cols2Input"
-                                placeholder="Section Abbreviation"
-                                type="text"
-                                onChange={handleChange("abbreviation")}
-                                required
-                              />
-                            </Col>
-                   
-                            <Col>
-                              <label
-                                className="form-control-label"
-                                htmlFor="example4cols2Input"
-                              >
-                                Subject
-                              </label>
-                              <Select
-                                isMulti
-                                name="colors"
-                                options={roleOptions}
-                                onChange={handleSubjectChange}
-                                className="basic-multi-select"
-                                classNamePrefix="select"
-                                required
-                              />
-                            </Col>
-                          </Row>
-                          <Row className="mt-4 float-right">
-                            <Col>
-                              <Button color="primary" type="submit">
-                                Submit
-                              </Button>
-                            </Col>
-                          </Row>
-                        </CardBody>
-                      </Form>
-                    </Card>
-                  </div>
-             ))
-              
-             }
+                              ))}
+                            </Input>
+                          </Col>
+
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Section
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Section"
+                              type="text"
+                              onChange={handleChange("name")}
+                              required
+                            />
+                          </Col>
+                        </Row>
+
+                        <Row className="mt-4">
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Section Abbreviation
+                            </label>
+                            <Input
+                              id="example4cols2Input"
+                              placeholder="Section Abbreviation"
+                              type="text"
+                              onChange={handleChange("abbreviation")}
+                              required
+                            />
+                          </Col>
+
+                          <Col>
+                            <label
+                              className="form-control-label"
+                              htmlFor="example4cols2Input"
+                            >
+                              Subject
+                            </label>
+                            <Select
+                              isMulti
+                              name="colors"
+                              options={roleOptions}
+                              onChange={handleSubjectChange}
+                              className="basic-multi-select"
+                              classNamePrefix="select"
+                              required
+                            />
+                          </Col>
+                        </Row>
+                        <Row className="mt-4 float-right">
+                          <Col>
+                            <Button color="primary" type="submit">
+                              Submit
+                            </Button>
+                          </Col>
+                        </Row>
+                      </CardBody>
+                    </Form>
+                  </Card>
+                </div>
+              )
+            )}
           </Col>
-       
 
           <Col>
             <div className="card-wrapper">
@@ -647,15 +672,16 @@ const AddSection = () => {
                     Print
                   </Button>
                   {!loading && sectionList ? (
-                    isData?(  <AntTable
-                      columns={columns}
-                      data={sectionList}
-                      pagination={true}
-                      exportFileName="SectionDetails"
-                    />):(
-                      <h3 style={{width:"100%"}} >No section found</h3>
+                    isData ? (
+                      <AntTable
+                        columns={columns}
+                        data={sectionList}
+                        pagination={true}
+                        exportFileName="SectionDetails"
+                      />
+                    ) : (
+                      <h3 style={{ width: "100%" }}>No section found</h3>
                     )
-                  
                   ) : (
                     <Loader />
                   )}
@@ -752,6 +778,7 @@ const AddSection = () => {
                   className="basic-multi-select"
                   classNamePrefix="select"
                   required
+                  defaultValue={initialSubject}
                 />
               </Col>
             </Row>

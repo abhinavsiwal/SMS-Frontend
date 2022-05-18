@@ -48,7 +48,7 @@ const DepartmentHead = () => {
       const payload = { school: user.school };
 
       const staffData = await getNonHeads(user.school, user._id);
-      // console.log("staffData", staffData);
+      console.log(staffData);
       if (staffData.err) {
         return toast.error(staffData.err);
       }
@@ -101,7 +101,6 @@ const DepartmentHead = () => {
         toast.success("Primary Head Removed");
         setChecked(!checked);
         setLoading(false);
-        
       } catch (err) {
         console.log(err);
         toast.error("Error in Removing Primary Head");
@@ -185,7 +184,7 @@ const DepartmentHead = () => {
         );
         // console.log(data1);
         toast.success("Secondary Head Removed");
-        setChecked(!checked)
+        setChecked(!checked);
         setLoading(false);
       } catch (err) {
         console.log(err);
@@ -293,11 +292,15 @@ const DepartmentHead = () => {
                               )}
 
                               {staff &&
-                                staff.map((tech) => (
-                                  <option key={tech._id} value={tech._id}>
-                                    {tech.firstname} {tech.lastname}
-                                  </option>
-                                ))}
+                                staff.map((tech) => {
+                                  if (tech.department._id === clas._id) {
+                                    return (
+                                      <option key={tech._id} value={tech._id}>
+                                        {tech.firstname} {tech.lastname}
+                                      </option>
+                                    );
+                                  }
+                                })}
                             </Input>
                           </td>
                           <td>
@@ -329,12 +332,16 @@ const DepartmentHead = () => {
                               )}
 
                               {staff &&
-                                staff.map((tech) => (
-                                  <option key={tech._id} value={tech._id}>
-                                    {tech.firstname} {tech.lastname}
-                                  </option>
-                                ))}
-                            </Input>
+                                staff.map((tech) => {
+                                  if (tech.department._id === clas._id) {
+                                    return (
+                                      <option key={tech._id} value={tech._id}>
+                                        {tech.firstname} {tech.lastname}
+                                      </option>
+                                    );
+                                  }
+                                })}
+                            </Input>  
                           </td>
                         </tr>
                       ))}
