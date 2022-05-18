@@ -605,7 +605,7 @@ const StaffAttendance = () => {
                 </CardHeader>
                 <CardBody>
                   {staff.length === 0 && (
-                    <h3 style={{ padding: "10px" }}>No Student Data Found</h3>
+                    <h3 style={{ padding: "10px" }}>No Staff Data Found</h3>
                   )}
                   <div className="attendance_main_div">
                     <table>
@@ -746,7 +746,7 @@ const StaffAttendance = () => {
             textColor="#676767"
             text="Please Wait..."
           ></LoadingScreen>
-          {staff.length > 0 ? (
+          {attendanceData.length > 0 ? (
             <>
               <div className="model_table_main">
                 <Table className="model_table" bordered>
@@ -832,7 +832,7 @@ const StaffAttendance = () => {
               </div>
             </>
           ) : (
-            <h2>No Student Data is Found</h2>
+            <h2>No Staff Data is Found</h2>
           )}
         </ModalBody>
       </Modal>
@@ -920,7 +920,7 @@ const StaffAttendance = () => {
                         );
                       })
                     ) : (
-                      <h3>No Student Data is Found</h3>
+                      <h3>No Staff Data is Found</h3>
                     )}
                   </tbody>
                 </Table>
