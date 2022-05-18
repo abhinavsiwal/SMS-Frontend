@@ -223,8 +223,8 @@ const AddSubject = () => {
         // console.log(inputFields[key].subjectName);
         list.push(inputFields[key].subjectName);
       }
-      // console.log(list);
-      formData.set("list", JSON.stringify(list));
+      console.log(list);
+      formData.set("list", list);
     }
 
     try {
@@ -376,7 +376,7 @@ const AddSubject = () => {
       
             let subject1 = JSON.stringify(subject);
            
-            return <p>{subject}</p>;
+            return <p>{subject1}</p>;
           })}
         </>
       ),
@@ -489,7 +489,7 @@ const AddSubject = () => {
     setGroupEditing(true);
     setEditGroupName(data.name);
     setEditGroupId(data._id);
-    let subjects = data.list;
+    let subjects = JSON.parse(data.list);
     let subjects1 = [];
     for (let i = 0; i < subjects.length; i++) {
       subjects1.push({ subjectName: subjects[i] });
