@@ -19,10 +19,10 @@ function Admin() {
     mainContentRef.current.scrollTop = 0;
   }, [location]);
 
-  // console.log(user);
   // console.log(adminRoutes);
-
+  
   useEffect(() => {
+    console.log(user);
     if(!user){
       return;
     }
@@ -135,7 +135,7 @@ function Admin() {
   return (
     <>
       <Sidebar
-        routes={routes}
+        routes={permittedRoute}
         toggleSidenav={toggleSidenav}
         sidenavOpen={sidenavOpen}
         logo={{

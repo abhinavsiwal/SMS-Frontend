@@ -486,10 +486,11 @@ const AddSubject = () => {
   };
 
   const groupRowHandler = (data) => {
+    console.log(data);
     setGroupEditing(true);
     setEditGroupName(data.name);
     setEditGroupId(data._id);
-    let subjects = JSON.parse(data.list);
+    let subjects = data.list;
     let subjects1 = [];
     for (let i = 0; i < subjects.length; i++) {
       subjects1.push({ subjectName: subjects[i] });
