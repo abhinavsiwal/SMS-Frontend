@@ -103,6 +103,15 @@ export const adminRoutes = [
         layout: "/admin",
         permission: "view",
       },
+      {
+        path: "/staff-attendance",
+        name: "Staff Attendance",
+        miniName: "S",
+        component: StaffAttendance,
+        layout: "/admin",
+        permission:"add",
+      },
+    
     ],
   },
   {
