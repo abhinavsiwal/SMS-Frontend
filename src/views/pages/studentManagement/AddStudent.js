@@ -148,6 +148,7 @@ function AddStudent() {
   const [pincode, setPincode] = useState("");
   const [pincodeError, setPincodeError] = useState(false);
   const { user, token } = isAuthenticated();
+  const [imagesPreview, setImagesPreview] = useState();
 
   useEffect(() => {
     getAllClasses();
@@ -381,6 +382,14 @@ function AddStudent() {
     formData.set(name, event.target.files[0]);
     // console.log("aa", event.target.files[0]);
     setStudentData({ ...studentData, [name]: event.target.files[0] });
+    setImage(event.target.files[0]);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   //Delete Fields
@@ -698,7 +707,16 @@ function AddStudent() {
                     <h2>File {studentData.photo.name} is Selected</h2>
                   )}
                   <Row md="4" className="d-flex justify-content-center mb-4">
-                    <Col md="8" style={{zIndex:"1"}} >
+                  <Col>
+                      <img
+                        src={imagesPreview && imagesPreview}
+                        alt="Preview"
+                        className="mt-3 me-2"
+                        width="80"
+                        height="80"
+                      />
+                    </Col>
+                    <Col md="6" style={{zIndex:"1"}} >
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"

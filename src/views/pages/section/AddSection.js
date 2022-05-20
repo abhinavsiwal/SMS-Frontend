@@ -58,7 +58,7 @@ const AddSection = () => {
   const [checked, setChecked] = useState(false);
   const [sessions, setSessions] = useState([]);
   const { user, token } = isAuthenticated();
-  const [tableClassSelectId, setTableClassSelectId] = useState("");
+  const [tableClassSelectId, setTableClassSelectId] = useState("empty");
   const [file, setFile] = useState();
   const [editing, setEditing] = useState(false);
   const fileReader = new FileReader();
@@ -262,7 +262,6 @@ const AddSection = () => {
       let res = await allClass(user._id, user.school, token);
       await setClassList(res);
       console.log(res);
-      await setTableClassSelectId(res[0]._id);
       dispatch(setClass(res));
       // setLoading(true);
     } catch (err) {
@@ -300,6 +299,12 @@ const AddSection = () => {
   const tableData = async () => {
     // console.log(tableClassSelectId);
     // console.log(classList);
+    if(tableClassSelectId==="empty"){
+      setisData(false);
+      return;
+    }
+
+
     let selectedClass = await classList.find(
       (clas) => clas._id === tableClassSelectId
     );
@@ -652,7 +657,7 @@ const AddSection = () => {
                         required
                         value={tableClassSelectId}
                       >
-                        <option value="" disabled selected>
+                        <option value="empty">
                           Select Class
                         </option>
                         {classList?.map((clas, index) => (
