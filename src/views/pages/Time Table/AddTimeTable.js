@@ -183,17 +183,6 @@ function AddTimeTable() {
         setShowLoad(false);
         return toast.error("TimeTable is Already Created");
       } else {
-        sessions.map((data) => {
-          if (data.status === "current") {
-            // formData.set("session", data._id);
-            var working_days = [];
-            for (var i = 0; i < data.working_days; i++) {
-              working_days.push(days[i]);
-            }
-            setDays(working_days);
-            setCurrentSession(data._id);
-          }
-        });
         setShowLoad(false);
         setStep(1);
       }
@@ -373,29 +362,46 @@ function AddTimeTable() {
     setShowLoad(true);
     e.preventDefault();
     var formdata = new FormData();
-    formdata.set("lecture", JSON.stringify(myObj));
-    formdata.set("session", currentSession);
-    formdata.set("class", selectedClass._id);
-    formdata.set("section", selectedSection._id);
-    formdata.set("timeSlots", JSON.stringify(periodArrayMain));
-    formdata.set("working_day", JSON.stringify(days));
-    const { user, token } = isAuthenticated();
-    formdata.set("school", user.school);
-    try {
-      const timetable = await createTimeTable(user._id, token, formdata);
-      if (timetable.err) {
+    var checker = true;
+    await days.map(async (data) => {
+      await periodArrayMain.map(async (data2) => {
+        if (data2 && data2.name && data2.name === "Lunch") {
+        } else {
+          console.log(Object.keys(myObj[data][data2]).length !== 0);
+          if (Object.keys(myObj[data][data2]).length !== 0) {
+            checker = false;
+          }
+        }
+      });
+    });
+    if (checker === false) {
+      formdata.set("lecture", JSON.stringify(myObj));
+      formdata.set("session", currentSession);
+      formdata.set("class", selectedClass._id);
+      formdata.set("section", selectedSection._id);
+      formdata.set("timeSlots", JSON.stringify(periodArrayMain));
+      formdata.set("working_day", JSON.stringify(days));
+      const { user, token } = isAuthenticated();
+      formdata.set("school", user.school);
+      try {
+        const timetable = await createTimeTable(user._id, token, formdata);
+        if (timetable.err) {
+          setShowLoad(false);
+          toast.error(timetable.err);
+        } else {
+          setShowLoad(false);
+          toast.success("TimeTable Create SuccessFully!");
+          setTimeout(() => {
+            window.location.reload(1);
+          }, 1000);
+        }
+      } catch (err) {
         setShowLoad(false);
-        toast.error(timetable.err);
-      } else {
-        setShowLoad(false);
-        toast.success("TimeTable Create SuccessFully!");
-        setTimeout(() => {
-          window.location.reload(1);
-        }, 1000);
+        toast.error("Something Went Wrong!");
       }
-    } catch (err) {
+    } else {
       setShowLoad(false);
-      toast.error("Something Went Wrong!");
+      toast.error("Fill Same Fields First!");
     }
   };
 

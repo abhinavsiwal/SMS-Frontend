@@ -287,6 +287,9 @@ const StaffAttendance = () => {
         setModal(false);
         setAddLoading(false);
         setAddAttendance([]);
+        setTimeout(() => {
+          window.location.reload(1);
+        }, 1000);
       }
     } catch (err) {
       console.log(err);
@@ -361,9 +364,9 @@ const StaffAttendance = () => {
           setModel2Loading(false);
           setEditPart(false);
           toast.success("Update Attendance is Done!");
-          // setTimeout(() => {
-          //   window.location.reload(1);
-          // }, 1000);
+          setTimeout(() => {
+            window.location.reload(1);
+          }, 1000);
         }
       } catch (error) {
         setModel2Loading(false);

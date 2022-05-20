@@ -53,6 +53,7 @@ const AddSession = () => {
   const [editSessionId, setEditSessionId] = useState("");
   const [feesmethod, setFeesmethod] = useState("");
   const [dateExpire, setDateExpire] = useState(false);
+  const [date, setDate] = useState(new Date());
   const [sessionData, setSessionData] = useState({
     name: "",
     start_date: "",
@@ -107,8 +108,8 @@ const AddSession = () => {
             data.push({
               key: i,
               session: res[i].name,
-              start_date: res[i].start_date.split("T")[0],
-              end_date: res[i].start_date.split("T")[0],
+              start_date: moment(res[i].start_date).format("DD-MM-YYYY"),
+              end_date: moment(res[i].end_date).format("DD-MM-YYYY"),
               working_days: res[i].working_days,
               working_time: res[i].working_time,
               year: res[i].year,
@@ -127,7 +128,7 @@ const AddSession = () => {
                           res[i].name,
                           res[i].fees_method,
                           res[i].start_date.split("T")[0],
-                          res[i].start_date.split("T")[0],
+                          res[i].end_date.split("T")[0],
                           res[i].working_days
                         )
                       }
@@ -183,7 +184,8 @@ const AddSession = () => {
   }
 
   //Edit Session
-  const handleEditSubmit = async () => {
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
     // console.log("clicked");
     const { user, token } = isAuthenticated();
     let formData = new FormData();
@@ -201,12 +203,18 @@ const AddSession = () => {
         token,
         formData
       );
+      console.log(updateSession);
       // console.log("updateDepartments", updateSession);
-      setEditing(false);
-      if (checked === false) {
-        setChecked(true);
+      if (updateSession.err) {
+        setEditing(false);
+        toast.error(updateSession.err);
       } else {
-        setChecked(false);
+        setEditing(false);
+        if (checked === false) {
+          setChecked(true);
+        } else {
+          setChecked(false);
+        }
       }
     } catch (err) {
       toast.error(err);
@@ -237,7 +245,7 @@ const AddSession = () => {
     {
       title: "Session",
       dataIndex: "session",
-      align:"left",
+      align: "left",
       // width: 150,
       width: "20%",
       sorter: (a, b) => a.session > b.session,
@@ -269,7 +277,7 @@ const AddSession = () => {
     {
       title: "Fees Method",
       key: "fees_method",
-      align:"left",
+      align: "left",
       dataIndex: "fees_method",
       sorter: (a, b) => a.fees_method > b.fees_method,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
@@ -300,7 +308,7 @@ const AddSession = () => {
     {
       title: "Start Date",
       dataIndex: "start_date",
-      align:"left",
+      align: "left",
       // width: 150,
       width: "20%",
       sorter: (a, b) => a.start_date > b.start_date,
@@ -332,7 +340,7 @@ const AddSession = () => {
     {
       title: "End Date",
       dataIndex: "end_date",
-      align:"left",
+      align: "left",
       width: "20%",
       // width: 150,
       sorter: (a, b) => a.end_date > b.end_date,
@@ -364,37 +372,13 @@ const AddSession = () => {
     {
       title: "Working Days",
       dataIndex: "working_days",
-      align:"left",
+      align: "left",
       // width: 150,
       sorter: (a, b) => a.working_days > b.working_days,
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
-        return (
-          <>
-            <Input
-              autoFocus
-              placeholder="Type text here"
-              value={selectedKeys[0]}
-              onChange={(e) => {
-                setSelectedKeys(e.target.value ? [e.target.value] : []);
-                confirm({ closeDropdown: false });
-              }}
-              onBlur={() => {
-                confirm();
-              }}
-            ></Input>
-          </>
-        );
-      },
-      filterIcon: () => {
-        return <SearchOutlined />;
-      },
-      onFilter: (value, record) => {
-        return record.working_days.toLowerCase().includes(value.toLowerCase());
-      },
     },
     {
       title: "Working Time",
-      align:"left",
+      align: "left",
       dataIndex: "working_time",
       // width: 150,
       width: "10%",
@@ -427,7 +411,7 @@ const AddSession = () => {
     {
       title: "Year",
       dataIndex: "year",
-      align:"left",
+      align: "left",
       width: "20%",
       // width: 150,
       sorter: (a, b) => a.year > b.year,
@@ -462,7 +446,7 @@ const AddSession = () => {
       key: "action",
       dataIndex: "action",
       fixed: "right",
-      align:"left",
+      align: "left",
     },
   ];
 
@@ -470,6 +454,16 @@ const AddSession = () => {
   const handleChange = (name) => (event) => {
     formData.set(name, event.target.value);
     setSessionData({ ...sessionData, [name]: event.target.value });
+  };
+
+  const handleDate = (name) => (event) => {
+    formData.set(name, event.target.value);
+    setDate(event.target.value);
+    setSessionData({
+      ...sessionData,
+      [name]: event.target.value,
+      end_date: "",
+    });
   };
 
   //Final Submit
@@ -560,8 +554,9 @@ const AddSession = () => {
                         <Input
                           id="example-date-input"
                           type="date"
-                          onChange={handleChange("start_date")}
+                          onChange={handleDate("start_date")}
                           required
+                          placeholder="dd-mm-yyyy"
                           value={sessionData.start_date}
                         />
                       </Col>
@@ -578,6 +573,8 @@ const AddSession = () => {
                           id="example-date-input"
                           value={sessionData.end_date}
                           type="date"
+                          min={moment(date).format("YYYY-MM-DD")}
+                          placeholder="dd-mm-yyyy"
                           onChange={handleChange("end_date")}
                           required
                         />
@@ -594,6 +591,8 @@ const AddSession = () => {
                         <Input
                           id="example-date-input"
                           type="number"
+                          max="7"
+                          min="1"
                           onChange={handleChange("working_days")}
                           value={sessionData.working_days}
                           placeholder="Working Days"
@@ -630,6 +629,7 @@ const AddSession = () => {
                         </label>
                         <select
                           required
+                          value={sessionData.fees_method}
                           className="form-control"
                           onChange={handleChange("fees_method")}
                         >
@@ -708,22 +708,24 @@ const AddSession = () => {
                         />
                       </div>
                     ) : (
-                      <Table
-                        style={{ whiteSpace: "pre" }}
-                        columns={columns}
-                        dataSource={sessionList}
-                        pagination={{
-                          pageSizeOptions: [
-                            "5",
-                            "10",
-                            "30",
-                            "60",
-                            "100",
-                            "1000",
-                          ],
-                          showSizeChanger: true,
-                        }}
-                      />
+                      <div className="main_table_div_session">
+                        <Table
+                          style={{ whiteSpace: "pre" }}
+                          columns={columns}
+                          dataSource={sessionList}
+                          pagination={{
+                            pageSizeOptions: [
+                              "5",
+                              "10",
+                              "30",
+                              "60",
+                              "100",
+                              "1000",
+                            ],
+                            showSizeChanger: true,
+                          }}
+                        />
+                      </div>
                     )
                   ) : (
                     <Loader />
@@ -753,120 +755,125 @@ const AddSession = () => {
               <span aria-hidden={true}>×</span>
             </button>
           </div>
-          <ModalBody>
-            <Row>
-              <Col>
-                <label className="form-control-label">Session Name</label>
-                <Input
-                  id="form-department-name"
-                  value={editSessionName}
-                  onChange={(e) => setEditSessionName(e.target.value)}
-                  placeholder="School Address"
-                  type="text"
-                />
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col>
-                <label
-                  className="form-control-label"
-                  htmlFor="example-date-input"
-                >
-                  Starting Date
-                </label>
-                <Input
-                  id="example-date-input"
-                  type="date"
-                  onChange={(e) => setEditStartDate(e.target.value)}
-                  required
-                  value={editStartDate}
-                />
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col>
-                <label
-                  className="form-control-label"
-                  htmlFor="example-date-input"
-                >
-                  Ending Date
-                </label>
-                <Input
-                  id="example-date-input"
-                  value={editEndDate}
-                  type="date"
-                  onChange={(e) => setEditEndDate(e.target.value)}
-                  required
-                />
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col>
-                <label
-                  className="form-control-label"
-                  htmlFor="example-date-input"
-                >
-                  Working Days
-                </label>
-                <Input
-                  id="example-date-input"
-                  value={editWorkingDay}
-                  type="number"
-                  onChange={(e) => setEditWorkingDay(e.target.value)}
-                  required
-                  placeholder="Working Days"
-                />
-              </Col>
-            </Row>
-            <Row className="mt-4">
-              <Col>
-                <label
-                  className="form-control-label"
-                  htmlFor="example-date-input"
-                >
-                  Working Time
-                </label>
-                <DatePicker
-                  id="exampleFormControlSelect3"
-                  className="Period-Time"
-                  selected={editWorkingTime}
-                  onChange={(date) => setEditWorkingTime(date)}
-                  showTimeSelect
-                  showTimeSelectOnly
-                  timeIntervals={15}
-                  timeCaption="Time"
-                  dateFormat="h:mm aa"
-                />
-              </Col>
-              {dateExpire && (
+          <Form onSubmit={handleEditSubmit}>
+            <ModalBody>
+              <Row>
+                <Col>
+                  <label className="form-control-label">Session Name</label>
+                  <Input
+                    id="form-department-name"
+                    value={editSessionName}
+                    onChange={(e) => setEditSessionName(e.target.value)}
+                    placeholder="School Address"
+                    type="text"
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-4">
                 <Col>
                   <label
                     className="form-control-label"
                     htmlFor="example-date-input"
                   >
-                    Fees Method
+                    Starting Date
                   </label>
-                  <select
+                  <Input
+                    id="example-date-input"
+                    type="date"
+                    onChange={(e) => setEditStartDate(e.target.value)}
                     required
-                    value={feesmethod}
-                    className="form-control"
-                    onChange={(e) => setFeesmethod(e.target.value)}
-                  >
-                    <option value="">Select Fees Method</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="quarterly">Quarterly</option>
-                    <option value="half_yearly">Half-Yearly</option>
-                    <option value="yearly">Yearly</option>
-                  </select>
+                    value={editStartDate}
+                  />
                 </Col>
-              )}
-            </Row>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="success" type="button" onClick={handleEditSubmit}>
-              Save changes
-            </Button>
-          </ModalFooter>
+              </Row>
+              <Row className="mt-4">
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example-date-input"
+                  >
+                    Ending Date
+                  </label>
+                  <Input
+                    id="example-date-input"
+                    value={editEndDate}
+                    type="date"
+                    min={moment(editStartDate).format("YYYY-MM-DD")}
+                    onChange={(e) => setEditEndDate(e.target.value)}
+                    required
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-4">
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example-date-input"
+                  >
+                    Working Days
+                  </label>
+                  <Input
+                    id="example-date-input"
+                    value={editWorkingDay}
+                    type="number"
+                    max="7"
+                    min="1"
+                    onChange={(e) => setEditWorkingDay(e.target.value)}
+                    required
+                    placeholder="Working Days"
+                  />
+                </Col>
+              </Row>
+              <Row className="mt-4">
+                <Col>
+                  <label
+                    className="form-control-label"
+                    htmlFor="example-date-input"
+                  >
+                    Working Time
+                  </label>
+                  <DatePicker
+                    id="exampleFormControlSelect3"
+                    className="Period-Time"
+                    selected={editWorkingTime}
+                    onChange={(date) => setEditWorkingTime(date)}
+                    showTimeSelect
+                    showTimeSelectOnly
+                    timeIntervals={15}
+                    timeCaption="Time"
+                    dateFormat="h:mm aa"
+                  />
+                </Col>
+                {dateExpire && (
+                  <Col>
+                    <label
+                      className="form-control-label"
+                      htmlFor="example-date-input"
+                    >
+                      Fees Method
+                    </label>
+                    <select
+                      required
+                      value={feesmethod}
+                      className="form-control"
+                      onChange={(e) => setFeesmethod(e.target.value)}
+                    >
+                      <option value="">Select Fees Method</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="half_yearly">Half-Yearly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+                  </Col>
+                )}
+              </Row>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="success" type="submit">
+                Save changes
+              </Button>
+            </ModalFooter>
+          </Form>
         </Modal>
       </Container>
     </>
