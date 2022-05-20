@@ -85,6 +85,7 @@ function UpdateStaff({ staffDetails }) {
     subject: staffDetails.subject,
     session: staffDetails.session._id,
     job_description: staffDetails.job_description,
+    tempPhoto:staffDetails.tempPhoto
   });
   const [subjectData, setSubjectData] = useState();
   const [sessions, setSessions] = useState([]);
@@ -109,6 +110,7 @@ function UpdateStaff({ staffDetails }) {
   const [contactPincode, setContactPincode] = useState(
     staffDetails.contact_person_pincode
   );
+  const [imagesPreview, setImagesPreview] = useState(staffDetails.tempPhoto);
   const [contactPincodeError, setContactPincodeError] = useState(false);
   const { user, token } = isAuthenticated();
   // console.log("staff", staffData);
@@ -170,6 +172,14 @@ function UpdateStaff({ staffDetails }) {
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
     setStaffData({ ...staffData, [name]: event.target.files[0].name });
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
+
   };
 
   const handleSubjectChange = (e) => {
@@ -516,12 +526,12 @@ function UpdateStaff({ staffDetails }) {
                     </Col>
                     <Col>
                       <img
-                        src={staffData.image}
+                        src={imagesPreview}
                         placeholder={staffData.firstname}
                         style={{ height: "100px", width: "100px" }}
                       />
                     </Col>
-                  </Row>
+                  </Row> 
                   <Row>
                     <Col>
                       <label

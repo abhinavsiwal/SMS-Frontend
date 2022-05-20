@@ -129,6 +129,8 @@ function AddStaff() {
   const [capturePhoto, setCapturePhoto] = useState(false);
   const [dateOfJoining, setDateOfJoining] = useState();
   const [dateOfBirth, setDateOfBirth] = useState();
+  const [imagesPreview, setImagesPreview] = useState();
+
   useEffect(() => {
     getAllRolesHandler();
     getSession();
@@ -164,6 +166,13 @@ function AddStaff() {
     // console.log(event.target.files[0]);
     setStaffData({ ...staffData, [name]: event.target.files[0] });
     setImage(event.target.files[0]);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   //react-select
@@ -453,9 +462,11 @@ function AddStaff() {
   };
   const pincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
-    if (regex.test(pincode)) {
+    if (pincode.length===6) {
+      console.log("herre");
       setPincodeError(false);
     } else {
+      console.log("herrsadasdadse");
       setPincodeError(true);
     }
   };
@@ -560,12 +571,18 @@ function AddStaff() {
             {step === 0 && (
               <Form onSubmit={handleFormChange} className="mb-4">
                 <CardBody>
-                  {staffData.photo.name && (
-                    <h2>File {staffData.photo.name} is Selected</h2>
-                  )}
-                  {capturePhoto && <h2>Photo is Selected</h2>}
-                  <Row md="4" className="d-flex justify-content-center mb-4">
-                    <Col md="8" style={{zIndex:"1"}}  >
+                 
+                  <Row md="4" className="d-flex mb-4">
+                    <Col>
+                      <img
+                        src={imagesPreview && imagesPreview}
+                        alt="Preview"
+                        className="mt-3 me-2"
+                        width="80"
+                        height="80"
+                      />
+                    </Col>
+                    <Col md="6" style={{ zIndex: "1" }}>
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"
