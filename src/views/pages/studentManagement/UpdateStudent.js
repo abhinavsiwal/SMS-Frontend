@@ -85,6 +85,7 @@ function UpdateStudent({ studentDetails }) {
   const [fatherPhoneError, setFatherPhoneError] = useState(false);
   const [motherPhoneError, setMotherPhoneError] = useState(false);
   const [aadharError, setAadharError] = useState(false);
+  const [imagesPreview, setImagesPreview] = useState(studentDetails.tempPhoto);
   const [student, setStudent] = useState({
     _id: studentDetails._id,
     image: studentDetails.image,
@@ -115,7 +116,7 @@ function UpdateStudent({ studentDetails }) {
     nationality: studentDetails.nationality,
     mother_tongue: studentDetails.mother_tongue,
     guardian_name: studentDetails.guardian_name,
-    guardian_email:studentDetails.guardian_email,
+    guardian_email: studentDetails.guardian_email,
     guardian_last_name: studentDetails.guardian_last_name,
     guardian_dob: studentDetails.guardian_dob,
     guardian_blood_group: studentDetails.guardian_blood_group,
@@ -147,6 +148,7 @@ function UpdateStudent({ studentDetails }) {
     mother_mother_tongue: studentDetails.mother_mother_tongue,
     parent_email: studentDetails.parent_email,
     parent_address: studentDetails.parent_address,
+    tempPhoto: studentDetails.tempPhoto,
   });
 
   const phoneBlurHandler = () => {
@@ -268,19 +270,14 @@ function UpdateStudent({ studentDetails }) {
     try {
       setLoading(true);
       const classess = await allClass(user._id, user.school, token);
-      // console.log("classes", classess);
+      console.log("classes", classess);
       if (classess.err) {
         setLoading(false);
         return toast.error(classess.err);
       }
-      setClassList(classess);
-      let selectedClass1 = classess.find(
-        (item) => item._id.toString() === student.class.toString()
-      );
-      setSelectedClass(selectedClass1);
-      // setLoading(true);
-      // toast.success(fetchingClassSuccess)
       setLoading(false);
+      setClassList(classess);
+   
     } catch (err) {
       toast.error("Fetching Classes Failed");
     }
@@ -308,6 +305,13 @@ function UpdateStudent({ studentDetails }) {
   const handleFileChange = (name) => (event) => {
     formData.set(name, event.target.files[0]);
     setStudent({ ...student, [name]: event.target.files[0].name });
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   const handleDeleteFields = (name) => {
@@ -512,10 +516,11 @@ function UpdateStudent({ studentDetails }) {
                           Select file
                         </label>
                       </div>
+                    
                     </Col>
                     <Col>
                       <img
-                        src={studentDetails.image}
+                        src={imagesPreview}
                         placeholder={studentDetails.firstname}
                         style={{ height: "100px", width: "100px" }}
                       />

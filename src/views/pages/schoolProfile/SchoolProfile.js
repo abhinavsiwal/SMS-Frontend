@@ -164,6 +164,7 @@ function SchoolProfile() {
         fax_no: "",
         affiliate_board: data.affiliate_board,
       });
+      setImagesPreview(data.photo)
       setLoading(false);
     } catch (err) {
       console.log(err);
