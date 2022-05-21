@@ -371,16 +371,24 @@ export const adminRoutes = [
     module: "Ecommerce",
     views: [
       {
-        path: "/add-cart",
+        path: "/add-products",
         name: "Add Product",
         miniName: "A",
         component: Addproduct,
         layout: "/admin",
-        permission: "add",
+        permission: "admin",
       },
       {
-        path: "/viewCart",
-        name: "View Product",
+        path: "/view-all-products",
+        name: "View All Products",
+        miniName: "A",
+        component: AllProducts,
+        layout: "/admin",
+        permission: "admin",
+      },
+      {
+        path: "/view-products",
+        name: "View Products",
         miniName: "V",
         component: Viewproduct,
         layout: "/admin",
@@ -401,7 +409,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddShelf, 
         layout: "/admin",
-        permission: "add",
+        permission: "admin",
       },
       {
         path: "/add-books",
@@ -409,7 +417,7 @@ export const adminRoutes = [
         miniName: "V",
         component: AddBooks,
         layout: "/admin",
-        permission: "add",
+        permission: "admin",
       },
       {
         path: "/book-allocations",
@@ -417,7 +425,7 @@ export const adminRoutes = [
         miniName: "V",
         component: AllocationManager,
         layout: "/admin",
-        permission: "add",
+        permission: "admin",
       },
       {
         path: "/view-allocations",
@@ -425,7 +433,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewAllocations,
         layout: "/admin",
-        permission: "view",
+        permission: "admin",
       },
     ],
   },
@@ -450,7 +458,7 @@ export const adminRoutes = [
         miniName: "a",
         component: ViewLeaves,
         layout: "/admin",
-        permission: "view",
+        permission: "admin",
       },
       {
         path: "/view-allleaves",
@@ -458,7 +466,7 @@ export const adminRoutes = [
         miniName: "a",
         component: ViewAllLeaves,
         layout: "/admin",
-        permission: "view",
+        permission: "edit",
       },
     
     ],

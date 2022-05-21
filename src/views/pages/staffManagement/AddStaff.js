@@ -513,6 +513,7 @@ function AddStaff() {
 
   return (
     <>
+      <SimpleHeader name="Add Staff" parentName="Staff Management" />
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
