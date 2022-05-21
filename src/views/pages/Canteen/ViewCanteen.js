@@ -474,23 +474,25 @@ function ViewCanteen() {
                 <i className="fas fa-user-edit" />
               </Button>
             )}
+
             {permission1 && permission1.includes("delete") && (
               <Button
-                className="btn-sm pull-right"
-                color="danger"
-                type="button"
-                key={"delete" + i + 1}
+              className="btn-sm pull-right"
+              color="danger"
+              type="button"
+              key={"delete" + i + 1}
+            >
+              <Popconfirm
+                title="Sure to delete?"
+                onConfirm={() =>
+                  deleteMenuItemHandler(selectedCanteen.menu[i]._id)
+                }
               >
-                <Popconfirm
-                  title="Sure to delete?"
-                  onConfirm={() =>
-                    deleteMenuItemHandler(selectedCanteen.menu[i]._id)
-                  }
-                >
-                  <i className="fas fa-trash" />
-                </Popconfirm>
-              </Button>
+                <i className="fas fa-trash" />
+              </Popconfirm>
+            </Button>
             )}
+            
           </h5>
         ),
       });
@@ -544,7 +546,7 @@ function ViewCanteen() {
 
   //Value for image
   const handleFileChange = (name) => (event) => {
-    setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
+    setAddMenu({ ...addMenu, [name]: event.target.files[0] });
     const reader = new FileReader();
     reader.onload = () => {
       if (reader.readyState === 2) {
