@@ -86,6 +86,10 @@ function UpdateStudent({ studentDetails }) {
   const [motherPhoneError, setMotherPhoneError] = useState(false);
   const [aadharError, setAadharError] = useState(false);
   const [imagesPreview, setImagesPreview] = useState(studentDetails.tempPhoto);
+  const [guardianPincodeError, setGuardianPincodeError] = useState(false);
+  const [motherPincodeError, setMotherPincodeError] = useState(false);
+  const [fatherPincodeError, setFatherPincodeError] = useState(false);
+  const [disableButton, setDisableButton] = useState(true);
   const [student, setStudent] = useState({
     _id: studentDetails._id,
     image: studentDetails.image,
@@ -157,40 +161,50 @@ function UpdateStudent({ studentDetails }) {
     let regex = /^[5-9]{2}[0-9]{8}$/;
     if (regex.test(student.phone)) {
       setPhoneError(false);
+      setDisableButton(false);
     } else {
       setPhoneError(true);
+      setDisableButton(true);
     }
   };
   const altPhoneBlurHandler = () => {
     let regex = /^[5-9]{2}[0-9]{8}$/;
     if (regex.test(student.alternate_phone)) {
       setAltPhoneError(false);
+      setDisableButton(false);
     } else {
       setAltPhoneError(true);
+      setDisableButton(true);
     }
   };
   const emailBlurHandler = () => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (regex.test(student.email)) {
       setEmailError(false);
+      setDisableButton(false);
     } else {
       setEmailError(true);
+      setDisableButton(true);
     }
   };
   const parentEmailBlurHandler = async () => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (regex.test(student.parent_email)) {
       setParentEmailError(false);
+      setDisableButton(false);
     } else {
-      return setParentEmailError(true);
+      setParentEmailError(true);
+      setDisableButton(false);
     }
   };
   const guardianEmailBlurHandler = async () => {
     let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (regex.test(student.guardian_email)) {
       setGuardianEmailError(false);
+      setDisableButton(false);
     } else {
       setGuardianEmailError(true);
+      setDisableButton(true);
     }
   };
 
@@ -198,8 +212,10 @@ function UpdateStudent({ studentDetails }) {
     let regex = /^[5-9]{1}[0-9]{9}$/;
     if (regex.test(student.guardian_phone)) {
       setGuardianPhoneError(false);
+      setDisableButton(false);
     } else {
       setGuardianPhoneError(true);
+      setDisableButton(true);
     }
   };
 
@@ -207,8 +223,10 @@ function UpdateStudent({ studentDetails }) {
     let regex = /^[5-9]{1}[0-9]{9}$/;
     if (regex.test(student.father_phone)) {
       setFatherPhoneError(false);
+      setDisableButton(false);
     } else {
       setFatherPhoneError(true);
+      setDisableButton(true);
     }
   };
 
@@ -216,8 +234,10 @@ function UpdateStudent({ studentDetails }) {
     let regex = /^[5-9]{2}[0-9]{8}$/;
     if (regex.test(student.mother_phone)) {
       setMotherPhoneError(false);
+      setDisableButton(false);
     } else {
       setMotherPhoneError(true);
+      setDisableButton(true);
     }
   };
 
@@ -225,8 +245,10 @@ function UpdateStudent({ studentDetails }) {
     let regex = /^[0-9]{12}$/;
     if (regex.test(student.aadhar_number)) {
       setAadharError(false);
+      setDisableButton(false);
     } else {
       setAadharError(true);
+      setDisableButton(true);
     }
   };
   const handleSubmitForm = async (e) => {
@@ -277,7 +299,6 @@ function UpdateStudent({ studentDetails }) {
       }
       setLoading(false);
       setClassList(classess);
-   
     } catch (err) {
       toast.error("Fetching Classes Failed");
     }
@@ -440,12 +461,55 @@ function UpdateStudent({ studentDetails }) {
 
   const pincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
-    if (regex.test(pincode)) {
+    if (pincode.length===6) {
+   
       setPincodeError(false);
+      setDisableButton(false);
     } else {
+ 
       setPincodeError(true);
+      setDisableButton(true);
     }
   };
+  const guardianPincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (studentData.guardian_pincode.length===6) {
+      console.log("herre");
+      setGuardianPincodeError(false);
+      setDisableButton(false);
+    } else {
+      console.log("herrsadasdadse");
+      setGuardianPincodeError(true);
+      setDisableButton(true);
+    }
+  };
+  const fatherPincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (studentData.father_pincode.length===6) {
+      console.log("herre");
+      setFatherPincodeError(false);
+      setDisableButton(false);
+    } else {
+      console.log("herrsadasdadse");
+      setFatherPincodeError(true);
+      setDisableButton(true);
+    }
+  };
+  const motherPincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (studentData.mother_pincode.length===6) {
+      console.log("herre");
+      setMotherPincodeError(false);
+      setDisableButton(false);
+    } else {
+      console.log("herrsadasdadse");
+      setMotherPincodeError(true);
+      setDisableButton(true);
+    }
+  };
+
+
+
   const cancelHandler = () => {
     window.location.reload();
   };
@@ -516,7 +580,6 @@ function UpdateStudent({ studentDetails }) {
                           Select file
                         </label>
                       </div>
-                    
                     </Col>
                     <Col>
                       <img
