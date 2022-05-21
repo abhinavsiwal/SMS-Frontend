@@ -69,7 +69,7 @@ function CalendarView() {
   const [modalAdd, setModalAdd] = React.useState(false);
   const [modalChange, setModalChange] = React.useState(false);
   const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
+  const [endDate, setEndDate] = React.useState();
   const [radios, setRadios] = React.useState(null);
   const [eventId, setEventId] = React.useState(null);
   const [eventTitle, setEventTitle] = React.useState(null);
@@ -789,7 +789,7 @@ function CalendarView() {
                             dateFormat="yyyy MMMM, dd h:mm aa"
                             selected={endDate}
                             selectsStart
-                            minDate={new Date()}
+                            minDate={new Date(startDate)}
                             startDate={startDate}
                             onChange={(date) => setEndDate(date)}
                             strictParsing
@@ -947,6 +947,7 @@ function CalendarView() {
                             selectsStart
                             startDate={startDate}
                             onChange={(date) => setStartDate(date)}
+                            minDate={new Date()}
                             strictParsing
                             value={startDate}
                             required
@@ -966,6 +967,7 @@ function CalendarView() {
                             // dateFormat="'YYYY-MM-dd', h:mm"
                             selected={endDate}
                             selectsStart
+                            minDate={new Date(startDate)}
                             startDate={endDate}
                             onChange={(date) => setEndDate(date)}
                             strictParsing
