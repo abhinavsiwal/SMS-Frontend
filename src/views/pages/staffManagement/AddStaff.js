@@ -493,7 +493,7 @@ function AddStaff() {
         toast.error("Failed to fetch pin code.");
       }
     }
-  };
+  }; 
   const contactPincodeChangeHandler = async (e) => {
     setContactPincode(e.target.value);
     if (e.target.value.length === 6) {
