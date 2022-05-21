@@ -189,10 +189,12 @@ function CalendarView() {
         console.log("event", event);
         setEventId(event.id);
         setEventTitle(event.title);
-        setDescription(event.description);
-        setRadios("exams");
+        setDescription(event._def.extendedProps.description);
+        setRadios(event.classNames[0]);
+        setStartDate(event.start);
+        setEndDate(event.end);
         setEvent(event);
-        setAssignTeachers(event.assignTeachers);
+        setAssignTeachers(event._def.extendedProps.assignTeacherName);
         setModalChange(true);
       },
     });
@@ -216,7 +218,7 @@ function CalendarView() {
     // formData.set("assignTeachers", assignTeachers)
     formData.set("event_type", radios);
     formData.set("school", user.school);
-    formData.set("assignTeachers", JSON.stringify([staffId]));
+    formData.set("assignTeachers", assignTeachers);
     formData.set("session", sessionID);
 
     // console.log("str", new Date(startDate));
@@ -259,7 +261,11 @@ function CalendarView() {
         className: events.event_type,
         description: events.description,
         id: events._id,
-        assignTeacher: assignTeachers,
+        assignTeacher: events.assignTeachers._id,
+        assignTeacherName:
+          events.assignTeachers.firstname +
+          " " +
+          events.assignTeachers.lastname,
       });
     });
 
@@ -304,9 +310,8 @@ function CalendarView() {
     formData.set("event_from", new Date(startDate));
     formData.set("event_to", new Date(endDate));
     formData.set("description", description);
-    // formData.set("assignTeachers", assignTeachers)
+    formData.set("assignTeachers", assignTeachers);
     formData.set("event_type", radios);
-    formData.set("session", sessionID);
     formData.set("school", user.school);
     // sessions.map((data) => {
     //   if (data.status === "current") {
@@ -799,7 +804,7 @@ function CalendarView() {
                           </Label>
                           <Input
                             type="select"
-                            onChange={(e) => setStaffId(e.target.value)}
+                            onChange={(e) => setAssignTeachers(e.target.value)}
                           >
                             <option value={""}>{"Select Staff"}</option>
                             {staff &&
@@ -980,9 +985,10 @@ function CalendarView() {
                             onChange={(e) => setAssignTeachers(e.target.value)}
                             required
                           >
-                            <option value="" selected>
+                            <option selected disabled>
                               {assignTeachers}
                             </option>
+                            <hr />
                             {staff.map((staff, i) => (
                               <option key={i} value={staff._id}>
                                 {staff.firstname} {staff.lastname}
