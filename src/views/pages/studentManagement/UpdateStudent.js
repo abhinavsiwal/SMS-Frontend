@@ -254,7 +254,7 @@ function UpdateStudent({ studentDetails }) {
       toast.success("Student updated successfully");
       dispatch(setStudentEditing(false));
       setLoading(false);
-      history.push("/admin/all-students");
+      window.location.reload();
     } catch (err) {
       toast.error("Something Went Wrong");
       setLoading(false);

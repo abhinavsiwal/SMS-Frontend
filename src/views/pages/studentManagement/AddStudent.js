@@ -512,7 +512,7 @@ function AddStudent() {
       } else {
         toast.success("Student added successfully");
         setLoading(false);
-        window.location.reload()
+        
         history.push("/admin/all-students");
       }
     } catch (err) {
@@ -668,11 +668,11 @@ function AddStudent() {
     let regex = /^[1-9][0-9]{5}$/;
     if (studentData.guardian_pincode.length===6) {
       console.log("herre");
-      setPincodeError(false);
+      setGuardianPincodeError(false);
       setDisableButton(false);
     } else {
       console.log("herrsadasdadse");
-      setPincodeError(true);
+      setGuardianPincodeError(true);
       setDisableButton(true);
     }
   };
@@ -680,11 +680,11 @@ function AddStudent() {
     let regex = /^[1-9][0-9]{5}$/;
     if (studentData.father_pincode.length===6) {
       console.log("herre");
-      setPincodeError(false);
+      setFatherPincodeError(false);
       setDisableButton(false);
     } else {
       console.log("herrsadasdadse");
-      setPincodeError(true);
+      setFatherPincodeError(true);
       setDisableButton(true);
     }
   };
@@ -692,11 +692,11 @@ function AddStudent() {
     let regex = /^[1-9][0-9]{5}$/;
     if (studentData.mother_pincode.length===6) {
       console.log("herre");
-      setPincodeError(false);
+      setMotherPincodeError(false);
       setDisableButton(false);
     } else {
       console.log("herrsadasdadse");
-      setPincodeError(true);
+      setMotherPincodeError(true);
       setDisableButton(true);
     }
   };
@@ -1921,6 +1921,7 @@ function AddStudent() {
                             className="mr-4"
                             color="success"
                             type="submit"
+                            disabled={disableButton}
                           >
                             Submit
                           </Button>

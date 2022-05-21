@@ -330,6 +330,7 @@ function CalendarView() {
       setEvents(updateEvents);
       setChecked(true);
       setEditLoading(false);
+
     } catch (err) {
       setEditLoading(false);
       toast.error(updateCalendarError);
@@ -340,6 +341,7 @@ function CalendarView() {
     setEventDescription(undefined);
     setEventId(undefined);
     setEvent(undefined);
+    
   };
 
   //Delete Events Confirm Box
