@@ -17,6 +17,9 @@ import { toast, ToastContainer } from "react-toastify";
 import { getStaffByDepartment, allStaffs } from "api/staff";
 import { getDepartment } from "api/department";
 import { getAllBooks, returnBook } from "../../../api/libraryManagement";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./style.css";
 const StaffReturn = () => {
   const { user, token } = isAuthenticated();
   const [loading, setLoading] = useState(false);
@@ -28,7 +31,7 @@ const StaffReturn = () => {
     collectionDate: "",
     collectedBy: "",
   });
-
+  const [returnDate, setReturnDate] = useState(new Date());
   const [allDepartments, setAllDepartments] = useState([]);
   const [allStaff, setAllStaff] = useState([]);
   const [filterStaff, setFilterStaff] = useState([]);
@@ -128,7 +131,7 @@ const StaffReturn = () => {
     formData.set("school", user.school);
     formData.set("returned", true);
     formData.set("collectedBy", returnData.collectedBy);
-    formData.set("collectionDate", returnData.collectionDate);
+    formData.set("collectionDate", returnDate);
     formData.set("allocationId", allocationId);
     formData.set("department", returnData.department);
     try {
@@ -265,12 +268,18 @@ const StaffReturn = () => {
               >
                 Collection Date
               </Label>
-              <Input
-                id="example-date-input"
-                type="date"
-                onChange={handleChange("collectionDate")}
-                value={returnData.collectionDate}
+              <DatePicker
+                id="exampleFormControlSelect3"
+                dateFormat="dd/MM/yyyy"
+                placeholderText="dd/mm/yyyy"
+                selected={returnDate}
+                onChange={(date) => setReturnDate(date)}
+                howMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                className="datePicker"
                 required
+                minDate={new Date()}
               />
             </Col>
           </Row>

@@ -26,6 +26,8 @@ import {
   editLeave,
 } from "../../../api/leave";
 import { Popconfirm } from "antd";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const ApplyLeave = () => {
   const { user } = isAuthenticated();
@@ -34,6 +36,8 @@ const ApplyLeave = () => {
   const [leave, setLeave] = useState([]);
   const [sessions, setSessions] = useState([]);
   const [checked, setChecked] = useState(false);
+  const [dateFrom, setDateFrom] = useState();
+  const [dateTo, setDateTo] = useState();
   const [leaveData, setLeaveData] = useState({
     leaveType: "",
     from: "",
@@ -357,8 +361,8 @@ const ApplyLeave = () => {
     console.log(leaveData);
     e.preventDefault();
     const formData = new FormData();
-    formData.set("dateFrom", leaveData.from);
-    formData.set("dateTo", leaveData.to);
+    formData.set("dateFrom", dateFrom);
+    formData.set("dateTo", dateTo);
     formData.set("reason", leaveData.reason);
     formData.set("userId", user._id);
     formData.set("user", user.user);
@@ -399,7 +403,12 @@ const ApplyLeave = () => {
     }
   };
 
-  console.log(user);
+  const filterPassedTime = (time) => {
+    const currentDate = new Date(dateFrom);
+    const selectedDate = new Date(time);
+
+    return currentDate < selectedDate;
+  };
   return (
     <>
       <SimpleHeader name="Apply Leave" parentName="Leave Management" />
@@ -488,13 +497,18 @@ const ApplyLeave = () => {
                         >
                           From
                         </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Leave Type"
-                          type="date"
-                          onChange={handleChange("from")}
-                          value={leaveData.from}
+                        <DatePicker
+                          id="exampleFormControlSelect3"
+                          dateFormat="dd/MM/yyyy"
+                          placeholderText="dd/mm/yyyy"
+                          selected={dateFrom}
+                          onChange={(date) => setDateFrom(date)}
+                          howMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          className="datePicker"
                           required
+                          minDate={new Date()}
                         />
                       </Col>
                       <Col>
@@ -525,13 +539,20 @@ const ApplyLeave = () => {
                         >
                           To
                         </label>
-                        <Input
-                          id="example4cols2Input"
-                          placeholder="Leave Type"
-                          type="date"
-                          onChange={handleChange("to")}
-                          value={leaveData.to}
+                        <DatePicker
+                          id="exampleFormControlSelect3"
+                          dateFormat="dd/MM/yyyy"
+                          placeholderText="dd/mm/yyyy"
+                          selected={dateTo}
+                          onChange={(date) => setDateTo(date)}
+                          howMonthDropdown
+                          showYearDropdown
+                          dropdownMode="select"
+                          className="datePicker"
                           required
+                          minDate={new Date()}
+                          
+                          filterDate={filterPassedTime}
                         />
                       </Col>
                       <Col>

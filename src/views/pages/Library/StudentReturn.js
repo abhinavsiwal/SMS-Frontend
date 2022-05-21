@@ -11,6 +11,9 @@ import {
   Button,
   CardHeader,
 } from "reactstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./style.css";
 import { allStudents, filterStudent } from "api/student";
 import Loader from "components/Loader/Loader";
 import { isAuthenticated } from "api/auth";
@@ -31,6 +34,7 @@ const StudentReturn = () => {
     collectedBy: "",
   });
   const [loading, setLoading] = useState(false);
+  const [returnDate, setReturnDate] = useState(new Date());
   const [classList, setClassList] = useState([]);
   const [selectedClass, setSelectedClass] = useState({});
   const [studentLoading, setStudentLoading] = useState(false);
@@ -156,7 +160,7 @@ const StudentReturn = () => {
     formData.set("school", user.school);
     formData.set("returned", true);
     formData.set("collectedBy", returnData.collectedBy);
-    formData.set("collectionDate", returnData.collectionDate);
+    formData.set("collectionDate", returnDate);
     formData.set("allocationId", allocationId);
     try {
       setLoading(true);
@@ -312,12 +316,18 @@ const StudentReturn = () => {
               >
                 Collection Date
               </Label>
-              <Input
-                id="example-date-input"
-                type="date"
-                onChange={handleChange("collectionDate")}
-                value={returnData.collectionDate}
+              <DatePicker
+                id="exampleFormControlSelect3"
+                dateFormat="dd/MM/yyyy"
+                placeholderText="dd/mm/yyyy"
+                selected={returnDate}
+                onChange={(date) => setReturnDate(date)}
+                howMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                className="datePicker"
                 required
+                minDate={new Date()}
               />
             </Col>
             <Col md="6">
