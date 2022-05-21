@@ -125,6 +125,7 @@ const AllStudents = () => {
           first_name: res[i].firstname,
           last_name: res[i].lastname,
           email: res[i].email,
+          tempPhoto: res[i].tempPhoto,
           phone: res[i].phone,
           gender: res[i].gender,
           dob: getFormattedDate(res[i].date_of_birth),

@@ -53,8 +53,9 @@ function ViewAllCanteen() {
     setLoading(true);
     const res = await allCanteens(user._id, user.school); // Call your function here
     // console.log(res);
-   await setCanteenData(allCanteen);
     await setAllCanteen(res);
+    await setCanteenData(res);
+
     await setSelectedCanteenId(res[0]._id);
     setLoading(false);
   };
@@ -110,10 +111,9 @@ function ViewAllCanteen() {
 
     setCanteenData(filteredData);
 
-    return ()=>{
+    return () => {
       setCanteenData(allCanteen);
-    }
-
+    };
   }, [searchText]);
 
   let inputHandler = (e) => {
@@ -163,7 +163,7 @@ function ViewAllCanteen() {
         <>
           {check === false && (
             <div className="mt--6s items">
-              {canteenData ?(
+              {canteenData ? (
                 canteenData.map((canteen) => {
                   return (
                     <NavLink
@@ -189,36 +189,37 @@ function ViewAllCanteen() {
                       </div>
                     </NavLink>
                   );
-                })):(
-                  <>
+                })
+              ) : (
+                <>
                   {allCanteen.map((canteen) => {
-                      return (
-                        <NavLink
-                          key={canteen._id}
-                          fluid
-                          onClick={() => selectedStaff(canteen._id)}
+                    return (
+                      <NavLink
+                        key={canteen._id}
+                        fluid
+                        onClick={() => selectedStaff(canteen._id)}
+                      >
+                        <Card className="h-100 w-100">
+                          <CardBody>
+                            <p className="d-flex justify-content-around">
+                              {canteen.name}
+                            </p>
+                          </CardBody>
+                        </Card>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            fontSize: "1.2rem",
+                          }}
                         >
-                          <Card className="h-100 w-100">
-                            <CardBody>
-                              <p className="d-flex justify-content-around">
-                                {canteen.name}
-                              </p>
-                            </CardBody>
-                          </Card>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "center",
-                              fontSize: "1.2rem",
-                            }}
-                          >
-                            {canteen.name}
-                          </div>
-                        </NavLink>
-                      );
+                          {canteen.name}
+                        </div>
+                      </NavLink>
+                    );
                   })}
-                  </>
-                )}
+                </>
+              )}
             </div>
           )}
           {check && (

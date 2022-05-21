@@ -503,7 +503,7 @@ function UpdateStudent({ studentDetails }) {
                           lang="en"
                           type="file"
                           accept="image/*"
-                          onChange={handleFileChange("image")}
+                          onChange={handleFileChange("photo")}
                         />
                         <label
                           className="custom-file-label"

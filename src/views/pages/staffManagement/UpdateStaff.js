@@ -513,7 +513,7 @@ function UpdateStaff({ staffDetails }) {
                           lang="en"
                           type="file"
                           // required
-                          onChange={handleFileChange("image")}
+                          onChange={handleFileChange("photo")}
                           accept="image/*"
                         />
                         <label
