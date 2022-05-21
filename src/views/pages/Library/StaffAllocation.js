@@ -11,26 +11,31 @@ import {
   Button,
   CardHeader,
 } from "reactstrap";
+import "./style.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Loader from "components/Loader/Loader";
 import { isAuthenticated } from "api/auth";
 import { toast, ToastContainer } from "react-toastify";
 import { getStaffByDepartment, allStaffs } from "api/staff";
 import { getDepartment } from "api/department";
-import { getAllBooks,allocateBook } from "../../../api/libraryManagement";
+import { getAllBooks, allocateBook } from "../../../api/libraryManagement";
 const StaffAllocation = () => {
   const { user, token } = isAuthenticated();
+  const [allocationDate, setAllocationDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [allocationData, setAllocationData] = useState({
     department: "",
     staff: "",
     bookName: "",
     bookId: "",
-    allocationDate: "",
+    allocationDate: new Date(),
     allocatedBy: "",
     duration: "",
     allocationType: "",
     rent: "",
   });
+
   const [allDepartments, setAllDepartments] = useState([]);
   const [allStaff, setAllStaff] = useState([]);
   const [filterStaff, setFilterStaff] = useState([]);
@@ -117,7 +122,7 @@ const StaffAllocation = () => {
       const data = await getStaffByDepartment(user.school, user._id, formData);
       console.log(data);
       setFilterStaff(data);
-      
+
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -132,12 +137,12 @@ const StaffAllocation = () => {
     formData.set("book", allocationData.bookName);
     formData.set("bookID", allocationData.bookId);
     formData.set("staff", allocationData.staff);
-    formData.set("allocationDate", allocationData.allocationDate);
+    formData.set("allocationDate", allocationDate);
     formData.set("duration", allocationData.duration);
     formData.set("school", user.school);
     formData.set("department", allocationData.department);
     formData.set("allocatedBy", allocationData.allocatedBy);
-    formData.set("status","Allocated");
+    formData.set("status", "Allocated");
     formData.set("allocatedBy", allocationData.allocatedBy);
     if (typeView === 2) {
       formData.set("rent", allocationData.rent);
@@ -299,12 +304,18 @@ const StaffAllocation = () => {
               >
                 Allocation Date
               </Label>
-              <Input
-                id="example-date-input"
-                type="date"
-                onChange={handleChange("allocationDate")}
-                value={allocationData.allocationDate}
+              <DatePicker
+                id="exampleFormControlSelect3"
+                dateFormat="dd/MM/yyyy"
+                placeholderText="dd/mm/yyyy"
+                selected={allocationDate}
+                onChange={(date) => setAllocationDate(date)}
+                howMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                className="datePicker"
                 required
+                minDate={new Date()}
               />
             </Col>
             <Col md="6">
@@ -320,6 +331,7 @@ const StaffAllocation = () => {
                 onChange={handleChange("duration")}
                 value={allocationData.duration}
                 required
+                placeholder="Duration"
               />
             </Col>
           </Row>
@@ -349,8 +361,8 @@ const StaffAllocation = () => {
                   ))}
               </Input>
             </Col>
-            <Col md="6" >
-            <Label
+            <Col md="6">
+              <Label
                 className="form-control-label"
                 htmlFor="example-date-input"
               >
@@ -370,7 +382,7 @@ const StaffAllocation = () => {
             </Col>
           </Row>
           <Row>
-          {typeView === 2 && (
+            {typeView === 2 && (
               <Col md="6">
                 <Label
                   className="form-control-label"
@@ -386,7 +398,7 @@ const StaffAllocation = () => {
                   value={allocationData.rent}
                   required
                 />
-              </Col> 
+              </Col>
             )}
           </Row>
           <Row className="mt-4">

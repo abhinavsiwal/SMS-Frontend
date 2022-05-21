@@ -30,7 +30,7 @@ import {
   canteenDelete,
   menuItemDelete,
   menuItemEdit,
-  canteenEdit
+  canteenEdit,
 } from "../../../api/canteen/index";
 //Loader
 import Loader from "components/Loader/Loader";
@@ -76,16 +76,17 @@ function ViewCanteen() {
   const [checked, setChecked] = useState(false);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [canteenEditLoading, setCanteenEditLoading] = useState(false);
+  const [imagesPreview, setImagesPreview] = useState();
   const columns = [
     {
       title: "S No.",
       dataIndex: "s_no",
-      align:"left",
+      align: "left",
     },
     {
       title: "Item Name",
       dataIndex: "item_name",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.item_name > b.item_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -116,7 +117,7 @@ function ViewCanteen() {
     {
       title: "Start Time",
       dataIndex: "start_time",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.start_time > b.start_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -146,7 +147,7 @@ function ViewCanteen() {
     {
       title: "End Time",
       dataIndex: "end_time",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.end_time > b.end_time,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -176,12 +177,11 @@ function ViewCanteen() {
     {
       title: "Image",
       dataIndex: "image",
-
     },
     {
       title: "Price",
       dataIndex: "price",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.price > b.price,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -211,7 +211,7 @@ function ViewCanteen() {
     {
       title: "Publish",
       dataIndex: "publish",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.publish > b.publish,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -244,7 +244,7 @@ function ViewCanteen() {
       key: "action",
       dataIndex: "action",
       fixed: "right",
-      align:"left",
+      align: "left",
     },
   ];
 
@@ -252,12 +252,12 @@ function ViewCanteen() {
     {
       title: "S No.",
       dataIndex: "s_no",
-      align:"left"
+      align: "left",
     },
     {
       title: "Canteen Name",
       dataIndex: "canteen_name",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.canteen_name > b.canteen_name,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -287,7 +287,7 @@ function ViewCanteen() {
     {
       title: "Staff",
       dataIndex: "staff",
-      align:"left",
+      align: "left",
       sorter: (a, b) => a.staff > b.staff,
       filterDropdown: ({ setSelectedKeys, selectedKeys, confirm }) => {
         return (
@@ -317,7 +317,7 @@ function ViewCanteen() {
     },
     {
       title: "Action",
-      align:"left",
+      align: "left",
       key: "action",
       dataIndex: "action",
       fixed: "right",
@@ -364,8 +364,12 @@ function ViewCanteen() {
   const getAllStaffs = async () => {
     const { data } = await allStaffs(user.school, user._id);
     // console.log(data);
+    let canteenStaff = data.filter(
+      (staff) => staff.assign_role.name === "Canteen"
+    );
+
     let options = [];
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < canteenStaff.length; i++) {
       options.push({ value: data[i]._id, label: data[i].firstname });
     }
     // console.log(options);
@@ -495,44 +499,44 @@ function ViewCanteen() {
     setLoading(false);
   };
 
-const rowHandler1 = (data)=>{
-  setCanteenEditing(true);
-  setEditCanteenName(data.name);
-  let staff = [];
-  for (let i = 0; i < data.staff.length; i++) {
-    staff.push({
-      value: data.staff[i]._id,
-      label: data.staff[i].firstname + " " + data.staff[i].lastname,
-    });
-  }
-  setEditCanteenStaff(staff);
-}
-const canteenEditHandler = async(e)=>{
-  e.preventDefault();
-  const formData = new FormData();
-  formData.set("name",editCanteenName);
-  formData.set("staff",JSON.stringify(staff));
-
-  try {
-    setCanteenEditLoading(true);
-    const data = await canteenEdit(selectedCanteenId,user._id,formData);
-    console.log(data);
-    if(data.err){
-      setCanteenEditLoading(false);
-      return toast.error(data.err);
+  const rowHandler1 = (data) => {
+    setCanteenEditing(true);
+    setEditCanteenName(data.name);
+    let staff = [];
+    for (let i = 0; i < data.staff.length; i++) {
+      staff.push({
+        value: data.staff[i]._id,
+        label: data.staff[i].firstname + " " + data.staff[i].lastname,
+      });
     }
-    setChecked(!checked);
-    setSelectedCanteenId("empty");
-    // setSelectedCanteen({})
-    setCanteenEditing(false)
-    setCanteenEditLoading(false);
-    toast.success("Canteen updated successfully");
-  } catch (err) {
-    console.log(err);
-    setCanteenEditLoading(false);
-    toast.error("Can't update canteen");
-  }
-}
+    setEditCanteenStaff(staff);
+  };
+  const canteenEditHandler = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.set("name", editCanteenName);
+    formData.set("staff", JSON.stringify(staff));
+
+    try {
+      setCanteenEditLoading(true);
+      const data = await canteenEdit(selectedCanteenId, user._id, formData);
+      console.log(data);
+      if (data.err) {
+        setCanteenEditLoading(false);
+        return toast.error(data.err);
+      }
+      setChecked(!checked);
+      setSelectedCanteenId("empty");
+      // setSelectedCanteen({})
+      setCanteenEditing(false);
+      setCanteenEditLoading(false);
+      toast.success("Canteen updated successfully");
+    } catch (err) {
+      console.log(err);
+      setCanteenEditLoading(false);
+      toast.error("Can't update canteen");
+    }
+  };
   //values of addMenu
   const handleChangeMenu = (name) => (event) => {
     setAddMenu({ ...addMenu, [name]: event.target.value });
@@ -541,6 +545,13 @@ const canteenEditHandler = async(e)=>{
   //Value for image
   const handleFileChange = (name) => (event) => {
     setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   function rowHandler(sectionData) {
@@ -554,9 +565,10 @@ const canteenEditHandler = async(e)=>{
       price: sectionData.price,
       publish: sectionData.publish,
       // start_time: sectionData.start_time,
-      image: sectionData.image,
+      image: sectionData.tempPhoto,
       id: sectionData._id,
     });
+    setImagesPreview(sectionData.tempPhoto);
   }
   //Edit Canteen
   const handleEditSubmit = async (e) => {
@@ -626,6 +638,13 @@ const canteenEditHandler = async(e)=>{
     }
   };
 
+  const filterPassedTime = (time) => {
+    const currentDate = new Date(startDate);
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
+  };
+
   return (
     <>
       <SimpleHeader name="Canteen" parentName="View Canteen" />
@@ -671,7 +690,6 @@ const canteenEditHandler = async(e)=>{
                 exportFileName="Canteen"
               />
             )}
-        
           </CardHeader>
           <CardBody>
             <Button
@@ -729,7 +747,6 @@ const canteenEditHandler = async(e)=>{
             <ModalBody>
               <Form className="mb-4" onSubmit={canteenEditHandler}>
                 <CardBody>
-                
                   <Row>
                     <Col md="6">
                       <Label
@@ -742,12 +759,12 @@ const canteenEditHandler = async(e)=>{
                         id="example4cols2Input"
                         placeholder="Name"
                         type="text"
-                        onChange={e=>setEditCanteenName(e.target.value)}
+                        onChange={(e) => setEditCanteenName(e.target.value)}
                         value={editCanteenName}
                         required
                       />
                     </Col>
-                
+
                     <Col md="6">
                       <Label
                         className="form-control-label"
@@ -756,18 +773,18 @@ const canteenEditHandler = async(e)=>{
                         Staff
                       </Label>
                       <Select
-                      isMulti
-                      name="colors"
-                      options={roleOptions}
-                      onChange={handleSubjectChange}
-                      className="basic-multi-select"
-                      classNamePrefix="select"
-                      required
-                      defaultValue={editCanteenStaff}
-                    />
+                        isMulti
+                        name="colors"
+                        options={roleOptions}
+                        onChange={handleSubjectChange}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        required
+                        defaultValue={editCanteenStaff}
+                      />
                     </Col>
-                 
-                    <Col className="mt-4" >
+
+                    <Col className="mt-4">
                       <Button color="primary" type="submit">
                         Save Changes
                       </Button>
@@ -830,7 +847,11 @@ const canteenEditHandler = async(e)=>{
                       </div>
                     </Col>
                     <Col>
-                    <img src={addMenu.image} placeholder={addMenu.id} style={{height:"100px",width:"100px"}} />
+                      <img
+                        src={imagesPreview}
+                        placeholder={addMenu.id}
+                        style={{ height: "100px", width: "100px" }}
+                      />
                     </Col>
                   </Row>
                   <Row>
@@ -929,6 +950,7 @@ const canteenEditHandler = async(e)=>{
                         timeCaption="Time"
                         dateFormat="h:mm aa"
                         required
+                        filterTime={filterPassedTime}
                       />
                     </Col>
                   </Row>

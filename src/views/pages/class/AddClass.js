@@ -95,7 +95,7 @@ const AddClass = () => {
     try {
       const res = await allClass(user._id, user.school, token);
 
-      // console.log("allClass", res);
+      console.log("allClass", res);
       dispatch(setClass(res));
       setClassList(res);
 
@@ -307,7 +307,7 @@ const AddClass = () => {
     }
    
     let res = classList.filter((item) => {
-      return item.session === selectedSessionId;
+      return item.session._id === selectedSessionId;
     });
     console.log(res);
     const data = [];

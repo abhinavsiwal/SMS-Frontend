@@ -1033,28 +1033,28 @@ const routes = [
       },
     ],
   },
-  // {
-  //   collapse: true,
-  //   name: "Credential Master",
-  //   icon: "ni ni-settings-gear-65 text-red",
-  //   state: "credentialCollapse",
-  //   views: [
-  //     {
-  //       path: "/student-credentials",
-  //       name: "Student",
-  //       miniName: "A",
-  //       component: StudentCredentials,
-  //       layout: "/admin",
-  //     },
-  //     {
-  //       path: "/staff-credentials",
-  //       name: "Staff",
-  //       miniName: "S",
-  //       // component: ViewRoute,
-  //       layout: "/admin",
-  //     },
-  //   ],
-  // },
+  {
+    collapse: true,
+    name: "Credential Master",
+    icon: "ni ni-settings-gear-65 text-red",
+    state: "credentialCollapse",
+    views: [
+      {
+        path: "/student-credentials",
+        name: "Student",
+        miniName: "A",
+        component: StudentCredentials,
+        layout: "/admin",
+      },
+      {
+        path: "/staff-credentials",
+        name: "Staff",
+        miniName: "S",
+        // component: ViewRoute,
+        layout: "/admin",
+      },
+    ],
+  },
   {
     collapse: true,
     name: "Ecommerce",

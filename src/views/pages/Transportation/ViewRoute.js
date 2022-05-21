@@ -486,6 +486,20 @@ function ViewRoute() {
     }
   };
 
+  const filterPassedTime = (time) => {
+    const currentDate = new Date(startDate);
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
+  };
+
+  const filterPassedPickupTime = (time) => {
+    const currentDate = new Date(startTimePickup);
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
+  };
+
   return (
     <>
       <ToastContainer
@@ -800,6 +814,7 @@ function ViewRoute() {
                         timeCaption="Time"
                         dateFormat="h:mm aa"
                         required
+                        filterTime={filterPassedTime}
                       />
                     </Col>
                   </Row>

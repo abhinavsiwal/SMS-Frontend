@@ -147,12 +147,14 @@ function AddRoute() {
     arr.push(obj);
     setAddStops(arr);
     setCheck(!check);
+    setPlaceName("")
+    setDisableButton(true);
   };
 
-  const deleteStopHandler = (name)=>{
-    let stops = addStops.filter(stop=>stop.stopName!==name);
+  const deleteStopHandler = (name) => {
+    let stops = addStops.filter((stop) => stop.stopName !== name);
     setAddStops(stops);
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -205,6 +207,19 @@ function AddRoute() {
     } else {
       setDisableButton(true);
     }
+  };
+
+  const filterPassedTime = (time) => {
+    const currentDate = new Date(startDate);
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
+  };
+  const filterPassedPickupTime = (time) => {
+    const currentDate = new Date(startTimePickup);
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime() < selectedDate.getTime();
   };
 
   return (
@@ -374,6 +389,7 @@ function AddRoute() {
                             timeCaption="Time"
                             dateFormat="h:mm aa"
                             required
+                            filterTime={filterPassedTime}
                           />
                         </Col>
                       </Row>
@@ -392,10 +408,11 @@ function AddRoute() {
                           </Label>
                           <Input
                             id="example4cols2Input"
-                            placeholder="Class"
+                            placeholder="Place Name"
                             type="text"
                             onChange={(e) => setPlaceName(e.target.value)}
                             required
+                            value={placeName}
                             onBlur={placeBlurHandler}
                           />
                         </Col>
@@ -440,6 +457,7 @@ function AddRoute() {
                             dateFormat="h:mm aa"
                             required
                             startDate={startTimePickup}
+                            filterTime={filterPassedPickupTime}
                           />
                         </Col>
                       </Row>
@@ -486,27 +504,27 @@ function AddRoute() {
                       <>
                         {addStops.map((stops, index) => {
                           return (
-                            <tbody key={index} >
+                            <tbody key={index}>
                               <tr>
                                 <td key={index}>{index + 1}</td>
                                 <td key={index}>{stops.stopName}</td>
                                 <td key={index}>{stops.pickupTime}</td>
                                 <td key={index}>{stops.dropTime}</td>
                                 <td key={index}>
-                                <Button
-                                      className="btn-sm pull-right"
-                                      color="danger"
-                                      type="button"
+                                  <Button
+                                    className="btn-sm pull-right"
+                                    color="danger"
+                                    type="button"
+                                  >
+                                    <Popconfirm
+                                      title="Sure to delete?"
+                                      onConfirm={() =>
+                                        deleteStopHandler(stops.stopName)
+                                      }
                                     >
-                                      <Popconfirm
-                                        title="Sure to delete?"
-                                        onConfirm={() =>
-                                          deleteStopHandler(stops.stopName)
-                                        }
-                                      >
-                                        <i className="fas fa-trash" />
-                                      </Popconfirm>
-                                    </Button>
+                                      <i className="fas fa-trash" />
+                                    </Popconfirm>
+                                  </Button>
                                 </td>
                               </tr>
                             </tbody>

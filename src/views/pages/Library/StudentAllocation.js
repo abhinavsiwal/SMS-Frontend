@@ -17,11 +17,15 @@ import { allStudents, filterStudent } from "api/student";
 import { getAllBooks, allocateBook } from "../../../api/libraryManagement";
 import { allStaffs } from "api/staff";
 //css
+import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "./style.css";
 import { toast, ToastContainer } from "react-toastify";
 import { allClass } from "api/class";
 const StudentAllocation = () => {
   const { user, token } = isAuthenticated();
+  const [allocationDate, setAllocationDate] = useState(new Date());
   const [allocationData, setAllocationData] = useState({
     class: "",
     section: "",
@@ -150,7 +154,7 @@ const StudentAllocation = () => {
     formData.set("book", allocationData.bookName);
     formData.set("bookID", allocationData.bookId);
     formData.set("student", allocationData.student);
-    formData.set("allocationDate", allocationData.allocationDate);
+    formData.set("allocationDate", allocationDate);
     formData.set("duration", allocationData.duration);
     formData.set("school", user.school);
     formData.set("class", allocationData.class);
@@ -189,6 +193,13 @@ const StudentAllocation = () => {
       toast.error("Allocation Failed");
       setLoading(false);
     }
+  };
+
+  const filterDateHandler = (time) => {
+    const currentDate = new Date();
+    const selectedDate = new Date(time);
+
+    return currentDate <= selectedDate;
   };
 
   return (
@@ -348,12 +359,20 @@ const StudentAllocation = () => {
               >
                 Allocation Date
               </Label>
-              <Input
-                id="example-date-input"
-                type="date"
-                onChange={handleChange("allocationDate")}
-                value={allocationData.allocationDate}
+              <DatePicker
+                id="exampleFormControlSelect3"
+                
+                dateFormat="dd/MM/yyyy"
+                placeholderText="dd/mm/yyyy"
+                selected={allocationDate}
+                onChange={(date) => setAllocationDate(date)}
+                howMonthDropdown
+          
+                showYearDropdown
+                dropdownMode="select"
+                className="datePicker"
                 required
+                minDate={new Date()}
               />
             </Col>
           </Row>

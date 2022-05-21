@@ -489,6 +489,7 @@ const AddSection = () => {
       setEditing(false);
       setLoading(false);
       toast.success("Section edited successfully");
+      setTableClassSelectId("empty");
     } catch (err) {
       console.log(err);
       toast.error("Edit Section Failed");
@@ -742,31 +743,7 @@ const AddSection = () => {
                 />
               </Col>
             </Row>
-            <Row>
-              <Col>
-                <label
-                  className="form-control-label"
-                  htmlFor="example4cols2Input"
-                >
-                  Class
-                </label>
-                <Input
-                  id="example4cols2Input"
-                  type="select"
-                  onChange={(e) => setEditingClassId(e.target.value)}
-                  required
-                >
-                  <option value="" disabled selected>
-                    Select Class
-                  </option>
-                  {classList?.map((clas, index) => (
-                    <option key={index} value={clas._id}>
-                      {clas.name}
-                    </option>
-                  ))}
-                </Input>
-              </Col>
-            </Row>
+      
             <Row className="mt-4">
               <Col>
                 <label

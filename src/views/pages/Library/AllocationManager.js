@@ -13,6 +13,10 @@ import {
 } from "reactstrap";
 import Loader from "components/Loader/Loader";
 import { isAuthenticated } from "api/auth";
+//React Datepicker
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 //css
 import "./style.css";
 import { toast, ToastContainer } from "react-toastify";

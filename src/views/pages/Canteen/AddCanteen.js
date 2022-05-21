@@ -53,6 +53,7 @@ function AddCanteen() {
   const [allCanteen, setAllCanteen] = useState([]);
   const [checked, setChecked] = useState(false);
   const [file, setFile] = useState();
+  const [imagesPreview, setImagesPreview] = useState();
   // import { useHistory } from "react-router-dom";
 
   const [canteenLoading, setCanteenLoading] = useState(false);
@@ -84,14 +85,16 @@ function AddCanteen() {
     }
   }, []);
 
+
+
   const getAllStaffs = async () => {
     try {
       const { data } = await allStaffs(user.school, user._id);
-      // console.log(data);
-      let canteenStaff = data.find((staff) => staff.assign_role === "canteen");
+      console.log(data);
+      let canteenStaff = data.filter((staff) => staff.assign_role.name === "Canteen");
       setAllStaff(canteenStaff);
       let options = [];
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < canteenStaff.length; i++) {
         options.push({ value: data[i]._id, label: data[i].firstname });
       }
       // console.log(options);
@@ -185,6 +188,13 @@ function AddCanteen() {
   //Value for image
   const handleFileChange = (name) => (event) => {
     setAddMenu({ ...addMenu, [name]: event.target.files[0] });
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   //AddMenu
@@ -237,6 +247,14 @@ function AddCanteen() {
     addMenu.addCanteen = e.target.value;
     setSelectedCanteenId(e.target.value);
   };
+
+  const filterPassedTime = (time)=>{
+    const currentDate = new Date(startDate);
+    const selectedDate = new Date(time);
+
+    return currentDate.getTime()<selectedDate.getTime();
+
+  }
 
   return (
     <>
@@ -360,7 +378,14 @@ function AddCanteen() {
                         md="4"
                         className="d-flex justify-content-center mb-4"
                       >
-                        <Col md="8">
+                         <img
+                        src={imagesPreview && imagesPreview}
+                        alt="Preview"
+                        className="mt-3 me-2"
+                        width="80"
+                        height="80"
+                      />
+                        <Col md="6">
                           <label
                             className="form-control-label"
                             htmlFor="example3cols2Input"
@@ -511,6 +536,7 @@ function AddCanteen() {
                             timeCaption="Time"
                             dateFormat="h:mm aa"
                             required
+                            filterTime={filterPassedTime}
                           />
                         </Col>
                         <Col md="6">

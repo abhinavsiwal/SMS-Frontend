@@ -59,12 +59,12 @@ const AddSubject = () => {
   const [editGroupName, setEditGroupName] = useState("");
   const [editGroupId, setEditGroupId] = useState("");
   const [editGroupSubjects, setEditGroupSubjects] = useState([]);
+  const [disabled, setDisabled] = useState(true);
 
   const handleOnChange = (e) => {
     setFile(e.target.files[0]);
   };
 
- 
   const componentRef = React.useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -76,7 +76,7 @@ const AddSubject = () => {
       permission1 = user.permissions["Class, section and subject master"];
       setPermissions(permission1);
     }
-  }, [checked,reload]);
+  }, [checked, reload]);
 
   useEffect(() => {
     getAllClasses();
@@ -137,11 +137,10 @@ const AddSubject = () => {
     const values = [...editInputFields];
     values[index][event.target.name] = event.target.value;
     setEditInputFields(values);
-  }
+  };
   //Edit Subject
   const handleEdit = async () => {
     try {
-     
       formData.set("name", editSubjectName);
       setLoading(true);
       const updatedSubject = await updateSubject(
@@ -165,20 +164,19 @@ const AddSubject = () => {
     }
   };
 
-  const handleEditGroupSubmit =async ()=>{
+  const handleEditGroupSubmit = async () => {
     const formData = new FormData();
-    formData.set("name",editGroupName);
+    formData.set("name", editGroupName);
     let list = [];
     for (const key in editInputFields) {
       // console.log(inputFields[key].subjectName);
       list.push(editInputFields[key].subjectName);
     }
     console.log(list);
+
     formData.set("list", JSON.stringify(list));
 
     try {
-     
-    
       setLoading(true);
       const updatedSubject = await updateSubject(
         editGroupId,
@@ -199,8 +197,7 @@ const AddSubject = () => {
       toast.error(err);
       setLoading(false);
     }
-    
-  }
+  };
 
   const [formData] = useState(new FormData());
   const handleChange = (name) => (event) => {
@@ -224,7 +221,7 @@ const AddSubject = () => {
         list.push(inputFields[key].subjectName);
       }
       console.log(list);
-      formData.set("list", list);
+      formData.set("list", JSON.stringify(list));
     }
 
     try {
@@ -244,6 +241,8 @@ const AddSubject = () => {
       setChecked(!checked);
       setAddLoading(false);
       setLoading(false);
+      setInputFields([{ subjectName: "" }]);
+      setGroupName("");
       toast.success("Subject added successfully");
       setReload(true);
     } catch (err) {
@@ -373,9 +372,8 @@ const AddSubject = () => {
       render: (subjects) => (
         <>
           {subjects.map((subject) => {
-      
             let subject1 = JSON.stringify(subject);
-           
+
             return <p>{subject1}</p>;
           })}
         </>
@@ -394,7 +392,7 @@ const AddSubject = () => {
     setLoading(true);
     allSubjects(user._id, user.school, token)
       .then((res) => {
-        console.log(res); 
+        console.log(res);
         setLoading(true);
         // console.log("res", res);
         let data = [];
@@ -503,7 +501,7 @@ const AddSubject = () => {
   };
   const handleEditAddFields = () => {
     setEditInputFields([...editInputFields, { subjectName: "" }]);
-  }
+  };
   const handleRemoveFields = (index) => {
     const values = [...inputFields];
     values.splice(index, 1);
@@ -513,9 +511,7 @@ const AddSubject = () => {
     const values = [...editInputFields];
     values.splice(index, 1);
     setEditInputFields(values);
-  }
-
-
+  };
 
   return (
     <>
@@ -944,7 +940,11 @@ const AddSubject = () => {
             </Row>
           </ModalBody>
           <ModalFooter>
-            <Button color="success" type="button" onClick={handleEditGroupSubmit}>
+            <Button
+              color="success"
+              type="button"
+              onClick={handleEditGroupSubmit}
+            >
               Save changes
             </Button>
           </ModalFooter>
