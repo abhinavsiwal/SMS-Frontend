@@ -23,10 +23,21 @@ import "./style.css";
 import { FaEdit } from "react-icons/fa";
 
 function Staffdetails({ data, backHandle }) {
-  // console.log(data);
+  console.log(data);
   // 1 -> Details, 2 -> Documents, 3 -> Attendance
   const [activeTab, setActiveTab] = useState("1");
-
+  function getFormattedDate(date1) {
+    let date = new Date(date1);
+    var year = date.getFullYear();
+  
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : "0" + month;
+  
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : "0" + day;
+  
+    return day + "/" + month + "/" + year;
+  }
   return (
     <>
       <SimpleHeader name="Student Profile" parentName="Student Management" />
@@ -72,7 +83,7 @@ function Staffdetails({ data, backHandle }) {
                     </Col>
                     <Col align="center">
                       <h4 className="mt-3 mb-1">Roll No</h4>
-                      <span className="text-md">{data.roll}</span>
+                      <span className="text-md">{data.roll_number}</span>
                     </Col>
                   </Row>
                   <Row>
@@ -152,7 +163,7 @@ function Staffdetails({ data, backHandle }) {
                                   <h5 className="checklist-title mb-0">
                                     Joining Date
                                   </h5>
-                                  <small>{data.joining_date}</small>
+                                  <small>{data.joining_date && getFormattedDate(data.joining_date)}</small>
                                 </div>
                               </div>
                             </ListGroupItem>
@@ -378,9 +389,9 @@ function Staffdetails({ data, backHandle }) {
                                 <div className="checklist-item checklist-item-success">
                                   <div className="checklist-info">
                                     <h5 className="checklist-title mb-0">
-                                      Contact Person Country
+                                      Father's Name
                                     </h5>
-                                    <small>{data.contact_person_country}</small>
+                                    <small>{data.father_name+" "+ data.father_last_name}</small>
                                   </div>
                                 </div>
                               </ListGroupItem>
@@ -390,9 +401,9 @@ function Staffdetails({ data, backHandle }) {
                                 <div className="checklist-item checklist-item-info">
                                   <div className="checklist-info">
                                     <h5 className="checklist-title mb-0">
-                                      Contact Person State
+                                      Mother's Name
                                     </h5>
-                                    <small>{data.contact_person_state}</small>
+                                    <small>{data.mother_name+" "+ data.mother_last_name}</small>
                                   </div>
                                 </div>
                               </ListGroupItem>
@@ -402,10 +413,10 @@ function Staffdetails({ data, backHandle }) {
                                 <div className="checklist-item checklist-item-info">
                                   <div className="checklist-info">
                                     <h5 className="checklist-title mb-0">
-                                      Contact Person City
+                                      Parent Email
                                     </h5>
                                     <small>
-                                      +91 {data.contact_person_city}
+                                      {data.parent_email}
                                     </small>
                                   </div>
                                 </div>
@@ -418,9 +429,9 @@ function Staffdetails({ data, backHandle }) {
                                 <div className="checklist-item checklist-item-info">
                                   <div className="checklist-info">
                                     <h5 className="checklist-title mb-0">
-                                      Contact Person Name
+                                      Father's Phone No.
                                     </h5>
-                                    <small>{data.contact_person_name}</small>
+                                    <small>{data.father_phone}</small>
                                   </div>
                                 </div>
                               </ListGroupItem>
@@ -430,25 +441,14 @@ function Staffdetails({ data, backHandle }) {
                                 <div className="checklist-item checklist-item-info">
                                   <div className="checklist-info">
                                     <h5 className="checklist-title mb-0">
-                                      Contact Person Phone
+                                    Mother Phone
                                     </h5>
-                                    <small>{data.contact_person_phone}</small>
+                                    <small>{data.mother_phone}</small>
                                   </div>
                                 </div>
                               </ListGroupItem>
                             </Col>
-                            <Col>
-                              <ListGroupItem className="checklist-entry flex-column align-items-start py-4 px-4">
-                                <div className="checklist-item checklist-item-info">
-                                  <div className="checklist-info">
-                                    <h5 className="checklist-title mb-0">
-                                      Contact Person Pincode
-                                    </h5>
-                                    <small>{data.contact_person_pincode}</small>
-                                  </div>
-                                </div>
-                              </ListGroupItem>
-                            </Col>
+                         
                           </Row>
                           <Row className="mt-4">
                             <Col>
@@ -456,9 +456,9 @@ function Staffdetails({ data, backHandle }) {
                                 <div className="checklist-item checklist-item-success">
                                   <div className="checklist-info">
                                     <h5 className="checklist-title mb-0">
-                                      Contact Person Address
+                                      Parent Address
                                     </h5>
-                                    <small>{data.contact_person_address}</small>
+                                    <small>{data.parent_address}</small>
                                   </div>
                                 </div>
                               </ListGroupItem>

@@ -65,6 +65,7 @@ const AllStudents = () => {
   const [viewModal, setViewModal] = useState(false);
   const [studentDetails, setSudentDetails] = useState({});
   const componentRef = useRef();
+  const [allStudentsData, setAllStudentsData] = useState([]);
   const [studentData, setStudentData] = useState({});
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
@@ -114,6 +115,7 @@ const AllStudents = () => {
       JSON.stringify(payload)
     );
     // console.log("res", res);
+    setAllStudentsData(res)
     if (res.err) {
       return toast.error(res.err);
     } else {
@@ -644,118 +646,93 @@ const AllStudents = () => {
                       <>
                         <Container className="" fluid>
                           <Row className="card-wrapper">
-                            {currentItems !== null && (
+                            {allStudentsData && (
                               <>
-                                {currentItems.map((student, index) => (
-                                  <Col md="4" key={index}>
-                                    <Card>
-                                      <CardHeader align="right">
-                                        <UncontrolledDropdown>
-                                          <DropdownToggle
-                                            className="btn-icon-only text-light"
-                                            color=""
-                                            role="button"
-                                            size="sm"
-                                          >
-                                            <i className="fas fa-ellipsis-v" />
-                                          </DropdownToggle>
-                                          <DropdownMenu
-                                            className="dropdown-menu-arrow"
-                                            right
-                                          >
-                                            <DropdownItem
-                                              href="#pablo"
-                                              onClick={(e) =>
-                                                e.preventDefault()
-                                              }
-                                            >
-                                              Edit
-                                            </DropdownItem>
-                                            <DropdownItem
-                                              href="#pablo"
-                                              onClick={(e) =>
-                                                e.preventDefault()
-                                              }
-                                            >
-                                              Delete
-                                            </DropdownItem>
-                                          </DropdownMenu>
-                                        </UncontrolledDropdown>
-                                      </CardHeader>
-                                      {student.tempPhoto && (
-                                        <CardImg
-                                          alt="..."
-                                          src={student.tempPhoto}
-                                          top
-                                          className="p-4"
-                                          style={{height:"13rem"}}
-                                        />
-                                      )}
-                                      <CardBody className="mt-0">
-                                        <Row>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">SID</h4>
-                                            <span className="text-md">
-                                              {student.sid}
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              First Name
-                                            </h4>
-                                            <span className="text-md">
-                                              {student.first_name}
-                                            </span>
-                                          </Col>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              Last Name
-                                            </h4>
-                                            <span className="text-md">
-                                              {student.last_name}
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">Class</h4>
-                                            <span className="text-md">
-                                              {student.class}
-                                            </span>
-                                          </Col>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">
-                                              Section
-                                            </h4>
-                                            <span className="text-md">
-                                              {student.section}
-                                            </span>
-                                          </Col>
-                                          <Col align="center">
-                                            <h4 className="mt-3 mb-1">Roll</h4>
-                                            <span className="text-md">
-                                              {student.roll}
-                                            </span>
-                                          </Col>
-                                        </Row>
-                                        <Row>
-                                          <Col align="center">
-                                            <Button
-                                              className="mt-3"
-                                              onClick={() =>
-                                                handleStaffDetails(student)
-                                              }
-                                            >
-                                              Read More
-                                            </Button>
-                                          </Col>
-                                        </Row>
-                                      </CardBody>
-                                    </Card>
-                                  </Col>
-                                ))}
+                                {allStudentsData.map((student, index) => {
+                                  console.log(student);
+                                  return (
+                                    <Col md="4" key={index}>
+                                      <Card>
+                                      
+                                        {student.tempPhoto && (
+                                          <CardImg
+                                            alt="..."
+                                            src={student.tempPhoto}
+                                            top
+                                            className="p-4"
+                                            style={{ height: "13rem" }}
+                                          />
+                                        )}
+                                        <CardBody className="mt-0">
+                                          <Row>
+                                            <Col align="center">
+                                              <h4 className="mt-3 mb-1">SID</h4>
+                                              <span className="text-md">
+                                                {student.SID}
+                                              </span>
+                                            </Col>
+                                          </Row>
+                                          <Row>
+                                            <Col align="center">
+                                              <h4 className="mt-3 mb-1">
+                                                First Name
+                                              </h4>
+                                              <span className="text-md">
+                                                {student.firstname}
+                                              </span>
+                                            </Col>
+                                            <Col align="center">
+                                              <h4 className="mt-3 mb-1">
+                                                Last Name
+                                              </h4>
+                                              <span className="text-md">
+                                                {student.lastname}
+                                              </span>
+                                            </Col>
+                                          </Row>
+                                          <Row>
+                                            <Col align="center">
+                                              <h4 className="mt-3 mb-1">
+                                                Class
+                                              </h4>
+                                              <span className="text-md">
+                                                {student.class.name}
+                                              </span>
+                                            </Col>
+                                            <Col align="center">
+                                              <h4 className="mt-3 mb-1">
+                                                Section
+                                              </h4>
+                                              <span className="text-md">
+                                                {student.section.name}
+                                              </span>
+                                            </Col>
+                                            <Col align="center">
+                                              <h4 className="mt-3 mb-1">
+                                                Roll
+                                              </h4>
+                                              <span className="text-md">
+                                                {student.roll_number}
+                                              </span>
+                                            </Col>
+                                          </Row>
+                                          <Row>
+                                            <Col align="center">
+                                              <Button
+                                                className="mt-3"
+                                                onClick={() =>
+                                                  handleStaffDetails(student)
+                                                }
+                                              >
+                                                Read More
+                                              </Button>
+                                            </Col>
+                                          </Row>
+                                        </CardBody>
+                                      </Card>
+                                    </Col>
+                                  );
+                                })}
                               </>
                             )}
                           </Row>

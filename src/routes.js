@@ -219,6 +219,14 @@ export const adminRoutes = [
         layout: "/admin",
         permission: "view",
       },
+      {
+        path: "/attendance",
+        name: "Attendance",
+        miniName: "A",
+        component: Attendance,
+        layout: "/admin",
+        permission: "add",
+      },
     ],
   },
   {
@@ -376,7 +384,7 @@ export const adminRoutes = [
         miniName: "A",
         component: Addproduct,
         layout: "/admin",
-        permission: "admin",
+        permission: "add",
       },
       {
         path: "/view-all-products",
@@ -384,7 +392,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AllProducts,
         layout: "/admin",
-        permission: "admin",
+        permission: "add",
       },
       {
         path: "/view-products",
@@ -409,7 +417,7 @@ export const adminRoutes = [
         miniName: "A",
         component: AddShelf, 
         layout: "/admin",
-        permission: "admin",
+        permission: "add",
       },
       {
         path: "/add-books",
@@ -417,7 +425,7 @@ export const adminRoutes = [
         miniName: "V",
         component: AddBooks,
         layout: "/admin",
-        permission: "admin",
+        permission: "add",
       },
       {
         path: "/book-allocations",
@@ -425,7 +433,7 @@ export const adminRoutes = [
         miniName: "V",
         component: AllocationManager,
         layout: "/admin",
-        permission: "admin",
+        permission: "add",
       },
       {
         path: "/view-allocations",
@@ -433,7 +441,7 @@ export const adminRoutes = [
         miniName: "V",
         component: ViewAllocations,
         layout: "/admin",
-        permission: "admin",
+        permission: "view",
       },
     ],
   },
@@ -458,7 +466,7 @@ export const adminRoutes = [
         miniName: "a",
         component: ViewLeaves,
         layout: "/admin",
-        permission: "admin",
+        permission: "add",
       },
       {
         path: "/view-allleaves",
