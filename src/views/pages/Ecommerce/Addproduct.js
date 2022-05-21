@@ -44,6 +44,7 @@ function Addproduct() {
   const [editAbbv, setEditAbbv] = useState("");
   const [editId, setEditId] = useState("");
   const [categoriesData, setCategoriesData] = useState([]);
+  const [imagesPreview, setImagesPreview] = useState();
   const [addProduct, setAddProduct] = useState({
     name: "",
     description: "",
@@ -59,6 +60,13 @@ function Addproduct() {
   const handleFileChange = (name) => (event) => {
     // formData.set(name, event.target.files[0]);
     // setAddMenu({ ...addMenu, [name]: event.target.files[0].name });
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
   };
 
   const handleChange = (name) => (event) => {
