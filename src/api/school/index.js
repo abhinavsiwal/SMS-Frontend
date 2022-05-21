@@ -41,3 +41,16 @@ export const adminProfileEdit = async (userId, formData) => {
     throw err;
   }
 }
+
+export const getAdminProfile = async(userId) => {
+  try {
+    const {data} = await sendRequest(
+      `${process.env.REACT_APP_API_URL}/api/school/admin/details/get/${userId}`
+    );
+    // console.log(data);
+    return data;
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+}

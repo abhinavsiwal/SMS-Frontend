@@ -22,6 +22,7 @@ import {
   Form,
   Label,
   Input,
+  FormFeedback,
 } from "reactstrap";
 // core components
 
@@ -30,7 +31,7 @@ import SimpleHeader from "components/Headers/SimpleHeader.js";
 import { schoolProfile, editProfile } from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { fetchingSchoolProfileError } from "constants/errors";
 import { updateSchoolError } from "constants/errors";
 import { updateSchoolSuccess } from "constants/success";
@@ -44,6 +45,11 @@ function SchoolProfile() {
   const [formData] = useState(new FormData());
   const [checked, setChecked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [altPhoneError, setAltPhoneError] = useState(false);
+  const [pincodeError, setPincodeError] = useState(false);
+  const [disableButton, setDisableButton] = useState(false);
   const [editSchoolProfile, setEditSchoolProfile] = useState({
     school_name: "",
     abbreviation: "",
@@ -57,7 +63,64 @@ function SchoolProfile() {
     telephone: "",
     fax_no: "",
     affiliate_board: "",
+    image:""
   });
+  const [imagesPreview, setImagesPreview] = useState();
+  const handleFileChange = (name) => (event) => {
+    // formData.set(name, event.target.files[0]);
+    // console.log(event.target.files[0]);
+    setEditSchoolProfile({...editSchoolProfile, image: event.target.files[0]});
+    // setImage(event.target.files[0]);
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImagesPreview(reader.result);
+      }
+    };
+    reader.readAsDataURL(event.target.files[0]);
+  };
+  const phoneBlurHandler = () => {
+    console.log("here");
+
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(editSchoolProfile.primary_contact_no)) {
+      setPhoneError(false);
+      setDisableButton(false);
+    } else {
+      setPhoneError(true);
+      setDisableButton(true);
+    }
+  };
+  const altPhoneBlurHandler = () => {
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(editSchoolProfile.telephone)) {
+      setAltPhoneError(false);
+      setDisableButton(false);
+    } else {
+      setAltPhoneError(true);
+      setDisableButton(true);
+    }
+  };
+  const emailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(editSchoolProfile.school_email)) {
+      setEmailError(false);
+      setDisableButton(false);
+    } else {
+      setEmailError(true);
+      setDisableButton(true);
+    }
+  };
+  const pincodeBlurHandler = () => {
+    let regex = /^[1-9][0-9]{5}$/;
+    if (editSchoolProfile.pin_code.length === 6) {
+      setPincodeError(false);
+      setDisableButton(false);
+    } else {
+      setPincodeError(true);
+      setDisableButton(true);
+    }
+  };
 
   const [permissions, setPermissions] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
@@ -79,7 +142,12 @@ function SchoolProfile() {
       setLoading(true);
       const { data } = await schoolProfile(user.school, user._id);
       // console.log(user);
-      // console.log(data);
+      if(data.err){
+        toast.error(data.err);
+        setLoading(false);
+        return;
+      }
+      console.log(data);
       setSchoolDetails(data);
       setEditSchoolProfile({
         ...editSchoolProfile,
@@ -124,11 +192,17 @@ function SchoolProfile() {
     formData.set("pincode", editSchoolProfile.pin_code);
     formData.set("state", editSchoolProfile.state);
     formData.set("telephone", editSchoolProfile.telephone);
+    formData.set("photo", editSchoolProfile.image);
 
     try {
       setEditLoading(true);
       const data = await editProfile(user.school, user._id, formData);
       // console.log(data);
+      if(data.err){
+        toast.error(data.err);
+        setEditLoading(false);
+        return;
+      }
       setEditing(false);
       setChecked(!checked);
       setEditLoading(false);
@@ -156,7 +230,6 @@ function SchoolProfile() {
         theme="colored"
       />
       <Modal
-        style={{ height: "75vh" }}
         isOpen={editing}
         toggle={() => setEditing(false)}
         size="lg"
@@ -164,7 +237,7 @@ function SchoolProfile() {
       >
         <div className="modal-header">
           <h2 className="modal-title" id="modal-title-default">
-            {editing ? "Event List" : ""}
+        Edit School Details
           </h2>
           <button
             aria-label="Close"
@@ -180,7 +253,44 @@ function SchoolProfile() {
           <Loader />
         ) : (
           <ModalBody>
-            <Form onSubmit={handleEdit} >
+            <Form onSubmit={handleEdit}>
+            <Row md="4" className="d-flex mb-4">
+                    <Col>
+                      <img
+                        src={imagesPreview && imagesPreview}
+                        alt="Preview"
+                        className="mt-3 me-2"
+                        width="80"
+                        height="80"
+                      />
+                    </Col>
+                    <Col md="6" style={{ zIndex: "1" }}>
+                      <label
+                        className="form-control-label"
+                        htmlFor="example3cols2Input"
+                      >
+                        Upload Image
+                      </label>
+                      <div className="custom-file">
+                        <input
+                          className="custom-file-input"
+                          id="customFileLang"
+                          lang="en"
+                          type="file"
+                          onChange={handleFileChange("image")}
+                          accept="image/*"
+                          // value={staffData.photo.name}
+                        />
+                        <label
+                          className="custom-file-label"
+                          htmlFor="customFileLang"
+                        >
+                          Select file
+                        </label>
+                      </div>
+                    </Col>
+                   
+                  </Row>
               <Row>
                 <Col>
                   <Label
@@ -260,11 +370,17 @@ function SchoolProfile() {
                   <Input
                     id="example4cols2Input"
                     placeholder="Class"
-                    type="text"
+                    type="number"
                     onChange={handleChange("pin_code")}
                     value={editSchoolProfile.pin_code}
                     required
+                    pattern="[1-9]{1}[0-9]{5}"
+                    onBlur={pincodeBlurHandler}
+                    invalid={pincodeError}
                   />
+                  {pincodeError && (
+                    <FormFeedback>Please Enter a valid Pincode</FormFeedback>
+                  )}
                 </Col>
                 <Col>
                   <Label
@@ -275,7 +391,7 @@ function SchoolProfile() {
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
+                    placeholder="Country"
                     type="text"
                     onChange={handleChange("country")}
                     value={editSchoolProfile.country}
@@ -323,16 +439,22 @@ function SchoolProfile() {
                     className="form-control-label"
                     htmlFor="example4cols2Input"
                   >
-                    SchoolEmail
+                    School Email
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
-                    type="text"
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                    placeholder="Email"
+                    type="email"
                     onChange={handleChange("school_email")}
                     value={editSchoolProfile.school_email}
                     required
+                    onBlur={emailBlurHandler}
+                    invalid={emailError}
                   />
+                  {emailError && (
+                    <FormFeedback>Please Enter a valid Email</FormFeedback>
+                  )}
                 </Col>
                 <Col>
                   <Label
@@ -343,12 +465,18 @@ function SchoolProfile() {
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
-                    type="text"
+                    pattern="[1-9]{1}[0-9]{9}"
+                    placeholder="Primary Contact No"
+                    type="number"
                     onChange={handleChange("primary_contact_no")}
                     value={editSchoolProfile.primary_contact_no}
                     required
+                    invalid={phoneError}
+                    onBlur={phoneBlurHandler}
                   />
+                  {phoneError && (
+                    <FormFeedback>Please Enter a valid phone no</FormFeedback>
+                  )}
                 </Col>
               </Row>
               <Row>
@@ -362,11 +490,17 @@ function SchoolProfile() {
                   <Input
                     id="example4cols2Input"
                     placeholder="Class"
-                    type="text"
+                    type="number"
+                    pattern="[1-9]{1}[0-9]{9}"
                     onChange={handleChange("telephone")}
                     value={editSchoolProfile.telephone}
                     required
+                    onBlur={altPhoneBlurHandler}
+                    invalid={altPhoneError}
                   />
+                  {altPhoneError && (
+                    <FormFeedback>Please Enter a valid phone no</FormFeedback>
+                  )}
                 </Col>
               </Row>
               <Button
@@ -374,7 +508,7 @@ function SchoolProfile() {
                 type="submit"
                 className="mt-2 mb-2"
                 style={{ float: "right" }}
-                
+                disabled={disableButton}
               >
                 Save changes
               </Button>
@@ -393,7 +527,7 @@ function SchoolProfile() {
                   <Col align="center">
                     <CardImg
                       alt="..."
-                      src="https://trancaes.files.wordpress.com/2015/09/school-logo-new.jpg"
+                      src={schoolDetails.photo && schoolDetails.photo}
                       top
                       className="p-4"
                       style={{ width: "80%", height: "100%" }}
@@ -421,6 +555,14 @@ function SchoolProfile() {
                         <h4 className="mt-3 mb-1">Affiliated Board</h4>
                         <span className="text-md">
                           {schoolDetails.affiliate_board}
+                        </span>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col align="center">
+                        <h4 className="mt-3 mb-1">Website</h4>
+                        <span className="text-md">
+                          {schoolDetails.website}
                         </span>
                       </Col>
                     </Row>

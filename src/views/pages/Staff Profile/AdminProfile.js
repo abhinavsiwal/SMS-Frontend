@@ -22,12 +22,18 @@ import {
   Form,
   Label,
   Input,
+  FormFeedback,
 } from "reactstrap";
 // core components
 
 import Loader from "components/Loader/Loader";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import { schoolProfile, editProfile,adminProfileEdit } from "api/school";
+import {
+  schoolProfile,
+  editProfile,
+  adminProfileEdit,
+  getAdminProfile,
+} from "api/school";
 import { FaEdit } from "react-icons/fa";
 import { isAuthenticated } from "api/auth";
 import { toast, ToastContainer } from "react-toastify";
@@ -40,10 +46,14 @@ function AdminProfile() {
   const [activeTab, setActiveTab] = useState("1");
   const [schoolDetails, setSchoolDetails] = useState({});
   const [editing, setEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { user } = isAuthenticated();
   const [formData] = useState(new FormData());
   const [checked, setChecked] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  const [phoneError, setPhoneError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [profile, setProfile] = useState({});
   const [editSchoolProfile, setEditSchoolProfile] = useState({
     firstname: "",
     lastname: "",
@@ -51,13 +61,53 @@ function AdminProfile() {
     phone: "",
   });
 
-  const [permissions, setPermissions] = useState([]);
   const [editLoading, setEditLoading] = useState(false);
-  
+
   useEffect(() => {
     getSchoolDetails();
+ 
+    adminProfile();
   }, [checked]);
 
+  const adminProfile = async () => {
+    try {
+      setLoading(true);
+      const data = await getAdminProfile(user._id);
+      console.log(data);
+      setProfile(data);
+      setEditSchoolProfile({
+        ...editSchoolProfile,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        email: data.email,
+        phone: data.phone,
+      });
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+      toast.error("Getting Admin Details failed");
+    }
+  };
+
+  const phoneBlurHandler = () => {
+    console.log("here");
+
+    let regex = /^[5-9]{2}[0-9]{8}$/;
+    if (regex.test(editSchoolProfile.phone)) {
+      setPhoneError(false);
+    } else {
+      setPhoneError(true);
+    }
+  };
+  const emailBlurHandler = () => {
+    let regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex.test(editSchoolProfile.email)) {
+      setEmailError(false);
+    } else {
+      setEmailError(true);
+    }
+  };
   const getSchoolDetails = async () => {
     try {
       setLoading(true);
@@ -66,13 +116,7 @@ function AdminProfile() {
       // console.log(data);
 
       setSchoolDetails(data);
-      setEditSchoolProfile({
-        ...editSchoolProfile,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        email: user.email,
-        phone: user.phone,
-      });
+    
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -91,14 +135,14 @@ function AdminProfile() {
     // console.log(editSchoolProfile);
     formData.set("firstname", editSchoolProfile.firstname);
     formData.set("lastname", editSchoolProfile.lastname);
-    formData.set("email",editSchoolProfile.email);
+    formData.set("email", editSchoolProfile.email);
     formData.set("phone", editSchoolProfile.phone);
 
     try {
       setEditLoading(true);
       const data = await adminProfileEdit(user._id, formData);
       // console.log(data);
-      if(data.err){
+      if (data.err) {
         setEditLoading(false);
         return toast.error(data.err);
       }
@@ -145,7 +189,7 @@ function AdminProfile() {
       >
         <div className="modal-header">
           <h2 className="modal-title" id="modal-title-default">
-            {editing ? "Event List" : ""}
+            Edit Profile
           </h2>
           <button
             aria-label="Close"
@@ -172,7 +216,7 @@ function AdminProfile() {
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
+                    placeholder="First Name"
                     type="text"
                     onChange={handleChange("firstname")}
                     value={editSchoolProfile.firstname}
@@ -188,7 +232,7 @@ function AdminProfile() {
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
+                    placeholder="LastName"
                     type="text"
                     onChange={handleChange("lastname")}
                     value={editSchoolProfile.lastname}
@@ -206,12 +250,18 @@ function AdminProfile() {
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
+                    placeholder="Email"
                     type="text"
                     onChange={handleChange("email")}
                     value={editSchoolProfile.email}
                     required
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+                    onBlur={emailBlurHandler}
+                    invalid={emailError}
                   />
+                  {emailError && (
+                    <FormFeedback>Please Enter a valid Email</FormFeedback>
+                  )}
                 </Col>
                 <Col>
                   <Label
@@ -222,12 +272,18 @@ function AdminProfile() {
                   </Label>
                   <Input
                     id="example4cols2Input"
-                    placeholder="Class"
+                    placeholder="Phone"
                     type="text"
                     onChange={handleChange("phone")}
                     value={editSchoolProfile.phone}
                     required
+                    pattern="[1-9]{1}[0-9]{9}"
+                    onBlur={phoneBlurHandler}
+                    invalid={phoneError}
                   />
+                  {phoneError && (
+                    <FormFeedback>Please Enter a valid phone no</FormFeedback>
+                  )}
                 </Col>
               </Row>
 
@@ -265,20 +321,20 @@ function AdminProfile() {
                       <Col align="center">
                         <h4 className="mt-0 mb-1">Name</h4>
                         <span className="text-md">
-                          {user.firstname} {user.lastname}
+                          {profile.firstname} {profile.lastname}
                         </span>
                       </Col>
                     </Row>
                     <Row>
                       <Col align="center">
                         <h4 className="mt-3 mb-1">Email</h4>
-                        <span className="text-md">{user.email}</span>
+                        <span className="text-md">{profile.email}</span>
                       </Col>
                     </Row>
                     <Row>
                       <Col align="center">
                         <h4 className="mt-3 mb-1">Phone</h4>
-                        <span className="text-md">{user.phone}</span>
+                        <span className="text-md">{profile.phone}</span>
                       </Col>
                     </Row>
                   </CardBody>
@@ -310,20 +366,19 @@ function AdminProfile() {
                           </NavItem>
                         </Nav>
                       </Col>
-                      {permissions && permissions.includes("edit") && (
-                        <Col className="text-right">
-                          <Button
-                            className="btn-icon"
-                            color="primary"
-                            type="button"
-                            onClick={() => setEditing(true)}
-                          >
-                            <span className="btn-inner--icon">
-                              <FaEdit />
-                            </span>
-                          </Button>
-                        </Col>
-                      )}
+
+                      <Col className="text-right">
+                        <Button
+                          className="btn-icon"
+                          color="primary"
+                          type="button"
+                          onClick={() => setEditing(true)}
+                        >
+                          <span className="btn-inner--icon">
+                            <FaEdit />
+                          </span>
+                        </Button>
+                      </Col>
                     </Row>
                   </CardHeader>
                   <CardBody>

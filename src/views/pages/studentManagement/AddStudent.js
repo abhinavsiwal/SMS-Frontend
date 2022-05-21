@@ -149,7 +149,7 @@ function AddStudent() {
   const [pincodeError, setPincodeError] = useState(false);
   const { user, token } = isAuthenticated();
   const [imagesPreview, setImagesPreview] = useState();
-
+  const [disableButton, setDisableButton] = useState(true);
   useEffect(() => {
     getAllClasses();
   }, []);
@@ -289,8 +289,10 @@ function AddStudent() {
     let regex = /^[0-9]{12}$/;
     if (regex.test(studentData.aadhar_number)) {
       setAadharError(false);
+      setDisableButton(false);
     } else {
       setAadharError(true);
+      setDisableButton(true);
     }
   };
   //Checking Parent or Gaurdian Email is Exist or Not
@@ -702,12 +704,9 @@ function AddStudent() {
             {step === 0 && (
               <Form onSubmit={handleFormChange} className="mb-4">
                 <CardBody>
-                  {capturePhoto && <h2>Photo is Selected</h2>}
-                  {studentData.photo.name && (
-                    <h2>File {studentData.photo.name} is Selected</h2>
-                  )}
+                 
                   <Row md="4" className="d-flex justify-content-center mb-4">
-                  <Col>
+                    <Col>
                       <img
                         src={imagesPreview && imagesPreview}
                         alt="Preview"
@@ -716,7 +715,7 @@ function AddStudent() {
                         height="80"
                       />
                     </Col>
-                    <Col md="6" style={{zIndex:"1"}} >
+                    <Col md="6" style={{ zIndex: "1" }}>
                       <label
                         className="form-control-label"
                         htmlFor="example3cols2Input"
@@ -1071,7 +1070,7 @@ function AddStudent() {
                     <Button onClick={cancelHandler} color="danger">
                       Cancel
                     </Button>
-                    <Button color="primary" type="submit">
+                    <Button color="primary" type="submit" disabled={disableButton} >
                       Next
                     </Button>
                   </Row>

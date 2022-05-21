@@ -116,13 +116,13 @@ function AddStaff() {
   const [city, setCity] = useState("");
   const [contactCity, setContactCity] = useState("");
   const [phoneError, setPhoneError] = useState(false);
-  const [altPhoneError, setAltPhoneError] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [altPhoneError, setAltPhoneError] = useState(false);
+  const [pincodeError, setPincodeError] = useState(false);
   const [subjectData, setSubjectData] = useState();
   const [contactPhoneError, setContactPhoneError] = useState(false);
   const [camera, setCamera] = useState(false);
   const [pincode, setPincode] = useState("");
-  const [pincodeError, setPincodeError] = useState(false);
   const [contactPincode, setContactPincode] = useState("");
   const [contactPincodeError, setContactPincodeError] = useState(false);
   const [image, setImage] = useState();
