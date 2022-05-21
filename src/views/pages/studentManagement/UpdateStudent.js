@@ -89,7 +89,7 @@ function UpdateStudent({ studentDetails }) {
   const [guardianPincodeError, setGuardianPincodeError] = useState(false);
   const [motherPincodeError, setMotherPincodeError] = useState(false);
   const [fatherPincodeError, setFatherPincodeError] = useState(false);
-  const [disableButton, setDisableButton] = useState(true);
+  const [disableButton, setDisableButton] = useState(false);
   const [student, setStudent] = useState({
     _id: studentDetails._id,
     image: studentDetails.image,
@@ -299,6 +299,13 @@ function UpdateStudent({ studentDetails }) {
       }
       setLoading(false);
       setClassList(classess);
+      let selectedClass1 = classess.find(
+        (item) => item._id.toString() === student.class.toString()
+      );
+      setSelectedClass(selectedClass1);
+      // setLoading(true);
+      // toast.success(fetchingClassSuccess)
+      setLoading(false);
     } catch (err) {
       toast.error("Fetching Classes Failed");
     }
@@ -461,19 +468,17 @@ function UpdateStudent({ studentDetails }) {
 
   const pincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
-    if (pincode.length===6) {
-   
+    if (pincode.length === 6) {
       setPincodeError(false);
       setDisableButton(false);
     } else {
- 
       setPincodeError(true);
       setDisableButton(true);
     }
   };
   const guardianPincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
-    if (studentData.guardian_pincode.length===6) {
+    if (student.guardian_pincode.length === 6) {
       console.log("herre");
       setGuardianPincodeError(false);
       setDisableButton(false);
@@ -485,7 +490,7 @@ function UpdateStudent({ studentDetails }) {
   };
   const fatherPincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
-    if (studentData.father_pincode.length===6) {
+    if (student.father_pincode.length === 6) {
       console.log("herre");
       setFatherPincodeError(false);
       setDisableButton(false);
@@ -497,7 +502,7 @@ function UpdateStudent({ studentDetails }) {
   };
   const motherPincodeBlurHandler = () => {
     let regex = /^[1-9][0-9]{5}$/;
-    if (studentData.mother_pincode.length===6) {
+    if (student.mother_pincode.length === 6) {
       console.log("herre");
       setMotherPincodeError(false);
       setDisableButton(false);
@@ -507,8 +512,6 @@ function UpdateStudent({ studentDetails }) {
       setDisableButton(true);
     }
   };
-
-
 
   const cancelHandler = () => {
     window.location.reload();
@@ -848,7 +851,7 @@ function UpdateStudent({ studentDetails }) {
                     <Button onClick={cancelHandler} color="danger">
                       Cancel
                     </Button>
-                    <Button color="primary" onClick={handleFormChange}>
+                    <Button color="primary" onClick={handleFormChange} disabled={disableButton} >
                       Next
                     </Button>
                   </Row>
@@ -992,7 +995,7 @@ function UpdateStudent({ studentDetails }) {
                       <Button onClick={cancelHandler} color="danger">
                         Cancel
                       </Button>
-                      <Button className="mr-4" color="primary" type="submit">
+                      <Button className="mr-4" color="primary" type="submit" disabled={disableButton} >
                         Next
                       </Button>
                     </div>
@@ -1055,6 +1058,7 @@ function UpdateStudent({ studentDetails }) {
                         type="number"
                         required
                         onBlur={pincodeBlurHandler}
+                        invalid={pincodeError}
                       />
                       {pincodeError && (
                         <FormFeedback>
@@ -1163,7 +1167,7 @@ function UpdateStudent({ studentDetails }) {
                       <Button onClick={cancelHandler} color="danger">
                         Cancel
                       </Button>
-                      <Button className="mr-4" color="primary" type="submit">
+                      <Button className="mr-4" color="primary" type="submit" disabled={disableButton} >
                         Next
                       </Button>
                     </div>
@@ -1348,7 +1352,14 @@ function UpdateStudent({ studentDetails }) {
                               onChange={handleChange("father_pincode")}
                               required
                               value={student.father_pincode}
+                              onBlur={fatherPincodeBlurHandler}
+                              invalid={fatherPincodeError}
                             />
+                            {fatherPincodeError && (
+                              <FormFeedback>
+                                Please Enter a valid Pincode
+                              </FormFeedback>
+                            )}
                           </Col>
                           <Col>
                             <label
@@ -1510,7 +1521,15 @@ function UpdateStudent({ studentDetails }) {
                               onChange={handleChange("mother_pincode")}
                               required
                               value={student.mother_pincode}
+
+                            onBlur={motherPincodeBlurHandler}
+                              invalid={motherPincodeError}
                             />
+                            {motherPincodeError && (
+                              <FormFeedback>
+                                Please Enter a valid Pincode
+                              </FormFeedback>
+                            )}
                           </Col>
                           <Col>
                             <label
@@ -1563,6 +1582,7 @@ function UpdateStudent({ studentDetails }) {
                             className="mr-4"
                             color="success"
                             type="submit"
+                            disabled={disableButton}
                           >
                             Submit
                           </Button>
@@ -1766,7 +1786,14 @@ function UpdateStudent({ studentDetails }) {
                               onChange={handleChange("guardian_pincode")}
                               required
                               value={student.guardian_pincode}
+                              onBlur={guardianPincodeBlurHandler}
+                              invalid={guardianPincodeError}
                             />
+                            {guardianPincodeError && (
+                              <FormFeedback>
+                                Please Enter a valid Pincode
+                              </FormFeedback>
+                            )}
                           </Col>
                           <Col>
                             <label
@@ -1823,6 +1850,7 @@ function UpdateStudent({ studentDetails }) {
                               className="mr-4"
                               color="success"
                               type="submit"
+                              disabled={disableButton}
                             >
                               Submit
                             </Button>

@@ -135,10 +135,10 @@ function AddStudent() {
   const [guardianEmailError, setGuardianEmailError] = useState(false);
   const [guardianPhoneError, setGuardianPhoneError] = useState(false);
   const [guardianPincodeError, setGuardianPincodeError] = useState(false);
-  const [fatherPhoneError, setFatherPhoneError] = useState(false);
-  const [fatherPincodeError, setFatherPincodeError] = useState(false);
-  const [motherPhoneError, setMotherPhoneError] = useState(false);
   const [motherPincodeError, setMotherPincodeError] = useState(false);
+  const [fatherPincodeError, setFatherPincodeError] = useState(false);
+  const [fatherPhoneError, setFatherPhoneError] = useState(false);
+  const [motherPhoneError, setMotherPhoneError] = useState(false);
   const [aadharError, setAadharError] = useState(false);
   const [camera, setCamera] = useState(false);
   const [image, setImage] = useState();

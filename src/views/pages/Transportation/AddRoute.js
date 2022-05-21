@@ -411,7 +411,7 @@ function AddRoute() {
                             placeholder="Place Name"
                             type="text"
                             onChange={(e) => setPlaceName(e.target.value)}
-                            required
+                          
                             value={placeName}
                             onBlur={placeBlurHandler}
                           />
