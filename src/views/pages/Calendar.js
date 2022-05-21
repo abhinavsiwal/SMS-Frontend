@@ -95,6 +95,7 @@ function CalendarView() {
   const [loading, setLoading] = useState(false);
   const [addLoading, setAddLoading] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
+  const [assignTeacherName, setAssignTeacherName] = useState(null)
   let permission1 = [];
   useEffect(() => {
     // console.log(user);
@@ -194,7 +195,8 @@ function CalendarView() {
         setStartDate(event.start);
         setEndDate(event.end);
         setEvent(event);
-        setAssignTeachers(event._def.extendedProps.assignTeacherName);
+        setAssignTeachers(event._def.extendedProps.assignTeacher);
+        setAssignTeacherName(event._def.extendedProps.assignTeacherName)
         setModalChange(true);
       },
     });
@@ -986,7 +988,7 @@ function CalendarView() {
                             required
                           >
                             <option selected disabled>
-                              {assignTeachers}
+                              {assignTeacherName}
                             </option>
                             <hr />
                             {staff.map((staff, i) => (
