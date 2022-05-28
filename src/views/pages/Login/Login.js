@@ -160,7 +160,7 @@ function Login() {
                     htmlFor="example4cols2Input"
                   >
                     Password
-                  </label>
+                  </label> 
                   <FormGroup
                     className={classnames("mb-3", {
                       focused: focusedPassword,
