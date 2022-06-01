@@ -299,11 +299,10 @@ const AddSection = () => {
   const tableData = async () => {
     // console.log(tableClassSelectId);
     // console.log(classList);
-    if(tableClassSelectId==="empty"){
+    if (tableClassSelectId === "empty") {
       setisData(false);
       return;
     }
-
 
     let selectedClass = await classList.find(
       (clas) => clas._id === tableClassSelectId
@@ -472,7 +471,6 @@ const AddSection = () => {
     }
   };
 
-  
   const handleEditSubmit = async () => {
     const formData = new FormData();
     formData.set("school", user.school);
@@ -658,9 +656,7 @@ const AddSection = () => {
                         required
                         value={tableClassSelectId}
                       >
-                        <option value="empty">
-                          Select Class
-                        </option>
+                        <option value="empty">Select Class</option>
                         {classList?.map((clas, index) => (
                           <option key={index} value={clas._id}>
                             {clas.name}
@@ -743,7 +739,7 @@ const AddSection = () => {
                 />
               </Col>
             </Row>
-      
+
             <Row className="mt-4">
               <Col>
                 <label

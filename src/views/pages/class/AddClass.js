@@ -309,7 +309,7 @@ const AddClass = () => {
     let res = classList.filter((item) => {
       return item.session._id === selectedSessionId;
     });
-    console.log(res);
+    // console.log(res);
     const data = [];
     for (let i = 0; i < res.length; i++) {
       data.push({
